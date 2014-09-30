@@ -1,0 +1,26 @@
+<project>
+	<actions/>
+	<description>@description</description>
+@LOG_ROTATOR@
+	<keepDependencies>false</keepDependencies>
+	<properties>
+@PROPERTIES@
+	</properties>
+@SCM@
+	<assignedNode>master</assignedNode>
+	<canRoam>false</canRoam>
+	<disabled>false</disabled>
+	<blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+	<blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+	<triggers>
+@TRIGGERS
+	</triggers>
+	<concurrentBuild>false</concurrentBuild>
+	<builders>
+@BUILDERS@
+	</builders>
+	<publishers>
+@PUBLISHERS@
+	</publishers>
+	<buildWrappers/>
+</project>

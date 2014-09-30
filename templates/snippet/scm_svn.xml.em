@@ -1,0 +1,20 @@
+<scm class="hudson.scm.SubversionSCM" plugin="subversion@@1.54">
+	<locations>
+		<hudson.scm.SubversionSCM_-ModuleLocation>
+			<remote>@remote</remote>
+@[if local]@
+			<local>@local</local>
+@[end if]@
+			<depthOption>infinity</depthOption>
+			<ignoreExternalsOption>false</ignoreExternalsOption>
+		</hudson.scm.SubversionSCM_-ModuleLocation>
+	</locations>
+	<excludedRegions/>
+	<includedRegions/>
+	<excludedUsers/>
+	<excludedRevprop/>
+	<excludedCommitMessages/>
+	<workspaceUpdater class="hudson.scm.subversion.UpdateUpdater"/>
+	<ignoreDirPropChanges>false</ignoreDirPropChanges>
+	<filterChangelog>false</filterChangelog>
+</scm>
