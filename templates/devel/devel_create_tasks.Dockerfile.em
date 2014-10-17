@@ -18,8 +18,7 @@ RUN apt-get update
 RUN apt-get install -q -y python3-empy python3-rosdep
 
 RUN useradd -u @uid -m buildfarm
-# workaround https://github.com/ros-infrastructure/catkin_pkg/issues/108
-RUN PYTHONPATH=/usr/lib/python2.7/dist-packages:$PYTHONPATH rosdep init
-RUN su buildfarm -c "PYTHONPATH=/usr/lib/python2.7/dist-packages:$PYTHONPATH rosdep --rosdistro=@rosdistro_name update"
+RUN rosdep init
+RUN su buildfarm -c "rosdep --rosdistro=@rosdistro_name update"
 
 CMD ["su", "buildfarm", "-c", "PYTHONPATH=/tmp/ros_buildfarm:/usr/lib/python2.7/dist-packages:$PYTHONPATH python3 -u /tmp/ros_buildfarm/scripts/devel/create_devel_task_generator.py --rosdistro-name @rosdistro_name --workspace-root /tmp/catkin_workspace --os-name @os_name --os-code-name @os_code_name --distribution-repository-urls @(' '.join(distribution_repository_urls)) --distribution-repository-key-files @(' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))])) --dockerfile-dir /tmp/docker_build_and_install && PYTHONPATH=/tmp/ros_buildfarm:/usr/lib/python2.7/dist-packages:$PYTHONPATH python3 -u /tmp/ros_buildfarm/scripts/devel/create_devel_task_generator.py --rosdistro-name @rosdistro_name --workspace-root /tmp/catkin_workspace --os-name @os_name --os-code-name @os_code_name --distribution-repository-urls @(' '.join(distribution_repository_urls)) --distribution-repository-key-files @(' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))])) --testing --dockerfile-dir /tmp/docker_build_and_test"]
