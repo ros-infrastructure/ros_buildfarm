@@ -102,7 +102,6 @@
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
-        'ls -al $WORKSPACE/ros_buildfarm/scripts/command',
         'docker run' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
@@ -120,7 +119,6 @@
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
-        'ls -al $WORKSPACE/ros_buildfarm/scripts/command',
         'docker run' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
