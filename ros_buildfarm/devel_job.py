@@ -1,7 +1,7 @@
 """
 Documentation and functions for devel jobs.
 
-The script ``scripts/management/generate_devel_jobs.py`` generates Jenkins jobs
+The script ``scripts/devel/generate_devel_maintenance_jobs.py`` generates Jenkins jobs
 for each repository and os_name/os_code_name/arch matching the build file.
 
 It requires the following arguments to identify the build file:
@@ -15,18 +15,18 @@ The job configuration contains a build step to:
     ros_buildfarm
     SOURCE repository to run CI on
   invokes
-    scripts/job/run_devel_job.py
+    scripts/devel/run_devel_job.py
       --distribution-repository-urls
       --distribution-repository-key-files
 
 Each devel Jenkins job is expanded from the template
-  templates/job/devel.xml.em
+  templates/devel/devel_job.xml.em
 It clones the following repositories:
   ros_buildfarm
   SOURCE repository to run CI on
 It then invokes
-  scripts/job/run_devel_job.py
-    which expands a Dockerfile from templates/dockerfile/generate_docker_devel.em
+  scripts/devel/run_devel_job.py
+    which expands a Dockerfile from templates/devel/devel_create_tasks.Dockerfile.em
 """
 
 from datetime import datetime
@@ -138,7 +138,7 @@ def _get_devel_view(rosdistro_name, source_build_name, jenkins):
 def _get_devel_job_config(
         rosdistro_index_url, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, conf, source_repo_spec):
-    template_name = 'job/devel.xml.em'
+    template_name = 'devel/devel_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
@@ -209,7 +209,7 @@ def _get_devel_job_config(
                 'echo "# BEGIN SECTION: Generate Dockerfile 1"',
                 'mkdir -p $WORKSPACE/docker_generating_devel_dockers',
                 'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-                '$WORKSPACE/ros_buildfarm/scripts/job/run_devel_job.py' +
+                '$WORKSPACE/ros_buildfarm/scripts/devel/run_devel_job.py' +
                 ' --rosdistro-index-url %s' % rosdistro_index_url +
                 ' --rosdistro-name %s' % rosdistro_name +
                 ' --source-build-name %s' % source_build_name +

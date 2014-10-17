@@ -82,7 +82,7 @@ def main(argv=sys.argv[1:]):
 
 
 def generate_dockerfile(data):
-    return expand_template('dockerfile/generate_docker_devel.em', data)
+    return expand_template('devel/devel_create_tasks.Dockerfile.em', data)
 
 
 if __name__ == '__main__':

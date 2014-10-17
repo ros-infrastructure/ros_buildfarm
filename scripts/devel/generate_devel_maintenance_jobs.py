@@ -47,7 +47,7 @@ def main(argv=sys.argv[1:]):
 
 
 def get_job_config(args, build_file):
-    template_name = 'job/devel_reconfigure-jobs.xml.em'
+    template_name = 'devel/devel_reconfigure-jobs_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
     job_data = {
@@ -81,7 +81,7 @@ def get_job_config(args, build_file):
 
                 'cd ros_buildfarm',
                 'export PYTHONPATH=`pwd`:$PYTHONPATH',
-                'python3 -u scripts/management/generate_devel_jobs.py ' +
+                'python3 -u scripts/devel/generate_devel_jobs.py ' +
                 '--rosdistro-index-url "%s" %s %s' %
                 (args.rosdistro_index_url,
                  args.rosdistro, args.source_build),

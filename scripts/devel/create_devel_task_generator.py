@@ -178,7 +178,7 @@ def resolve_names(rosdep_keys, os_name, os_code_name, view, installer):
 
 
 def generate_dockerfile(data):
-    return expand_template('dockerfile/devel_job.em', data)
+    return expand_template('devel/devel_task.Dockerfile.em', data)
 
 
 if __name__ == '__main__':

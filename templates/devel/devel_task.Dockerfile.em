@@ -35,7 +35,7 @@ RUN apt-get install -q -y @d
 @[end for]@
 
 @[if not testing]@
-CMD ["su", "buildfarm", "-c", "PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u /tmp/ros_buildfarm/scripts/command/catkin_make_isolated_and_install.py --rosdistro-name @rosdistro_name --workspace-root /tmp/catkin_workspace --clean-before"]
+CMD ["su", "buildfarm", "-c", "PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u /tmp/ros_buildfarm/scripts/devel/catkin_make_isolated_and_install.py --rosdistro-name @rosdistro_name --workspace-root /tmp/catkin_workspace --clean-before"]
 @[else]@
-CMD ["su", "buildfarm", "-c", "PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u /tmp/ros_buildfarm/scripts/command/catkin_make_isolated_and_test.py --rosdistro-name @rosdistro_name --workspace-root /tmp/catkin_workspace"]
+CMD ["su", "buildfarm", "-c", "PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u /tmp/ros_buildfarm/scripts/devel/catkin_make_isolated_and_test.py --rosdistro-name @rosdistro_name --workspace-root /tmp/catkin_workspace"]
 @[end if]@
