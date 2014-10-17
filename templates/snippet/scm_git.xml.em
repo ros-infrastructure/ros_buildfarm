@@ -2,12 +2,12 @@
 		<configVersion>2</configVersion>
 		<userRemoteConfigs>
 			<hudson.plugins.git.UserRemoteConfig>
-				<url>@url</url>
+				<url>@ESCAPE(url)</url>
 			</hudson.plugins.git.UserRemoteConfig>
 		</userRemoteConfigs>
 		<branches>
 			<hudson.plugins.git.BranchSpec>
-				<name>@refspec</name>
+				<name>@ESCAPE(refspec)</name>
 			</hudson.plugins.git.BranchSpec>
 		</branches>
 		<doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
@@ -15,7 +15,7 @@
 		<extensions>
 @[if relative_target_dir]@
 			<hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
-				<relativeTargetDir>@relative_target_dir</relativeTargetDir>
+				<relativeTargetDir>@ESCAPE(relative_target_dir)</relativeTargetDir>
 			</hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
 @[end if]@
 		</extensions>

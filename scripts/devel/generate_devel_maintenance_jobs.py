@@ -51,51 +51,17 @@ def get_job_config(args, build_file):
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
     job_data = {
-        'description': "Generated at %s from template '%s'" %
-        (now_str, template_name),
-        '-LOG_ROTATOR': expand_template('snippet/log-rotator.xml.em', {
-            'days_to_keep': 100,
-            'num_to_keep': 100,
-        }),
-        '-PROPERTIES': expand_template(
-            'snippet/property_job-priority.xml.em', {
-                'priority': 2,
-            }
-        ),
-        '-SCM': expand_template('snippet/scm_git.xml.em', {
-            'url': get_repository_url('.'),
-            'refspec': 'master',
-            'relative_target_dir': 'ros_buildfarm',
-        }),
-        '-TRIGGERS': expand_template('snippet/trigger_timer.xml.em', {
-            'spec': '0 23 * * *'
-        }),
-        '-BUILDERS': expand_template('snippet/builder_shell.xml.em', {
-            'script': '\n'.join([
-                # TODO remove temporary checkout of rosdistro and dependency installation
-                'echo "# BEGIN SECTION: Clone custom rosdistro"',
-                'rm -fr rosdistro',
-                'git clone https://github.com/dirk-thomas/ros-infrastructure_rosdistro.git rosdistro',
-                'export PYTHONPATH=$WORKSPACE/rosdistro/src:$PYTHONPATH',
-                'echo "# END SECTION"',
+        'template_name': template_name,
+        'now_str': now_str,
 
-                'cd ros_buildfarm',
-                'export PYTHONPATH=`pwd`:$PYTHONPATH',
-                'python3 -u scripts/devel/generate_devel_jobs.py ' +
-                '--rosdistro-index-url "%s" %s %s' %
-                (args.rosdistro_index_url,
-                 args.rosdistro, args.source_build),
-            ]),
-        }),
-        '-PUBLISHERS': ''
+        'rosdistro_index_url': args.rosdistro_index_url,
+        'rosdistro_name': args.rosdistro,
+        'source_build_name': args.source_build,
+
+        'ros_buildfarm_url': get_repository_url('.'),
+
+        'recipients': build_file.notify_emails,
     }
-    if build_file.notify_emails:
-        job_data['-PUBLISHERS'] = expand_template(
-            'snippet/publisher_mailer.xml.em', {
-                'recipients': build_file.notify_emails,
-                'send_to_individuals': False,
-            }
-        )
     job_config = expand_template(template_name, job_data)
     return job_config
 

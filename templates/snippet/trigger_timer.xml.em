@@ -1,3 +1,3 @@
 	<hudson.triggers.TimerTrigger>
-		<spec>@spec</spec>
+		<spec>@ESCAPE(spec)</spec>
 	</hudson.triggers.TimerTrigger>

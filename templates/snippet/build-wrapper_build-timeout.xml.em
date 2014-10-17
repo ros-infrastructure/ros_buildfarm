@@ -1,6 +1,6 @@
 		<hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.14">
 			<strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
-				<timeoutMinutes>@timeout_minutes</timeoutMinutes>
+				<timeoutMinutes>@int(timeout_minutes)</timeoutMinutes>
 			</strategy>
 			<operationList>
 				<hudson.plugins.build__timeout.operations.WriteDescriptionOperation>

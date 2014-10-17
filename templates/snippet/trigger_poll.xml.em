@@ -1,4 +1,4 @@
 	<hudson.triggers.SCMTrigger>
-		<spec>@spec</spec>
+		<spec>@ESCAPE(spec)</spec>
 		<ignorePostCommitHooks>false</ignorePostCommitHooks>
 	</hudson.triggers.SCMTrigger>

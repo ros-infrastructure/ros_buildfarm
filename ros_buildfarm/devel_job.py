@@ -39,7 +39,6 @@ from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.templates import expand_template
-from ros_buildfarm.templates import get_scm_snippet
 
 
 # For every source repository and target which matches the build file criteria
@@ -165,127 +164,23 @@ def _get_devel_job_config(
                 )
 
     job_data = {
-        'description': "Generated at %s from template '%s'" %
-        (now_str, template_name),
-        '-LOG_ROTATOR': expand_template('snippet/log-rotator.xml.em', {
-            'days_to_keep': 100,
-            'num_to_keep': 100,
-        }),
-        '-PROPERTIES': expand_template(
-            'snippet/property_job-priority.xml.em', {
-                'priority': 3,
-            }
-        ),
-        '-SCM': get_scm_snippet(
-            source_repo_spec,
-            'catkin_workspace/src/%s' % source_repo_spec.name),
-        '-TRIGGERS': expand_template('snippet/trigger_poll.xml.em', {
-            'spec': 'H * * * *'
-        }),
-        '-BUILDERS': expand_template('snippet/builder_shell.xml.em', {
-            'script': '\n'.join([
-                # TODO remove temporary checkout of rosdistro and dependency installation
-                'echo "# BEGIN SECTION: Clone custom rosdistro"',
-                'rm -fr rosdistro',
-                'git clone https://github.com/dirk-thomas/ros-infrastructure_rosdistro.git rosdistro',
-                'echo "# END SECTION"',
-                '',
-                'echo "# BEGIN SECTION: Clone ros_buildfarm"',
-                'rm -fr ros_buildfarm',
-                'git clone https://github.com/dirk-thomas/ros_buildfarm.git ros_buildfarm',
-                'echo "# END SECTION"',
-            ]),
-        }) + expand_template('snippet/builder_shell.xml.em', {
-            'script': '\n'.join([
-                '# generate key files',
-                'echo "# BEGIN SECTION: Generate key files"',
-            ] + script_generating_key_files + [
-                'echo "# END SECTION"',
-            ]),
-        }) + expand_template('snippet/builder_shell.xml.em', {
-            'script': '\n'.join([
-                '# generate Dockerfile, build and run it',
-                '# generating the Dockerfiles for the actual build tasks',
-                'echo "# BEGIN SECTION: Generate Dockerfile 1"',
-                'mkdir -p $WORKSPACE/docker_generating_devel_dockers',
-                'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-                '$WORKSPACE/ros_buildfarm/scripts/devel/run_devel_job.py' +
-                ' --rosdistro-index-url %s' % rosdistro_index_url +
-                ' --rosdistro-name %s' % rosdistro_name +
-                ' --source-build-name %s' % source_build_name +
-                ' --repo-name %s' % source_repo_spec.name +
-                ' --os-name %s' % os_name +
-                ' --os-code-name %s' % os_code_name +
-                ' --arch %s' % arch +
-                ' ' + ' '.join(apt_mirror_args) +
-                ' --workspace-root $WORKSPACE/catkin_workspace' +
-                ' --dockerfile-dir $WORKSPACE/docker_generating_devel_dockers',
-                'echo "# END SECTION"',
-                '',
-                'echo "# BEGIN SECTION: Build Dockerfile - generating docker tasks"',
-                'cd $WORKSPACE/docker_generating_devel_dockers',
-                'docker build -t devel .',
-                'echo "# END SECTION"',
-                '',
-                'echo "# BEGIN SECTION: Run Dockerfile - generating docker tasks"',
-                'mkdir -p $WORKSPACE/docker_build_and_install',
-                'mkdir -p $WORKSPACE/docker_build_and_test',
-                'docker run' +
-                ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
-                ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
-                ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
-                ' -v $WORKSPACE/docker_build_and_test:/tmp/docker_build_and_test' +
-                ' devel',
-                'echo "# END SECTION"',
-            ]),
-        }) + expand_template('snippet/builder_shell.xml.em', {
-            'script': '\n'.join([
-                'echo "# BEGIN SECTION: Build Dockerfile - build and install"',
-                '# build and run build_and_install Dockerfile',
-                'cd $WORKSPACE/docker_build_and_install',
-                'docker build -t build_and_install .',
-                'echo "# END SECTION"',
-                '',
-                'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
-                'ls -al $WORKSPACE/ros_buildfarm/scripts/command',
-                'docker run' +
-                ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
-                ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
-                ' build_and_install',
-                'echo "# END SECTION"',
-            ]),
-        }) + expand_template('snippet/builder_shell.xml.em', {
-            'script': '\n'.join([
-                'echo "# BEGIN SECTION: Build Dockerfile - build and test"',
-                '# build and run build_and_test Dockerfile',
-                'cd $WORKSPACE/docker_build_and_test',
-                'docker build -t build_and_test .',
-                'echo "# END SECTION"',
-                '',
-                'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
-                'ls -al $WORKSPACE/ros_buildfarm/scripts/command',
-                'docker run' +
-                ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
-                ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
-                ' build_and_test',
-                'echo "# END SECTION"',
-            ]),
-        }),
-        '-PUBLISHERS': expand_template(
-            'snippet/publisher_junit.xml.em', {
-                'test_results': 'catkin_workspace/build_isolated/**/*.xml',
-            }
-        ) + expand_template(
-            'snippet/publisher_mailer.xml.em', {
-                'recipients': build_file.notify_emails,
-                'send_to_individuals': True,
-            }
-        ),
-        '-BUILD_WRAPPERS': expand_template(
-            'snippet/build-wrapper_build-timeout.xml.em', {
-                'timeout_minutes': 120,
-            }
-        ),
+        'template_name': template_name,
+        'now_str': now_str,
+
+        'source_repo_spec': source_repo_spec,
+
+        'script_generating_key_files': script_generating_key_files,
+
+        'rosdistro_index_url': rosdistro_index_url,
+        'rosdistro_name': rosdistro_name,
+        'source_build_name': source_build_name,
+        'source_repo_spec': source_repo_spec,
+        'os_name': os_name,
+        'os_code_name': os_code_name,
+        'arch': arch,
+        'apt_mirror_args': apt_mirror_args,
+
+        'recipients': build_file.notify_emails,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
