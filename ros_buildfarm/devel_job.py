@@ -224,13 +224,13 @@ def _get_devel_job_config(
                 '',
                 'echo "# BEGIN SECTION: Build Dockerfile - generating docker tasks"',
                 'cd $WORKSPACE/docker_generating_devel_dockers',
-                'docker.io build -t devel .',
+                'docker build -t devel .',
                 'echo "# END SECTION"',
                 '',
                 'echo "# BEGIN SECTION: Run Dockerfile - generating docker tasks"',
                 'mkdir -p $WORKSPACE/docker_build_and_install',
                 'mkdir -p $WORKSPACE/docker_build_and_test',
-                'docker.io run' +
+                'docker run' +
                 ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
                 ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
                 ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
@@ -243,12 +243,12 @@ def _get_devel_job_config(
                 'echo "# BEGIN SECTION: Build Dockerfile - build and install"',
                 '# build and run build_and_install Dockerfile',
                 'cd $WORKSPACE/docker_build_and_install',
-                'docker.io build -t build_and_install .',
+                'docker build -t build_and_install .',
                 'echo "# END SECTION"',
                 '',
                 'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
                 'ls -al $WORKSPACE/ros_buildfarm/scripts/command',
-                'docker.io run' +
+                'docker run' +
                 ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
                 ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
                 ' build_and_install',
@@ -259,12 +259,12 @@ def _get_devel_job_config(
                 'echo "# BEGIN SECTION: Build Dockerfile - build and test"',
                 '# build and run build_and_test Dockerfile',
                 'cd $WORKSPACE/docker_build_and_test',
-                'docker.io build -t build_and_test .',
+                'docker build -t build_and_test .',
                 'echo "# END SECTION"',
                 '',
                 'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
                 'ls -al $WORKSPACE/ros_buildfarm/scripts/command',
-                'docker.io run' +
+                'docker run' +
                 ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
                 ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
                 ' build_and_test',

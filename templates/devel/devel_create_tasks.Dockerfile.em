@@ -15,7 +15,7 @@ RUN echo deb @url @os_code_name main | tee /etc/apt/sources.list.d/buildfarm.lis
 @[end for]@
 
 RUN apt-get update
-RUN apt-get install -q -y docker.io python3-empy python3-rosdep
+RUN apt-get install -q -y python3-empy python3-rosdep
 
 RUN useradd -u @uid -m buildfarm
 # workaround https://github.com/ros-infrastructure/catkin_pkg/issues/108
