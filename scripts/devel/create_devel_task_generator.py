@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 
+from apt import Cache
 from catkin_pkg.packages import find_packages
 from ros_buildfarm import get_distribution_repository_keys
 from ros_buildfarm.templates import expand_template
@@ -87,6 +88,12 @@ def main(argv=sys.argv[1:]):
         debian_pkg_names_testing -= set(debian_pkg_names)
         debian_pkg_names += sorted(debian_pkg_names_testing)
 
+    debian_pkg_versions = {}
+    apt_cache = Cache()
+    for debian_pkg_name in debian_pkg_names:
+        pkg = apt_cache[debian_pkg_name]
+        debian_pkg_versions[debian_pkg_name] = max(pkg.versions).version
+
     # generate Dockerfile
     data = {
         'os_name': args.os_name,
@@ -105,6 +112,7 @@ def main(argv=sys.argv[1:]):
         'uid': os.getuid(),
 
         'dependencies': list(debian_pkg_names),
+        'dependency_versions': debian_pkg_versions,
 
         'testing': args.testing,
     }

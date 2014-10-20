@@ -5,6 +5,8 @@ VOLUME ["/var/cache/apt/archives"]
 
 ENV DEBIAN_FRONTEND noninteractive
 
+RUN useradd -u @uid -m buildfarm
+
 @[if os_name == 'ubuntu']@
 # Add multiverse
 RUN echo deb http://archive.ubuntu.com/ubuntu @os_code_name multiverse | tee -a /etc/apt/sources.list
@@ -12,9 +14,6 @@ RUN echo deb http://archive.ubuntu.com/ubuntu @os_code_name multiverse | tee -a 
 # Add contrib and non-free to debian images
 RUN echo deb http://http.debian.net/debian @os_code_name contrib non-free | tee -a /etc/apt/sources.list
 @[end if]@
-
-RUN apt-get update
-RUN apt-get install -q -y curl net-tools
 
 RUN mkdir /tmp/keys
 @[for i, key in enumerate(distribution_repository_keys)]@
@@ -25,10 +24,13 @@ RUN apt-key add /tmp/keys/@(i).key
 RUN echo deb @url @os_code_name main | tee /etc/apt/sources.list.d/buildfarm.list
 @[end for]@
 
+# if any dependency version has changed invalidate cache
+@[for d in dependencies]@
+RUN echo "@d: @dependency_versions[d]"
+@[end for]@
+
 RUN apt-get update
 RUN apt-get install -q -y build-essential python3
-
-RUN useradd -u @uid -m buildfarm
 
 @[for d in dependencies]@
 RUN apt-get install -q -y @d
