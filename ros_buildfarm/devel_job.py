@@ -77,10 +77,6 @@ def configure_devel_jobs(
             print("Skipping repository '%s': no source version" % repo_name)
             continue
 
-        # TODO
-        if repo_name not in ['ros_tutorials', 'roscpp_core']:
-            continue
-
         for os_name, os_code_name, arch in targets:
             configure_devel_job(
                 rosdistro_index_url, rosdistro_name, source_build_name,
