@@ -163,6 +163,8 @@ def _get_devel_job_config(
         'template_name': template_name,
         'now_str': now_str,
 
+        'job_priority': build_file.jenkins_job_priority,
+
         'source_repo_spec': source_repo_spec,
 
         'script_generating_key_files': script_generating_key_files,
@@ -177,6 +179,8 @@ def _get_devel_job_config(
         'apt_mirror_args': apt_mirror_args,
 
         'recipients': build_file.notify_emails,
+
+        'timeout_minutes': build_file.jenkins_job_timeout,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

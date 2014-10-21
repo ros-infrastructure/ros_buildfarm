@@ -8,10 +8,12 @@
 ))@
 	<keepDependencies>false</keepDependencies>
 	<properties>
+@[if job_priority is not None]@
 @(SNIPPET(
     'property_job-priority',
-    priority=3,
+    priority=job_priority,
 ))@
+@[end if]@
 	</properties>
 @(SNIPPET(
     'scm',
@@ -139,9 +141,11 @@
 ))@
 	</publishers>
 	<buildWrappers>
+@[if timeout_minutes is not None]@
 @(SNIPPET(
     'build-wrapper_build-timeout',
-    timeout_minutes=120,
+    timeout_minutes=timeout_minutes,
 ))@
+@[end if]@
 	</buildWrappers>
 </project>
