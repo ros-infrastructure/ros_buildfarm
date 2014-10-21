@@ -70,11 +70,13 @@ def main(argv=sys.argv[1:]):
     context = initialize_resolver(
         args.rosdistro_name, args.os_name, args.os_code_name)
 
+    debian_pkg_names = ['build-essential', 'python3']
+
     # get build dependencies and map them to binary packages
     build_depends = get_dependencies(
         pkgs.values(), 'build', _get_build_dependencies)
-    debian_pkg_names = resolve_names(build_depends, **context)
-    debian_pkg_names = sorted(debian_pkg_names)
+    debian_pkg_names_building = resolve_names(build_depends, **context)
+    debian_pkg_names += sorted(debian_pkg_names_building)
 
     if args.testing:
         # get run and test dependencies and map them to binary packages

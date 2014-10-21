@@ -5,6 +5,8 @@ VOLUME ["/var/cache/apt/archives"]
 
 ENV DEBIAN_FRONTEND noninteractive
 
+RUN useradd -u @uid -m buildfarm
+
 RUN mkdir /tmp/keys
 @[for i, key in enumerate(distribution_repository_keys)]@
 RUN echo "@('\\n'.join(key.splitlines()))" > /tmp/keys/@(i).key
@@ -14,10 +16,25 @@ RUN apt-key add /tmp/keys/@(i).key
 RUN echo deb @url @os_code_name main | tee /etc/apt/sources.list.d/buildfarm.list
 @[end for]@
 
+# optionally manual cache invalidation for core Python packages
+RUN echo "2014-10-20"
+
+# automatic invalidation once every day
+@{
+import datetime
+today_isoformat = datetime.date.today().isoformat()
+}@
+RUN echo "@today_isoformat"
+
 RUN apt-get update
 RUN apt-get install -q -y python3-apt python3-catkin-pkg python3-empy python3-rosdep
 
-RUN useradd -u @uid -m buildfarm
+# TODO improve rosdep init/update performance, enable on-change invalidation
+@{
+import datetime
+now_isoformat = datetime.datetime.today().isoformat()
+}@
+RUN echo "@now_isoformat"
 RUN rosdep init
 RUN su buildfarm -c "rosdep --rosdistro=@rosdistro_name update"
 
