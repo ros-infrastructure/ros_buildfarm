@@ -33,12 +33,43 @@ from datetime import datetime
 
 from rosdistro import get_distribution_file
 from rosdistro import get_index
+from rosdistro import get_index_url
 from rosdistro import get_source_build_files
 
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.templates import expand_template
+
+
+def add_arguments_for_source_build_file(parser):
+    parser.add_argument(
+        '--rosdistro-index-url',
+        default=get_index_url(),
+        help=("The URL to the ROS distro index (default: '%s', based on the " +
+              "environment variable ROSDISTRO_INDEX_URL") % get_index_url())
+    parser.add_argument(
+        'rosdistro_name',
+        help="The name of the ROS distro from the index")
+    parser.add_argument(
+        'source_build_name',
+        help="The name of the 'source-build' file from the index")
+
+
+def add_arguments_for_target(parser):
+    add_arguments_for_source_build_file(parser)
+    parser.add_argument(
+        'repository_name',
+        help="The name of the 'repository' from the distribution file")
+    parser.add_argument(
+        'os_name',
+        help="The OS name from the 'source-build' file")
+    parser.add_argument(
+        'os_code_name',
+        help="A OS code name from the 'source-build' file")
+    parser.add_argument(
+        'arch',
+        help="An arch from the 'source-build' file")
 
 
 # For every source repository and target which matches the build file criteria
@@ -63,7 +94,8 @@ def configure_devel_jobs(
 
     jenkins = connect(build_file.jenkins_url)
 
-    view = _get_devel_view(rosdistro_name, source_build_name, jenkins)
+    view_name = _get_devel_view_name(rosdistro_name, source_build_name)
+    view = configure_view(jenkins, view_name)
 
     repo_names = dist_file.repositories.keys()
     repo_names = build_file.filter_repositories(repo_names)
@@ -102,10 +134,6 @@ def configure_devel_job(
         build_file = build_files[source_build_name]
     if dist_file is None:
         dist_file = get_distribution_file(index, rosdistro_name)
-    if jenkins is None:
-        jenkins = connect(build_file.jenkins_url)
-    if view is None:
-        view = _get_devel_view(rosdistro_name, source_build_name, jenkins)
 
     repo_names = dist_file.repositories.keys()
     repo_names = build_file.filter_repositories(repo_names)
@@ -139,17 +167,32 @@ def configure_devel_job(
     conf = build_file.get_target_configuration(
         os_name=os_name, os_code_name=os_code_name, arch=arch)
 
-    job_name = '%s_%s__%s_%s_%s' % \
-        (view.name, repo_name, os_name, os_code_name, arch)
+    if jenkins is None:
+        jenkins = connect(build_file.jenkins_url)
+    if view is None:
+        view_name = _get_devel_view_name(rosdistro_name, source_build_name)
+        view = configure_view(jenkins, view_name)
+
+    job_name = get_devel_job_name(
+        rosdistro_name, source_build_name,
+        repo_name, os_name, os_code_name, arch)
+
     job_config = _get_devel_job_config(
         rosdistro_index_url, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, conf, repo.source_repository)
-    configure_job(jenkins, job_name, job_config, view)
+    if jenkins:
+        configure_job(jenkins, job_name, job_config, view)
 
 
-def _get_devel_view(rosdistro_name, source_build_name, jenkins):
-    view_name = '%sdev%s' % (rosdistro_name[0].upper(), source_build_name)
-    return configure_view(jenkins, view_name)
+def _get_devel_view_name(rosdistro_name, source_build_name):
+    return '%sdev%s' % (rosdistro_name[0].upper(), source_build_name)
+
+
+def get_devel_job_name(rosdistro_name, source_build_name,
+                       repo_name, os_name, os_code_name, arch):
+    view_name = _get_devel_view_name(rosdistro_name, source_build_name)
+    return '%s_%s__%s_%s_%s' % \
+        (view_name, repo_name, os_name, os_code_name, arch)
 
 
 def _get_devel_job_config(

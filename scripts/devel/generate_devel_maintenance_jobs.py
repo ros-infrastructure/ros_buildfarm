@@ -5,9 +5,9 @@ from datetime import datetime
 import sys
 
 from rosdistro import get_index
-from rosdistro import get_index_url
 from rosdistro import get_source_build_files
 
+from ros_buildfarm.devel_job import add_arguments_for_source_build_file
 from ros_buildfarm.git import get_repository_url
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
@@ -18,17 +18,7 @@ from ros_buildfarm.templates import expand_template
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
         description="Generate the 'devel' management jobs on Jenkins")
-    parser.add_argument(
-        '--rosdistro-index-url',
-        default=get_index_url(),
-        help=("The URL to the ROS distro index (default: '%s', based on the " +
-              "environment variable ROSDISTRO_INDEX_URL") % get_index_url())
-    parser.add_argument(
-        'rosdistro',
-        help="The name of the ROS distro from the index")
-    parser.add_argument(
-        'source_build',
-        help="The name of the 'source-build' file from the index")
+    add_arguments_for_source_build_file(parser)
     args = parser.parse_args(argv)
 
     index = get_index(args.rosdistro_index_url)

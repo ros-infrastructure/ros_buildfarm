@@ -7,17 +7,24 @@ template_basepath = os.path.normpath(
     os.path.join(os.path.dirname(__file__), '..', 'templates'))
 
 
-def expand_template(template_name, data):
+template_hook = None
+
+
+def expand_template(template_name, data, options=None):
+    global template_hook
     output = StringIO()
     try:
-        interpreter = Interpreter(output=output)
+        interpreter = Interpreter(output=output, options=options)
         template_path = os.path.join(template_basepath, template_name)
         # create copy before manipulating
         data = dict(data)
         data['ESCAPE'] = _escape_value
         data['SNIPPET'] = _expand_snippet
         interpreter.file(open(template_path), locals=data)
-        return output.getvalue()
+        value = output.getvalue()
+        if template_hook:
+            template_hook(template_name, data, value)
+        return value
     finally:
         interpreter.shutdown()
 
