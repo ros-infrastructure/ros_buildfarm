@@ -107,12 +107,34 @@ def configure_devel_job(
     if view is None:
         view = _get_devel_view(rosdistro_name, source_build_name, jenkins)
 
+    repo_names = dist_file.repositories.keys()
+    repo_names = build_file.filter_repositories(repo_names)
+
+    if repo_name not in repo_names:
+        return "Invalid repository name '%s' " % repo_name + \
+            'choose one of the following: ' + \
+            ', '.join(sorted(dist_file.repositories.keys()))
+
     repo = dist_file.repositories[repo_name]
 
-    assert repo.source_repository, \
-        "Repository '%s' has no source section" % repo_name
-    assert repo.source_repository.version, \
-        "Repository '%s' has no source version" % repo_name
+    if not repo.source_repository:
+        return "Repository '%s' has no source section" % repo_name
+    if not repo.source_repository.version:
+        return "Repository '%s' has no source version" % repo_name
+
+    if os_name not in build_file.get_target_os_names():
+        return "Invalid OS name '%s' " % os_name + \
+            'choose one of the following: ' + \
+            ', '.join(sorted(build_file.get_target_os_names()))
+    if os_code_name not in build_file.get_target_os_code_names(os_name):
+        return "Invalid OS code name '%s' " % os_code_name + \
+            'choose one of the following: ' + \
+            ', '.join(sorted(build_file.get_target_os_code_names(os_name)))
+    if arch not in build_file.get_target_arches(os_name, os_code_name):
+        return "Invalid architecture '%s' " % arch + \
+            'choose one of the following: ' + \
+            ', '.join(sorted(
+                build_file.get_target_arches(os_name, os_code_name)))
 
     conf = build_file.get_target_configuration(
         os_name=os_name, os_code_name=os_code_name, arch=arch)

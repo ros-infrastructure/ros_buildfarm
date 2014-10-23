@@ -24,9 +24,9 @@ def main(argv=sys.argv[1:]):
         help="The name of the 'source-build' file from the index")
     args = parser.parse_args(argv)
 
-    configure_devel_jobs(
+    return configure_devel_jobs(
         args.rosdistro_index_url, args.rosdistro_name, args.source_build_name)
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
