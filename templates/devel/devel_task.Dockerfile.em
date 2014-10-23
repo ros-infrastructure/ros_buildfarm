@@ -25,8 +25,8 @@ RUN echo deb http://http.debian.net/debian @os_code_name contrib non-free | tee 
 @[end if]@
 
 # if any dependency version has changed invalidate cache
-@[for d in dependencies]@
-RUN echo "@d: @dependency_versions[d]"
+@[for k in sorted(dependency_versions.keys())]@
+RUN echo "@k: @dependency_versions[k]"
 @[end for]@
 
 # automatic invalidation once every day

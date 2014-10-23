@@ -70,31 +70,32 @@ def main(argv=sys.argv[1:]):
     context = initialize_resolver(
         args.rosdistro_name, args.os_name, args.os_code_name)
 
+    apt_cache = Cache()
+
     debian_pkg_names = ['build-essential', 'python3']
+    debian_pkg_versions = {}
 
     # get build dependencies and map them to binary packages
     build_depends = get_dependencies(
         pkgs.values(), 'build', _get_build_dependencies)
     debian_pkg_names_building = resolve_names(build_depends, **context)
     debian_pkg_names += sorted(debian_pkg_names_building)
+    debian_pkg_versions.update(
+        get_binary_package_versions(apt_cache, debian_pkg_names))
 
+    # get run and test dependencies and map them to binary packages
+    run_and_test_depends = get_dependencies(
+        pkgs.values(), 'run and test', _get_run_and_test_dependencies)
+    debian_pkg_names_testing = resolve_names(
+        run_and_test_depends, **context)
+    # all additional run/test dependencies
+    # are added after the build dependencies
+    # in order to reuse existing images in the docker container
+    debian_pkg_names_testing -= set(debian_pkg_names)
+    debian_pkg_versions.update(
+        get_binary_package_versions(apt_cache, debian_pkg_names_testing))
     if args.testing:
-        # get run and test dependencies and map them to binary packages
-        run_and_test_depends = get_dependencies(
-            pkgs.values(), 'run and test', _get_run_and_test_dependencies)
-        debian_pkg_names_testing = resolve_names(
-            run_and_test_depends, **context)
-        # all additional run/test dependencies
-        # are added after the build dependencies
-        # in order to reuse existing images in the docker container
-        debian_pkg_names_testing -= set(debian_pkg_names)
         debian_pkg_names += sorted(debian_pkg_names_testing)
-
-    debian_pkg_versions = {}
-    apt_cache = Cache()
-    for debian_pkg_name in debian_pkg_names:
-        pkg = apt_cache[debian_pkg_name]
-        debian_pkg_versions[debian_pkg_name] = max(pkg.versions).version
 
     # generate Dockerfile
     data = {
@@ -151,6 +152,14 @@ def _get_build_dependencies(pkg):
 def _get_run_and_test_dependencies(pkg):
     return pkg.build_export_depends + pkg.buildtool_export_depends + \
         pkg.exec_depends + pkg.test_depends
+
+
+def get_binary_package_versions(apt_cache, debian_pkg_names):
+    versions = {}
+    for debian_pkg_name in debian_pkg_names:
+        pkg = apt_cache[debian_pkg_name]
+        versions[debian_pkg_name] = max(pkg.versions).version
+    return versions
 
 
 def initialize_resolver(rosdistro_name, os_name, os_code_name):
