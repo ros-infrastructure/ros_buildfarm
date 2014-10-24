@@ -180,7 +180,8 @@ def configure_devel_job(
     job_config = _get_devel_job_config(
         rosdistro_index_url, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, conf, repo.source_repository)
-    if jenkins:
+    # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
+    if isinstance(jenkins, object):
         configure_job(jenkins, job_name, job_config, view)
 
 
