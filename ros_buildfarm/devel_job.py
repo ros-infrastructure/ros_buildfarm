@@ -1,34 +1,3 @@
-"""
-Documentation and functions for devel jobs.
-
-The script ``scripts/devel/generate_devel_maintenance_jobs.py`` generates Jenkins jobs
-for each repository and os_name/os_code_name/arch matching the build file.
-
-It requires the following arguments to identify the build file:
-  --rosdistro-index-url
-  --rosdistro-name
-  --source-build-name
-
-The job configuration contains a build step to:
-  write all keys to files
-  clones the following repositories:
-    ros_buildfarm
-    SOURCE repository to run CI on
-  invokes
-    scripts/devel/run_devel_job.py
-      --distribution-repository-urls
-      --distribution-repository-key-files
-
-Each devel Jenkins job is expanded from the template
-  templates/devel/devel_job.xml.em
-It clones the following repositories:
-  ros_buildfarm
-  SOURCE repository to run CI on
-It then invokes
-  scripts/devel/run_devel_job.py
-    which expands a Dockerfile from templates/devel/devel_create_tasks.Dockerfile.em
-"""
-
 from datetime import datetime
 
 from rosdistro import get_distribution_file
@@ -244,7 +213,9 @@ def _get_devel_job_config(
         'arch': arch,
         'apt_mirror_args': apt_mirror_args,
 
-        'recipients': build_file.notify_emails,
+        'notify_emails': build_file.notify_emails,
+        'notify_maintainers': build_file.notify_maintainers,
+        'notify_committers': build_file.notify_committers,
 
         'timeout_minutes': build_file.jenkins_job_timeout,
     }

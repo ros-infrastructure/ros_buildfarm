@@ -134,6 +134,7 @@
     'publisher_junit',
     test_results='catkin_workspace/build_isolated/**/*.xml',
 ))@
+@[if notify_maintainers]@
 @(SNIPPET(
     'publisher_groovy-postbuild',
     script='\n'.join([
@@ -167,10 +168,11 @@
         '}',
     ]),
 ))@
+@[end if]@
 @(SNIPPET(
     'publisher_mailer',
-    recipients=recipients,
-    send_to_individuals=True,
+    recipients=notify_emails,
+    send_to_individuals=notify_committers,
 ))@
 	</publishers>
 	<buildWrappers>
