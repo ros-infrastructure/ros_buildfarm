@@ -67,6 +67,13 @@ def main(argv=sys.argv[1:]):
     for pkg_name in sorted(pkg_names):
         print('  -', pkg_name)
 
+    maintainer_emails = set([])
+    for pkg in pkgs.values():
+        for m in pkg.maintainers:
+            maintainer_emails.add(m.email)
+    if maintainer_emails:
+        print('Package maintainer emails: %s' % ' '.join(sorted(maintainer_emails)))
+
     context = initialize_resolver(
         args.rosdistro_name, args.os_name, args.os_code_name)
 
