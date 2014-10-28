@@ -38,4 +38,22 @@ RUN echo "@now_isoformat"
 RUN rosdep init
 RUN su buildfarm -c "rosdep --rosdistro=@rosdistro_name update"
 
-CMD ["su", "buildfarm", "-c", "PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u /tmp/ros_buildfarm/scripts/devel/create_devel_task_generator.py --rosdistro-name @rosdistro_name --workspace-root /tmp/catkin_workspace --os-name @os_name --os-code-name @os_code_name --distribution-repository-urls @(' '.join(distribution_repository_urls)) --distribution-repository-key-files @(' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))])) --dockerfile-dir /tmp/docker_build_and_install && PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u /tmp/ros_buildfarm/scripts/devel/create_devel_task_generator.py --rosdistro-name @rosdistro_name --workspace-root /tmp/catkin_workspace --os-name @os_name --os-code-name @os_code_name --distribution-repository-urls @(' '.join(distribution_repository_urls)) --distribution-repository-key-files @(' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))])) --testing --dockerfile-dir /tmp/docker_build_and_test"]
+@{
+cmd = \
+    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
+    ' /tmp/ros_buildfarm/scripts/devel/create_devel_task_generator.py' + \
+    ' --rosdistro-name ' + rosdistro_name + \
+    ' --workspace-root /tmp/catkin_workspace' + \
+    ' --os-name ' + os_name + \
+    ' --os-code-name ' + os_code_name + \
+    ' --distribution-repository-urls ' + ' '.join(distribution_repository_urls) + \
+    ' --distribution-repository-key-files ' + ' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))])
+cmds = [
+    cmd +
+    ' --dockerfile-dir /tmp/docker_build_and_install',
+    cmd +
+    ' --dockerfile-dir /tmp/docker_build_and_test' +
+    ' --testing',
+]
+}@
+CMD ["su", "buildfarm", "-c", "@(' && '.join(cmds))"]

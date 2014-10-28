@@ -5,44 +5,16 @@ from rosdistro import get_index
 from rosdistro import get_index_url
 from rosdistro import get_source_build_files
 
+from ros_buildfarm.common \
+    import get_apt_mirrors_and_script_generating_key_files
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.templates import expand_template
 
 
-def add_arguments_for_source_build_file(parser):
-    parser.add_argument(
-        '--rosdistro-index-url',
-        default=get_index_url(),
-        help=("The URL to the ROS distro index (default: '%s', based on the " +
-              "environment variable ROSDISTRO_INDEX_URL") % get_index_url())
-    parser.add_argument(
-        'rosdistro_name',
-        help="The name of the ROS distro from the index")
-    parser.add_argument(
-        'source_build_name',
-        help="The name of the 'source-build' file from the index")
-
-
-def add_arguments_for_target(parser):
-    add_arguments_for_source_build_file(parser)
-    parser.add_argument(
-        'repository_name',
-        help="The name of the 'repository' from the distribution file")
-    parser.add_argument(
-        'os_name',
-        help="The OS name from the 'source-build' file")
-    parser.add_argument(
-        'os_code_name',
-        help="A OS code name from the 'source-build' file")
-    parser.add_argument(
-        'arch',
-        help="An arch from the 'source-build' file")
-
-
-# For every source repository and target which matches the build file criteria
-# invoke configure_devel_job().
+# For every source repository and target
+# which matches the build file criteria  invoke configure_devel_job().
 def configure_devel_jobs(
         rosdistro_index_url, rosdistro_name, source_build_name):
     index = get_index(rosdistro_index_url)
@@ -110,7 +82,7 @@ def configure_devel_job(
     if repo_name not in repo_names:
         return "Invalid repository name '%s' " % repo_name + \
             'choose one of the following: ' + \
-            ', '.join(sorted(dist_file.repositories.keys()))
+            ', '.join(sorted(repo_names))
 
     repo = dist_file.repositories[repo_name]
 
@@ -133,14 +105,14 @@ def configure_devel_job(
             ', '.join(sorted(
                 build_file.get_target_arches(os_name, os_code_name)))
 
-    conf = build_file.get_target_configuration(
-        os_name=os_name, os_code_name=os_code_name, arch=arch)
-
     if jenkins is None:
         jenkins = connect(build_file.jenkins_url)
     if view is None:
         view_name = _get_devel_view_name(rosdistro_name, source_build_name)
         view = configure_view(jenkins, view_name)
+
+    conf = build_file.get_target_configuration(
+        os_name=os_name, os_code_name=os_code_name, arch=arch)
 
     job_name = get_devel_job_name(
         rosdistro_name, source_build_name,
@@ -172,27 +144,8 @@ def _get_devel_job_config(
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    # extract the distribution repository urls and keys from the build file
-    # and pass them as command line arguments and files
-    # so that the job must not parse the build file
-    apt_mirror_args = []
-    script_generating_key_files = []
-    if 'apt_mirrors' in conf:
-        apt_mirrors = conf['apt_mirrors']
-        if apt_mirrors:
-            apt_mirror_args.append('--distribution-repository-urls')
-            apt_mirror_args += apt_mirrors
-    if 'apt_mirror_keys' in conf:
-        apt_mirror_keys = conf['apt_mirror_keys']
-        if apt_mirror_keys:
-            apt_mirror_args.append('--distribution-repository-key-files')
-            script_generating_key_files.append("mkdir -p $WORKSPACE/keys")
-            script_generating_key_files.append("rm -fr $WORKSPACE/keys/*")
-            for i, apt_mirror_key in enumerate(apt_mirror_keys):
-                apt_mirror_args.append('$WORKSPACE/keys/%d.key' % i)
-                script_generating_key_files.append(
-                    'echo "%s" > $WORKSPACE/keys/%d.key' % (apt_mirror_key, i)
-                )
+    apt_mirror_args, script_generating_key_files = \
+        get_apt_mirrors_and_script_generating_key_files(conf)
 
     job_data = {
         'template_name': template_name,
@@ -207,7 +160,6 @@ def _get_devel_job_config(
         'rosdistro_index_url': rosdistro_index_url,
         'rosdistro_name': rosdistro_name,
         'source_build_name': source_build_name,
-        'source_repo_spec': source_repo_spec,
         'os_name': os_name,
         'os_code_name': os_code_name,
         'arch': arch,
@@ -221,14 +173,3 @@ def _get_devel_job_config(
     }
     job_config = expand_template(template_name, job_data)
     return job_config
-
-
-# The script must run on a clean slave without installing anything
-# therefore it creates a Dockerfile
-# and runs all computations in the container
-def run_devel_job(
-        rosdistro_index_url, rosdistro_name, source_build_name,
-        repo_name, os_name, os_code_name, arch,
-        distribution_repository_urls, distribution_repository_key_files,
-        workspace_root, dockerfile_dir):
-    pass

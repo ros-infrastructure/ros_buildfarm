@@ -5,7 +5,13 @@ from em import BANGPATH_OPT
 import sys
 
 from ros_buildfarm import templates
-from ros_buildfarm.devel_job import add_arguments_for_target
+from ros_buildfarm.argument import add_argument_arch
+from ros_buildfarm.argument import add_argument_build_name
+from ros_buildfarm.argument import add_argument_os_code_name
+from ros_buildfarm.argument import add_argument_os_name
+from ros_buildfarm.argument import add_argument_repository_name
+from ros_buildfarm.argument import add_argument_rosdistro_index_url
+from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.devel_job import configure_devel_job
 from ros_buildfarm.devel_job import get_devel_job_name
 from ros_buildfarm.templates import expand_template
@@ -15,7 +21,13 @@ def main(argv=sys.argv[1:]):
     global templates
     parser = argparse.ArgumentParser(
         description="Generate a 'devel' script")
-    add_arguments_for_target(parser)
+    add_argument_rosdistro_index_url(parser)
+    add_argument_rosdistro_name(parser)
+    add_argument_build_name(parser, 'source')
+    add_argument_repository_name(parser)
+    add_argument_os_name(parser)
+    add_argument_os_code_name(parser)
+    add_argument_arch(parser)
     args = parser.parse_args(argv)
 
     # collect all template snippets of specific types

@@ -6,7 +6,7 @@ import sys
 
 from apt import Cache
 from catkin_pkg.packages import find_packages
-from ros_buildfarm import get_distribution_repository_keys
+from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.templates import expand_template
 from rosdep2 import create_default_installer_context
 from rosdep2.catkin_support import get_catkin_view
@@ -72,7 +72,8 @@ def main(argv=sys.argv[1:]):
         for m in pkg.maintainers:
             maintainer_emails.add(m.email)
     if maintainer_emails:
-        print('Package maintainer emails: %s' % ' '.join(sorted(maintainer_emails)))
+        print('Package maintainer emails: %s' %
+              ' '.join(sorted(maintainer_emails)))
 
     context = initialize_resolver(
         args.rosdistro_name, args.os_name, args.os_code_name)

@@ -5,35 +5,27 @@ import copy
 import os
 import sys
 
-from ros_buildfarm import get_distribution_repository_keys
+from ros_buildfarm.argument import add_argument_arch
+from ros_buildfarm.argument import add_argument_build_name
+from ros_buildfarm.argument import add_argument_os_code_name
+from ros_buildfarm.argument import add_argument_os_name
+from ros_buildfarm.argument import add_argument_repository_name
+from ros_buildfarm.argument import add_argument_rosdistro_index_url
+from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.templates import expand_template
 
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
         description="Run the 'devel' job")
-    parser.add_argument(
-        '--rosdistro-index-url',
-        required=True,
-        help='The URL to the ROS distro index')
-    parser.add_argument(
-        '--rosdistro-name',
-        help="The name of the ROS distro from the index")
-    parser.add_argument(
-        '--source-build-name',
-        help="The name of the 'source-build' file from the index")
-    parser.add_argument(
-        '--repo-name',
-        help="The name of the repository")
-    parser.add_argument(
-        '--os-name',
-        help='The OS name')
-    parser.add_argument(
-        '--os-code-name',
-        help='The OS code name')
-    parser.add_argument(
-        '--arch',
-        help='The architecture')
+    add_argument_rosdistro_index_url(parser, required=True)
+    add_argument_rosdistro_name(parser)
+    add_argument_build_name(parser, 'source')
+    add_argument_repository_name(parser)
+    add_argument_os_name(parser)
+    add_argument_os_code_name(parser)
+    add_argument_arch(parser)
     parser.add_argument(
         '--distribution-repository-urls',
         nargs='*',
@@ -72,17 +64,13 @@ def main(argv=sys.argv[1:]):
         'uid': os.getuid(),
     })
 
-    content = generate_dockerfile(data)
+    content = expand_template('devel/devel_create_tasks.Dockerfile.em', data)
     dockerfile = os.path.join(args.dockerfile_dir, 'Dockerfile')
     print("Generating Dockerfile '%s':" % dockerfile)
     for line in content.splitlines():
         print(' ', line)
     with open(dockerfile, 'w') as h:
         h.write(content)
-
-
-def generate_dockerfile(data):
-    return expand_template('devel/devel_create_tasks.Dockerfile.em', data)
 
 
 if __name__ == '__main__':

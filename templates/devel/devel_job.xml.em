@@ -60,29 +60,29 @@
     'builder_shell',
     script='\n'.join([
         '# generate Dockerfile, build and run it',
-        '# generating the Dockerfiles for the actual build tasks',
-        'echo "# BEGIN SECTION: Generate Dockerfile 1"',
-        'mkdir -p $WORKSPACE/docker_generating_devel_dockers',
+        '# generating the Dockerfiles for the actual devel tasks',
+        'echo "# BEGIN SECTION: Generate Dockerfile - devel tasks"',
+        'mkdir -p $WORKSPACE/docker_generating_dockers',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         '$WORKSPACE/ros_buildfarm/scripts/devel/run_devel_job.py' +
         ' --rosdistro-index-url %s' % rosdistro_index_url +
-        ' --rosdistro-name %s' % rosdistro_name +
-        ' --source-build-name %s' % source_build_name +
-        ' --repo-name %s' % source_repo_spec.name +
-        ' --os-name %s' % os_name +
-        ' --os-code-name %s' % os_code_name +
-        ' --arch %s' % arch +
+        ' %s' % rosdistro_name +
+        ' %s' % source_build_name +
+        ' %s' % source_repo_spec.name +
+        ' %s' % os_name +
+        ' %s' % os_code_name +
+        ' %s' % arch +
         ' ' + ' '.join(apt_mirror_args) +
         ' --workspace-root $WORKSPACE/catkin_workspace' +
-        ' --dockerfile-dir $WORKSPACE/docker_generating_devel_dockers',
+        ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',
         '',
-        'echo "# BEGIN SECTION: Build Dockerfile - generating docker tasks"',
-        'cd $WORKSPACE/docker_generating_devel_dockers',
+        'echo "# BEGIN SECTION: Build Dockerfile - generating devel tasks"',
+        'cd $WORKSPACE/docker_generating_dockers',
         'docker build -t devel .',
         'echo "# END SECTION"',
         '',
-        'echo "# BEGIN SECTION: Run Dockerfile - generating docker tasks"',
+        'echo "# BEGIN SECTION: Run Dockerfile - generating devel tasks"',
         'mkdir -p $WORKSPACE/docker_build_and_install',
         'mkdir -p $WORKSPACE/docker_build_and_test',
         'docker run' +
