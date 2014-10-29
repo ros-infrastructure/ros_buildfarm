@@ -2,7 +2,6 @@ from datetime import datetime
 
 from rosdistro import get_distribution_file
 from rosdistro import get_index
-from rosdistro import get_index_url
 from rosdistro import get_source_build_files
 
 from ros_buildfarm.common \
