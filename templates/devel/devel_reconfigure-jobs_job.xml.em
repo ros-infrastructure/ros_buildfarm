@@ -33,19 +33,44 @@
 	<concurrentBuild>false</concurrentBuild>
 	<builders>
 @(SNIPPET(
+    'builder_shell_key-files',
+    script_generating_key_files=script_generating_key_files,
+))@
+@(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        '# TODO remove temporary checkout of rosdistro and dependency installation',
+        '# TODO replace with python3-rosdistro',
         'echo "# BEGIN SECTION: Clone custom rosdistro"',
         'rm -fr rosdistro',
         'git clone https://github.com/dirk-thomas/ros-infrastructure_rosdistro.git rosdistro',
-        'export PYTHONPATH=$WORKSPACE/rosdistro/src:$PYTHONPATH',
         'echo "# END SECTION"',
         '',
-        'cd ros_buildfarm',
-        'export PYTHONPATH=`pwd`:$PYTHONPATH',
-        'python3 -u scripts/devel/generate_devel_jobs.py ' +
-        '--rosdistro-index-url "%s" %s %s' % (rosdistro_index_url, rosdistro_name, source_build_name),
+        '# generate Dockerfile, build and run it',
+        '# generating the Dockerfiles for the actual devel tasks',
+        'echo "# BEGIN SECTION: Generate Dockerfile - reconfigure jobs"',
+        'mkdir -p $WORKSPACE/docker_generate_devel_jobs',
+        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
+        '$WORKSPACE/ros_buildfarm/scripts/devel/run_devel_reconfigure_job.py' +
+        ' --rosdistro-index-url %s' % rosdistro_index_url +
+        ' %s' % rosdistro_name +
+        ' %s' % source_build_name +
+        ' ' + ' '.join(apt_mirror_args) +
+        ' --dockerfile-dir $WORKSPACE/docker_generate_devel_jobs',
+        'echo "# END SECTION"',
+        '',
+        'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',
+        'cd $WORKSPACE/docker_generate_devel_jobs',
+        'docker build -t devel_reconfigure_jobs .',
+        'echo "# END SECTION"',
+        '',
+        'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs"',
+        'docker run' +
+        ' --net=host' +
+        ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
+        ' -v $WORKSPACE/rosdistro:/tmp/rosdistro' +
+        ' -v %s:%s' % (credentials_src, credentials_dst) +
+        ' devel_reconfigure_jobs',
+        'echo "# END SECTION"',
     ]),
 ))@
 	</builders>

@@ -2,6 +2,7 @@
 
 import argparse
 from datetime import datetime
+import os
 import sys
 
 from rosdistro import get_index
@@ -10,10 +11,14 @@ from rosdistro import get_source_build_files
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.common import \
+    get_apt_mirrors_and_script_generating_key_files
 from ros_buildfarm.git import get_repository_url
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
+from ros_buildfarm.jenkins_credentials import get_credential_path
+from ros_buildfarm.jenkins_credentials import get_relative_credential_path
 from ros_buildfarm.templates import expand_template
 
 
@@ -45,15 +50,30 @@ def get_job_config(args, build_file):
     template_name = 'devel/devel_reconfigure-jobs_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    conf = build_file.get_target_configuration()
+    apt_mirror_args, script_generating_key_files = \
+        get_apt_mirrors_and_script_generating_key_files(conf)
+
     job_data = {
         'template_name': template_name,
         'now_str': now_str,
 
+        'script_generating_key_files': script_generating_key_files,
+
         'rosdistro_index_url': args.rosdistro_index_url,
         'rosdistro_name': args.rosdistro_name,
         'source_build_name': args.source_build_name,
+        'apt_mirror_args': apt_mirror_args,
 
         'ros_buildfarm_url': get_repository_url('.'),
+
+        'credentials_src': os.path.join(
+            '/var/lib/jenkins',
+            os.path.dirname(get_relative_credential_path())),
+        'credentials_dst': os.path.join(
+            '/home/buildfarm',
+            os.path.dirname(get_relative_credential_path())),
 
         'recipients': build_file.notify_emails,
     }
