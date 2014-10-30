@@ -1,6 +1,8 @@
+from em import Error
 from em import Interpreter
 from io import StringIO
 import os
+import sys
 from xml.sax.saxutils import escape
 
 template_basepath = os.path.normpath(
@@ -41,4 +43,10 @@ def _escape_value(value):
 
 def _expand_snippet(snippet_name, **kwargs):
     template_name = 'snippet/%s.xml.em' % snippet_name
-    return expand_template(template_name, kwargs)
+    try:
+        value = expand_template(template_name, kwargs)
+        return value
+    except Error as e:
+        print("%s in snippet '%s': %s" %
+              (e.__class__.__name__, snippet_name, str(e)), file=sys.stderr)
+        sys.exit(1)
