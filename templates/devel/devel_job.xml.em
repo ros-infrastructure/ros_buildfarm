@@ -137,6 +137,7 @@
 @(SNIPPET(
     'publisher_mailer',
     recipients=notify_emails,
+    dynamic_recipients=maintainer_emails,
     send_to_individuals=notify_committers,
 ))@
 	</publishers>

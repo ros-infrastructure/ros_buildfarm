@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from catkin_pkg.package import parse_package_string
+from rosdistro import get_distribution_cache
 from rosdistro import get_distribution_file
 from rosdistro import get_index
 from rosdistro import get_source_build_files
@@ -19,6 +21,10 @@ def configure_devel_jobs(
     index = get_index(rosdistro_index_url)
     build_files = get_source_build_files(index, rosdistro_name)
     build_file = build_files[source_build_name]
+
+    dist_cache = None
+    if build_file.notify_maintainers:
+        dist_cache = get_distribution_cache(index, rosdistro_name)
 
     # get targets
     targets = []
@@ -54,7 +60,7 @@ def configure_devel_jobs(
                 rosdistro_index_url, rosdistro_name, source_build_name,
                 repo_name, os_name, os_code_name, arch,
                 index=index, build_file=build_file, dist_file=dist_file,
-                jenkins=jenkins, view=view)
+                dist_cache=dist_cache, jenkins=jenkins, view=view)
 
 
 # Configure a Jenkins devel job which
@@ -65,7 +71,7 @@ def configure_devel_jobs(
 def configure_devel_job(
         rosdistro_index_url, rosdistro_name, source_build_name,
         repo_name, os_name, os_code_name, arch,
-        index=None, build_file=None, dist_file=None,
+        index=None, build_file=None, dist_file=None, dist_cache=None,
         jenkins=None, view=None):
     if index is None:
         index = get_index(rosdistro_index_url)
@@ -104,6 +110,8 @@ def configure_devel_job(
             ', '.join(sorted(
                 build_file.get_target_arches(os_name, os_code_name)))
 
+    if dist_cache is None and build_file.notify_maintainers:
+        dist_cache = get_distribution_cache(index, rosdistro_name)
     if jenkins is None:
         jenkins = connect(build_file.jenkins_url)
     if view is None:
@@ -119,7 +127,8 @@ def configure_devel_job(
 
     job_config = _get_devel_job_config(
         rosdistro_index_url, rosdistro_name, source_build_name,
-        build_file, os_name, os_code_name, arch, conf, repo.source_repository)
+        build_file, os_name, os_code_name, arch, conf, repo.source_repository,
+        repo_name, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object):
         configure_job(jenkins, job_name, job_config, view)
@@ -138,13 +147,27 @@ def get_devel_job_name(rosdistro_name, source_build_name,
 
 def _get_devel_job_config(
         rosdistro_index_url, rosdistro_name, source_build_name,
-        build_file, os_name, os_code_name, arch, conf, source_repo_spec):
+        build_file, os_name, os_code_name, arch, conf, source_repo_spec,
+        repo_name, dist_cache=None):
     template_name = 'devel/devel_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     apt_mirror_args, script_generating_key_files = \
         get_apt_mirrors_and_script_generating_key_files(conf)
+
+    maintainer_emails = set([])
+    if build_file.notify_maintainers and dist_cache:
+        # add maintainers listed in latest release to recipients
+        repo = dist_cache.distribution_file.repositories[repo_name]
+        if repo.release_repository:
+            for pkg_name in repo.release_repository.package_names:
+                if pkg_name not in dist_cache.release_package_xmls:
+                    continue
+                pkg_xml = dist_cache.release_package_xmls[pkg_name]
+                pkg = parse_package_string(pkg_xml)
+                for m in pkg.maintainers:
+                    maintainer_emails.add(m.email)
 
     job_data = {
         'template_name': template_name,
@@ -165,6 +188,7 @@ def _get_devel_job_config(
         'apt_mirror_args': apt_mirror_args,
 
         'notify_emails': build_file.notify_emails,
+        'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
         'notify_committers': build_file.notify_committers,
 

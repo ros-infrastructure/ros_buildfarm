@@ -78,6 +78,7 @@
 @(SNIPPET(
     'publisher_mailer',
     recipients=recipients,
+    dynamic_recipients=[],
     send_to_individuals=False,
 ))@
 	</publishers>
