@@ -27,6 +27,10 @@ def expand_template(template_name, data, options=None):
         if template_hook:
             template_hook(template_name, data, value)
         return value
+    except Exception as e:
+        print("%s processing template '%s'" %
+              (e.__class__.__name__, template_name), file=sys.stderr)
+        raise
     finally:
         interpreter.shutdown()
 

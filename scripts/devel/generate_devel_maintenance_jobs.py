@@ -17,7 +17,6 @@ from ros_buildfarm.git import get_repository_url
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
-from ros_buildfarm.jenkins_credentials import get_credential_path
 from ros_buildfarm.jenkins_credentials import get_relative_credential_path
 from ros_buildfarm.templates import expand_template
 
