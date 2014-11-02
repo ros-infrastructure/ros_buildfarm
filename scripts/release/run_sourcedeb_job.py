@@ -5,7 +5,6 @@ import copy
 import os
 import sys
 
-from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name

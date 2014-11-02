@@ -12,7 +12,7 @@ def add_argument_source_dir(parser):
         help='The path to the package sources')
 
 
-def get_package_sources(
+def get_sources(
         rosdistro_index_url, rosdistro_name, pkg_name, os_name, os_code_name,
         sources_dir):
     index = get_index(rosdistro_index_url)
@@ -40,7 +40,7 @@ def get_package_sources(
         repo.release_repository.url, sources_dir]
 
     print("Invoking '%s'" % ' '.join(cmd))
-    subprocess.call(cmd)
+    subprocess.check_call(cmd)
 
     pkg = parse_package(sources_dir)
     maintainer_emails = set([])
@@ -58,7 +58,7 @@ def _get_source_tag(
         (rosdistro_name, pkg_name.replace('_', '-'), pkg_version, os_code_name)
 
 
-def build_package_sourcedeb(sources_dir):
+def build_sourcedeb(sources_dir):
     cmd = [
         'git', 'config',
         '--file', 'debian/gbp.conf',
@@ -78,4 +78,4 @@ def build_package_sourcedeb(sources_dir):
         # debuild args for lintian
         '--lintian-opts', '--suppress-tags', 'newer-standards-version']
     print("Invoking '%s' in '%s'" % (' '.join(cmd), sources_dir))
-    subprocess.call(cmd, cwd=sources_dir)
+    subprocess.check_call(cmd, cwd=sources_dir)

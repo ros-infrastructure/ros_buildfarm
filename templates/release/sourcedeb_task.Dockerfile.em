@@ -39,7 +39,7 @@ RUN apt-get install -q -y openssh-client
 @{
 cmds = [
     'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' +
-    ' /tmp/ros_buildfarm/scripts/release/get_package_sources.py' +
+    ' /tmp/ros_buildfarm/scripts/release/get_sources.py' +
     ' --rosdistro-index-url ' + rosdistro_index_url +
     ' ' + rosdistro_name +
     ' ' + package_name +
@@ -48,7 +48,7 @@ cmds = [
     ' --source-dir /tmp/sourcedeb/source',
 
     'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' +
-    ' /tmp/ros_buildfarm/scripts/release/build_package_sourcedeb.py' +
+    ' /tmp/ros_buildfarm/scripts/release/build_sourcedeb.py' +
     ' --source-dir /tmp/sourcedeb/source',
 
 #    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u ' +
