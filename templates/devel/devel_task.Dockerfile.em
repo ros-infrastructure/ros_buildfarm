@@ -42,6 +42,7 @@ RUN apt-get update
 RUN apt-get install -q -y @d
 @[end for]@
 
+USER buildfarm
 @{
 if not testing:
     cmd = 'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u ' + \
@@ -52,4 +53,4 @@ else:
         '/tmp/ros_buildfarm/scripts/devel/catkin_make_isolated_and_test.py ' + \
         '--rosdistro-name %s --workspace-root /tmp/catkin_workspace' % rosdistro_name
 }@
-CMD ["su", "buildfarm", "-c", "@cmd"]
+CMD ["@cmd"]

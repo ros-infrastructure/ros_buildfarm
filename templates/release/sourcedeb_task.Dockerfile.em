@@ -32,10 +32,11 @@ RUN apt-get update
 # TODO use python3-rosdistro instead of source checkout
 RUN apt-get install -q -y git python3 python3-catkin-pkg python3-yaml
 # build_sourcedeb dependencies
-RUN apt-get install -q -y dpkg dpkg-dev git-buildpackage
+RUN apt-get install -q -y debhelper dpkg dpkg-dev git-buildpackage
 # upload_sourcedeb dependencies
 RUN apt-get install -q -y openssh-client
 
+USER buildfarm
 @{
 cmds = [
     'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' +
@@ -55,4 +56,4 @@ cmds = [
 #    '/tmp/ros_buildfarm/scripts/release/upload_sourcedeb.py',
 ]
 }@
-CMD ["su", "buildfarm", "-c", "@(' && '.join(cmds))"]
+CMD ["sh", "-c", "@(' && '.join(cmds))"]

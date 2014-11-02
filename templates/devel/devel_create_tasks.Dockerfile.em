@@ -36,7 +36,10 @@ now_isoformat = datetime.datetime.today().isoformat()
 }@
 RUN echo "@now_isoformat"
 RUN rosdep init
-RUN su buildfarm -c "rosdep --rosdistro=@rosdistro_name update"
+
+USER buildfarm
+
+RUN rosdep --rosdistro=@rosdistro_name update
 
 @{
 cmd = \
@@ -56,4 +59,4 @@ cmds = [
     ' --testing',
 ]
 }@
-CMD ["su", "buildfarm", "-c", "@(' && '.join(cmds))"]
+CMD ["sh", "-c", "@(' && '.join(cmds))"]

@@ -30,6 +30,7 @@ RUN apt-get update
 RUN apt-get install -q -y python3-catkin-pkg python3-empy python3-pip python3-yaml
 RUN pip3 install jenkinsapi
 
+USER buildfarm
 @{
 cmd = \
     'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' + \
@@ -38,4 +39,4 @@ cmd = \
     ' ' + rosdistro_name + \
     ' ' + source_build_name
 }@
-CMD ["su", "buildfarm", "-c", "@cmd"]
+CMD ["@cmd"]
