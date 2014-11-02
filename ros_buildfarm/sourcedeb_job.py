@@ -60,22 +60,32 @@ def _get_source_tag(
 
 def build_sourcedeb(sources_dir):
     cmd = [
-        'git', 'config',
-        '--file', 'debian/gbp.conf',
-        'git-buildpackage.upstream-branch']
-    upstream_tag = subprocess.check_output(cmd, cwd=sources_dir)
-    upstream_tag = upstream_tag.decode().rstrip()
-
-    cmd = [
         'git', 'buildpackage',
         '--git-ignore-new',
         '--git-ignore-branch',
-        # override wrong debian/gbp.conf values
-        '--git-upstream-tag=' + upstream_tag,
-        '--git-upstream-tree=tag',
         # dpkg-buildpackage args
         '-S', '-us', '-uc',
         # debuild args for lintian
         '--lintian-opts', '--suppress-tags', 'newer-standards-version']
+
+    # workaround for old gbp.conf values
+    # https://github.com/ros-infrastructure/bloom/issues/211
+    config_cmd = [
+        'git', 'config',
+        '--file', 'debian/gbp.conf',
+        'git-buildpackage.upstream-tree']
+    upstream_tree = subprocess.check_output(config_cmd, cwd=sources_dir)
+    upstream_tree = upstream_tree.decode().rstrip()
+    if upstream_tree != 'tag':
+        config_cmd = [
+            'git', 'config',
+            '--file', 'debian/gbp.conf',
+            'git-buildpackage.upstream-branch']
+        upstream_tag = subprocess.check_output(config_cmd, cwd=sources_dir)
+        upstream_tag = upstream_tag.decode().rstrip()
+        cmd += [
+            '--git-upstream-tag=' + upstream_tag,
+            '--git-upstream-tree=tag']
+
     print("Invoking '%s' in '%s'" % (' '.join(cmd), sources_dir))
     subprocess.check_call(cmd, cwd=sources_dir)
