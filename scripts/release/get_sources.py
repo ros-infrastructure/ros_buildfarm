@@ -8,8 +8,8 @@ from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.argument import add_argument_source_dir
 
-from ros_buildfarm.sourcedeb_job import add_argument_source_dir
 from ros_buildfarm.sourcedeb_job import get_sources
 
 

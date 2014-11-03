@@ -45,3 +45,15 @@ def get_distribution_repository_keys(urls, key_files):
         with open(key_file, 'r') as h:
             keys.append(h.read())
     return keys
+
+
+def get_binary_package_versions(apt_cache, debian_pkg_names):
+    versions = {}
+    for debian_pkg_name in debian_pkg_names:
+        pkg = apt_cache[debian_pkg_name]
+        versions[debian_pkg_name] = max(pkg.versions).version
+    return versions
+
+
+def get_debian_package_name(rosdistro_name, ros_package_name):
+    return 'ros-%s-%s' % (rosdistro_name, ros_package_name.replace('_', '-'))

@@ -4,12 +4,7 @@ from catkin_pkg.package import parse_package
 from rosdistro import get_distribution_file
 from rosdistro import get_index
 
-
-def add_argument_source_dir(parser):
-    parser.add_argument(
-        '--source-dir',
-        required=True,
-        help='The path to the package sources')
+from ros_buildfarm.common import get_debian_package_name
 
 
 def get_sources(
@@ -54,8 +49,9 @@ def get_sources(
 def _get_source_tag(
         rosdistro_name, pkg_name, pkg_version, os_name, os_code_name):
     assert os_name == 'ubuntu'
-    return 'debian/ros-%s-%s_%s_%s' % \
-        (rosdistro_name, pkg_name.replace('_', '-'), pkg_version, os_code_name)
+    return 'debian/%s_%s_%s' % \
+        (get_debian_package_name(rosdistro_name, pkg_name),
+         pkg_version, os_code_name)
 
 
 def build_sourcedeb(sources_dir):

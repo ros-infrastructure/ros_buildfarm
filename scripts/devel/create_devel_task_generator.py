@@ -6,6 +6,7 @@ import sys
 
 from apt import Cache
 from catkin_pkg.packages import find_packages
+from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.templates import expand_template
 from rosdep2 import create_default_installer_context
@@ -55,7 +56,6 @@ def main(argv=sys.argv[1:]):
         help='The flag if the workspace should be built with tests enabled '
              'and instead of installing the tests are ran')
     args = parser.parse_args(argv)
-    args.distribution_repositories = []
 
     # get direct build dependencies
     source_space = os.path.join(args.workspace_root, 'src')
@@ -127,7 +127,7 @@ def main(argv=sys.argv[1:]):
 
         'testing': args.testing,
     }
-    content = generate_dockerfile(data)
+    content = expand_template('devel/devel_task.Dockerfile.em', data)
     dockerfile = os.path.join(args.dockerfile_dir, 'Dockerfile')
     print("Generating Dockerfile '%s':" % dockerfile)
     for line in content.splitlines():
@@ -162,14 +162,6 @@ def _get_run_and_test_dependencies(pkg):
         pkg.exec_depends + pkg.test_depends
 
 
-def get_binary_package_versions(apt_cache, debian_pkg_names):
-    versions = {}
-    for debian_pkg_name in debian_pkg_names:
-        pkg = apt_cache[debian_pkg_name]
-        versions[debian_pkg_name] = max(pkg.versions).version
-    return versions
-
-
 def initialize_resolver(rosdistro_name, os_name, os_code_name):
     # resolve rosdep keys into binary package names
     ctx = create_default_installer_context()
@@ -202,10 +194,6 @@ def resolve_names(rosdep_keys, os_name, os_code_name, view, installer):
     for debian_pkg_name in sorted(debian_pkg_names):
         print('  -', debian_pkg_name)
     return debian_pkg_names
-
-
-def generate_dockerfile(data):
-    return expand_template('devel/devel_task.Dockerfile.em', data)
 
 
 if __name__ == '__main__':

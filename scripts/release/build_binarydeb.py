@@ -4,16 +4,16 @@ import argparse
 import sys
 
 from ros_buildfarm.argument import add_argument_source_dir
-from ros_buildfarm.sourcedeb_job import build_sourcedeb
+from ros_buildfarm.binarydeb_job import build_binarydeb
 
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
-        description='Build package sourcedeb')
+        description='Build package binarydeb')
     add_argument_source_dir(parser)
     args = parser.parse_args(argv)
 
-    return build_sourcedeb(args.source_dir)
+    return build_binarydeb(args.source_dir)
 
 
 if __name__ == '__main__':

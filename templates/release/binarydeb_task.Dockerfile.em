@@ -16,8 +16,13 @@ RUN apt-key add /tmp/keys/@(i).key
 RUN echo deb @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.list
 @[end for]@
 
-# optionally manual cache invalidation for core Python packages
+# optionally manual cache invalidation for core dependencies
 RUN echo "2014-10-20"
+
+# if any dependency version has changed invalidate cache
+@[for k in sorted(dependency_versions.keys())]@
+RUN echo "@k: @dependency_versions[k]"
+@[end for]@
 
 # automatic invalidation once every day
 @{
@@ -27,16 +32,20 @@ today_isoformat = datetime.date.today().isoformat()
 RUN echo "@today_isoformat"
 
 RUN apt-get update
-RUN apt-get install -q -y python3-catkin-pkg python3-empy python3-pip python3-yaml
-RUN pip3 install jenkinsapi
+
+@[for d in dependencies]@
+RUN apt-get install -q -y @d
+@[end for]@
 
 USER buildfarm
 @{
-cmd = \
-    'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' + \
-    ' /tmp/ros_buildfarm/scripts/release/generate_release_jobs.py' + \
-    ' --rosdistro-index-url ' + rosdistro_index_url + \
-    ' ' + rosdistro_name + \
-    ' ' + source_build_name
+cmds = [
+    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' +
+    ' /tmp/ros_buildfarm/scripts/release/build_binarydeb.py' +
+    ' --source-dir /tmp/binarydeb/%s' % source_subfolder,
+
+#    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u ' +
+#    '/tmp/ros_buildfarm/scripts/release/upload_binarydeb.py',
+]
 }@
-CMD ["@cmd"]
+CMD ["sh", "-c", "@(' && '.join(cmds))"]

@@ -136,6 +136,11 @@ def configure_release_job(
 
     # binarydeb jobs
     for arch in build_file.get_target_arches(os_name, os_code_name):
+        # TODO support for non amd64 arch missing
+        if arch not in ['amd64']:
+            print('Skipping arch:', arch)
+            continue
+
         conf = build_file.get_target_configuration(
             os_name=os_name, os_code_name=os_code_name, arch=arch)
 
@@ -146,7 +151,8 @@ def configure_release_job(
         job_config = _get_binarydeb_job_config(
             rosdistro_index_url, rosdistro_name, release_build_name,
             build_file, os_name, os_code_name, arch, conf,
-            repo.release_repository, pkg_name)
+            repo.release_repository, pkg_name,
+            repo_name, dist_cache=dist_cache)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object):
             configure_job(jenkins, job_name, job_config, view)
@@ -182,18 +188,9 @@ def _get_sourcedeb_job_config(
     apt_mirror_args, script_generating_key_files = \
         get_apt_mirrors_and_script_generating_key_files(conf)
 
-    maintainer_emails = set([])
-    if build_file.notify_maintainers and dist_cache:
-        # add maintainers listed in latest release to recipients
-        repo = dist_cache.distribution_file.repositories[repo_name]
-        if repo.release_repository:
-            for pkg_name in repo.release_repository.package_names:
-                if pkg_name not in dist_cache.release_package_xmls:
-                    continue
-                pkg_xml = dist_cache.release_package_xmls[pkg_name]
-                pkg = parse_package_string(pkg_xml)
-                for m in pkg.maintainers:
-                    maintainer_emails.add(m.email)
+    maintainer_emails = get_maintainer_emails(dist_cache, repo_name) \
+        if build_file.notify_maintainers \
+        else set([])
 
     job_data = {
         'template_name': template_name,
@@ -226,13 +223,18 @@ def _get_sourcedeb_job_config(
 def _get_binarydeb_job_config(
         rosdistro_index_url, rosdistro_name, release_build_name,
         build_file, os_name, os_code_name, arch, conf,
-        release_repo_spec, pkg_name):
+        release_repo_spec, pkg_name,
+        repo_name, dist_cache=None):
     template_name = 'release/binarydeb_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     apt_mirror_args, script_generating_key_files = \
         get_apt_mirrors_and_script_generating_key_files(conf)
+
+    maintainer_emails = get_maintainer_emails(dist_cache, repo_name) \
+        if build_file.notify_maintainers \
+        else set([])
 
     job_data = {
         'template_name': template_name,
@@ -254,9 +256,26 @@ def _get_binarydeb_job_config(
         'apt_mirror_args': apt_mirror_args,
 
         'notify_emails': build_file.notify_emails,
+        'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
 
         'timeout_minutes': build_file.jenkins_binarydeb_job_timeout,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
+
+
+def get_maintainer_emails(dist_cache, repo_name):
+    maintainer_emails = set([])
+    if dist_cache:
+        # add maintainers listed in latest release to recipients
+        repo = dist_cache.distribution_file.repositories[repo_name]
+        if repo.release_repository:
+            for pkg_name in repo.release_repository.package_names:
+                if pkg_name not in dist_cache.release_package_xmls:
+                    continue
+                pkg_xml = dist_cache.release_package_xmls[pkg_name]
+                pkg = parse_package_string(pkg_xml)
+                for m in pkg.maintainers:
+                    maintainer_emails.add(m.email)
+    return maintainer_emails

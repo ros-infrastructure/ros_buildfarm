@@ -56,3 +56,24 @@ def add_argument_arch(parser):
     parser.add_argument(
         'arch',
         help='An architecture from the build file')
+
+
+def add_argument_source_dir(parser):
+    parser.add_argument(
+        '--source-dir',
+        required=True,
+        help='The path to the package sources')
+
+
+def add_argument_sourcedeb_dir(parser):
+    parser.add_argument(
+        '--sourcedeb-dir',
+        required=True,
+        help='The path to the package sourcedeb')
+
+
+def add_argument_binarydeb_dir(parser):
+    parser.add_argument(
+        '--binarydeb-dir',
+        required=True,
+        help='The path to the package binarydeb')
