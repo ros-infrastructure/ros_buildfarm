@@ -71,16 +71,11 @@ def main(argv=sys.argv[1:]):
     dsc_file = get_dsc_file(
         args.binarydeb_dir, debian_package_name, debian_package_version)
     debian_pkg_names += sorted(get_build_depends(dsc_file))
-    print('debian_pkg_names', debian_pkg_names)
 
     # get versions for build dependencies
     apt_cache = Cache()
-    print('apt_cache.keys()', sorted(apt_cache.keys()))
     debian_pkg_versions = get_binary_package_versions(
         apt_cache, debian_pkg_names)
-
-    debian_package_version_without_debinc = \
-        debian_package_version[:debian_package_version.find('-')]
 
     # generate Dockerfile
     data = {
@@ -99,9 +94,6 @@ def main(argv=sys.argv[1:]):
 
         'dependencies': list(debian_pkg_names),
         'dependency_versions': debian_pkg_versions,
-
-        'source_subfolder': '%s-%s' %
-        (debian_package_name, debian_package_version_without_debinc),
     }
     content = expand_template('release/binarydeb_task.Dockerfile.em', data)
     dockerfile = os.path.join(args.dockerfile_dir, 'Dockerfile')

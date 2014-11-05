@@ -5,6 +5,7 @@ import copy
 import os
 import sys
 
+from ros_buildfarm.argument import add_argument_append_timestamp
 from ros_buildfarm.argument import add_argument_binarydeb_dir
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
@@ -42,6 +43,7 @@ def main(argv=sys.argv[1:]):
         '--dockerfile-dir',
         default=os.curdir,
         help="The directory where the 'Dockerfile' will be generated")
+    add_argument_append_timestamp(parser)
     args = parser.parse_args(argv)
 
     data = copy.deepcopy(args.__dict__)

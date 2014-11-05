@@ -64,7 +64,8 @@
         ' %s' % arch +
         ' ' + ' '.join(apt_mirror_args) +
         ' --binarydeb-dir $WORKSPACE/binarydeb' +
-        ' --dockerfile-dir $WORKSPACE/docker_generating_docker',
+        ' --dockerfile-dir $WORKSPACE/docker_generating_docker' +
+        (' --append-timestamp' if append_timestamp else ''),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - generate binarydeb"',

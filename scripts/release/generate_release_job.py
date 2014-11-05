@@ -3,6 +3,7 @@
 import argparse
 import sys
 
+from ros_buildfarm.argument import add_argument_append_timestamp
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_os_code_name
@@ -23,11 +24,13 @@ def main(argv=sys.argv[1:]):
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
+    add_argument_append_timestamp(parser)
     args = parser.parse_args(argv)
 
     return configure_release_job(
         args.rosdistro_index_url, args.rosdistro_name, args.release_build_name,
-        args.repository_name, args.os_name, args.os_code_name)
+        args.repository_name, args.os_name, args.os_code_name,
+        append_timestamp=args.append_timestamp)
 
 
 if __name__ == '__main__':

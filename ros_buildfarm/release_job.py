@@ -17,7 +17,8 @@ from ros_buildfarm.templates import expand_template
 # For every package in the release repository and target
 # which matches the build file criteria invoke configure_release_job().
 def configure_release_jobs(
-        rosdistro_index_url, rosdistro_name, release_build_name):
+        rosdistro_index_url, rosdistro_name, release_build_name,
+        append_timestamp=False):
     index = get_index(rosdistro_index_url)
     build_files = get_release_build_files(index, rosdistro_name)
     build_file = build_files[release_build_name]
@@ -63,6 +64,7 @@ def configure_release_jobs(
             configure_release_job(
                 rosdistro_index_url, rosdistro_name, release_build_name,
                 pkg_name, os_name, os_code_name,
+                append_timestamp=append_timestamp,
                 index=index, build_file=build_file, dist_file=dist_file,
                 dist_cache=dist_cache, jenkins=jenkins, view=view)
 
@@ -72,7 +74,7 @@ def configure_release_jobs(
 # - N binary debs, one for each archicture
 def configure_release_job(
         rosdistro_index_url, rosdistro_name, release_build_name,
-        pkg_name, os_name, os_code_name,
+        pkg_name, os_name, os_code_name, append_timestamp=False,
         index=None, build_file=None, dist_file=None, dist_cache=None,
         jenkins=None, view=None):
     if index is None:
@@ -151,7 +153,7 @@ def configure_release_job(
         job_config = _get_binarydeb_job_config(
             rosdistro_index_url, rosdistro_name, release_build_name,
             build_file, os_name, os_code_name, arch, conf,
-            repo.release_repository, pkg_name,
+            repo.release_repository, pkg_name, append_timestamp,
             repo_name, dist_cache=dist_cache)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object):
@@ -223,7 +225,7 @@ def _get_sourcedeb_job_config(
 def _get_binarydeb_job_config(
         rosdistro_index_url, rosdistro_name, release_build_name,
         build_file, os_name, os_code_name, arch, conf,
-        release_repo_spec, pkg_name,
+        release_repo_spec, pkg_name, append_timestamp,
         repo_name, dist_cache=None):
     template_name = 'release/binarydeb_job.xml.em'
     now = datetime.utcnow()
@@ -254,6 +256,8 @@ def _get_binarydeb_job_config(
         'os_code_name': os_code_name,
         'arch': arch,
         'apt_mirror_args': apt_mirror_args,
+
+        'append_timestamp': append_timestamp,
 
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,

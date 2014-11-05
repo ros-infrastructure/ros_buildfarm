@@ -39,9 +39,15 @@ cmds = [
     ' ' + package_name +
     ' --sourcedeb-dir ' + binarydeb_dir,
 ]
-if False:
-    # TODO add changelog rewriting
-    pass
+
+if append_timestamp:
+    cmds.append(
+        'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' +
+        ' /tmp/ros_buildfarm/scripts/release/append_build_timestamp.py' +
+        ' ' + rosdistro_name +
+        ' ' + package_name +
+        ' --sourcedeb-dir ' + binarydeb_dir)
+
 cmds.append(
     'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' +
     ' /tmp/ros_buildfarm/scripts/release/create_binarydeb_task_generator.py' +

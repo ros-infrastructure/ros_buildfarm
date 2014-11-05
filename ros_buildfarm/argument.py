@@ -77,3 +77,10 @@ def add_argument_binarydeb_dir(parser):
         '--binarydeb-dir',
         required=True,
         help='The path to the package binarydeb')
+
+
+def add_argument_append_timestamp(parser):
+    parser.add_argument(
+        '--append-timestamp',
+        action='store_true',
+        help='Append timestamp to binarydeb version')
