@@ -43,6 +43,7 @@ RUN apt-get install -q -y @d
 @[end for]@
 
 USER buildfarm
+ENTRYPOINT ["sh", "-c"]
 @{
 if not testing:
     cmd = 'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u ' + \

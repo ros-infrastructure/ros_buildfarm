@@ -31,6 +31,7 @@ RUN apt-get install -q -y python3-catkin-pkg python3-empy python3-pip python3-ya
 RUN pip3 install jenkinsapi
 
 USER buildfarm
+ENTRYPOINT ["sh", "-c"]
 @{
 cmd = \
     'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' + \

@@ -37,6 +37,7 @@ RUN apt-get install -q -y debhelper dpkg dpkg-dev git-buildpackage
 RUN apt-get install -q -y openssh-client
 
 USER buildfarm
+ENTRYPOINT ["sh", "-c"]
 @{
 cmds = [
     'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' +
@@ -56,4 +57,4 @@ cmds = [
 #    '/tmp/ros_buildfarm/scripts/release/upload_sourcedeb.py',
 ]
 }@
-CMD ["sh", "-c", "@(' && '.join(cmds))"]
+CMD ["@(' && '.join(cmds))"]

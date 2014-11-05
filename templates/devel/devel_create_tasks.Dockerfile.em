@@ -41,6 +41,7 @@ USER buildfarm
 
 RUN rosdep --rosdistro=@rosdistro_name update
 
+ENTRYPOINT ["sh", "-c"]
 @{
 cmd = \
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
@@ -59,4 +60,4 @@ cmds = [
     ' --testing',
 ]
 }@
-CMD ["sh", "-c", "@(' && '.join(cmds))"]
+CMD ["@(' && '.join(cmds))"]

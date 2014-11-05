@@ -31,6 +31,7 @@ RUN apt-get update
 RUN apt-get install -q -y dpkg-dev python3-apt python3-empy python3-yaml
 
 USER buildfarm
+ENTRYPOINT ["sh", "-c"]
 @{
 cmds = [
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' +
@@ -62,4 +63,4 @@ cmds.append(
     ' --binarydeb-dir ' + binarydeb_dir +
     ' --dockerfile-dir ' + dockerfile_dir)
 }@
-CMD ["sh", "-c", "@(' && '.join(cmds))"]
+CMD ["@(' && '.join(cmds))"]
