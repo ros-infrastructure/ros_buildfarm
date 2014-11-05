@@ -18,7 +18,7 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
 
     return append_build_timestamp(
-        args.rosdistro_name, args.package_name, args.source_dir)
+        args.rosdistro_name, args.package_name, args.sourcedeb_dir)
 
 
 if __name__ == '__main__':

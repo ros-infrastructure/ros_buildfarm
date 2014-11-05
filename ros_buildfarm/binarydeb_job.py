@@ -2,8 +2,6 @@ import os
 import subprocess
 from time import strftime
 
-from catkin_pkg.package import parse_package
-
 from ros_buildfarm.common import get_debian_package_name
 
 
@@ -29,6 +27,7 @@ def get_sourcedeb(rosdistro_name, package_name, sourcedeb_dir):
     print("Package '%s' version: %s" % (debian_package_name, version))
 
     # output package maintainers for job notification
+    from catkin_pkg.package import parse_package
     pkg = parse_package(source_dir)
     maintainer_emails = set([])
     for m in pkg.maintainers:
@@ -84,7 +83,7 @@ def _get_package_subfolders(basepath, debian_package_name):
         path = os.path.join(basepath, filename)
         if not os.path.isdir(path):
             continue
-        if path.startswith('%s-' % debian_package_name):
+        if filename.startswith('%s-' % debian_package_name):
             subfolders.append(path)
     return subfolders
 
