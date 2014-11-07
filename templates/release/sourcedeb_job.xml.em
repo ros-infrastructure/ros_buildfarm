@@ -75,8 +75,8 @@
         'rm -fr $WORKSPACE/sourcedeb',
         'mkdir -p $WORKSPACE/sourcedeb/source',
         'docker run' +
-        ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
-        ' -v $WORKSPACE/rosdistro:/tmp/rosdistro' +
+        ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
+        ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
         ' -v $WORKSPACE/sourcedeb:/tmp/sourcedeb' +
         ' sourcedeb',
         'echo "# END SECTION"',

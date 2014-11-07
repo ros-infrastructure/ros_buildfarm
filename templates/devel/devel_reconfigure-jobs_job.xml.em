@@ -66,9 +66,9 @@
         'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs"',
         'docker run' +
         ' --net=host' +
-        ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
-        ' -v $WORKSPACE/rosdistro:/tmp/rosdistro' +
-        ' -v %s:%s' % (credentials_src, credentials_dst) +
+        ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
+        ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
+        ' -v %s:%s:ro' % (credentials_src, credentials_dst) +
         ' devel_reconfigure_jobs',
         'echo "# END SECTION"',
     ]),

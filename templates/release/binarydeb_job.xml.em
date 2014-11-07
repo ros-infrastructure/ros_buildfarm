@@ -78,8 +78,8 @@
         'mkdir -p $WORKSPACE/binarydeb',
         'mkdir -p $WORKSPACE/docker_binarydeb',
         'docker run' +
-        ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
-        ' -v $WORKSPACE/rosdistro:/tmp/rosdistro' +
+        ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
+        ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' -v $WORKSPACE/docker_binarydeb:/tmp/docker_binarydeb' +
         ' binarydeb',
@@ -97,7 +97,7 @@
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and upload"',
         'docker run' +
-        ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm' +
+        ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' build_and_upload',
         'echo "# END SECTION"',

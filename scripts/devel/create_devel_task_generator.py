@@ -139,7 +139,7 @@ def main(argv=sys.argv[1:]):
     ros_buildfarm_basepath = os.path.normpath(
         os.path.join(os.path.dirname(__file__), '..', '..'))
     print('Mount the following volumes when running the container:')
-    print('  -v %s:/tmp/ros_buildfarm' % ros_buildfarm_basepath)
+    print('  -v %s:/tmp/ros_buildfarm:ro' % ros_buildfarm_basepath)
     print('  -v %s:/tmp/catkin_workspace' % args.workspace_root)
 
 
