@@ -2,6 +2,8 @@ from jenkinsapi.jenkins import Jenkins
 
 from .jenkins_credentials import get_credentials
 
+JENKINS_MANAGEMENT_VIEW = 'Manage'
+
 
 def connect(jenkins_url):
     print("Connecting to Jenkins '%s'" % jenkins_url)

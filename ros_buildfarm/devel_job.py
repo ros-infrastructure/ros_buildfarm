@@ -8,6 +8,7 @@ from rosdistro import get_source_build_files
 
 from ros_buildfarm.common \
     import get_apt_mirrors_and_script_generating_key_files
+from ros_buildfarm.common import get_devel_view_name
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
@@ -40,7 +41,7 @@ def configure_devel_jobs(
 
     jenkins = connect(build_file.jenkins_url)
 
-    view_name = _get_devel_view_name(rosdistro_name, source_build_name)
+    view_name = get_devel_view_name(rosdistro_name, source_build_name)
     view = configure_view(jenkins, view_name)
 
     repo_names = dist_file.repositories.keys()
@@ -115,7 +116,7 @@ def configure_devel_job(
     if jenkins is None:
         jenkins = connect(build_file.jenkins_url)
     if view is None:
-        view_name = _get_devel_view_name(rosdistro_name, source_build_name)
+        view_name = get_devel_view_name(rosdistro_name, source_build_name)
         view = configure_view(jenkins, view_name)
 
     conf = build_file.get_target_configuration(
@@ -134,13 +135,9 @@ def configure_devel_job(
         configure_job(jenkins, job_name, job_config, view)
 
 
-def _get_devel_view_name(rosdistro_name, source_build_name):
-    return '%sdev%s' % (rosdistro_name[0].upper(), source_build_name)
-
-
 def get_devel_job_name(rosdistro_name, source_build_name,
                        repo_name, os_name, os_code_name, arch):
-    view_name = _get_devel_view_name(rosdistro_name, source_build_name)
+    view_name = get_devel_view_name(rosdistro_name, source_build_name)
     return '%s_%s__%s_%s_%s' % \
         (view_name, repo_name, os_name, os_code_name, arch)
 

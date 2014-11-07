@@ -13,10 +13,12 @@ from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import \
     get_apt_mirrors_and_script_generating_key_files
+from ros_buildfarm.common import get_release_view_name
 from ros_buildfarm.git import get_repository_url
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
+from ros_buildfarm.jenkins import JENKINS_MANAGEMENT_VIEW
 from ros_buildfarm.jenkins_credentials import get_relative_credential_path
 from ros_buildfarm.templates import expand_template
 
@@ -37,11 +39,11 @@ def main(argv=sys.argv[1:]):
 
     jenkins = connect(build_file.jenkins_url)
 
-    view_name = '%srel%s' % \
-        (args.rosdistro_name[0].upper(), args.release_build_name)
-    view = configure_view(jenkins, view_name)
+    view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
 
-    job_name = '%s__%s' % (view_name, 'reconfigure-jobs')
+    group_name = get_release_view_name(
+        args.rosdistro_name, args.release_build_name)
+    job_name = '%s__%s' % (group_name, 'reconfigure-jobs')
     configure_job(jenkins, job_name, job_config, view=view)
 
 

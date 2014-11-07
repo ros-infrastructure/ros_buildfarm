@@ -8,6 +8,7 @@ from rosdistro import get_release_build_files
 
 from ros_buildfarm.common \
     import get_apt_mirrors_and_script_generating_key_files
+from ros_buildfarm.common import get_release_view_name
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
@@ -41,7 +42,7 @@ def configure_release_jobs(
 
     jenkins = connect(build_file.jenkins_url)
 
-    view_name = _get_release_view_name(rosdistro_name, release_build_name)
+    view_name = get_release_view_name(rosdistro_name, release_build_name)
     view = configure_view(jenkins, view_name)
 
     pkg_names = dist_file.release_packages.keys()
@@ -116,7 +117,7 @@ def configure_release_job(
     if jenkins is None:
         jenkins = connect(build_file.jenkins_url)
     if view is None:
-        view_name = _get_release_view_name(rosdistro_name, release_build_name)
+        view_name = get_release_view_name(rosdistro_name, release_build_name)
         view = configure_view(jenkins, view_name)
 
     # sourcedeb job
@@ -156,13 +157,9 @@ def configure_release_job(
             configure_job(jenkins, job_name, job_config, view)
 
 
-def _get_release_view_name(rosdistro_name, release_build_name):
-    return '%srel%s' % (rosdistro_name[0].upper(), release_build_name)
-
-
 def get_sourcedeb_job_name(rosdistro_name, release_build_name,
                            pkg_name, os_name, os_code_name):
-    view_name = _get_release_view_name(rosdistro_name, release_build_name)
+    view_name = get_release_view_name(rosdistro_name, release_build_name)
     return '%s_%s__%s_%s__source' % \
         (view_name, pkg_name, os_name, os_code_name)
 
@@ -181,7 +178,7 @@ def _get_target_arches(build_file, os_name, os_code_name, print_skipped=True):
 
 def get_binarydeb_job_name(rosdistro_name, release_build_name,
                            pkg_name, os_name, os_code_name, arch):
-    view_name = _get_release_view_name(rosdistro_name, release_build_name)
+    view_name = get_release_view_name(rosdistro_name, release_build_name)
     return '%s_%s__%s_%s_%s__binary' % \
         (view_name, pkg_name, os_name, os_code_name, arch)
 

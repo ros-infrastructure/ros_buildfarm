@@ -1,0 +1,45 @@
+<project>
+	<actions/>
+	<description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
+@(SNIPPET(
+    'log-rotator',
+    days_to_keep=100,
+    num_to_keep=100,
+))@
+	<keepDependencies>false</keepDependencies>
+	<properties>
+@(SNIPPET(
+    'property_job-priority',
+    priority=2,
+))@
+	</properties>
+@(SNIPPET(
+    'scm_null',
+))@
+	<assignedNode>master</assignedNode>
+	<canRoam>false</canRoam>
+	<disabled>false</disabled>
+	<blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+	<blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+	<triggers>
+@(SNIPPET(
+    'trigger_timer',
+    spec='0 */6 * * *',
+))@
+	</triggers>
+	<concurrentBuild>false</concurrentBuild>
+	<builders>
+@(SNIPPET(
+    'builder_system-groovy_dashboard',
+))@
+	</builders>
+	<publishers>
+@(SNIPPET(
+    'publisher_mailer',
+    recipients=notification_emails,
+    dynamic_recipients=[],
+    send_to_individuals=False,
+))@
+	</publishers>
+	<buildWrappers/>
+</project>
