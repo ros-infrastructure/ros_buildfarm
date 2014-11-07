@@ -22,10 +22,6 @@ def get_sourcedeb(rosdistro_name, package_name, sourcedeb_dir):
     assert len(subfolders) == 1
     source_dir = subfolders[0]
 
-    # output package version for job description
-    (version, ) = _dpkg_parsechangelog(source_dir, ['Version'])
-    print("Package '%s' version: %s" % (debian_package_name, version))
-
     # output package maintainers for job notification
     from catkin_pkg.package import parse_package
     pkg = parse_package(source_dir)
@@ -68,6 +64,8 @@ def build_binarydeb(rosdistro_name, package_name, sourcedeb_dir):
 
     source, version = _dpkg_parsechangelog(
         source_dir, ['Source', 'Version'])
+    # output package version for job description
+    print("Package '%s' version: %s" % (debian_package_name, version))
 
     cmd = ['apt-src', 'import', source, '--here', '--version', version]
     subprocess.check_call(cmd, cwd=source_dir)

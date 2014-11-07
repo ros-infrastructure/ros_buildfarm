@@ -63,7 +63,7 @@ def main(argv=sys.argv[1:]):
     debian_package_version = package_version
 
     # build_binarydeb dependencies
-    debian_pkg_names = ['apt-src', 'devscripts']
+    debian_pkg_names = ['apt-src']
     # TODO upload_binarydeb dependencies
     #debian_pkg_names += []
 

@@ -28,7 +28,7 @@ today_isoformat = datetime.date.today().isoformat()
 RUN echo "@today_isoformat"
 
 RUN apt-get update
-RUN apt-get install -q -y dpkg-dev python3-apt python3-catkin-pkg python3-empy python3-yaml
+RUN apt-get install -q -y devscripts dpkg-dev python3-apt python3-catkin-pkg python3-empy python3-yaml
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
