@@ -97,3 +97,44 @@ def _dpkg_parsechangelog(source_dir, fields):
                 values[field] = line[len(prefix):]
     assert len(fields) == len(values.keys())
     return [values[field] for field in fields]
+
+
+def upload_binarydeb(
+        rosdistro_name, package_name, os_code_name, sourcedeb_dir,
+        upload_host):
+    # ensure that one deb file exists
+    debian_package_name = get_debian_package_name(rosdistro_name, package_name)
+    deb_files = _get_deb_files(sourcedeb_dir, debian_package_name)
+    assert len(deb_files) == 1
+    deb_file = deb_files[0]
+
+    changes_file = deb_file[:-3] + 'changes'
+
+    # upload related files
+    files = [deb_file, changes_file]
+    for f in files:
+        assert os.path.exists(f)
+
+    cmd = [
+        '/usr/bin/scp',
+        '-o', 'StrictHostKeyChecking=no',
+    ]
+    cmd += files
+    # TODO upload to build specific subfolder
+    cmd.append(
+        'jenkins-slave@%s:/var/repos/ubuntu/building/queue/%s/' %
+        (upload_host, os_code_name))
+    print("Invoking '%s'" % ' '.join(cmd))
+    subprocess.check_call(cmd)
+
+
+def _get_deb_files(basepath, debian_package_name):
+    files = []
+    for filename in os.listdir(basepath):
+        if not filename.startswith('%s_' % debian_package_name):
+            continue
+        if not filename.endswith('.deb'):
+            continue
+        path = os.path.join(basepath, filename)
+        files.append(path)
+    return files

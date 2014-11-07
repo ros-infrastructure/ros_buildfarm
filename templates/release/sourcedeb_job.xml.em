@@ -75,10 +75,25 @@
         'rm -fr $WORKSPACE/sourcedeb',
         'mkdir -p $WORKSPACE/sourcedeb/source',
         'docker run' +
+        ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
         ' -v $WORKSPACE/sourcedeb:/tmp/sourcedeb' +
         ' sourcedeb',
+        'echo "# END SECTION"',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: upload sourcedeb"',
+        'PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH python3 -u ' +
+        '$WORKSPACE/ros_buildfarm/scripts/release/upload_sourcedeb.py' +
+        ' ' + rosdistro_name +
+        ' ' + pkg_name +
+        ' %s' % os_code_name +
+        ' --sourcedeb-dir $WORKSPACE/sourcedeb' +
+        ' --upload-host ' + upload_host,
         'echo "# END SECTION"',
     ]),
 ))@
@@ -111,5 +126,8 @@
     timeout_minutes=timeout_minutes,
 ))@
 @[end if]@
+@(SNIPPET(
+    'build-wrapper_ssh-agent_credential-id',
+))@
 	</buildWrappers>
 </project>

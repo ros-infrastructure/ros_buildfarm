@@ -223,6 +223,8 @@ def _get_sourcedeb_job_config(
         'os_code_name': os_code_name,
         'apt_mirror_args': apt_mirror_args,
 
+        'upload_host': 'repo',  # TODO should come from build file
+
         'child_projects': binary_job_names,
 
         'notify_emails': build_file.notify_emails,
@@ -271,6 +273,8 @@ def _get_binarydeb_job_config(
         'apt_mirror_args': apt_mirror_args,
 
         'append_timestamp': append_timestamp,
+
+        'upload_host': 'repo',  # TODO should come from build file
 
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,

@@ -1,3 +1,16 @@
+class Scope(object):
+
+    def __init__(self, scope_name, description):
+        self.scope_name = scope_name
+        self.description = description
+
+    def __enter__(self):
+        print('# BEGIN %s: %s' % (self.scope_name, self.description))
+
+    def __exit__(self, type, value, traceback):
+        print('# END %s' % self.scope_name)
+
+
 def get_apt_mirrors_and_script_generating_key_files(conf):
     # extract the distribution repository urls and keys from the build file
     # and pass them as command line arguments and files

@@ -97,9 +97,24 @@
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and upload"',
         'docker run' +
+        ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' build_and_upload',
+        'echo "# END SECTION"',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: upload binarydeb"',
+        'PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH python3 -u ' +
+        '$WORKSPACE/ros_buildfarm/scripts/release/upload_binarydeb.py' +
+        ' ' + rosdistro_name +
+        ' ' + pkg_name +
+        ' %s' % os_code_name +
+        ' --binarydeb-dir $WORKSPACE/binarydeb' +
+        ' --upload-host ' + upload_host,
         'echo "# END SECTION"',
     ]),
 ))@
@@ -128,5 +143,8 @@
     timeout_minutes=timeout_minutes,
 ))@
 @[end if]@
+@(SNIPPET(
+    'build-wrapper_ssh-agent_credential-id',
+))@
 	</buildWrappers>
 </project>

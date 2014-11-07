@@ -1,8 +1,5 @@
+import os
 import subprocess
-
-from catkin_pkg.package import parse_package
-from rosdistro import get_distribution_file
-from rosdistro import get_index
 
 from ros_buildfarm.common import get_debian_package_name
 
@@ -10,6 +7,8 @@ from ros_buildfarm.common import get_debian_package_name
 def get_sources(
         rosdistro_index_url, rosdistro_name, pkg_name, os_name, os_code_name,
         sources_dir):
+    from rosdistro import get_distribution_file
+    from rosdistro import get_index
     index = get_index(rosdistro_index_url)
     dist_file = get_distribution_file(index, rosdistro_name)
     if pkg_name not in dist_file.release_packages:
@@ -37,6 +36,7 @@ def get_sources(
     print("Invoking '%s'" % ' '.join(cmd))
     subprocess.check_call(cmd)
 
+    from catkin_pkg.package import parse_package
     pkg = parse_package(sources_dir)
     maintainer_emails = set([])
     for m in pkg.maintainers:
@@ -85,3 +85,51 @@ def build_sourcedeb(sources_dir):
 
     print("Invoking '%s' in '%s'" % (' '.join(cmd), sources_dir))
     subprocess.check_call(cmd, cwd=sources_dir)
+
+
+def upload_sourcedeb(
+        rosdistro_name, package_name, os_code_name, sourcedeb_dir,
+        upload_host):
+    # ensure that one deb file exists
+    debian_package_name = get_debian_package_name(rosdistro_name, package_name)
+    source_changes_files = _get_source_changes_files(
+        sourcedeb_dir, debian_package_name)
+    assert len(source_changes_files) == 1
+    source_changes_file = source_changes_files[0]
+
+    debian_tar_gz_file = source_changes_file[:-15] + '.debian.tar.gz'
+    dsc_file = source_changes_file[:-15] + '.dsc'
+    index = source_changes_file.find(
+        '-',
+        len(os.path.dirname(source_changes_file)) + len(debian_package_name))
+    orig_tar_gz_file = source_changes_file[:index] + '.orig.tar.gz'
+
+    # upload related files
+    files = [
+        source_changes_file, debian_tar_gz_file, dsc_file, orig_tar_gz_file]
+    for f in files:
+        assert os.path.exists(f)
+
+    cmd = [
+        '/usr/bin/scp',
+        '-o', 'StrictHostKeyChecking=no',
+    ]
+    cmd += files
+    # TODO upload to build specific subfolder
+    cmd.append(
+        'jenkins-slave@%s:/var/repos/ubuntu/building/queue/%s/' %
+        (upload_host, os_code_name))
+    print("Invoking '%s'" % ' '.join(cmd))
+    subprocess.check_call(cmd)
+
+
+def _get_source_changes_files(basepath, debian_package_name):
+    files = []
+    for filename in os.listdir(basepath):
+        if not filename.startswith('%s_' % debian_package_name):
+            continue
+        if not filename.endswith('_source.changes'):
+            continue
+        path = os.path.join(basepath, filename)
+        files.append(path)
+    return files

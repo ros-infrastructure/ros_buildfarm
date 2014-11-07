@@ -40,15 +40,11 @@ RUN apt-get install -q -y @d
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
-cmds = [
-    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' +
-    ' /tmp/ros_buildfarm/scripts/release/build_binarydeb.py' +
-    ' ' + rosdistro_name +
-    ' ' + package_name +
-    ' --sourcedeb-dir ' + binarydeb_dir,
-
-#    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u ' +
-#    '/tmp/ros_buildfarm/scripts/release/upload_binarydeb.py',
-]
+cmd = \
+    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
+    ' /tmp/ros_buildfarm/scripts/release/build_binarydeb.py' + \
+    ' ' + rosdistro_name + \
+    ' ' + package_name + \
+    ' --sourcedeb-dir ' + binarydeb_dir
 }@
-CMD ["@(' && '.join(cmds))"]
+CMD ["@cmd"]
