@@ -1,0 +1,155 @@
+digraph {
+	# release scripts
+	scripts__release__append_build_timestamp [label="scripts/release/append_build_timestamp.py"]
+	scripts__release__build_binarydeb [label="scripts/release/build_binarydeb.py"]
+	scripts__release__build_sourcedeb [label="scripts/release/build_sourcedeb.py"]
+	scripts__release__create_binarydeb_task_generator [label="scripts/release/create_binarydeb_task_generator.py"]
+	scripts__release__generate_release_job [label="scripts/release/generate_release_job.py"]
+	scripts__release__generate_release_jobs [label="scripts/release/generate_release_jobs.py"]
+	scripts__release__generate_release_maintenance_jobs [label="scripts/release/generate_release_maintenance_jobs.py"]
+	scripts__release__generate_release_script [label="scripts/release/generate_release_script.py"]
+	scripts__release__get_sourcedeb [label="scripts/release/get_sourcedeb.py"]
+	scripts__release__get_sources [label="scripts/release/get_sources.py"]
+	scripts__release__run_binarydeb_job [label="scripts/release/run_binarydeb_job.py"]
+	scripts__release__run_release_reconfigure_job [label="scripts/release/run_release_reconfigure_job.py"]
+	scripts__release__run_sourcedeb_job [label="scripts/release/run_sourcedeb_job.py"]
+	scripts__release__upload_binarydeb [label="scripts/release/upload_binarydeb.py"]
+	scripts__release__upload_sourcedeb [label="scripts/release/upload_sourcedeb.py"]
+
+	# release templates
+	templates__release__binarydeb_create_task__Dockerfile [label="templates/release/binarydeb_create_task.Dockerfile.em"]
+	templates__release__binarydeb_job__xml [label="templates/release/binarydeb_job.xml.em"]
+	templates__release__binarydeb_task__Dockerfile [label="templates/release/binarydeb_task.Dockerfile.em"]
+	templates__release__release_create_reconfigure_task__Dockerfile [label="templates/release/release_create_reconfigure_task.Dockerfile.em"]
+	templates__release__release_reconfigure_jobs_job__xml [label="templates/release/release_reconfigure-jobs_job.xml.em"]
+	templates__release__sourcedeb_job__xml [label="templates/release/sourcedeb_job.xml.em"]
+	templates__release__sourcedeb_task__Dockerfile [label="templates/release/sourcedeb_task.Dockerfile.em"]
+
+	# templates
+	templates__release__binarydeb_create_task__Dockerfile,
+	templates__release__binarydeb_job__xml,
+	templates__release__binarydeb_task__Dockerfile,
+	templates__release__release_create_reconfigure_task__Dockerfile,
+	templates__release__release_reconfigure_jobs_job__xml,
+	templates__release__sourcedeb_job__xml,
+	templates__release__sourcedeb_task__Dockerfile
+		[color="gray"]
+
+	# run in Docker container
+	scripts__release__append_build_timestamp,
+	scripts__release__build_binarydeb,
+	scripts__release__build_sourcedeb,
+	scripts__release__create_binarydeb_task_generator,
+	scripts__release__get_sourcedeb,
+	scripts__release__get_sources,
+	scripts__release__upload_binarydeb,
+	scripts__release__upload_sourcedeb
+		[shape="box"]
+	scripts__release__generate_release_job,
+	scripts__release__generate_release_jobs
+		[shape="octagon"]
+
+	# Jenkins job templates
+	templates__release__binarydeb_job__xml,
+	templates__release__release_reconfigure_jobs_job__xml,
+	templates__release__sourcedeb_job__xml
+		[fontcolor="blue"]
+
+	# entry points
+	scripts__release__generate_release_job,
+	scripts__release__generate_release_jobs,
+	scripts__release__generate_release_maintenance_jobs,
+	scripts__release__generate_release_script
+		[color="darkgreen", fontcolor="darkgreen"]
+
+	# TODO
+	scripts__release__generate_release_script,
+	scripts__release__upload_binarydeb,
+	scripts__release__upload_sourcedeb
+		[color="red", fontcolor="red"]
+
+	# call graph
+	scripts__release__generate_release_maintenance_jobs -> templates__release__release_reconfigure_jobs_job__xml [weight="2"]
+	templates__release__release_reconfigure_jobs_job__xml -> scripts__release__run_release_reconfigure_job [weight="2"]
+	scripts__release__run_release_reconfigure_job -> templates__release__release_create_reconfigure_task__Dockerfile [weight="2"]
+	templates__release__release_create_reconfigure_task__Dockerfile:w -> scripts__release__generate_release_jobs:e [constraint=false]
+
+	scripts__release__generate_release_jobs -> scripts__release__generate_release_job [fontcolor="gray", label=" &forall; source pkgs", weight="2"]
+	scripts__release__generate_release_job -> templates__release__sourcedeb_job__xml [fontcolor="gray", label="&forall; OS code names", weight="2"]
+	scripts__release__generate_release_job -> templates__release__binarydeb_job__xml [fontcolor="gray", label="&forall; OS code names\nand arches", weight="2"]
+	{
+		rank = same
+		templates__release__sourcedeb_job__xml -> templates__release__binarydeb_job__xml [style = invis]
+	}
+
+	# sourcedeb branch
+	templates__release__sourcedeb_job__xml -> scripts__release__run_sourcedeb_job [weight="2"]
+	scripts__release__run_sourcedeb_job -> templates__release__sourcedeb_task__Dockerfile [weight="2"]
+	templates__release__sourcedeb_task__Dockerfile -> scripts__release__get_sources
+	templates__release__sourcedeb_task__Dockerfile -> scripts__release__build_sourcedeb
+	templates__release__sourcedeb_task__Dockerfile -> scripts__release__upload_sourcedeb
+	{
+		rank = same
+		scripts__release__get_sources -> scripts__release__build_sourcedeb -> scripts__release__upload_sourcedeb [style = invis]
+	}
+
+	# binarydeb branch
+	templates__release__binarydeb_job__xml -> scripts__release__run_binarydeb_job [weight="2"]
+	scripts__release__run_binarydeb_job -> templates__release__binarydeb_create_task__Dockerfile [weight="2"]
+	templates__release__binarydeb_create_task__Dockerfile -> scripts__release__get_sourcedeb
+	templates__release__binarydeb_create_task__Dockerfile -> scripts__release__append_build_timestamp [fontcolor="gray", label="optional"]
+	templates__release__binarydeb_create_task__Dockerfile -> scripts__release__create_binarydeb_task_generator [fontcolor="gray", label="needs deps from\n.dsc file"]
+	{
+		rank = same
+		scripts__release__get_sourcedeb -> scripts__release__append_build_timestamp -> scripts__release__create_binarydeb_task_generator [style = invis]
+	}
+	scripts__release__create_binarydeb_task_generator -> templates__release__binarydeb_task__Dockerfile [weight="2"]
+	templates__release__binarydeb_task__Dockerfile -> scripts__release__build_binarydeb
+	templates__release__binarydeb_task__Dockerfile -> scripts__release__upload_binarydeb
+	{
+		rank = same
+		scripts__release__build_binarydeb -> scripts__release__upload_binarydeb [style = invis]
+	}
+
+	subgraph legend_subgraph {
+		label="Legend"
+		node [margin="0", shape="none"]
+		legend_anchor [height="0", label="L E G E N D"]
+
+		edge [style="invis"]
+		spacer1 [label=""]
+		spacer2 [label=""]
+		spacer1 -> spacer2 -> legend_anchor
+
+		k1 [color="darkgreen", label="", shape="ellipse"]
+		v1 [label="entry point"]
+		legend_anchor -> k1
+		legend_anchor -> v1
+
+		k2 [color="gray", label="", shape="ellipse"]
+		v2 [label="template"]
+		k1 -> k2
+		v1 -> v2
+
+		k3 [fontcolor="blue", label="label", shape=none]
+		v3 [label="Jenkins job"]
+		k2 -> k3
+		v2 -> v3
+
+		k4 [label="", shape="box"]
+		v4 [label="run inside Docker"]
+		k3 -> k4
+		v3 -> v4
+
+		k5 [color="darkgreen", label="", shape="octagon"]
+		v5 [label="entry point\nor inside Docker"]
+		k4 -> k5
+		v4 -> v5
+
+		edge [constraint=false]
+		k1 -> v1
+		k2 -> v2
+		k3 -> v3
+		k4 -> v4
+	}
+}

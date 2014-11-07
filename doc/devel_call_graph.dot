@@ -1,0 +1,117 @@
+digraph {
+	# devel scripts
+	scripts__devel__catkin_make_isolated_and_install [label="scripts/devel/catkin_make_isolated_and_install.py"]
+	scripts__devel__catkin_make_isolated_and_test [label="scripts/devel/catkin_make_isolated_and_test.py"]
+	scripts__devel__create_devel_task_generator [label="scripts/devel/create_devel_task_generator.py"]
+	scripts__devel__generate_devel_job [label="scripts/devel/generate_devel_job.py"]
+	scripts__devel__generate_devel_jobs [label="scripts/devel/generate_devel_jobs.py"]
+	scripts__devel__generate_devel_maintenance_jobs [label="scripts/devel/generate_devel_maintenance_jobs.py"]
+	scripts__devel__generate_devel_script [label="scripts/devel/generate_devel_script.py"]
+	scripts__devel__run_devel_job [label="scripts/devel/run_devel_job.py"]
+	scripts__devel__run_devel_reconfigure_job [label="scripts/devel/run_devel_reconfigure_job.py"]
+
+	# devel templates
+	templates__devel__devel_create_reconfigure_task__Dockerfile [label="templates/devel/devel_create_reconfigure_task.Dockerfile.em"]
+	templates__devel__devel_create_tasks__Dockerfile [label="templates/devel/devel_create_tasks.Dockerfile.em"]
+	templates__devel__devel_job__xml [label="templates/devel/devel_job.xml.em"]
+	templates__devel__devel_reconfigure_jobs_job__xml [label="templates/devel/devel_reconfigure-jobs_job.xml.em"]
+	templates__devel__devel_script__sh [label="templates/devel/devel_script.sh.em"]
+	templates__devel__devel_task__Dockerfile [label="templates/devel/devel_task.Dockerfile.em"]
+
+	# templates
+	templates__devel__devel_create_reconfigure_task__Dockerfile,
+	templates__devel__devel_create_tasks__Dockerfile,
+	templates__devel__devel_job__xml,
+	templates__devel__devel_reconfigure_jobs_job__xml,
+	templates__devel__devel_script__sh,
+	templates__devel__devel_task__Dockerfile
+		[color="gray"]
+
+	# run in Docker container
+	scripts__devel__catkin_make_isolated_and_install,
+	scripts__devel__catkin_make_isolated_and_test,
+	scripts__devel__create_devel_task_generator
+		[shape="box"]
+	scripts__devel__generate_devel_job,
+	scripts__devel__generate_devel_jobs
+		[shape="octagon"]
+
+	# Jenkins job templates
+	templates__devel__devel_job__xml,
+	templates__devel__devel_reconfigure_jobs_job__xml
+		[fontcolor="blue"]
+
+	# entry points
+	scripts__devel__generate_devel_job,
+	scripts__devel__generate_devel_jobs,
+	scripts__devel__generate_devel_maintenance_jobs,
+	scripts__devel__generate_devel_script
+		[color="darkgreen", fontcolor="darkgreen"]
+
+	# call graph
+	scripts__devel__generate_devel_maintenance_jobs -> templates__devel__devel_reconfigure_jobs_job__xml [weight="2"]
+	templates__devel__devel_reconfigure_jobs_job__xml -> scripts__devel__run_devel_reconfigure_job [weight="2"]
+	scripts__devel__run_devel_reconfigure_job -> templates__devel__devel_create_reconfigure_task__Dockerfile [weight="2"]
+	templates__devel__devel_create_reconfigure_task__Dockerfile:w -> scripts__devel__generate_devel_jobs:e [constraint=false]
+
+	scripts__devel__generate_devel_jobs -> scripts__devel__generate_devel_job [fontcolor="gray", label=" &forall; source repos", weight="2"]
+	scripts__devel__generate_devel_job -> templates__devel__devel_job__xml [weight="2"]
+
+	templates__devel__devel_job__xml -> scripts__devel__run_devel_job [weight="2"]
+	scripts__devel__run_devel_job -> templates__devel__devel_create_tasks__Dockerfile
+
+	templates__devel__devel_create_tasks__Dockerfile:sw -> scripts__devel__create_devel_task_generator
+	templates__devel__devel_create_tasks__Dockerfile:se -> scripts__devel__create_devel_task_generator [fontcolor="gray", label=" --testing"]
+	scripts__devel__create_devel_task_generator -> templates__devel__devel_task__Dockerfile:nw [fontcolor="gray", xlabel="cmi + install "]
+	scripts__devel__create_devel_task_generator -> templates__devel__devel_task__Dockerfile:ne [fontcolor="gray", label=" cmi + test"]
+	templates__devel__devel_task__Dockerfile -> scripts__devel__catkin_make_isolated_and_install [fontcolor="gray", xlabel="build deps "]
+	templates__devel__devel_task__Dockerfile -> scripts__devel__catkin_make_isolated_and_test [fontcolor="gray", label=" build/run/test deps"]
+
+	scripts__devel__generate_devel_script -> templates__devel__devel_script__sh [weight="2"]
+	templates__devel__devel_script__sh -> templates__devel__devel_job__xml [weight="0"]
+
+	# invisible edge to make backward arrow layout well
+	scripts__devel__generate_devel_script -> scripts__devel__run_devel_job [color="red", style="invis", weight="0"]
+
+	subgraph legend_subgraph {
+		label="Legend"
+		node [margin="0", shape="none"]
+		legend_anchor [height="0", label="L E G E N D"]
+
+		edge [style="invis"]
+		spacer1 [label=""]
+		spacer2 [label=""]
+		spacer1 -> spacer2 -> legend_anchor
+
+		k1 [color="darkgreen", label="", shape="ellipse"]
+		v1 [label="entry point"]
+		legend_anchor -> k1
+		legend_anchor -> v1
+
+		k2 [color="gray", label="", shape="ellipse"]
+		v2 [label="template"]
+		k1 -> k2
+		v1 -> v2
+
+		k3 [fontcolor="blue", label="label", shape=none]
+		v3 [label="Jenkins job"]
+		k2 -> k3
+		v2 -> v3
+
+		k4 [label="", shape="box"]
+		v4 [label="run inside Docker"]
+		k3 -> k4
+		v3 -> v4
+
+		k5 [color="darkgreen", label="", shape="octagon"]
+		v5 [label="entry point\nor inside Docker"]
+		k4 -> k5
+		v4 -> v5
+
+		edge [constraint=false]
+		k1 -> v1
+		k2 -> v2
+		k3 -> v3
+		k4 -> v4
+	}
+}

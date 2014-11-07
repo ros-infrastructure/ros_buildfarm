@@ -167,14 +167,14 @@ def _get_release_view_name(rosdistro_name, release_build_name):
 def get_sourcedeb_job_name(rosdistro_name, release_build_name,
                            pkg_name, os_name, os_code_name):
     view_name = _get_release_view_name(rosdistro_name, release_build_name)
-    return '%s_%s__%s_%s_sourcedeb' % \
+    return '%s_%s__%s_%s__source' % \
         (view_name, pkg_name, os_name, os_code_name)
 
 
 def get_binarydeb_job_name(rosdistro_name, release_build_name,
                            pkg_name, os_name, os_code_name, arch):
     view_name = _get_release_view_name(rosdistro_name, release_build_name)
-    return '%s_%s__%s_%s_binarydeb_%s' % \
+    return '%s_%s__%s_%s_%s__binary' % \
         (view_name, pkg_name, os_name, os_code_name, arch)
 
 
