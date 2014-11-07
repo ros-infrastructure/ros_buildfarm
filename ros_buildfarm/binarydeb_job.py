@@ -23,7 +23,7 @@ def get_sourcedeb(rosdistro_name, package_name, sourcedeb_dir):
     source_dir = subfolders[0]
 
     # output package version for job description
-    version = _dpkg_parsechangelog(source_dir, ['Version'])
+    (version, ) = _dpkg_parsechangelog(source_dir, ['Version'])
     print("Package '%s' version: %s" % (debian_package_name, version))
 
     # output package maintainers for job notification

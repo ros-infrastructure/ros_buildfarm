@@ -129,7 +129,8 @@ def configure_release_job(
 
     job_config = _get_sourcedeb_job_config(
         rosdistro_index_url, rosdistro_name, release_build_name,
-        build_file, os_name, os_code_name, conf,
+        build_file, os_name, os_code_name, conf, _get_target_arches(
+            build_file, os_name, os_code_name, print_skipped=False),
         repo.release_repository, pkg_name,
         repo_name, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
@@ -137,12 +138,7 @@ def configure_release_job(
         configure_job(jenkins, job_name, job_config, view)
 
     # binarydeb jobs
-    for arch in build_file.get_target_arches(os_name, os_code_name):
-        # TODO support for non amd64 arch missing
-        if arch not in ['amd64']:
-            print('Skipping arch:', arch)
-            continue
-
+    for arch in _get_target_arches(build_file, os_name, os_code_name):
         conf = build_file.get_target_configuration(
             os_name=os_name, os_code_name=os_code_name, arch=arch)
 
@@ -171,6 +167,18 @@ def get_sourcedeb_job_name(rosdistro_name, release_build_name,
         (view_name, pkg_name, os_name, os_code_name)
 
 
+def _get_target_arches(build_file, os_name, os_code_name, print_skipped=True):
+    arches = []
+    for arch in build_file.get_target_arches(os_name, os_code_name):
+        # TODO support for non amd64 arch missing
+        if arch not in ['amd64']:
+            if print_skipped:
+                print('Skipping arch:', arch)
+            continue
+        arches.append(arch)
+    return arches
+
+
 def get_binarydeb_job_name(rosdistro_name, release_build_name,
                            pkg_name, os_name, os_code_name, arch):
     view_name = _get_release_view_name(rosdistro_name, release_build_name)
@@ -180,7 +188,7 @@ def get_binarydeb_job_name(rosdistro_name, release_build_name,
 
 def _get_sourcedeb_job_config(
         rosdistro_index_url, rosdistro_name, release_build_name,
-        build_file, os_name, os_code_name, conf,
+        build_file, os_name, os_code_name, conf, binary_arches,
         release_repo_spec, pkg_name,
         repo_name, dist_cache=None):
     template_name = 'release/sourcedeb_job.xml.em'
@@ -189,6 +197,12 @@ def _get_sourcedeb_job_config(
 
     apt_mirror_args, script_generating_key_files = \
         get_apt_mirrors_and_script_generating_key_files(conf)
+
+    binary_job_names = [
+        get_binarydeb_job_name(
+            rosdistro_name, release_build_name,
+            pkg_name, os_name, os_code_name, arch)
+        for arch in binary_arches]
 
     maintainer_emails = get_maintainer_emails(dist_cache, repo_name) \
         if build_file.notify_maintainers \
@@ -211,6 +225,8 @@ def _get_sourcedeb_job_config(
         'os_name': os_name,
         'os_code_name': os_code_name,
         'apt_mirror_args': apt_mirror_args,
+
+        'child_projects': binary_job_names,
 
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,

@@ -85,6 +85,10 @@
 	</builders>
 	<publishers>
 @(SNIPPET(
+    'publisher_build-trigger',
+    child_projects=child_projects,
+))@
+@(SNIPPET(
     'publisher_description-setter',
     regexp="Package '[^']+' version: ([^\s]+)",
 ))@
