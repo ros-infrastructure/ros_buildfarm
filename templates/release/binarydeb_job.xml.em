@@ -105,18 +105,10 @@
     ]),
 ))@
 @(SNIPPET(
-    'builder_shell',
-    script='\n'.join([
-        'echo "# BEGIN SECTION: upload binarydeb"',
-        'PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH python3 -u ' +
-        '$WORKSPACE/ros_buildfarm/scripts/release/upload_binarydeb.py' +
-        ' ' + rosdistro_name +
-        ' ' + pkg_name +
-        ' %s' % os_code_name +
-        ' --binarydeb-dir $WORKSPACE/binarydeb' +
-        ' --upload-host ' + upload_host,
-        'echo "# END SECTION"',
-    ]),
+    'builder_publish-over-ssh',
+    remote_directory='%s/${JOB_NAME}__${BUILD_NUMBER}' % os_code_name,
+    source_files=binarydeb_files,
+    remove_prefix='binarydeb',
 ))@
 	</builders>
 	<publishers>

@@ -195,6 +195,13 @@ def _get_sourcedeb_job_config(
     apt_mirror_args, script_generating_key_files = \
         get_apt_mirrors_and_script_generating_key_files(conf)
 
+    sourcedeb_files = [
+        'sourcedeb/*.debian.tar.gz',
+        'sourcedeb/*.dsc',
+        'sourcedeb/*.orig.tar.gz',
+        'sourcedeb/*_source.changes',
+    ]
+
     binary_job_names = [
         get_binarydeb_job_name(
             rosdistro_name, release_build_name,
@@ -223,7 +230,7 @@ def _get_sourcedeb_job_config(
         'os_code_name': os_code_name,
         'apt_mirror_args': apt_mirror_args,
 
-        'upload_host': 'repo',  # TODO should come from build file
+        'sourcedeb_files': sourcedeb_files,
 
         'child_projects': binary_job_names,
 
@@ -248,6 +255,11 @@ def _get_binarydeb_job_config(
 
     apt_mirror_args, script_generating_key_files = \
         get_apt_mirrors_and_script_generating_key_files(conf)
+
+    binarydeb_files = [
+        'binarydeb/*.changes',
+        'binarydeb/*.deb',
+    ]
 
     maintainer_emails = get_maintainer_emails(dist_cache, repo_name) \
         if build_file.notify_maintainers \
@@ -274,7 +286,7 @@ def _get_binarydeb_job_config(
 
         'append_timestamp': append_timestamp,
 
-        'upload_host': 'repo',  # TODO should come from build file
+        'binarydeb_files': binarydeb_files,
 
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,
