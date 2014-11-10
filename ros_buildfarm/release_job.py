@@ -26,7 +26,7 @@ def configure_release_jobs(
     build_file = build_files[release_build_name]
 
     dist_cache = None
-    if build_file.notify_maintainers:
+    if build_file.notify_maintainers or build_file.abi_incompatibility_assumed:
         dist_cache = get_distribution_cache(index, rosdistro_name)
 
     # get targets
@@ -119,7 +119,9 @@ def configure_release_job(
             'choose one of the following: ' + \
             ', '.join(sorted(build_file.get_target_os_code_names(os_name)))
 
-    if dist_cache is None and build_file.notify_maintainers:
+    if dist_cache is None and \
+            (build_file.notify_maintainers or
+             build_file.abi_incompatibility_assumed):
         dist_cache = get_distribution_cache(index, rosdistro_name)
     if jenkins is None:
         jenkins = connect(build_file.jenkins_url)
@@ -150,6 +152,11 @@ def configure_release_job(
     if isinstance(jenkins, object):
         configure_job(jenkins, job_name, job_config, view)
 
+    dependency_names = []
+    if build_file.abi_incompatibility_assumed:
+        dependency_names = _get_direct_dependencies(
+            pkg_name, dist_cache, pkg_names)
+
     # binarydeb jobs
     for arch in _get_target_arches(build_file, os_name, os_code_name):
         conf = build_file.get_target_configuration(
@@ -159,11 +166,18 @@ def configure_release_job(
             rosdistro_name, release_build_name,
             pkg_name, os_name, os_code_name, arch)
 
+        upstream_job_names = [
+            get_binarydeb_job_name(
+                rosdistro_name, release_build_name,
+                dependency_name, os_name, os_code_name, arch)
+            for dependency_name in dependency_names]
+
         job_config = _get_binarydeb_job_config(
             rosdistro_index_url, rosdistro_name, release_build_name,
             build_file, os_name, os_code_name, arch, conf,
             repo.release_repository, pkg_name, append_timestamp,
-            repo_name, dist_cache=dist_cache)
+            repo_name, dist_cache=dist_cache,
+            upstream_job_names=upstream_job_names)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object):
             configure_job(jenkins, job_name, job_config, view)
@@ -193,6 +207,22 @@ def get_binarydeb_job_name(rosdistro_name, release_build_name,
     view_name = get_release_view_name(rosdistro_name, release_build_name)
     return '%s_%s__%s_%s_%s__binary' % \
         (view_name, pkg_name, os_name, os_code_name, arch)
+
+
+def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
+    assert pkg_name in dist_cache.release_package_xmls
+    pkg_xml = dist_cache.release_package_xmls[pkg_name]
+    pkg = parse_package_string(pkg_xml)
+    depends = set([
+        d.name for d in (
+            pkg.buildtool_depends +
+            pkg.build_depends +
+            pkg.buildtool_export_depends +
+            pkg.build_export_depends +
+            pkg.exec_depends +
+            pkg.test_depends)
+        if d.name in pkg_names])
+    return depends
 
 
 def _get_sourcedeb_job_config(
@@ -260,7 +290,7 @@ def _get_binarydeb_job_config(
         rosdistro_index_url, rosdistro_name, release_build_name,
         build_file, os_name, os_code_name, arch, conf,
         release_repo_spec, pkg_name, append_timestamp,
-        repo_name, dist_cache=None):
+        repo_name, dist_cache=None, upstream_job_names=None):
     template_name = 'release/binarydeb_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -282,6 +312,8 @@ def _get_binarydeb_job_config(
         'now_str': now_str,
 
         'job_priority': build_file.jenkins_job_priority,
+
+        'upstream_projects': upstream_job_names,
 
         'release_repo_spec': release_repo_spec,
 

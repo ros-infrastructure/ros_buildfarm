@@ -1,0 +1,10 @@
+		<jenkins.triggers.ReverseBuildTrigger>
+			<spec/>
+			<upstreamProjects>@(','.join(upstream_projects))</upstreamProjects>
+			<threshold>
+			<name>UNSTABLE</name>
+			<ordinal>1</ordinal>
+			<color>YELLOW</color>
+			<completeBuild>true</completeBuild>
+			</threshold>
+		</jenkins.triggers.ReverseBuildTrigger>

@@ -23,7 +23,14 @@
 	<disabled>false</disabled>
 	<blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
 	<blockBuildWhenUpstreamBuilding>true</blockBuildWhenUpstreamBuilding>
-	<triggers/>
+	<triggers>
+@[if upstream_projects]@
+@(SNIPPET(
+    'trigger_reverse-build',
+    upstream_projects=upstream_projects,
+))@
+@[end if]@
+	</triggers>
 	<concurrentBuild>false</concurrentBuild>
 	<builders>
 @(SNIPPET(
