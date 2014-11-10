@@ -15,7 +15,9 @@
 ))@
 @[end if]@
 	</properties>
-	<scm class="hudson.scm.NullSCM"/>
+@(SNIPPET(
+    'scm_null',
+))@
 	<assignedNode>buildslave</assignedNode>
 	<canRoam>false</canRoam>
 	<disabled>false</disabled>

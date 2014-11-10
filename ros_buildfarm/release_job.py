@@ -12,6 +12,7 @@ from ros_buildfarm.common import get_release_view_name
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
+from ros_buildfarm.jenkins import JENKINS_MANAGEMENT_VIEW
 from ros_buildfarm.templates import expand_template
 
 
@@ -42,6 +43,10 @@ def configure_release_jobs(
 
     jenkins = connect(build_file.jenkins_url)
 
+    configure_import_package_job(
+        rosdistro_index_url, rosdistro_name, release_build_name,
+        index=index, build_file=build_file, jenkins=jenkins)
+
     view_name = get_release_view_name(rosdistro_name, release_build_name)
     view = configure_view(jenkins, view_name)
 
@@ -67,7 +72,8 @@ def configure_release_jobs(
                 pkg_name, os_name, os_code_name,
                 append_timestamp=append_timestamp,
                 index=index, build_file=build_file, dist_file=dist_file,
-                dist_cache=dist_cache, jenkins=jenkins, view=view)
+                dist_cache=dist_cache, jenkins=jenkins, view=view,
+                generate_import_package_job=False)
 
 
 # Configure a Jenkins release job which consists of
@@ -77,7 +83,8 @@ def configure_release_job(
         rosdistro_index_url, rosdistro_name, release_build_name,
         pkg_name, os_name, os_code_name, append_timestamp=False,
         index=None, build_file=None, dist_file=None, dist_cache=None,
-        jenkins=None, view=None):
+        jenkins=None, view=None,
+        generate_import_package_job=True):
     if index is None:
         index = get_index(rosdistro_index_url)
     if build_file is None:
@@ -119,6 +126,11 @@ def configure_release_job(
     if view is None:
         view_name = get_release_view_name(rosdistro_name, release_build_name)
         view = configure_view(jenkins, view_name)
+
+    if generate_import_package_job:
+        configure_import_package_job(
+            rosdistro_index_url, rosdistro_name, release_build_name,
+            index=index, build_file=build_file, jenkins=jenkins)
 
     # sourcedeb job
     conf = build_file.get_target_configuration(
@@ -293,6 +305,46 @@ def _get_binarydeb_job_config(
         'notify_maintainers': build_file.notify_maintainers,
 
         'timeout_minutes': build_file.jenkins_binarydeb_job_timeout,
+    }
+    job_config = expand_template(template_name, job_data)
+    return job_config
+
+
+def configure_import_package_job(
+        rosdistro_index_url, rosdistro_name, release_build_name,
+        index=None, build_file=None, jenkins=None):
+    if index is None:
+        index = get_index(rosdistro_index_url)
+    if build_file is None:
+        build_files = get_release_build_files(index, rosdistro_name)
+        build_file = build_files[release_build_name]
+    if jenkins is None:
+        jenkins = connect(build_file.jenkins_url)
+
+    job_name = get_import_package_job_name(rosdistro_name, release_build_name)
+    job_config = _get_import_package_job_config(build_file)
+    view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
+
+    # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
+    if isinstance(jenkins, object):
+        configure_job(jenkins, job_name, job_config, view)
+
+
+def get_import_package_job_name(rosdistro_name, release_build_name):
+    view_name = get_release_view_name(rosdistro_name, release_build_name)
+    return '%s__import_package' % view_name
+
+
+def _get_import_package_job_config(build_file):
+    template_name = 'release/import_package_job.xml.em'
+    now = datetime.utcnow()
+    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    job_data = {
+        'template_name': template_name,
+        'now_str': now_str,
+
+        'notify_emails': build_file.notify_emails,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

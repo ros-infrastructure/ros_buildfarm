@@ -1,3 +1,5 @@
+import sys
+
 from jenkinsapi.jenkins import Jenkins
 
 from .jenkins_credentials import get_credentials
@@ -24,18 +26,22 @@ def configure_view(jenkins, view_name):
 
 
 def configure_job(jenkins, job_name, job_config, view=None):
-    if not jenkins.has_job(job_name):
-        print("Creating job '%s'" % job_name)
-        job = jenkins.create_job(job_name, job_config)
-    else:
-        print("Updating job '%s'" % job_name)
-        job = jenkins.get_job(job_name)
-        job.update_config(job_config)
-    print(job_config)
+    try:
+        if not jenkins.has_job(job_name):
+            print("Creating job '%s'" % job_name)
+            job = jenkins.create_job(job_name, job_config)
+        else:
+            print("Updating job '%s'" % job_name)
+            job = jenkins.get_job(job_name)
+            job.update_config(job_config)
+    except Exception:
+        print("Failed to configure job '%s' with config:\n%s" %
+              (job_name, job_config), file=sys.stderr)
+        raise
     if view is not None:
         if job_name not in view:
-            print("Adding job '%s' to view '%s" % (job_name, view.name))
+            print("Adding job '%s' to view '%s'" % (job_name, view.name))
             job = view.add_job(job_name, job)
         else:
-            print("Job '%s' is already in view '%s" % (job_name, view.name))
+            print("Job '%s' is already in view '%s'" % (job_name, view.name))
     return job
