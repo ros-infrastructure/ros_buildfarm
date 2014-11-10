@@ -34,6 +34,9 @@
 	<concurrentBuild>false</concurrentBuild>
 	<builders>
 @(SNIPPET(
+    'builder_system-groovy_verify-upstream',
+))@
+@(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone custom rosdistro"',
