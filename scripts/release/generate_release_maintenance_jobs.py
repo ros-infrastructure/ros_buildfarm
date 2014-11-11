@@ -43,7 +43,7 @@ def main(argv=sys.argv[1:]):
 
     group_name = get_release_view_name(
         args.rosdistro_name, args.release_build_name)
-    job_name = '%s__%s' % (group_name, 'reconfigure-jobs')
+    job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
     configure_job(jenkins, job_name, job_config, view=view)
 
 

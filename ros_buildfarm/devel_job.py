@@ -138,7 +138,7 @@ def configure_devel_job(
 def get_devel_job_name(rosdistro_name, source_build_name,
                        repo_name, os_name, os_code_name, arch):
     view_name = get_devel_view_name(rosdistro_name, source_build_name)
-    return '%s_%s__%s_%s_%s' % \
+    return '%s__%s__%s_%s_%s' % \
         (view_name, repo_name, os_name, os_code_name, arch)
 
 

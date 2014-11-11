@@ -35,19 +35,23 @@ def main(argv=sys.argv[1:]):
     build_files = get_source_build_files(index, args.rosdistro_name)
     build_file = build_files[args.source_build_name]
 
-    job_config = get_job_config(args, build_file)
-
     jenkins = connect(build_file.jenkins_url)
-
     view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
-
     group_name = get_devel_view_name(
         args.rosdistro_name, args.source_build_name)
-    job_name = '%s__%s' % (group_name, 'reconfigure-jobs')
+
+    configure_reconfigure_jobs_job(jenkins, view, group_name, args, build_file)
+    configure_trigger_jobs_job(jenkins, view, group_name, build_file)
+
+
+def configure_reconfigure_jobs_job(
+        jenkins, view, group_name, args, build_file):
+    job_config = get_reconfigure_jobs_job_config(args, build_file)
+    job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
     configure_job(jenkins, job_name, job_config, view=view)
 
 
-def get_job_config(args, build_file):
+def get_reconfigure_jobs_job_config(args, build_file):
     template_name = 'devel/devel_reconfigure-jobs_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -75,6 +79,30 @@ def get_job_config(args, build_file):
         'credentials_dst': os.path.join(
             '/home/buildfarm',
             os.path.dirname(get_relative_credential_path())),
+
+        'recipients': build_file.notify_emails,
+    }
+    job_config = expand_template(template_name, job_data)
+    return job_config
+
+
+def configure_trigger_jobs_job(
+        jenkins, view, group_name, build_file):
+    job_config = get_trigger_jobs_job_config(group_name, build_file)
+    job_name = '%s_%s' % (group_name, 'trigger-jobs')
+    configure_job(jenkins, job_name, job_config, view=view)
+
+
+def get_trigger_jobs_job_config(group_name, build_file):
+    template_name = 'devel/devel_trigger-jobs_job.xml.em'
+    now = datetime.utcnow()
+    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    job_data = {
+        'template_name': template_name,
+        'now_str': now_str,
+
+        'project_name_pattern': '%s__.*' % group_name,
 
         'recipients': build_file.notify_emails,
     }

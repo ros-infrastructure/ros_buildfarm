@@ -186,7 +186,7 @@ def configure_release_job(
 def get_sourcedeb_job_name(rosdistro_name, release_build_name,
                            pkg_name, os_name, os_code_name):
     view_name = get_release_view_name(rosdistro_name, release_build_name)
-    return '%s_%s__%s_%s__source' % \
+    return '%s__%s__%s_%s__source' % \
         (view_name, pkg_name, os_name, os_code_name)
 
 
@@ -205,7 +205,7 @@ def _get_target_arches(build_file, os_name, os_code_name, print_skipped=True):
 def get_binarydeb_job_name(rosdistro_name, release_build_name,
                            pkg_name, os_name, os_code_name, arch):
     view_name = get_release_view_name(rosdistro_name, release_build_name)
-    return '%s_%s__%s_%s_%s__binary' % \
+    return '%s__%s__%s_%s_%s__binary' % \
         (view_name, pkg_name, os_name, os_code_name, arch)
 
 
@@ -364,7 +364,7 @@ def configure_import_package_job(
 
 def get_import_package_job_name(rosdistro_name, release_build_name):
     view_name = get_release_view_name(rosdistro_name, release_build_name)
-    return '%s__import_package' % view_name
+    return '%s_import_package' % view_name
 
 
 def _get_import_package_job_config(build_file):

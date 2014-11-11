@@ -1,6 +1,6 @@
 		<hudson.plugins.groovy.SystemGroovy plugin="groovy@@1.23">
 			<scriptSource class="hudson.plugins.groovy.StringScriptSource">
-				<command>@command</command>
+				<command>@ESCAPE(command)</command>
 			</scriptSource>
 			<bindings/>
 			<classpath/>
