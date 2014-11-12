@@ -13,8 +13,6 @@ digraph {
 	scripts__release__run_binarydeb_job [label="scripts/release/run_binarydeb_job.py"]
 	scripts__release__run_release_reconfigure_job [label="scripts/release/run_release_reconfigure_job.py"]
 	scripts__release__run_sourcedeb_job [label="scripts/release/run_sourcedeb_job.py"]
-	scripts__release__upload_binarydeb [label="scripts/release/upload_binarydeb.py"]
-	scripts__release__upload_sourcedeb [label="scripts/release/upload_sourcedeb.py"]
 
 	# release templates
 	templates__release__binarydeb_create_task__Dockerfile [label="templates/release/binarydeb_create_task.Dockerfile.em"]
@@ -22,6 +20,7 @@ digraph {
 	templates__release__binarydeb_task__Dockerfile [label="templates/release/binarydeb_task.Dockerfile.em"]
 	templates__release__release_create_reconfigure_task__Dockerfile [label="templates/release/release_create_reconfigure_task.Dockerfile.em"]
 	templates__release__release_reconfigure_jobs_job__xml [label="templates/release/release_reconfigure-jobs_job.xml.em"]
+	templates__release__release_script__sh [label="templates/release/release_script.sh.em"]
 	templates__release__sourcedeb_job__xml [label="templates/release/sourcedeb_job.xml.em"]
 	templates__release__sourcedeb_task__Dockerfile [label="templates/release/sourcedeb_task.Dockerfile.em"]
 
@@ -31,6 +30,7 @@ digraph {
 	templates__release__binarydeb_task__Dockerfile,
 	templates__release__release_create_reconfigure_task__Dockerfile,
 	templates__release__release_reconfigure_jobs_job__xml,
+	templates__release__release_script__sh,
 	templates__release__sourcedeb_job__xml,
 	templates__release__sourcedeb_task__Dockerfile
 		[color="gray"]
@@ -41,9 +41,7 @@ digraph {
 	scripts__release__build_sourcedeb,
 	scripts__release__create_binarydeb_task_generator,
 	scripts__release__get_sourcedeb,
-	scripts__release__get_sources,
-	scripts__release__upload_binarydeb,
-	scripts__release__upload_sourcedeb
+	scripts__release__get_sources
 		[shape="box"]
 	scripts__release__generate_release_job,
 	scripts__release__generate_release_jobs
@@ -61,12 +59,6 @@ digraph {
 	scripts__release__generate_release_maintenance_jobs,
 	scripts__release__generate_release_script
 		[color="darkgreen", fontcolor="darkgreen"]
-
-	# TODO
-	scripts__release__generate_release_script,
-	scripts__release__upload_binarydeb,
-	scripts__release__upload_sourcedeb
-		[color="red", fontcolor="red"]
 
 	# call graph
 	scripts__release__generate_release_maintenance_jobs -> templates__release__release_reconfigure_jobs_job__xml [weight="2"]
@@ -87,10 +79,9 @@ digraph {
 	scripts__release__run_sourcedeb_job -> templates__release__sourcedeb_task__Dockerfile [weight="2"]
 	templates__release__sourcedeb_task__Dockerfile -> scripts__release__get_sources
 	templates__release__sourcedeb_task__Dockerfile -> scripts__release__build_sourcedeb
-	templates__release__sourcedeb_task__Dockerfile -> scripts__release__upload_sourcedeb
 	{
 		rank = same
-		scripts__release__get_sources -> scripts__release__build_sourcedeb -> scripts__release__upload_sourcedeb [style = invis]
+		scripts__release__get_sources -> scripts__release__build_sourcedeb [style = invis]
 	}
 
 	# binarydeb branch
@@ -105,11 +96,17 @@ digraph {
 	}
 	scripts__release__create_binarydeb_task_generator -> templates__release__binarydeb_task__Dockerfile [weight="2"]
 	templates__release__binarydeb_task__Dockerfile -> scripts__release__build_binarydeb
-	templates__release__binarydeb_task__Dockerfile -> scripts__release__upload_binarydeb
+
+	scripts__release__generate_release_script -> templates__release__release_script__sh [weight="2"]
+	templates__release__release_script__sh -> templates__release__sourcedeb_job__xml [weight="0"]
+	templates__release__release_script__sh -> templates__release__binarydeb_job__xml [weight="0"]
 	{
 		rank = same
-		scripts__release__build_binarydeb -> scripts__release__upload_binarydeb [style = invis]
+		scripts__release__generate_release_script -> scripts__release__generate_release_jobs [style = invis]
 	}
+
+	# invisible edge to make backward arrow layout well
+	#scripts__release__generate_release_maintenance_jobs -> scripts__release__run_release_reconfigure_job [color="red", weight="0"]
 
 	subgraph legend_subgraph {
 		label="Legend"

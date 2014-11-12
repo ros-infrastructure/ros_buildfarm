@@ -131,7 +131,7 @@ def configure_devel_job(
         build_file, os_name, os_code_name, arch, conf, repo.source_repository,
         repo_name, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object):
+    if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, job_name, job_config, view)
 
 

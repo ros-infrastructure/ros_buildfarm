@@ -51,6 +51,7 @@ def main(argv=sys.argv[1:]):
     devel_job_name = get_devel_job_name(
         args.rosdistro_name, args.source_build_name,
         args.repository_name, args.os_name, args.os_code_name, args.arch)
+
     value = expand_template(
         'devel/devel_script.sh.em', {
             'devel_job_name': devel_job_name,

@@ -84,7 +84,8 @@ def configure_release_job(
         pkg_name, os_name, os_code_name, append_timestamp=False,
         index=None, build_file=None, dist_file=None, dist_cache=None,
         jenkins=None, view=None,
-        generate_import_package_job=True):
+        generate_import_package_job=True,
+        filter_arches=None):
     if index is None:
         index = get_index(rosdistro_index_url)
     if build_file is None:
@@ -149,7 +150,7 @@ def configure_release_job(
         repo.release_repository, pkg_name,
         repo_name, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object):
+    if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, job_name, job_config, view)
 
     dependency_names = []
@@ -159,6 +160,9 @@ def configure_release_job(
 
     # binarydeb jobs
     for arch in _get_target_arches(build_file, os_name, os_code_name):
+        if filter_arches and arch not in filter_arches:
+            continue
+
         conf = build_file.get_target_configuration(
             os_name=os_name, os_code_name=os_code_name, arch=arch)
 
@@ -179,7 +183,7 @@ def configure_release_job(
             repo_name, dist_cache=dist_cache,
             upstream_job_names=upstream_job_names)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-        if isinstance(jenkins, object):
+        if isinstance(jenkins, object) and jenkins is not False:
             configure_job(jenkins, job_name, job_config, view)
 
 
@@ -358,7 +362,7 @@ def configure_import_package_job(
     view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object):
+    if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, job_name, job_config, view)
 
 
