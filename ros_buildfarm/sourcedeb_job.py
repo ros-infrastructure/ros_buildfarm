@@ -1,7 +1,7 @@
-import os
 import subprocess
 
 from ros_buildfarm.common import get_debian_package_name
+from ros_buildfarm.release_common import dpkg_parsechangelog
 
 
 def get_sources(
@@ -21,8 +21,6 @@ def get_sources(
         return "Repository '%s' has no release version" % repo_name
 
     pkg_version = repo.release_repository.version
-    print("Package '%s' version: %s" % (pkg_name, pkg_version))
-
     tag = _get_source_tag(
         rosdistro_name, pkg_name, pkg_version, os_name, os_code_name)
 
@@ -36,6 +34,20 @@ def get_sources(
     print("Invoking '%s'" % ' '.join(cmd))
     subprocess.check_call(cmd)
 
+    # ensure that the package version is correct
+    source_version = dpkg_parsechangelog(sources_dir, ['Version'])[0]
+    if not source_version.startswith(pkg_version) or \
+            (len(source_version) > len(pkg_version) and
+             source_version[len(pkg_version)] in '0123456789'):
+        raise RuntimeError(
+            ('The cloned package version from the GBP (%s) does not match ' +
+             'the expected package version from the distribution file (%s)') %
+            (source_version, pkg_version))
+
+    # output package version for job description
+    print("Package '%s' version: %s" % (pkg_name, source_version))
+
+    # output package maintainers for job notification
     from catkin_pkg.package import parse_package
     pkg = parse_package(sources_dir)
     maintainer_emails = set([])

@@ -3,6 +3,7 @@ import subprocess
 from time import strftime
 
 from ros_buildfarm.common import get_debian_package_name
+from ros_buildfarm.release_common import dpkg_parsechangelog
 
 
 def get_sourcedeb(
@@ -21,7 +22,7 @@ def get_sourcedeb(
         print("Invoking '%s'" % ' '.join(cmd))
         subprocess.check_call(cmd, cwd=sourcedeb_dir)
 
-    # extrace sourcedeb
+    # extract sourcedeb
     filenames = _get_package_dsc_filename(sourcedeb_dir, debian_package_name)
     assert len(filenames) == 1, filenames
     dsc_filename = filenames[0]
@@ -52,7 +53,7 @@ def append_build_timestamp(rosdistro_name, package_name, sourcedeb_dir):
     assert len(subfolders) == 1, subfolders
     source_dir = subfolders[0]
 
-    source, version, distribution, urgency = _dpkg_parsechangelog(
+    source, version, distribution, urgency = dpkg_parsechangelog(
         source_dir, ['Source', 'Version', 'Distribution', 'Urgency'])
     cmd = [
         'debchange',
@@ -74,7 +75,7 @@ def build_binarydeb(rosdistro_name, package_name, sourcedeb_dir):
     assert len(subfolders) == 1, subfolders
     source_dir = subfolders[0]
 
-    source, version = _dpkg_parsechangelog(
+    source, version = dpkg_parsechangelog(
         source_dir, ['Source', 'Version'])
     # output package version for job description
     print("Package '%s' version: %s" % (debian_package_name, version))
@@ -105,16 +106,3 @@ def _get_package_dsc_filename(basepath, debian_package_name):
                 filename.endswith('.dsc'):
             filenames.append(filename)
     return filenames
-
-
-def _dpkg_parsechangelog(source_dir, fields):
-    cmd = ['dpkg-parsechangelog']
-    output = subprocess.check_output(cmd, cwd=source_dir)
-    values = {}
-    for line in output.decode().splitlines():
-        for field in fields:
-            prefix = '%s: ' % field
-            if line.startswith(prefix):
-                values[field] = line[len(prefix):]
-    assert len(fields) == len(values.keys())
-    return [values[field] for field in fields]
