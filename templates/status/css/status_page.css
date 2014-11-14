@@ -1,0 +1,129 @@
+/* General page and reset styles. */
+body, div, dl, dt, dd, ul, ol, li, input, th, td, h1, h2 { margin: 0; padding: 0; }
+table { border-collapse: collapse; border-spacing: 0; }
+th { text-align: left }
+html, body { color: #111; font: 100%/1.45em "Lucida Grande", Verdana, Arial, Helvetica, sans-serif; margin: 0; padding: 0; }
+a { text-decoration: none; color: #4e6ca3; }
+a:hover { text-decoration: underline; }
+
+/* Logo and title. */
+h1 img { width: 150px; }
+h2 { font-size: 1.2em; margin-bottom: 12px; }
+
+/* Top-of-page legend. */
+div.top {
+  width: 250px;
+  float: left;
+  font-size: 0.8em;
+  margin: 15px 30px 0 15px;
+}
+div.search { width: 320px; }
+div.search input { width: 300px; font-size: 1.0em }
+div.search #search-count { color: #444; font-style: italic; }
+div.top.legend ul { list-style: none; }
+div.top.legend li a { margin: 0; position: relative; top: 3px; left: -5px; }
+
+/* Styles for the non-scrolling table header. */
+table {
+  font-size: 0.8em;
+  position: relative;
+  clear: both;
+}
+table thead { visibility: hidden; }
+table thead.floating {
+  visibility: visible;
+  position: absolute;
+  top: 0; left: 0;
+  background-color: white;
+  border-bottom: 1px solid gray;
+  text-indent: 3px;
+}
+table thead.fixed { position: fixed; }
+/* avoid position fixed on firefox since it makes the page really laggy when scrolling, http://stackoverflow.com/questions/67588/why-do-fixed-elements-slow-down-scrolling-in-firefox */
+@-moz-document url-prefix() {
+  table thead.fixed {
+    position: absolute;
+  }
+}
+th:nth-child(-n+5) { cursor: pointer; }
+th:nth-child(-n+5):hover { color: #888; }
+
+.squares a,
+tbody tr td:nth-child(n+6) a {
+  border: 1px solid gray;
+  display: inline-block;
+  height: 15px; width: 15px;
+  margin-right: 4px;
+  margin-top: 6px;
+  text-align: center;
+  line-height: 1.1;
+  text-decoration: none;
+}
+tbody tr td:nth-child(n+6) a {
+  line-height: inherit;
+  text-indent: -2000em;
+}
+.squares a, tbody tr td:nth-child(n+6) a { background: #a2d39c; }
+.squares a.m, tbody tr td:nth-child(n+6) a.m { background: #f07878; }
+.squares a.l, tbody tr td:nth-child(n+6) a.l { background: #7ea7d8; }
+.squares a.h, tbody tr td:nth-child(n+6) a.h { background: #f0ac78; }
+.squares a.i, tbody tr td:nth-child(n+6) a.i { background: #c8c8c8; }
+.squares a.o, tbody tr td:nth-child(n+6) a.o { background: #f0f078; }
+.squares a.w, tbody tr td:nth-child(n+6) a.w { background: white; }
+
+/* Hide hidden text. Consider converting to html data attribute. */
+.ht { display: none; }
+
+tbody tr { background-color: #fff; }
+tbody tr:not(:first-child):hover { background-color: #eef0ff; }
+tbody tr:nth-child(odd) { background-color: #E2E4FF; }
+tbody tr td:nth-child(n+6) {
+    white-space: nowrap;
+    padding: 0 2px;
+    width: 100px;
+}
+tbody tr td:nth-child(-n+4) {
+    padding: 3px 4px;
+}
+tbody tr td:nth-child(1) div { width: 230px; overflow-x: hidden; text-overflow: ellipsis; }
+tbody tr td:nth-child(2) div { width: 150px; overflow-x: hidden; }
+tbody tr td:nth-child(3) div { width: 80px; overflow-x: hidden; }
+tbody tr td:nth-child(4) a { display: block; width: 75px; }
+tbody tr td:nth-child(5), tbody tr td:nth-child(5) a {
+    display: block;
+    width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Give the table more breathing room on a wider display. */
+@media (min-width: 1380px) {
+  tbody tr td:nth-child(1) div { width: 300px; }
+  tbody tr td:nth-child(4) { padding-right: 20px; }
+  tbody tr td:nth-child(5) a { width: 240px; }
+}
+
+/* Generated content for the status field. */
+tbody tr td:nth-child(5) a { text-decoration: none; }
+a.developed:before { content: "developed"; color: #a2d39c; }
+a.maintained:before { content: "maintained"; color: #a2d39c; }
+a.unmaintained:before { content: "unmaintained"; color: #f0f078; }
+a.end-of-life:before { content: "end-of-life"; color: #f07878; }
+a.unknown:before { content:"unknown"; color: #c8c8c8; }
+
+.sum {
+  display: inline-block;
+  font-size: 0.8em;
+  width: 15px;
+  margin-right: 4px;
+  -moz-transform: rotate(-35deg);
+  -ms-transform: rotate(-35deg);
+  -o-transform: rotate(-35deg);
+  -webkit-transform: rotate(-35deg);
+  transform: rotate(-35deg);
+}
+/*
+.filter_column input { width: 55px; }
+th:first-child .filter_column input { width: 150px; }
+.search_init { color: gray; }*/

@@ -15,6 +15,8 @@ The buildfarm performs jobs of various different types:
 * `release_jobs`_
 * `devel_jobs`_
 * doc_jobs (to be done)
+* `miscellaneous_jobs`_
 
 .. _release_jobs: release_jobs.rst
 .. _devel_jobs: devel_jobs.rst
+.. _miscellaneous_jobs: miscellaneous_jobs.rst

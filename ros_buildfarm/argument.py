@@ -1,3 +1,6 @@
+import os
+
+
 def add_argument_rosdistro_index_url(parser, required=False):
     help_msg = 'The URL to the ROS distro index'
     if not required:
@@ -5,7 +8,6 @@ def add_argument_rosdistro_index_url(parser, required=False):
         parser.add_argument(
             '--rosdistro-index-url',
             default=get_index_url(),
-            required=required,
             help=("%s (default: '%s', based on the environment variable " +
                   "ROSDISTRO_INDEX_URL") % (help_msg, get_index_url()))
     else:
@@ -91,3 +93,39 @@ def add_argument_append_timestamp(parser):
         '--append-timestamp',
         action='store_true',
         help='Append timestamp to binarydeb version')
+
+
+def add_argument_output_dir(parser):
+    parser.add_argument(
+        '--output-dir',
+        default=os.curdir,
+        help='The output directory')
+
+
+def add_argument_debian_repository_url(parser):
+    parser.add_argument(
+        'debian_repository_url',
+        help='The URL of the Debian repository')
+
+
+def add_argument_os_code_name_and_arch_tuples(parser):
+    parser.add_argument(
+        '--os-code-name-and-arch-tuples',
+        nargs='+',
+        help="The colon separated tuple containing an OS code name and an " +
+             "architecture (e.g. 'trusty/amd64')")
+
+
+def add_argument_three_debian_repository_urls(parser):
+    parser.add_argument(
+        'debian_repository_urls',
+        nargs=3,
+        help='The URLs of the Debian repositories: building, testing and main')
+
+
+def add_argument_cache_dir(parser, default=None):
+    parser.add_argument(
+        '--cache-dir',
+        default=default,
+        required=default is None,
+        help='The cache directory')
