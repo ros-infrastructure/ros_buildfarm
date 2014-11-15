@@ -91,6 +91,13 @@
     source_files=sourcedeb_files,
     remove_prefix='sourcedeb',
 ))@
+@(SNIPPET(
+    'builder_parameterized-trigger',
+    project=import_package_job_name,
+    parameters='\n'.join([
+        'subfolder=%s/${JOB_NAME}__${BUILD_NUMBER}' % os_code_name,
+        'debian_package_name=%s' % debian_package_name]),
+))@
 	</builders>
 	<publishers>
 @(SNIPPET(

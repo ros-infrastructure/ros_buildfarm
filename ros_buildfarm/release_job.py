@@ -6,6 +6,7 @@ from rosdistro import get_distribution_file
 from rosdistro import get_index
 from rosdistro import get_release_build_files
 
+from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common \
     import get_apt_mirrors_and_script_generating_key_files
 from ros_buildfarm.common import get_release_view_name
@@ -278,6 +279,11 @@ def _get_sourcedeb_job_config(
 
         'sourcedeb_files': sourcedeb_files,
 
+        'import_package_job_name': get_import_package_job_name(
+            rosdistro_name, release_build_name),
+        'debian_package_name': get_debian_package_name(
+            rosdistro_name, pkg_name),
+
         'child_projects': binary_job_names,
 
         'notify_emails': build_file.notify_emails,
@@ -335,6 +341,11 @@ def _get_binarydeb_job_config(
         'append_timestamp': append_timestamp,
 
         'binarydeb_files': binarydeb_files,
+
+        'import_package_job_name': get_import_package_job_name(
+            rosdistro_name, release_build_name),
+        'debian_package_name': get_debian_package_name(
+            rosdistro_name, pkg_name),
 
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,
