@@ -80,20 +80,20 @@
         (' --append-timestamp' if append_timestamp else ''),
         'echo "# END SECTION"',
         '',
-        'echo "# BEGIN SECTION: Build Dockerfile - generate binarydeb"',
+        'echo "# BEGIN SECTION: Build Dockerfile - binarydeb task"',
         'cd $WORKSPACE/docker_generating_docker',
         'docker build -t binarydeb .',
         'echo "# END SECTION"',
         '',
-        'echo "# BEGIN SECTION: Run Dockerfile - generate binarydeb"',
+        'echo "# BEGIN SECTION: Run Dockerfile - binarydeb task"',
         'rm -fr $WORKSPACE/binarydeb',
         'mkdir -p $WORKSPACE/binarydeb',
-        'mkdir -p $WORKSPACE/docker_binarydeb',
+        'mkdir -p $WORKSPACE/docker_build_binarydeb',
         'docker run' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
-        ' -v $WORKSPACE/docker_binarydeb:/tmp/docker_binarydeb' +
+        ' -v $WORKSPACE/docker_build_binarydeb:/tmp/docker_build_binarydeb' +
         ' binarydeb',
         'echo "# END SECTION"',
     ]),
@@ -101,18 +101,47 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'echo "# BEGIN SECTION: Build Dockerfile - build and upload"',
-        '# build and run build_and_upload Dockerfile',
-        'cd $WORKSPACE/docker_binarydeb',
-        'docker build -t build_and_upload .',
+        'echo "# BEGIN SECTION: Build Dockerfile - build binarydeb"',
+        '# build and run build_binarydeb Dockerfile',
+        'cd $WORKSPACE/docker_build_binarydeb',
+        'docker build -t build_binarydeb .',
         'echo "# END SECTION"',
         '',
-        'echo "# BEGIN SECTION: Run Dockerfile - build and upload"',
+        'echo "# BEGIN SECTION: Run Dockerfile - build binarydeb"',
         'docker run' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
-        ' build_and_upload',
+        ' build_binarydeb',
+        'echo "# END SECTION"',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        '# generate Dockerfile, build and run it',
+        '# trying to install the built binarydeb',
+        'echo "# BEGIN SECTION: Generate Dockerfile - install"',
+        'mkdir -p $WORKSPACE/docker_install_binarydeb',
+        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
+        '$WORKSPACE/ros_buildfarm/scripts/release/create_binarydeb_install_task_generator.py' +
+        ' %s' % os_name +
+        ' %s' % os_code_name +
+        ' %s' % arch +
+        ' ' + ' '.join(apt_mirror_args) +
+        ' --binarydeb-dir $WORKSPACE/binarydeb' +
+        ' --dockerfile-dir $WORKSPACE/docker_install_binarydeb',
+        'echo "# END SECTION"',
+        '',
+        'echo "# BEGIN SECTION: Build Dockerfile - install"',
+        'cd $WORKSPACE/docker_install_binarydeb',
+        'docker build -t install_binarydeb .',
+        'echo "# END SECTION"',
+        '',
+        'echo "# BEGIN SECTION: Run Dockerfile - install"',
+        'docker run' +
+        ' -v $WORKSPACE/binarydeb:/tmp/binarydeb:ro' +
+        ' install_binarydeb',
         'echo "# END SECTION"',
     ]),
 ))@

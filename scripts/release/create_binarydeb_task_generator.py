@@ -64,8 +64,6 @@ def main(argv=sys.argv[1:]):
 
     # build_binarydeb dependencies
     debian_pkg_names = ['apt-src']
-    # TODO upload_binarydeb dependencies
-    #debian_pkg_names += []
 
     # add build dependencies from .dsc file
     dsc_file = get_dsc_file(

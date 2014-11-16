@@ -29,6 +29,10 @@ def main(argv=sys.argv[1:]):
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
+    parser.add_argument(
+        '--skip-install',
+        action='store_true',
+        help='Skip trying to install binarydeb')
     args = parser.parse_args(argv)
 
     # collect all template snippets of specific types
@@ -71,6 +75,7 @@ def main(argv=sys.argv[1:]):
             offset += len(script_name)
             script = script[:offset] + additional_argument + script[offset:]
             binary_scripts[i] = script
+            break
 
     # remove rm command for sourcedeb location
     rm_command = 'rm -fr $WORKSPACE/binarydeb'
@@ -79,6 +84,16 @@ def main(argv=sys.argv[1:]):
         if offset != -1:
             script = script[:offset] + script[offset + len(rm_command):]
             binary_scripts[i] = script
+            break
+
+    if args.skip_install:
+        # remove install step
+        script_name = '/create_binarydeb_install_task_generator.py '
+        for i, script in enumerate(binary_scripts):
+            offset = script.find(script_name)
+            if offset != -1:
+                del binary_scripts[i]
+                break
 
     value = expand_template(
         'release/release_script.sh.em', {
