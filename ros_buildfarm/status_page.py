@@ -1,3 +1,4 @@
+from collections import namedtuple
 from distutils.version import LooseVersion
 import os
 import re
@@ -11,6 +12,7 @@ from .common import get_debian_package_name
 from .common import get_release_view_name
 from .status_page_input import get_debian_repo_data
 from .status_page_input import get_rosdistro_info
+from .status_page_input import RosPackage
 from .status_page_input import Target
 from .templates import expand_template
 from .templates import template_basepath
@@ -28,12 +30,14 @@ def build_release_status_page(
 
     # get targets
     targets = []
-    for os_name in build_file.get_target_os_names():
+    for os_name in sorted(build_file.get_target_os_names()):
         if os_name != 'ubuntu':
             continue
-        for os_code_name in build_file.get_target_os_code_names(os_name):
+        for os_code_name in sorted(
+                build_file.get_target_os_code_names(os_name)):
             targets.append(Target(os_code_name, 'source'))
-            for arch in build_file.get_target_arches(os_name, os_code_name):
+            for arch in sorted(
+                    build_file.get_target_arches(os_name, os_code_name)):
                 targets.append(Target(os_code_name, arch))
     print('The build file contains the following targets:')
     for os_code_name, arch in targets:
@@ -53,39 +57,52 @@ def build_release_status_page(
     repos_data = [building_repo_data, testing_repo_data, main_repo_data]
 
     # compute derived attributes
+    package_descriptors = get_rosdistro_package_descriptors(
+        rosdistro_info, rosdistro_name)
+
     affected_by_sync = get_affected_by_sync(
-        rosdistro_name, targets,
-        rosdistro_info, testing_repo_data, main_repo_data)
+        package_descriptors, targets, testing_repo_data, main_repo_data)
 
     regressions = get_regressions(
-        rosdistro_name, targets,
-        rosdistro_info, building_repo_data, testing_repo_data, main_repo_data)
+        package_descriptors, targets,
+        building_repo_data, testing_repo_data, main_repo_data)
 
     version_status = get_version_status(
-        rosdistro_name, targets, rosdistro_info,
-        repos_data)
+        package_descriptors, targets, repos_data, strip_version=True)
 
-    homogeneous = get_homogeneous(
-        rosdistro_name, targets, rosdistro_info, repos_data)
+    homogeneous = get_homogeneous(package_descriptors, targets, repos_data)
 
     package_counts = get_package_counts(
-        rosdistro_name, targets, rosdistro_info, repos_data)
+        package_descriptors, targets, repos_data)
 
     jenkins_job_urls = get_jenkins_job_urls(
         rosdistro_name, build_file.jenkins_url, release_build_name, targets)
 
     # generate output
+    repo_urls = [building_repo_url, testing_repo_url, main_repo_url]
+    repo_names = get_url_names(repo_urls)
+
+    ordered_pkgs = []
+    for pkg_name in sorted(rosdistro_info.keys()):
+        ordered_pkgs.append(rosdistro_info[pkg_name])
+
     template_name = 'status/release_status_page.html.em'
     data = {
-        'rosdistro_name': rosdistro_name,
+        'title': 'ROS %s - release status' % rosdistro_name.capitalize(),
         'start_time': time.strftime('%Y-%m-%d %H:%M:%S %Z', start_time),
 
         'resource_hashes': get_resource_hashes(),
 
-        'repo_urls': [building_repo_url, testing_repo_url, main_repo_url],
+        'repo_names': repo_names,
+        'repo_urls': repo_urls,
 
-        'rosdistro_info': rosdistro_info,
+        'has_repository_column': True,
+        'has_status_column': True,
+        'has_maintainer_column': True,
+
+        'ordered_pkgs': ordered_pkgs,
         'targets': targets,
+        'target_prefix': rosdistro_name[0].upper(),
         'repos_data': repos_data,
 
         'affected_by_sync': affected_by_sync,
@@ -105,8 +122,140 @@ def build_release_status_page(
     additional_resources(output_dir)
 
 
+def build_debian_repos_status_page(
+        repo_urls, os_code_name_and_arch_tuples,
+        cache_dir, output_name, output_dir):
+    start_time = time.localtime()
+
+    # get targets
+    targets = []
+    for os_code_name_and_arch in os_code_name_and_arch_tuples:
+        assert os_code_name_and_arch.count(':') == 1, \
+            'The string (%s) does not contain single colon separating an ' + \
+            'OS code name and an architecture'
+        os_code_name, arch = os_code_name_and_arch.split(':')
+        targets.append(Target(os_code_name, arch))
+
+    # get all input data
+    repos_data = []
+    for repo_url in repo_urls:
+        repo_data = get_debian_repo_data(repo_url, targets, cache_dir)
+        repos_data.append(repo_data)
+
+    # compute derived attributes
+    package_descriptors = get_repos_package_descriptors(repos_data, targets)
+
+    version_status = get_version_status(
+        package_descriptors, targets, repos_data)
+
+    homogeneous = get_homogeneous(package_descriptors, targets, repos_data)
+
+    package_counts = get_package_counts(
+        package_descriptors, targets, repos_data)
+
+    # generate output
+    repo_names = get_url_names(repo_urls)
+
+    ordered_pkgs = []
+    for debian_pkg_name in sorted(package_descriptors.keys()):
+        pkg = RosPackage(debian_pkg_name)
+        pkg.debian_name = debian_pkg_name
+        pkg.version = package_descriptors[debian_pkg_name].version
+
+        # set unavailable attributes
+        pkg.repository_name = None
+        pkg.repository_url = None
+        pkg.status = None
+        pkg.status_description = None
+        pkg.maintainers = []
+        pkg.url = None
+
+        ordered_pkgs.append(pkg)
+
+    template_name = 'status/release_status_page.html.em'
+    data = {
+        'title': 'ROS repository status',
+        'start_time': time.strftime('%Y-%m-%d %H:%M:%S %Z', start_time),
+
+        'resource_hashes': get_resource_hashes(),
+
+        'repo_names': repo_names,
+        'repo_urls': repo_urls,
+
+        'has_repository_column': False,
+        'has_status_column': False,
+        'has_maintainer_column': False,
+
+        'ordered_pkgs': ordered_pkgs,
+        'targets': targets,
+        'target_prefix': '',
+        'repos_data': repos_data,
+
+        'affected_by_sync': None,
+        'homogeneous': homogeneous,
+        'jenkins_job_urls': None,
+        'package_counts': package_counts,
+        'regressions': None,
+        'version_status': version_status,
+    }
+    html = expand_template(template_name, data)
+    output_filename = os.path.join(
+        output_dir, '%s.html' % output_name)
+    print("Generating status page '%s':" % output_filename)
+    with open(output_filename, 'w') as h:
+        h.write(html)
+
+    additional_resources(output_dir)
+
+
+PackageDescriptor = namedtuple(
+    'PackageDescriptor', 'pkg_name debian_pkg_name version')
+
+
+def get_rosdistro_package_descriptors(rosdistro_info, rosdistro_name):
+    descriptors = {}
+    for pkg_name, pkg in rosdistro_info.items():
+        debian_pkg_name = get_debian_package_name(rosdistro_name, pkg_name)
+        descriptors[pkg_name] = PackageDescriptor(
+            pkg_name, debian_pkg_name, pkg.version)
+    return descriptors
+
+
+def get_repos_package_descriptors(repos_data, targets):
+    descriptors = {}
+
+    # the first repo / target is the reference version
+    target = targets[0]
+    repo_data = repos_data[0]
+    repo_index = repo_data[target]
+    for debian_pkg_name, version in repo_index.items():
+        descriptors[debian_pkg_name] = PackageDescriptor(
+            debian_pkg_name, debian_pkg_name, version)
+
+    for i, target in enumerate(targets):
+        for j, repo_data in enumerate(repos_data):
+            if i == 0 and j == 0:
+                continue
+            repo_index = repo_data[target]
+            for debian_pkg_name, version in repo_index.items():
+                if debian_pkg_name not in descriptors:
+                    descriptors[debian_pkg_name] = PackageDescriptor(
+                        debian_pkg_name, debian_pkg_name, version)
+    return descriptors
+
+
+def get_url_names(urls):
+    names = []
+    for url in urls:
+        basename = os.path.basename(url)
+        if basename == 'ubuntu':
+            basename = os.path.basename(os.path.dirname(url))
+        names.append(basename)
+    return names
+
+
 def get_affected_by_sync(
-        rosdistro_name, targets, rosdistro_info,
+        package_descriptors, targets,
         testing_repo_data, main_repo_data):
     """
     For each package and target check if it is affected by a sync.
@@ -118,10 +267,11 @@ def get_affected_by_sync(
       dicts indexed by targets containing a boolean flag
     """
     affected_by_sync = {}
-    for pkg_name in rosdistro_info.keys():
-        affected_by_sync[pkg_name] = {}
-        debian_pkg_name = get_debian_package_name(rosdistro_name, pkg_name)
+    for package_descriptor in package_descriptors.values():
+        pkg_name = package_descriptor.pkg_name
+        debian_pkg_name = package_descriptor.debian_pkg_name
 
+        affected_by_sync[pkg_name] = {}
         for target in targets:
             testing_version = \
                 (testing_repo_data[target][debian_pkg_name]
@@ -140,7 +290,7 @@ def get_affected_by_sync(
 
 
 def get_regressions(
-        rosdistro_name, targets, rosdistro_info,
+        package_descriptors, targets,
         building_repo_data, testing_repo_data, main_repo_data):
     """
     For each package and target check if it is a regression.
@@ -153,10 +303,11 @@ def get_regressions(
       dicts indexed by targets containing a boolean flag
     """
     regressions = {}
-    for pkg_name in rosdistro_info.keys():
-        regressions[pkg_name] = {}
-        debian_pkg_name = get_debian_package_name(rosdistro_name, pkg_name)
+    for package_descriptor in package_descriptors.values():
+        pkg_name = package_descriptor.pkg_name
+        debian_pkg_name = package_descriptor.debian_pkg_name
 
+        regressions[pkg_name] = {}
         for target in targets:
             regressions[pkg_name][target] = False
             main_version = \
@@ -175,7 +326,8 @@ def get_regressions(
     return regressions
 
 
-def get_version_status(rosdistro_name, targets, rosdistro_info, repos_data):
+def get_version_status(
+        package_descriptors, targets, repos_data, strip_version=False):
     """
     For each package and target check if it is affected by a sync.
 
@@ -187,11 +339,12 @@ def get_version_status(rosdistro_name, targets, rosdistro_info, repos_data):
       a list of status strings (one for each repo)
     """
     status = {}
-    for pkg_name, pkg in rosdistro_info.items():
-        status[pkg_name] = {}
-        ref_version = pkg.version
-        debian_pkg_name = get_debian_package_name(rosdistro_name, pkg_name)
+    for package_descriptor in package_descriptors.values():
+        pkg_name = package_descriptor.pkg_name
+        debian_pkg_name = package_descriptor.debian_pkg_name
+        ref_version = package_descriptor.version
 
+        status[pkg_name] = {}
         for target in targets:
             statuses = []
             for repo_data in repos_data:
@@ -199,12 +352,14 @@ def get_version_status(rosdistro_name, targets, rosdistro_info, repos_data):
                     (repo_data[target][debian_pkg_name]
                      if debian_pkg_name in repo_data[target] else None) \
                     if target in repo_data else None
-                version = _strip_version_suffix(version)
+                if strip_version:
+                    version = _strip_version_suffix(version)
 
                 if ref_version:
                     if not version:
                         statuses.append('missing')
-                    elif version == ref_version:
+                    elif version == ref_version or \
+                            version.startswith(ref_version):
                         statuses.append('equal')
                     elif LooseVersion(version) < LooseVersion(ref_version):
                         statuses.append('lower')
@@ -242,7 +397,7 @@ def _strip_version_suffix(version):
     return match.group(0) if match else version
 
 
-def get_homogeneous(rosdistro_name, targets, rosdistro_info, repos_data):
+def get_homogeneous(package_descriptors, targets, repos_data):
     """
     For each package check if the version in one repo is equal for all targets.
 
@@ -251,8 +406,9 @@ def get_homogeneous(rosdistro_name, targets, rosdistro_info, repos_data):
     :return: a dict indexed by package names containing a boolean flag
     """
     homogeneous = {}
-    for pkg_name in rosdistro_info.keys():
-        debian_pkg_name = get_debian_package_name(rosdistro_name, pkg_name)
+    for package_descriptor in package_descriptors.values():
+        pkg_name = package_descriptor.pkg_name
+        debian_pkg_name = package_descriptor.debian_pkg_name
 
         versions = []
         for repo_data in repos_data:
@@ -268,7 +424,7 @@ def get_homogeneous(rosdistro_name, targets, rosdistro_info, repos_data):
     return homogeneous
 
 
-def get_package_counts(rosdistro_name, targets, rosdistro_info, repos_data):
+def get_package_counts(package_descriptors, targets, repos_data):
     """
     Get the number of packages per target and repository.
 
@@ -278,8 +434,8 @@ def get_package_counts(rosdistro_name, targets, rosdistro_info, repos_data):
     counts = {}
     for target in targets:
         counts[target] = [0] * len(repos_data)
-    for pkg_name in rosdistro_info.keys():
-        debian_pkg_name = get_debian_package_name(rosdistro_name, pkg_name)
+    for package_descriptor in package_descriptors.values():
+        debian_pkg_name = package_descriptor.debian_pkg_name
 
         for target in targets:
             for i, repo_data in enumerate(repos_data):

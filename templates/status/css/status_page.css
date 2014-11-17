@@ -45,11 +45,11 @@ table thead.fixed { position: fixed; }
     position: absolute;
   }
 }
-th:nth-child(-n+5) { cursor: pointer; }
-th:nth-child(-n+5):hover { color: #888; }
+th.sortable { cursor: pointer; }
+th.sortable:hover { color: #888; }
 
 .squares a,
-tbody tr td:nth-child(n+6) a {
+tbody tr td > a {
   border: 1px solid gray;
   display: inline-block;
   height: 15px; width: 15px;
@@ -59,17 +59,17 @@ tbody tr td:nth-child(n+6) a {
   line-height: 1.1;
   text-decoration: none;
 }
-tbody tr td:nth-child(n+6) a {
+tbody tr td > a {
   line-height: inherit;
   text-indent: -2000em;
 }
-.squares a, tbody tr td:nth-child(n+6) a { background: #a2d39c; }
-.squares a.m, tbody tr td:nth-child(n+6) a.m { background: #f07878; }
-.squares a.l, tbody tr td:nth-child(n+6) a.l { background: #7ea7d8; }
-.squares a.h, tbody tr td:nth-child(n+6) a.h { background: #f0ac78; }
-.squares a.i, tbody tr td:nth-child(n+6) a.i { background: #c8c8c8; }
-.squares a.o, tbody tr td:nth-child(n+6) a.o { background: #f0f078; }
-.squares a.w, tbody tr td:nth-child(n+6) a.w { background: white; }
+.squares a, tbody tr td > a { background: #a2d39c; }
+.squares a.m, tbody tr td > a.m { background: #f07878; }
+.squares a.l, tbody tr td > a.l { background: #7ea7d8; }
+.squares a.h, tbody tr td > a.h { background: #f0ac78; }
+.squares a.i, tbody tr td > a.i { background: #c8c8c8; }
+.squares a.o, tbody tr td > a.o { background: #f0f078; }
+.squares a.w, tbody tr td > a.w { background: white; }
 
 /* Hide hidden text. Consider converting to html data attribute. */
 .ht { display: none; }
@@ -77,19 +77,17 @@ tbody tr td:nth-child(n+6) a {
 tbody tr { background-color: #fff; }
 tbody tr:not(:first-child):hover { background-color: #eef0ff; }
 tbody tr:nth-child(odd) { background-color: #E2E4FF; }
-tbody tr td:nth-child(n+6) {
-    white-space: nowrap;
-    padding: 0 2px;
-    width: 100px;
+tbody tr td div, tbody tr td span {
+  padding: 3px 4px;
 }
-tbody tr td:nth-child(-n+4) {
-    padding: 3px 4px;
+tbody tr td > a:last-child {
+    margin-right: 34px;
 }
 tbody tr td:nth-child(1) div { width: 230px; overflow-x: hidden; text-overflow: ellipsis; }
-tbody tr td:nth-child(2) div { width: 150px; overflow-x: hidden; }
-tbody tr td:nth-child(3) div { width: 80px; overflow-x: hidden; }
-tbody tr td:nth-child(4) a { display: block; width: 75px; }
-tbody tr td:nth-child(5), tbody tr td:nth-child(5) a {
+tbody tr td div.repo { width: 150px; overflow-x: hidden; }
+tbody tr td span { display: block; width: 80px; overflow-x: hidden; }
+tbody.longversion tr td span { width: 180px; }
+tbody tr td.main, tbody tr td.main a {
     display: block;
     width: 180px;
     white-space: nowrap;
@@ -100,17 +98,23 @@ tbody tr td:nth-child(5), tbody tr td:nth-child(5) a {
 /* Give the table more breathing room on a wider display. */
 @media (min-width: 1380px) {
   tbody tr td:nth-child(1) div { width: 300px; }
-  tbody tr td:nth-child(4) { padding-right: 20px; }
-  tbody tr td:nth-child(5) a { width: 240px; }
+  tbody tr td.main a { width: 240px; }
 }
 
 /* Generated content for the status field. */
-tbody tr td:nth-child(5) a { text-decoration: none; }
-a.developed:before { content: "developed"; color: #a2d39c; }
-a.maintained:before { content: "maintained"; color: #a2d39c; }
-a.unmaintained:before { content: "unmaintained"; color: #f0f078; }
-a.end-of-life:before { content: "end-of-life"; color: #f07878; }
-a.unknown:before { content:"unknown"; color: #c8c8c8; }
+tbody tr td span {
+  padding-right: 20px;
+}
+span.developed:before { content: "developed"; color: #a2d39c; }
+span.maintained:before { content: "maintained"; color: #a2d39c; }
+span.unmaintained:before { content: "unmaintained"; color: #f0f078; }
+span.end-of-life:before { content: "end-of-life"; color: #f07878; }
+span.unknown:before { content:"unknown"; color: #c8c8c8; }
+span.developed,
+span.maintained,
+span.unmaintained,
+span.end-of-life,
+span.unknown { padding-right: 20px; width: auto; }
 
 .sum {
   display: inline-block;

@@ -5,10 +5,10 @@ import sys
 
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_cache_dir
+from ros_buildfarm.argument import add_argument_debian_repository_urls
 from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.argument import add_argument_three_debian_repository_urls
 from ros_buildfarm.status_page import build_release_status_page
 
 
@@ -18,7 +18,7 @@ def main(argv=sys.argv[1:]):
     add_argument_rosdistro_index_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_build_name(parser, 'release')
-    add_argument_three_debian_repository_urls(parser)
+    add_argument_debian_repository_urls(parser, nargs=3)
     add_argument_cache_dir(parser, '/tmp/status_page_cache')
     add_argument_output_dir(parser)
     args = parser.parse_args(argv)

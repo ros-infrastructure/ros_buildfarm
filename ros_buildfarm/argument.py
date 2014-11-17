@@ -102,25 +102,11 @@ def add_argument_output_dir(parser):
         help='The output directory')
 
 
-def add_argument_debian_repository_url(parser):
-    parser.add_argument(
-        'debian_repository_url',
-        help='The URL of the Debian repository')
-
-
-def add_argument_os_code_name_and_arch_tuples(parser):
-    parser.add_argument(
-        '--os-code-name-and-arch-tuples',
-        nargs='+',
-        help="The colon separated tuple containing an OS code name and an " +
-             "architecture (e.g. 'trusty/amd64')")
-
-
-def add_argument_three_debian_repository_urls(parser):
+def add_argument_debian_repository_urls(parser, nargs='+'):
     parser.add_argument(
         'debian_repository_urls',
-        nargs=3,
-        help='The URLs of the Debian repositories: building, testing and main')
+        nargs=nargs,
+        help='The URLs of Debian repositories')
 
 
 def add_argument_cache_dir(parser, default=None):
