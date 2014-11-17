@@ -17,6 +17,10 @@ def get_sourcedeb(
 
     debian_package_name = get_debian_package_name(rosdistro_name, package_name)
     if not skip_download_sourcedeb:
+        # update apt index first
+        cmd = ['apt-get', 'update']
+        print("Invoking '%s'" % ' '.join(cmd))
+        subprocess.check_call(cmd, cwd=sourcedeb_dir)
         # download sourcedeb
         cmd = ['apt-get', 'source', debian_package_name, '--download-only']
         print("Invoking '%s'" % ' '.join(cmd))
