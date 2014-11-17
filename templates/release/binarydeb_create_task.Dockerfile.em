@@ -30,6 +30,13 @@ RUN echo "@today_isoformat"
 RUN apt-get update
 RUN apt-get install -q -y devscripts dpkg-dev python3-apt python3-catkin-pkg python3-empy python3-yaml
 
+# always invalidate to actually have the latest repo state
+@{
+now_isoformat = datetime.datetime.now().isoformat()
+}@
+RUN echo "@now_isoformat"
+RUN apt-get update
+
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
