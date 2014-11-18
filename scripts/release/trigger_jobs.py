@@ -5,29 +5,29 @@ import sys
 
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_cache_dir
-from ros_buildfarm.argument import add_argument_debian_repository_urls
-from ros_buildfarm.argument import add_argument_output_dir
+from ros_buildfarm.argument import add_argument_missing_only
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.status_page import build_release_status_page
+from ros_buildfarm.argument import add_argument_source_only
+from ros_buildfarm.trigger_job import trigger_release_jobs
 
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
-        description="Run the 'release_status_page' job")
+        description='Trigger a set of jobs which artifacts are missing in ' +
+                    'the repository')
     add_argument_rosdistro_index_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_build_name(parser, 'release')
-    add_argument_debian_repository_urls(parser, nargs=3)
+    add_argument_missing_only(parser)
+    add_argument_source_only(parser)
     add_argument_cache_dir(parser, '/tmp/debian_repo_cache')
-    add_argument_output_dir(parser)
     args = parser.parse_args(argv)
 
-    return build_release_status_page(
+    return trigger_release_jobs(
         args.rosdistro_index_url, args.rosdistro_name, args.release_build_name,
-        args.debian_repository_urls[0], args.debian_repository_urls[1],
-        args.debian_repository_urls[2], args.cache_dir, args.output_dir)
+        args.missing_only, args.source_only, args.cache_dir)
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

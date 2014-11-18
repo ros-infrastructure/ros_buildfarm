@@ -115,3 +115,17 @@ def add_argument_cache_dir(parser, default=None):
         default=default,
         required=default is None,
         help='The cache directory')
+
+
+def add_argument_missing_only(parser):
+    parser.add_argument(
+        '--missing-only',
+        action='store_true',
+        help='Only trigger jobs with missing artifacts')
+
+
+def add_argument_source_only(parser):
+    parser.add_argument(
+        '--source-only',
+        action='store_true',
+        help='Only trigger source jobs')

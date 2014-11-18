@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from catkin_pkg.package import parse_package_string
 from rosdistro import get_distribution_cache
 from rosdistro import get_distribution_file
 from rosdistro import get_index
@@ -215,6 +214,7 @@ def get_binarydeb_job_name(rosdistro_name, release_build_name,
 
 
 def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
+    from catkin_pkg.package import parse_package_string
     assert pkg_name in dist_cache.release_package_xmls
     pkg_xml = dist_cache.release_package_xmls[pkg_name]
     pkg = parse_package_string(pkg_xml)
@@ -400,6 +400,7 @@ def _get_import_package_job_config(build_file):
 def get_maintainer_emails(dist_cache, repo_name):
     maintainer_emails = set([])
     if dist_cache:
+        from catkin_pkg.package import parse_package_string
         # add maintainers listed in latest release to recipients
         repo = dist_cache.distribution_file.repositories[repo_name]
         if repo.release_repository:

@@ -10,7 +10,7 @@ from rosdistro import get_release_build_files
 
 from .common import get_debian_package_name
 from .common import get_release_view_name
-from .status_page_input import get_debian_repo_data
+from .debian_repo import get_debian_repo_data
 from .status_page_input import get_rosdistro_info
 from .status_page_input import RosPackage
 from .status_page_input import Target

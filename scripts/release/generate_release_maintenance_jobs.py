@@ -35,7 +35,10 @@ def main(argv=sys.argv[1:]):
     build_files = get_release_build_files(index, args.rosdistro_name)
     build_file = build_files[args.release_build_name]
 
-    job_config = get_job_config(args, build_file)
+    reconfigure_jobs_job_config = get_reconfigure_jobs_job_config(
+        args, build_file)
+    trigger_jobs_job_config = get_trigger_jobs_job_config(
+        args, build_file)
 
     jenkins = connect(build_file.jenkins_url)
 
@@ -43,12 +46,25 @@ def main(argv=sys.argv[1:]):
 
     group_name = get_release_view_name(
         args.rosdistro_name, args.release_build_name)
+
     job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
-    configure_job(jenkins, job_name, job_config, view=view)
+    configure_job(jenkins, job_name, reconfigure_jobs_job_config, view=view)
+
+    job_name = '%s_%s' % (group_name, 'trigger-jobs')
+    configure_job(jenkins, job_name, trigger_jobs_job_config, view=view)
 
 
-def get_job_config(args, build_file):
+def get_reconfigure_jobs_job_config(args, build_file):
     template_name = 'release/release_reconfigure-jobs_job.xml.em'
+    return _get_job_config(args, build_file, template_name)
+
+
+def get_trigger_jobs_job_config(args, build_file):
+    template_name = 'release/release_trigger-jobs_job.xml.em'
+    return _get_job_config(args, build_file, template_name)
+
+
+def _get_job_config(args, build_file, template_name):
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 

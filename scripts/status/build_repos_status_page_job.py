@@ -19,7 +19,7 @@ def main(argv=sys.argv[1:]):
         required=True,
         help="The colon separated tuple containing an OS code name and an " +
              "architecture (e.g. 'trusty:amd64')")
-    add_argument_cache_dir(parser, '/tmp/status_page_cache')
+    add_argument_cache_dir(parser, '/tmp/debian_repo_cache')
     parser.add_argument(
         '--output-name',
         required=True,

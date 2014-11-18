@@ -45,3 +45,30 @@ def configure_job(jenkins, job_name, job_config, view=None):
         else:
             print("Job '%s' is already in view '%s'" % (job_name, view.name))
     return job
+
+
+def invoke_job(jenkins, job_name, prevent_multiple=True):
+    try:
+        if not jenkins.has_job(job_name):
+            print("Failed to invoke job '%s' because it does not exist" %
+                  job_name, file=sys.stderr)
+            return False
+        job = jenkins.get_job(job_name)
+        if not job.is_enabled():
+            print("Failed to invoke job '%s' because it is disabled" %
+                  job_name, file=sys.stderr)
+            return False
+        if prevent_multiple and job.is_queued():
+            print("Skipped to invoke job '%s' because it is already queued" %
+                  job_name)
+            return False
+        if prevent_multiple and job.is_running():
+            print("Skipped to invoke job '%s' because it is already running" %
+                  job_name)
+            return False
+        print("Invoking job '%s'" % job_name)
+        job.invoke()
+    except Exception:
+        print("Failed to invoke job '%s'" % job_name, file=sys.stderr)
+        raise
+    return True
