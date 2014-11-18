@@ -50,9 +50,6 @@ def main(argv=sys.argv[1:]):
 
     data = copy.deepcopy(args.__dict__)
     data.update({
-        'os_name': 'ubuntu',
-        'os_code_name': 'trusty',
-
         'maintainer_email': 'dthomas+buildfarm@osrfoundation.org',
         'maintainer_name': 'Dirk Thomas',
 
