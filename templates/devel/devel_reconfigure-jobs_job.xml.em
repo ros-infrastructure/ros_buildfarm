@@ -82,5 +82,9 @@
     send_to_individuals=False,
 ))@
 	</publishers>
-	<buildWrappers/>
+	<buildWrappers>
+@(SNIPPET(
+    'build-wrapper_timestamper',
+))@
+	</buildWrappers>
 </project>

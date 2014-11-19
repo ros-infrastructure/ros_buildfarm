@@ -128,6 +128,9 @@
 ))@
 @[end if]@
 @(SNIPPET(
+    'build-wrapper_timestamper',
+))@
+@(SNIPPET(
     'build-wrapper_ssh-agent_credential-id',
 ))@
 	</buildWrappers>

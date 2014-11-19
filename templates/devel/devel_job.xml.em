@@ -148,5 +148,8 @@
     timeout_minutes=timeout_minutes,
 ))@
 @[end if]@
+@(SNIPPET(
+    'build-wrapper_timestamper',
+))@
 	</buildWrappers>
 </project>
