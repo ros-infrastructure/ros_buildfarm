@@ -69,7 +69,7 @@ for (p in hudson.model.Hudson.instance.getAllItems(AbstractProject)) {
         def lb = p.lastBuild
         if (!lb) {
             // job has never been built
-            if (filter != "not_built" && filter != "not_stable" && filter != "worse_than_unstable")) continue
+            if (filter != "not_built" && filter != "not_stable" && filter != "worse_than_unstable") continue
         } else {
             def r = lb.result
             def pb = lb
