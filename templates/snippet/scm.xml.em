@@ -8,14 +8,14 @@
 @[elif repo_spec.type == 'hg']@
 @(SNIPPET(
     'scm_hg',
-    source='repo_spec.url,
+    source=repo_spec.url,
     branch=repo_spec.version,
     subdir=path,
 ))@
 @[elif repo_spec.type == 'svn']@
 @(SNIPPET(
     'scm_svn',
-    remote='repo_spec.url,
+    remote=repo_spec.url,
     local=path,
 ))@
 @[else]@
