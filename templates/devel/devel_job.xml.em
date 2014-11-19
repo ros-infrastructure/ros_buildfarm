@@ -126,8 +126,8 @@
 	</builders>
 	<publishers>
 @(SNIPPET(
-    'publisher_junit',
-    test_results='catkin_workspace/build_isolated/**/*.xml',
+    'publisher_xunit',
+    pattern='catkin_workspace/build_isolated/**/*.xml',
 ))@
 @[if notify_maintainers]@
 @(SNIPPET(
