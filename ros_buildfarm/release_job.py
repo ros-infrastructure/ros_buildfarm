@@ -9,6 +9,7 @@ from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common \
     import get_apt_mirrors_and_script_generating_key_files
 from ros_buildfarm.common import get_release_view_name
+from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import OSTarget
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
@@ -77,10 +78,18 @@ def configure_release_jobs(
                 generate_import_package_job=False)
 
 
+# Use a wrapper to transform JobValidationErrors into return values
+def configure_release_job(*args, **kwargs):
+    try:
+        return configure_release_job_with_validation(*args, **kwargs)
+    except JobValidationError as error:
+        return error.message
+
+
 # Configure a Jenkins release job which consists of
 # - a source deb job
 # - N binary debs, one for each archicture
-def configure_release_job(
+def configure_release_job_with_validation(
         rosdistro_index_url, rosdistro_name, release_build_name,
         pkg_name, os_name, os_code_name, append_timestamp=False,
         index=None, build_file=None, dist_file=None, dist_cache=None,
@@ -99,27 +108,28 @@ def configure_release_job(
     pkg_names = build_file.filter_packages(pkg_names)
 
     if pkg_name not in pkg_names:
-        return "Invalid package name '%s' " % pkg_name + \
-            'choose one of the following: ' + \
-            ', '.join(sorted(pkg_names))
+        raise JobValidationError("Invalid package name '%s' " % pkg_name +
+                                 'choose one of the following: ' + ', '.join(sorted(pkg_names)))
 
     pkg = dist_file.release_packages[pkg_name]
     repo_name = pkg.repository_name
     repo = dist_file.repositories[repo_name]
 
     if not repo.release_repository:
-        return "Repository '%s' has no release section" % repo_name
+        raise JobValidationError("Repository '%s' has no release section" % repo_name)
+
     if not repo.release_repository.version:
-        return "Repository '%s' has no release version" % repo_name
+        raise JobValidationError("Repository '%s' has no release version" % repo_name)
 
     if os_name not in build_file.get_target_os_names():
-        return "Invalid OS name '%s' " % os_name + \
-            'choose one of the following: ' + \
-            ', '.join(sorted(build_file.get_target_os_names()))
+        raise JobValidationError("Invalid OS name '%s' " % os_name +
+                                 'choose one of the following: ' +
+                                 ', '.join(sorted(build_file.get_target_os_names())))
+
     if os_code_name not in build_file.get_target_os_code_names(os_name):
-        return "Invalid OS code name '%s' " % os_code_name + \
-            'choose one of the following: ' + \
-            ', '.join(sorted(build_file.get_target_os_code_names(os_name)))
+        raise JobValidationError("Invalid OS code name '%s' " % os_code_name + \
+                                 'choose one of the following: ' + \
+                                 ', '.join(sorted(build_file.get_target_os_code_names(os_name))))
 
     if dist_cache is None and \
             (build_file.notify_maintainers or

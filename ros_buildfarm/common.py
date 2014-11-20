@@ -12,6 +12,15 @@ class OSTarget(object):
         self.os_code_name = os_code_name
 
 
+class JobValidationError(Exception):
+    """
+    Raised by the reconfigure_*_job functions
+    if validation fails.
+    """
+    def __init__(self, message):
+        self.message = message
+
+
 class Scope(object):
 
     def __init__(self, scope_name, description):
