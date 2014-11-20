@@ -157,6 +157,8 @@ def configure_release_job(
     if build_file.abi_incompatibility_assumed:
         dependency_names = _get_direct_dependencies(
             pkg_name, dist_cache, pkg_names)
+        if dependency_names is None:
+            return
 
     # binarydeb jobs
     for arch in _get_target_arches(build_file, os_name, os_code_name):
@@ -220,7 +222,8 @@ def get_binarydeb_job_name(rosdistro_name, release_build_name,
 
 def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
     from catkin_pkg.package import parse_package_string
-    assert pkg_name in dist_cache.release_package_xmls
+    if pkg_name not in dist_cache.release_package_xmls:
+        return None
     pkg_xml = dist_cache.release_package_xmls[pkg_name]
     pkg = parse_package_string(pkg_xml)
     depends = set([
