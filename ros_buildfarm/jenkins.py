@@ -85,12 +85,20 @@ def configure_job(jenkins, job_name, job_config, view=None):
     return job
 
 
-def invoke_job(jenkins, job_name, prevent_multiple=True):
+def invoke_job(jenkins, job_name, prevent_multiple=True, queue=None):
     try:
         if not jenkins.has_job(job_name):
             print("Failed to invoke job '%s' because it does not exist" %
                   job_name, file=sys.stderr)
             return False
+
+        if prevent_multiple and queue:
+            is_queued = queue.get_queue_items_for_job(job_name)
+            if is_queued:
+                print(("Skipped to invoke job '%s' because it is already " +
+                       "in the queue") % job_name)
+                return False
+
         job = jenkins.get_job(job_name)
         if not job.is_enabled():
             print("Failed to invoke job '%s' because it is disabled" %

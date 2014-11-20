@@ -54,6 +54,7 @@ def trigger_release_jobs(
         repo_data = get_debian_repo_data(repo_url, targets, cache_dir)
 
     jenkins = connect(build_file.jenkins_url)
+    jenkins_queue = jenkins.get_queue()
 
     pkg_names = dist_file.release_packages.keys()
     pkg_names = build_file.filter_packages(pkg_names)
@@ -101,7 +102,7 @@ def trigger_release_jobs(
                                "already up-to-date") % job_name)
                         continue
 
-            success = invoke_job(jenkins, job_name)
+            success = invoke_job(jenkins, job_name, queue=jenkins_queue)
             if success:
                 triggered_jobs.append(job_name)
             else:
