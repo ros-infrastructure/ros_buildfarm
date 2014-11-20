@@ -57,15 +57,18 @@ digraph {
 	scripts__devel__generate_devel_jobs -> scripts__devel__generate_devel_job [fontcolor="gray", label=" &forall; source repos", weight="2"]
 	scripts__devel__generate_devel_job -> templates__devel__devel_job__xml [weight="2"]
 
-	templates__devel__devel_job__xml -> scripts__devel__run_devel_job [weight="2"]
-	scripts__devel__run_devel_job -> templates__devel__devel_create_tasks__Dockerfile
+	templates__devel__devel_job__xml -> scripts__devel__run_devel_job
+	scripts__devel__run_devel_job -> templates__devel__devel_create_tasks__Dockerfile [fontcolor="gray", label=" generate"]
+	templates__devel__devel_job__xml -> templates__devel__devel_create_tasks__Dockerfile [fontcolor="gray", label="build &amp; run"]
 
-	templates__devel__devel_create_tasks__Dockerfile:sw -> scripts__devel__create_devel_task_generator
+	templates__devel__devel_create_tasks__Dockerfile:s -> scripts__devel__create_devel_task_generator
 	templates__devel__devel_create_tasks__Dockerfile:se -> scripts__devel__create_devel_task_generator [fontcolor="gray", label=" --testing"]
-	scripts__devel__create_devel_task_generator -> templates__devel__devel_task__Dockerfile:nw [fontcolor="gray", xlabel="cmi + install "]
-	scripts__devel__create_devel_task_generator -> templates__devel__devel_task__Dockerfile:ne [fontcolor="gray", label=" cmi + test"]
-	templates__devel__devel_task__Dockerfile -> scripts__devel__catkin_make_isolated_and_install [fontcolor="gray", xlabel="build deps "]
-	templates__devel__devel_task__Dockerfile -> scripts__devel__catkin_make_isolated_and_test [fontcolor="gray", label=" build/run/test deps"]
+	scripts__devel__create_devel_task_generator -> templates__devel__devel_task__Dockerfile [fontcolor="gray", xlabel="generate   \ncmi + install    "]
+	scripts__devel__create_devel_task_generator -> templates__devel__devel_task__Dockerfile [fontcolor="gray", label="generate\ncmi + test"]
+	templates__devel__devel_job__xml -> templates__devel__devel_task__Dockerfile:ne [fontcolor="gray", xlabel=" build &amp;\nrun"]
+	templates__devel__devel_job__xml -> templates__devel__devel_task__Dockerfile:ne [fontcolor="gray", label=" build &amp;\nrun"]
+	templates__devel__devel_task__Dockerfile -> scripts__devel__catkin_make_isolated_and_install [fontcolor="gray", xlabel="has build deps "]
+	templates__devel__devel_task__Dockerfile -> scripts__devel__catkin_make_isolated_and_test [fontcolor="gray", label=" has build/run/test deps"]
 
 	scripts__devel__generate_devel_script -> templates__devel__devel_script__sh [weight="2"]
 	templates__devel__devel_script__sh -> templates__devel__devel_job__xml [weight="0"]
