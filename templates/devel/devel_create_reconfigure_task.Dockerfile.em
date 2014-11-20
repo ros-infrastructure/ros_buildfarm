@@ -28,7 +28,7 @@ RUN echo "@today_isoformat"
 
 RUN apt-get update
 RUN apt-get install -q -y python3-catkin-pkg python3-empy python3-pip python3-yaml
-RUN pip3 install jenkinsapi
+RUN pip3 install https://github.com/dirk-thomas/jenkinsapi/archive/feature/config_view.zip
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]

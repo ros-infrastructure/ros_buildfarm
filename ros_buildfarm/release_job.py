@@ -48,7 +48,7 @@ def configure_release_jobs(
         index=index, build_file=build_file, jenkins=jenkins)
 
     view_name = get_release_view_name(rosdistro_name, release_build_name)
-    view = configure_view(jenkins, view_name)
+    view = configure_release_view(jenkins, view_name)
 
     pkg_names = dist_file.release_packages.keys()
     pkg_names = build_file.filter_packages(pkg_names)
@@ -128,7 +128,7 @@ def configure_release_job(
         jenkins = connect(build_file.jenkins_url)
     if view is None:
         view_name = get_release_view_name(rosdistro_name, release_build_name)
-        view = configure_view(jenkins, view_name)
+        configure_release_view(jenkins, view_name)
 
     if generate_import_package_job:
         configure_import_package_job(
@@ -151,7 +151,7 @@ def configure_release_job(
         repo_name, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_job(jenkins, job_name, job_config, view)
+        configure_job(jenkins, job_name, job_config)
 
     dependency_names = []
     if build_file.abi_incompatibility_assumed:
@@ -184,7 +184,12 @@ def configure_release_job(
             upstream_job_names=upstream_job_names)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
-            configure_job(jenkins, job_name, job_config, view)
+            configure_job(jenkins, job_name, job_config)
+
+
+def configure_release_view(jenkins, view_name):
+    return configure_view(
+        jenkins, view_name, include_regex='%s__.+' % view_name)
 
 
 def get_sourcedeb_job_name(rosdistro_name, release_build_name,

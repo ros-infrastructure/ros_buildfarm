@@ -42,7 +42,7 @@ def configure_devel_jobs(
     jenkins = connect(build_file.jenkins_url)
 
     view_name = get_devel_view_name(rosdistro_name, source_build_name)
-    view = configure_view(jenkins, view_name)
+    view = configure_devel_view(jenkins, view_name)
 
     repo_names = dist_file.repositories.keys()
     repo_names = build_file.filter_repositories(repo_names)
@@ -117,7 +117,7 @@ def configure_devel_job(
         jenkins = connect(build_file.jenkins_url)
     if view is None:
         view_name = get_devel_view_name(rosdistro_name, source_build_name)
-        view = configure_view(jenkins, view_name)
+        configure_devel_view(jenkins, view_name)
 
     conf = build_file.get_target_configuration(
         os_name=os_name, os_code_name=os_code_name, arch=arch)
@@ -132,7 +132,7 @@ def configure_devel_job(
         repo_name, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_job(jenkins, job_name, job_config, view)
+        configure_job(jenkins, job_name, job_config)
 
 
 def get_devel_job_name(rosdistro_name, source_build_name,
@@ -140,6 +140,11 @@ def get_devel_job_name(rosdistro_name, source_build_name,
     view_name = get_devel_view_name(rosdistro_name, source_build_name)
     return '%s__%s__%s_%s_%s' % \
         (view_name, repo_name, os_name, os_code_name, arch)
+
+
+def configure_devel_view(jenkins, view_name):
+    return configure_view(
+        jenkins, view_name, include_regex='%s__.+' % view_name)
 
 
 def _get_devel_job_config(

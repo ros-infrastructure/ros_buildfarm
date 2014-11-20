@@ -1,8 +1,10 @@
+from datetime import datetime
 import sys
 
 from jenkinsapi.jenkins import Jenkins
 
 from .jenkins_credentials import get_credentials
+from .templates import expand_template
 
 JENKINS_MANAGEMENT_VIEW = 'Manage'
 
@@ -15,14 +17,39 @@ def connect(jenkins_url):
     return jenkins
 
 
-def configure_view(jenkins, view_name):
+def configure_view(jenkins, view_name, include_regex=None):
     if view_name not in jenkins.views:
         print("Creating view '%s'" % view_name)
         view = jenkins.views.create(view_name)
     else:
         print("Ensure that view '%s' exists" % view_name)
         view = jenkins.views[view_name]
+    if include_regex:
+        view_config = _get_view_config(view_name, include_regex)
+        try:
+            view.update_config(view_config)
+        except Exception:
+            print("Failed to configure view '%s' with config:\n%s" %
+                  (view_name, view_config), file=sys.stderr)
+            raise
     return view
+
+
+def _get_view_config(view_name, include_regex):
+    template_name = 'generic_view.xml.em'
+    now = datetime.utcnow()
+    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    view_data = {
+        'template_name': template_name,
+        'now_str': now_str,
+
+        'view_name': view_name,
+
+        'include_regex': include_regex,
+    }
+    view_config = expand_template(template_name, view_data)
+    return view_config
 
 
 def configure_job(jenkins, job_name, job_config, view=None):
