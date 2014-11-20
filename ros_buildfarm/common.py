@@ -1,3 +1,17 @@
+class OSTarget(object):
+    """
+    Specifies the target OS of a build as a
+    combination of OS name and OS code name.
+    """
+    def __init__(self, os_name: str, os_code_name: str):
+        """
+        @param os_name: The target OS name (e.g. 'Ubuntu', 'Debian')
+        @param os_code_name: The target OS code name (e.g. 'trusty', 'wheezy')
+        """
+        self.os_name = os_name
+        self.os_code_name = os_code_name
+
+
 class Scope(object):
 
     def __init__(self, scope_name, description):

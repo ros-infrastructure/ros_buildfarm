@@ -9,6 +9,7 @@ from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common \
     import get_apt_mirrors_and_script_generating_key_files
 from ros_buildfarm.common import get_release_view_name
+from ros_buildfarm.common import OSTarget
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
@@ -161,7 +162,7 @@ def configure_release_job(
             return
 
     # binarydeb jobs
-    for arch in _get_target_arches(build_file, os_name, os_code_name):
+    for arch in BuildTarget(build_file, OSTarget(os_name, os_code_name)).get_target_arches():
         if filter_arches and arch not in filter_arches:
             continue
 
@@ -200,17 +201,26 @@ def get_sourcedeb_job_name(rosdistro_name, release_build_name,
     return '%s__%s__%s_%s__source' % \
         (view_name, pkg_name, os_name, os_code_name)
 
+class BuildTarget:
+    def __init__(self, build_file, os_target):
+        """
+        @param os_target: The target operating system
+        @type os_target: OSTarget
+        """
+        self.build_file = build_file
+        self.os_target = os_target
 
-def _get_target_arches(build_file, os_name, os_code_name, print_skipped=True):
-    arches = []
-    for arch in build_file.get_target_arches(os_name, os_code_name):
-        # TODO support for non amd64 arch missing
-        if arch not in ['amd64']:
-            if print_skipped:
-                print('Skipping arch:', arch)
-            continue
-        arches.append(arch)
-    return arches
+    def get_target_arches(self, print_skipped=True):
+        arches = []
+        for arch in self.build_file.get_target_arches(self.os_target.os_name,
+                                                      self.os_target.os_code_name):
+            # TODO support for non amd64 arch missing
+            if arch not in ['amd64']:
+                if print_skipped:
+                    print('Skipping arch:', arch)
+                continue
+            arches.append(arch)
+        return arches
 
 
 def get_binarydeb_job_name(rosdistro_name, release_build_name,
