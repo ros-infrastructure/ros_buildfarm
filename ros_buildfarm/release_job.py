@@ -407,7 +407,7 @@ def _get_import_package_job_config(build_file):
 
 def get_maintainer_emails(dist_cache, repo_name):
     maintainer_emails = set([])
-    if dist_cache:
+    if dist_cache and repo_name in dist_cache.distribution_file.repositories:
         from catkin_pkg.package import parse_package_string
         # add maintainers listed in latest release to recipients
         repo = dist_cache.distribution_file.repositories[repo_name]
