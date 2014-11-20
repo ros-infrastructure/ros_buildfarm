@@ -1,5 +1,7 @@
 from datetime import datetime
+import difflib
 import sys
+from xml.etree import ElementTree
 
 from jenkinsapi.jenkins import Jenkins
 
@@ -58,9 +60,18 @@ def configure_job(jenkins, job_name, job_config, view=None):
             print("Creating job '%s'" % job_name)
             job = jenkins.create_job(job_name, job_config)
         else:
-            print("Updating job '%s'" % job_name)
             job = jenkins.get_job(job_name)
-            job.update_config(job_config)
+            remote_job_config = job.get_config()
+            diff = _diff_configs(remote_job_config, job_config)
+            if not diff:
+                print("Skipped '%s' because the config is the same" % job_name)
+            else:
+                print("Updating job '%s'" % job_name)
+                print('   ', '<<<')
+                for line in diff:
+                    print('   ', line)
+                print('   ', '>>>')
+                job.update_config(job_config)
     except Exception:
         print("Failed to configure job '%s' with config:\n%s" %
               (job_name, job_config), file=sys.stderr)
@@ -99,3 +110,20 @@ def invoke_job(jenkins, job_name, prevent_multiple=True):
         print("Failed to invoke job '%s'" % job_name, file=sys.stderr)
         raise
     return True
+
+
+def _diff_configs(remote_config, new_config):
+    remote_root = ElementTree.fromstring(remote_config)
+    new_root = ElementTree.fromstring(new_config)
+
+    # ignore description which contains timestamp
+    remote_root.find('description').text = ''
+    new_root.find('description').text = ''
+
+    if ElementTree.tostring(remote_root) == ElementTree.tostring(new_root):
+        return []
+
+    lines1 = ElementTree.tostringlist(remote_root, encoding='unicode')
+    lines2 = ElementTree.tostringlist(new_root, encoding='unicode')
+    return difflib.unified_diff(
+        lines1, lines2, 'remote config', 'new config', n=0)

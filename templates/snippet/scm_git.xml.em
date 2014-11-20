@@ -1,4 +1,4 @@
-	<scm class="hudson.plugins.git.GitSCM" plugin="git@@2.2.6">
+	<scm class="hudson.plugins.git.GitSCM" plugin="git@@2.3">
 		<configVersion>2</configVersion>
 		<userRemoteConfigs>
 			<hudson.plugins.git.UserRemoteConfig>
