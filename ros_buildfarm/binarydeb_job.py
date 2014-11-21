@@ -12,8 +12,8 @@ def get_sourcedeb(
     # ensure that no source subfolder exists
     debian_package_name = get_debian_package_name(rosdistro_name, package_name)
     subfolders = _get_package_subfolders(sourcedeb_dir, debian_package_name)
-    assert not subfolders, "Sourcedeb directory '%s' must not have any " + \
-        "subfolders starting with '%s-'" % (sourcedeb_dir, package_name)
+    assert not subfolders, ("Sourcedeb directory '%s' must not have any " + \
+        "subfolders starting with '%s-'") % (sourcedeb_dir, package_name)
 
     debian_package_name = get_debian_package_name(rosdistro_name, package_name)
     if not skip_download_sourcedeb:
