@@ -102,18 +102,21 @@ class ReleaseBuildConfiguration(object):
 
     ### Target OS handling
 
-    def get_target_os(self) -> list[OSTarget]:
+    def get_target_os(self):
+        """@rtype: list[OSTarget]"""
         targets = []
         for os_name in self.build_file.get_target_os_names():
             for os_code_name in self.build_file.get_target_os_code_names(os_name):
                 targets.append(OSTarget(os_name, os_code_name))
         return targets
 
-    def get_target_architectures_by_os(self, os_target: OSTarget) -> list[str]:
+    def get_target_architectures_by_os(self, os_target: OSTarget):
+        """@rtype: list[str]"""
         return self.build_file.get_target_arches(os_target.os_name,
                                                  os_target.os_code_name)
 
-    def get_filtered_target_architectures_by_os(self, os_target: OSTarget, print_skipped=True) -> list[str]:
+    def get_filtered_target_architectures_by_os(self, os_target: OSTarget, print_skipped=True):
+        """@rtype: list[str]"""
         arches = []
         for arch in self.get_target_architectures_by_os(os_target):
             # TODO support for non amd64 arch missing
@@ -161,7 +164,8 @@ class ReleaseBuildConfiguration(object):
         repo = self.dist_file.repositories[repo_name]
         return PackageInfo(pkg, repo)
 
-    def get_direct_dependencies(self, pkg_name: str) -> list[str]:
+    def get_direct_dependencies(self, pkg_name: str):
+        """@rtype: list[str]"""
         from catkin_pkg.package import parse_package_string
         assert self.dist_cache is not None
         if pkg_name not in self.dist_cache.release_package_xmls:

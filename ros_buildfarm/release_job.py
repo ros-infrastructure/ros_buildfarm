@@ -187,7 +187,7 @@ def _get_sourcedeb_job_config(
         config: ReleaseBuildConfiguration,
         os_target: OSTarget,
         target_config: dict,
-        binary_arches: list[str],
+        binary_arches: list,
         pkg_info: PackageInfo):
     template_name = 'release/sourcedeb_job.xml.em'
     now = datetime.utcnow()
