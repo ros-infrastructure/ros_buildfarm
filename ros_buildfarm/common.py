@@ -11,6 +11,27 @@ class OSTarget(object):
         self.os_name = os_name
         self.os_code_name = os_code_name
 
+    def __str__(self):
+        return '%s %s' % (self.os_name, self.os_code_name)
+
+
+class OSArchTarget(object):
+    """
+    Specifies the target OS and architecture
+    of a build.
+    """
+    def __init__(self, os_target: OSTarget, arch: str):
+        self.os_target = os_target
+        self.arch = arch
+
+    @property
+    def os_name(self) -> str:
+        return self.os_target.os_name
+
+    @property
+    def os_code_name(self) -> str:
+        return self.os_target.os_code_name
+
 
 class JobValidationError(Exception):
     """
