@@ -28,6 +28,9 @@
 				</hudson.model.ChoiceParameterDefinition>
 				</parameterDefinitions>
 		</hudson.model.ParametersDefinitionProperty>
+@(SNIPPET(
+    'property_requeue-job',
+))@
 	</properties>
 @(SNIPPET(
     'scm_git',

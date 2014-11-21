@@ -25,6 +25,9 @@
         },
     ],
 ))@
+@(SNIPPET(
+    'property_requeue-job',
+))@
 	</properties>
 @(SNIPPET(
     'scm_git',

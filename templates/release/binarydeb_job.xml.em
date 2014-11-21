@@ -14,6 +14,9 @@
     priority=job_priority,
 ))@
 @[end if]@
+@(SNIPPET(
+    'property_requeue-job',
+))@
 	</properties>
 @(SNIPPET(
     'scm_null',

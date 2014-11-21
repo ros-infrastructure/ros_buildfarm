@@ -12,6 +12,9 @@
     'property_job-priority',
     priority=2,
 ))@
+@(SNIPPET(
+    'property_requeue-job',
+))@
 	</properties>
 @(SNIPPET(
     'scm_git',
