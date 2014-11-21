@@ -30,14 +30,18 @@ class BuildConfiguration(object):
         self.append_timestamp = append_timestamp
 
     @staticmethod
-    def from_args(args) -> BuildConfiguration:
-        """Load the build configuration from the command line args object."""
+    def from_args(args):
+        """
+        Load the build configuration from the command line args object.
+        @rtype: BuildConfiguration
+        """
         return BuildConfiguration(args.rosdistro_index_url, args.rosdistro_name,
                                   args.release_build_name, append_timestamp=args.append_timestamp)
 
-    def resolve(self, override: ReleaseBuildConfiguration=None) -> ReleaseBuildConfiguration:
+    def resolve(self, override=None):
         """
         Load the actual build configuration from the index file.
+        @rtype: ReleaseBuildConfiguration
         """
         index = None
         dist_file = None
@@ -150,7 +154,8 @@ class ReleaseBuildConfiguration(object):
     def verify_contains_package(self, pkg_name: str):
         self.verify_is_in_list("package name", pkg_name, self.get_package_names())
 
-    def get_package_info(self, pkg_name: str) -> PackageInfo:
+    def get_package_info(self, pkg_name: str):
+        """@rtype: PackageInfo"""
         pkg = self.dist_file.release_packages[pkg_name]
         repo_name = pkg.repository_name
         repo = self.dist_file.repositories[repo_name]
