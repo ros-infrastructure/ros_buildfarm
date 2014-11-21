@@ -1,4 +1,11 @@
+import os
 import subprocess
+
+
+def get_ros_buildfarm_url():
+    # NOTE __file__ refers to filepath of the
+    # current module (i.e. the path of git.py).
+    return get_repository_url(os.path.dirname(__file__))
 
 
 def get_repository_url(path=None):

@@ -9,6 +9,7 @@ from rosdistro import get_source_build_files
 from ros_buildfarm.common \
     import get_apt_mirrors_and_script_generating_key_files
 from ros_buildfarm.common import get_devel_view_name
+from ros_buildfarm.git import get_ros_buildfarm_url
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
@@ -188,6 +189,8 @@ def _get_devel_job_config(
         'os_code_name': os_code_name,
         'arch': arch,
         'apt_mirror_args': apt_mirror_args,
+
+        'ros_buildfarm_url': get_ros_buildfarm_url(),
 
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,

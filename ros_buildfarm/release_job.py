@@ -225,6 +225,8 @@ def _get_sourcedeb_job_config(
         'os_code_name': os_target.os_code_name,
         'apt_mirror_args': apt_mirror_args,
 
+        'ros_buildfarm_url': config.base.ros_buildfarm_url,
+
         'sourcedeb_files': sourcedeb_files,
 
         'import_package_job_name': _get_import_package_job_name(config.base),
@@ -276,6 +278,8 @@ def _get_binarydeb_job_config(config: ReleaseBuildConfiguration, os_arch_target:
         'os_code_name': os_arch_target.os_code_name,
         'arch': os_arch_target.arch,
         'apt_mirror_args': apt_mirror_args,
+
+        'ros_buildfarm_url': config.base.ros_buildfarm_url,
 
         'append_timestamp': config.base.append_timestamp,
 

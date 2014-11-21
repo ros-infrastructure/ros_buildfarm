@@ -12,6 +12,7 @@ from rosdistro.repository import Repository
 from ros_buildfarm.common import OSTarget
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import OSArchTarget
+from ros_buildfarm.git import get_ros_buildfarm_url
 from ros_buildfarm.jenkins import connect
 
 
@@ -21,11 +22,16 @@ class BuildConfiguration(object):
     as specified on the command line.
     """
 
-    def __init__(self, rosdistro_index_url, rosdistro_name, release_build_name, append_timestamp=False):
+    def __init__(self, rosdistro_index_url, rosdistro_name,
+                 release_build_name, append_timestamp=False,
+                 ros_buildfarm_url=None):
         self.rosdistro_index_url = rosdistro_index_url
         self.rosdistro_name = rosdistro_name
         self.release_build_name = release_build_name
         self.append_timestamp = append_timestamp
+        self.ros_buildfarm_url = get_ros_buildfarm_url() \
+            if ros_buildfarm_url is None \
+            else ros_buildfarm_url
 
     @staticmethod
     def from_args(args):
@@ -166,6 +172,7 @@ class ReleaseBuildConfiguration(object):
     def get_direct_dependencies(self, pkg_name: str):
         """@rtype: list[str]"""
         from catkin_pkg.package import parse_package_string
+
         assert self.dist_cache is not None
         if pkg_name not in self.dist_cache.release_package_xmls:
             return None
