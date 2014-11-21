@@ -2,7 +2,7 @@
 	<name>@view_name</name>
 	<description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
 	<filterExecutors>false</filterExecutors>
-	<filterQueue>false</filterQueue>
+	<filterQueue>true</filterQueue>
 	<properties class="hudson.model.View$PropertyList"/>
 	<jobNames>
 		<comparator class="hudson.util.CaseInsensitiveComparator"/>
