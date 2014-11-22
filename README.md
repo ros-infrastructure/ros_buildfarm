@@ -12,3 +12,4 @@ to use the
 You will need the following dependencies:
 
 * a forked version of [jenkinsapi](https://github.com/dirk-thomas/jenkinsapi/tree/feature/config_view)
+* a forked version of [rosdistro](https://github.com/dirk-thomas/ros-infrastructure_rosdistro)
