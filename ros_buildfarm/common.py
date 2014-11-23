@@ -1,16 +1,11 @@
-class OSTarget(object):
+from collections import namedtuple
+
+
+class OSTarget(namedtuple('OSTarget', 'os_name os_code_name')):
     """
     Specifies the target OS of a build as a
     combination of OS name and OS code name.
     """
-    def __init__(self, os_name: str, os_code_name: str):
-        """
-        @param os_name: The target OS name (e.g. 'Ubuntu', 'Debian')
-        @param os_code_name: The target OS code name (e.g. 'trusty', 'wheezy')
-        """
-        self.os_name = os_name
-        self.os_code_name = os_code_name
-
     def __str__(self):
         return '%s %s' % (self.os_name, self.os_code_name)
 
