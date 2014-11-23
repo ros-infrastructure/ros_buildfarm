@@ -11,7 +11,6 @@ from rosdistro.repository import Repository
 
 from ros_buildfarm.common import OSTarget
 from ros_buildfarm.common import JobValidationError
-from ros_buildfarm.common import OSArchTarget
 from ros_buildfarm.git import get_ros_buildfarm_url
 from ros_buildfarm.jenkins import connect
 
@@ -143,12 +142,11 @@ class ReleaseBuildConfiguration(object):
                                self.build_file.get_target_os_code_names(os_target.os_name))
 
     def get_target_configuration(self, target):
-        if type(target) is OSTarget:
-            return self.build_file.get_target_configuration(target.os_name, target.os_code_name)
-        if type(target) is OSArchTarget:
-            return self.build_file.get_target_configuration(target.os_name, target.os_code_name, target.arch)
-        else:
-            raise TypeError('Expected a OSTarget or OSArchTarget.')
+        os_name = target.os_name
+        os_code_name = target.os_code_name
+        arch = getattr(target, 'arch', None)
+        return self.build_file.get_target_configuration(
+            os_name, os_code_name, arch)
 
     ### Package name handling
 
