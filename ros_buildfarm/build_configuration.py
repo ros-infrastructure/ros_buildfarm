@@ -1,5 +1,3 @@
-from jenkinsapi.jenkins import Jenkins
-
 from rosdistro import get_index
 from rosdistro import get_release_build_files
 from rosdistro import get_distribution_file
@@ -97,7 +95,8 @@ class ReleaseBuildConfiguration(object):
 
     ### Jenkins handling
 
-    def connect_to_jenkins(self) -> Jenkins:
+    def connect_to_jenkins(self):
+        """@rtype: jenkinsapi.jenkins.Jenkins"""
         return connect(self.build_file.jenkins_url)
 
     ### Target OS handling
