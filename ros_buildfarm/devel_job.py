@@ -16,10 +16,12 @@ from ros_buildfarm.jenkins import connect
 from ros_buildfarm.templates import expand_template
 
 
-# For every source repository and target
-# which matches the build file criteria  invoke configure_devel_job().
 def configure_devel_jobs(
         rosdistro_index_url, rosdistro_name, source_build_name):
+    """
+    For every source repository and target
+    which matches the build file criteria  invoke configure_devel_job().
+    """
     index = get_index(rosdistro_index_url)
     build_files = get_source_build_files(index, rosdistro_name)
     build_file = build_files[source_build_name]
@@ -65,16 +67,18 @@ def configure_devel_jobs(
                 dist_cache=dist_cache, jenkins=jenkins, view=view)
 
 
-# Configure a Jenkins devel job which
-# - clones the source repository to use
-# - clones the ros_buildfarm repository
-# - writes the distribution repository keys into files
-# - invokes the run_devel_job script
 def configure_devel_job(
         rosdistro_index_url, rosdistro_name, source_build_name,
         repo_name, os_name, os_code_name, arch,
         index=None, build_file=None, dist_file=None, dist_cache=None,
         jenkins=None, view=None):
+    """
+    Configure a Jenkins devel job which
+    - clones the source repository to use
+    - clones the ros_buildfarm repository
+    - writes the distribution repository keys into files
+    - invokes the run_devel_job script
+    """
     if index is None:
         index = get_index(rosdistro_index_url)
     if build_file is None:
