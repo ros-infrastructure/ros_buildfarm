@@ -10,14 +10,13 @@ class OSTarget(namedtuple('OSTarget', 'os_name os_code_name')):
         return '%s %s' % (self.os_name, self.os_code_name)
 
 
-class OSArchTarget(object):
+class OSArchTarget(namedtuple('OSArchTarget', 'os_target arch')):
     """
     Specifies the target OS and architecture
     of a build.
     """
-    def __init__(self, os_target: OSTarget, arch: str):
-        self.os_target = os_target
-        self.arch = arch
+    def __new__(cls, os_target: OSTarget, arch: str):
+        return super(OSArchTarget, cls).__new__(cls, os_target, arch)
 
     @property
     def os_name(self) -> str:
