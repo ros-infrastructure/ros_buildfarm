@@ -38,8 +38,12 @@ class BuildConfiguration(object):
         Load the build configuration from the command line args object.
         @rtype: BuildConfiguration
         """
-        return BuildConfiguration(args.rosdistro_index_url, args.rosdistro_name,
-                                  args.release_build_name, append_timestamp=args.append_timestamp)
+        return BuildConfiguration(
+            args.rosdistro_index_url,
+            args.rosdistro_name,
+            args.release_build_name,
+            append_timestamp=getattr(args, 'append_timestamp', None)
+        )
 
     def resolve(self, override=None):
         """
