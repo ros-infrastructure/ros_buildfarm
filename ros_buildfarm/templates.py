@@ -58,6 +58,19 @@ def _expand_snippet(snippet_name, **kwargs):
 
 
 def create_dockerfile(template_name, data, dockerfile_dir):
+    wrapper_scripts = {}
+    wrapper_script_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), 'scripts', 'wrapper')
+    for filename in os.listdir(wrapper_script_path):
+        if not filename.endswith('.py'):
+            continue
+        abs_file_path = os.path.join(wrapper_script_path, filename)
+        with open(abs_file_path, 'r') as h:
+            content = h.read()
+            wrapper_scripts[filename] = content
+            print(content)
+    data['wrapper_scripts'] = wrapper_scripts
+
     content = expand_template(template_name, data)
     dockerfile = os.path.join(dockerfile_dir, 'Dockerfile')
     print("Generating Dockerfile '%s':" % dockerfile)
@@ -65,11 +78,3 @@ def create_dockerfile(template_name, data, dockerfile_dir):
         print(' ', line)
     with open(dockerfile, 'w') as h:
         h.write(content)
-
-    wrapper_script_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), 'scripts', 'wrapper')
-    for filename in os.listdir(wrapper_script_path):
-        if not filename.endswith('.py'):
-            continue
-        abs_file_path = os.path.join(wrapper_script_path, filename)
-        shutil.copy(abs_file_path, dockerfile_dir)

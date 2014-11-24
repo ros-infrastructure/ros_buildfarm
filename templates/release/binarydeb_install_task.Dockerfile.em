@@ -23,8 +23,12 @@ now_isoformat = datetime.datetime.now().isoformat()
 }@
 RUN echo "@now_isoformat"
 
-ADD apt-get.py /tmp/
-RUN python3 -u /tmp/apt-get.py update
+RUN mkdir /tmp/wrapper_scripts
+@[for filename, content in wrapper_scripts.items()]@
+RUN echo "@('\\n'.join(content.replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
+@[end for]@
+
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py update
 
 ENTRYPOINT ["sh", "-c"]
 CMD ["dpkg -i --force-depends /tmp/binarydeb/*.deb && apt-get -f -y install"]

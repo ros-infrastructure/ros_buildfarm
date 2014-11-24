@@ -28,16 +28,20 @@ today_isoformat = datetime.date.today().isoformat()
 }@
 RUN echo "@today_isoformat"
 
-ADD apt-get.py /tmp/
-RUN python3 -u /tmp/apt-get.py update
+RUN mkdir /tmp/wrapper_scripts
+@[for filename, content in wrapper_scripts.items()]@
+RUN echo "@('\\n'.join(content.replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
+@[end for]@
+
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py update
 
 # get_sources dependencies
 # TODO use python3-rosdistro instead of source checkout
-RUN python3 -u /tmp/apt-get.py install -q -y git python3 python3-catkin-pkg python3-yaml
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y git python3 python3-catkin-pkg python3-yaml
 # build_sourcedeb dependencies
-RUN python3 -u /tmp/apt-get.py install -q -y debhelper dpkg dpkg-dev git-buildpackage
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y debhelper dpkg dpkg-dev git-buildpackage
 # upload_sourcedeb dependencies
-RUN python3 -u /tmp/apt-get.py install -q -y openssh-client
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y openssh-client
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
