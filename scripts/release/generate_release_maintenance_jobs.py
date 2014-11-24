@@ -39,6 +39,8 @@ def main(argv=sys.argv[1:]):
         args, build_file)
     trigger_jobs_job_config = get_trigger_jobs_job_config(
         args, build_file)
+    import_upstream_job_config = get_import_upstream_job_config(
+        args, build_file)
 
     jenkins = connect(build_file.jenkins_url)
 
@@ -53,6 +55,9 @@ def main(argv=sys.argv[1:]):
     job_name = '%s_%s' % (group_name, 'trigger-jobs')
     configure_job(jenkins, job_name, trigger_jobs_job_config, view=view)
 
+    job_name = 'import_upstream'
+    configure_job(jenkins, job_name, import_upstream_job_config, view=view)
+
 
 def get_reconfigure_jobs_job_config(args, build_file):
     template_name = 'release/release_reconfigure-jobs_job.xml.em'
@@ -61,6 +66,11 @@ def get_reconfigure_jobs_job_config(args, build_file):
 
 def get_trigger_jobs_job_config(args, build_file):
     template_name = 'release/release_trigger-jobs_job.xml.em'
+    return _get_job_config(args, build_file, template_name)
+
+
+def get_import_upstream_job_config(args, build_file):
+    template_name = 'release/import_upstream_job.xml.em'
     return _get_job_config(args, build_file, template_name)
 
 
