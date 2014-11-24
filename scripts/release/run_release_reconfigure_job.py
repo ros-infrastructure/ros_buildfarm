@@ -6,6 +6,9 @@ import os
 import sys
 
 from ros_buildfarm.argument import add_argument_build_name
+from ros_buildfarm.argument import add_argument_distribution_repository_key_files
+from ros_buildfarm.argument import add_argument_distribution_repository_urls
+from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_distribution_repository_keys
@@ -18,22 +21,9 @@ def main(argv=sys.argv[1:]):
     add_argument_rosdistro_index_url(parser, required=True)
     add_argument_rosdistro_name(parser)
     add_argument_build_name(parser, 'source')
-    parser.add_argument(
-        '--distribution-repository-urls',
-        nargs='*',
-        default=[],
-        help='The list of distribution repository URLs to use for installing '
-             'dependencies')
-    parser.add_argument(
-        '--distribution-repository-key-files',
-        nargs='*',
-        default=[],
-        help='The list of distribution repository key files to verify the '
-             'corresponding URLs')
-    parser.add_argument(
-        '--dockerfile-dir',
-        default=os.curdir,
-        help="The directory where the 'Dockerfile' will be generated")
+    add_argument_distribution_repository_urls(parser)
+    add_argument_distribution_repository_key_files(parser)
+    add_argument_dockerfile_dir(parser)
     args = parser.parse_args(argv)
 
     data = copy.deepcopy(args.__dict__)

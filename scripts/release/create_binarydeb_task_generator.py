@@ -10,6 +10,9 @@ from rosdistro import get_index
 from apt import Cache
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_binarydeb_dir
+from ros_buildfarm.argument import add_argument_distribution_repository_key_files
+from ros_buildfarm.argument import add_argument_distribution_repository_urls
+from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
@@ -30,23 +33,10 @@ def main(argv=sys.argv[1:]):
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)  # TODO not yet supported
-    parser.add_argument(
-        '--distribution-repository-urls',
-        nargs='*',
-        default=[],
-        help='The list of distribution repository URLs to use for installing '
-             'dependencies')
-    parser.add_argument(
-        '--distribution-repository-key-files',
-        nargs='*',
-        default=[],
-        help='The list of distribution repository key files to verify the '
-             'corresponding URLs')
+    add_argument_distribution_repository_urls(parser)
+    add_argument_distribution_repository_key_files(parser)
     add_argument_binarydeb_dir(parser)
-    parser.add_argument(
-        '--dockerfile-dir',
-        default=os.curdir,
-        help="The directory where the 'Dockerfile' will be generated")
+    add_argument_dockerfile_dir(parser)
     args = parser.parse_args(argv)
 
     debian_package_name = get_debian_package_name(

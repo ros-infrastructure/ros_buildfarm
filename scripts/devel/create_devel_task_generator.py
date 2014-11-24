@@ -6,6 +6,9 @@ import sys
 
 from apt import Cache
 from catkin_pkg.packages import find_packages
+from ros_buildfarm.argument import add_argument_distribution_repository_key_files
+from ros_buildfarm.argument import add_argument_distribution_repository_urls
+from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.templates import create_dockerfile
@@ -34,22 +37,9 @@ def main(argv=sys.argv[1:]):
         '--os-code-name',
         required=True,
         help="The OS code name (e.g. 'trusty')")
-    parser.add_argument(
-        '--distribution-repository-urls',
-        nargs='*',
-        default=[],
-        help='The list of distribution repository URLs to use for installing '
-             'dependencies')
-    parser.add_argument(
-        '--distribution-repository-key-files',
-        nargs='*',
-        default=[],
-        help='The list of distribution repository key files to verify the '
-             'corresponding URLs')
-    parser.add_argument(
-        '--dockerfile-dir',
-        default=os.curdir,
-        help="The directory where the 'Dockerfile' will be generated")
+    add_argument_distribution_repository_urls(parser)
+    add_argument_distribution_repository_key_files(parser)
+    add_argument_dockerfile_dir(parser)
     parser.add_argument(
         '--testing',
         action='store_true',
