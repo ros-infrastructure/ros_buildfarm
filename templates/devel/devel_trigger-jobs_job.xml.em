@@ -1,52 +1,52 @@
 <project>
-	<actions/>
-	<description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
+  <actions/>
+  <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
 @(SNIPPET(
     'log-rotator',
     days_to_keep=365,
     num_to_keep=10,
 ))@
-	<keepDependencies>false</keepDependencies>
-	<properties>
+  <keepDependencies>false</keepDependencies>
+  <properties>
 @(SNIPPET(
     'property_job-priority',
     priority=2,
 ))@
-		<hudson.model.ParametersDefinitionProperty>
-			<parameterDefinitions>
-				<hudson.model.ChoiceParameterDefinition>
-					<name>filter</name>
-					<description/>
-					<choices class="java.util.Arrays$ArrayList">
-						<a class="string-array">
-							<string>not_stable</string>
-							<string>worse_than_unstable</string>
-							<string>all</string>
-							<string>stable</string>
-							<string>unstable</string>
-							<string>failure</string>
-							<string>aborted</string>
-							<string>not_built</string>
-							</a>
-					</choices>
-				</hudson.model.ChoiceParameterDefinition>
-				</parameterDefinitions>
-		</hudson.model.ParametersDefinitionProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>filter</name>
+          <description/>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>not_stable</string>
+              <string>worse_than_unstable</string>
+              <string>all</string>
+              <string>stable</string>
+              <string>unstable</string>
+              <string>failure</string>
+              <string>aborted</string>
+              <string>not_built</string>
+              </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
 @(SNIPPET(
     'property_requeue-job',
 ))@
-	</properties>
+  </properties>
 @(SNIPPET(
     'scm_null',
 ))@
-	<assignedNode>master</assignedNode>
-	<canRoam>false</canRoam>
-	<disabled>false</disabled>
-	<blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-	<blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-	<triggers/>
-	<concurrentBuild>false</concurrentBuild>
-	<builders>
+  <assignedNode>master</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
 @(SNIPPET(
     'builder_system-groovy',
     command=
@@ -109,18 +109,18 @@ for (p in hudson.model.Hudson.instance.getAllItems(AbstractProject)) {
 }
 """ % project_name_pattern,
 ))@
-	</builders>
-	<publishers>
+  </builders>
+  <publishers>
 @(SNIPPET(
     'publisher_mailer',
     recipients=recipients,
     dynamic_recipients=[],
     send_to_individuals=False,
 ))@
-	</publishers>
-	<buildWrappers>
+  </publishers>
+  <buildWrappers>
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
-	</buildWrappers>
+  </buildWrappers>
 </project>

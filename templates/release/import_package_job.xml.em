@@ -1,13 +1,13 @@
 <project>
-	<actions/>
-	<description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
+  <actions/>
+  <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
 @(SNIPPET(
     'log-rotator',
     days_to_keep=100,
     num_to_keep=100,
 ))@
-	<keepDependencies>false</keepDependencies>
-	<properties>
+  <keepDependencies>false</keepDependencies>
+  <properties>
 @(SNIPPET(
     'property_parameters-definition',
     parameters=[
@@ -28,21 +28,21 @@
 @(SNIPPET(
     'property_requeue-job',
 ))@
-	</properties>
+  </properties>
 @(SNIPPET(
     'scm_git',
     url='https://github.com/ros-infrastructure/reprepro-updater.git',
     refspec='refactor',
     relative_target_dir='reprepro-updater',
 ))@
-	<assignedNode>building_repository</assignedNode>
-	<canRoam>false</canRoam>
-	<disabled>false</disabled>
-	<blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-	<blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-	<triggers/>
-	<concurrentBuild>false</concurrentBuild>
-	<builders>
+  <assignedNode>building_repository</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
@@ -52,8 +52,8 @@
         'echo "# END SECTION"',
     ]),
 ))@
-	</builders>
-	<publishers>
+  </builders>
+  <publishers>
 @(SNIPPET(
     'publisher_description-setter',
     regexp="Imported package: ([^\s]+)",
@@ -64,10 +64,10 @@
     dynamic_recipients=[],
     send_to_individuals=False,
 ))@
-	</publishers>
-	<buildWrappers>
+  </publishers>
+  <buildWrappers>
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
-	</buildWrappers>
+  </buildWrappers>
 </project>

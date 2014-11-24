@@ -1,13 +1,13 @@
 <project>
-	<actions/>
-	<description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
+  <actions/>
+  <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
 @(SNIPPET(
     'log-rotator',
     days_to_keep=180,
     num_to_keep=30,
 ))@
-	<keepDependencies>false</keepDependencies>
-	<properties>
+  <keepDependencies>false</keepDependencies>
+  <properties>
 @[if job_priority is not None]@
 @(SNIPPET(
     'property_job-priority',
@@ -17,25 +17,25 @@
 @(SNIPPET(
     'property_requeue-job',
 ))@
-	</properties>
+  </properties>
 @(SNIPPET(
     'scm_null',
 ))@
-	<assignedNode>buildslave</assignedNode>
-	<canRoam>false</canRoam>
-	<disabled>false</disabled>
-	<blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-	<blockBuildWhenUpstreamBuilding>true</blockBuildWhenUpstreamBuilding>
-	<triggers>
+  <assignedNode>buildslave</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>true</blockBuildWhenUpstreamBuilding>
+  <triggers>
 @[if upstream_projects]@
 @(SNIPPET(
     'trigger_reverse-build',
     upstream_projects=upstream_projects,
 ))@
 @[end if]@
-	</triggers>
-	<concurrentBuild>false</concurrentBuild>
-	<builders>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
 @(SNIPPET(
     'builder_system-groovy_verify-upstream',
 ))@
@@ -161,8 +161,8 @@
         'subfolder=%s/${JOB_NAME}__${BUILD_NUMBER}' % os_code_name,
         'debian_package_name=%s' % debian_package_name]),
 ))@
-	</builders>
-	<publishers>
+  </builders>
+  <publishers>
 @(SNIPPET(
     'publisher_description-setter',
     regexp="Package '[^']+' version: ([^\s]+)",
@@ -178,8 +178,8 @@
     dynamic_recipients=maintainer_emails,
     send_to_individuals=False,
 ))@
-	</publishers>
-	<buildWrappers>
+  </publishers>
+  <buildWrappers>
 @[if timeout_minutes is not None]@
 @(SNIPPET(
     'build-wrapper_build-timeout',
@@ -192,5 +192,5 @@
 @(SNIPPET(
     'build-wrapper_ssh-agent_credential-id',
 ))@
-	</buildWrappers>
+  </buildWrappers>
 </project>

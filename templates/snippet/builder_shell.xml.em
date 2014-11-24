@@ -1,3 +1,3 @@
-		<hudson.tasks.Shell>
-			<command>@ESCAPE(script)</command>
-		</hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>@ESCAPE(script)</command>
+    </hudson.tasks.Shell>

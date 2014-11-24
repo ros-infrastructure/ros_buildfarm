@@ -1,1 +1,1 @@
-	<scm class="hudson.scm.NullSCM"/>
+  <scm class="hudson.scm.NullSCM"/>

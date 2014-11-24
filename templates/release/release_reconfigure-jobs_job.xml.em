@@ -1,13 +1,13 @@
 <project>
-	<actions/>
-	<description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
+  <actions/>
+  <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
 @(SNIPPET(
     'log-rotator',
     days_to_keep=100,
     num_to_keep=100,
 ))@
-	<keepDependencies>false</keepDependencies>
-	<properties>
+  <keepDependencies>false</keepDependencies>
+  <properties>
 @(SNIPPET(
     'property_job-priority',
     priority=2,
@@ -15,26 +15,26 @@
 @(SNIPPET(
     'property_requeue-job',
 ))@
-	</properties>
+  </properties>
 @(SNIPPET(
     'scm_git',
     url=ros_buildfarm_url,
     refspec='master',
     relative_target_dir='ros_buildfarm',
 ))@
-	<assignedNode>master</assignedNode>
-	<canRoam>false</canRoam>
-	<disabled>false</disabled>
-	<blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-	<blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-	<triggers>
+  <assignedNode>master</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
 @(SNIPPET(
     'trigger_timer',
     spec='0 23 * * *',
 ))@
-	</triggers>
-	<concurrentBuild>false</concurrentBuild>
-	<builders>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
 @(SNIPPET(
     'builder_shell_key-files',
     script_generating_key_files=script_generating_key_files,
@@ -76,18 +76,18 @@
         'echo "# END SECTION"',
     ]),
 ))@
-	</builders>
-	<publishers>
+  </builders>
+  <publishers>
 @(SNIPPET(
     'publisher_mailer',
     recipients=recipients,
     dynamic_recipients=[],
     send_to_individuals=False,
 ))@
-	</publishers>
-	<buildWrappers>
+  </publishers>
+  <buildWrappers>
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
-	</buildWrappers>
+  </buildWrappers>
 </project>

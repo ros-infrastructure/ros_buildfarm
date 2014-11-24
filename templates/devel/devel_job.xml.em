@@ -1,13 +1,13 @@
 <project>
-	<actions/>
-	<description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
+  <actions/>
+  <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
 @(SNIPPET(
     'log-rotator',
     days_to_keep=100,
     num_to_keep=100,
 ))@
-	<keepDependencies>false</keepDependencies>
-	<properties>
+  <keepDependencies>false</keepDependencies>
+  <properties>
 @[if job_priority is not None]@
 @(SNIPPET(
     'property_job-priority',
@@ -17,25 +17,25 @@
 @(SNIPPET(
     'property_requeue-job',
 ))@
-	</properties>
+  </properties>
 @(SNIPPET(
     'scm',
     repo_spec=source_repo_spec,
     path='catkin_workspace/src/%s' % source_repo_spec.name
 ))@
-	<assignedNode>buildslave</assignedNode>
-	<canRoam>false</canRoam>
-	<disabled>false</disabled>
-	<blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-	<blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-	<triggers>
+  <assignedNode>buildslave</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
 @(SNIPPET(
     'trigger_poll',
     spec='H * * * *',
 ))@
-	</triggers>
-	<concurrentBuild>true</concurrentBuild>
-	<builders>
+  </triggers>
+  <concurrentBuild>true</concurrentBuild>
+  <builders>
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
@@ -126,8 +126,8 @@
         'echo "# END SECTION"',
     ]),
 ))@
-	</builders>
-	<publishers>
+  </builders>
+  <publishers>
 @(SNIPPET(
     'publisher_xunit',
     pattern='catkin_workspace/build_isolated/**/*.xml',
@@ -143,8 +143,8 @@
     dynamic_recipients=maintainer_emails,
     send_to_individuals=notify_committers,
 ))@
-	</publishers>
-	<buildWrappers>
+  </publishers>
+  <buildWrappers>
 @[if timeout_minutes is not None]@
 @(SNIPPET(
     'build-wrapper_build-timeout',
@@ -154,5 +154,5 @@
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
-	</buildWrappers>
+  </buildWrappers>
 </project>
