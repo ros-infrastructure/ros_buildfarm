@@ -18,13 +18,13 @@ RUN apt-key add /tmp/keys/@(i).key
 RUN echo deb @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.list
 @[end for]@
 
+RUN mkdir /tmp/wrapper_scripts
+@[for filename, content in wrapper_scripts.items()]@
+RUN echo "@('\\n'.join(content.replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
+@[end for]@
+
 # optionally manual cache invalidation for core dependencies
 RUN echo "2014-10-20"
-
-# if any dependency version has changed invalidate cache
-@[for k in sorted(dependency_versions.keys())]@
-RUN echo "@k: @dependency_versions[k]"
-@[end for]@
 
 # automatic invalidation once every day
 @{
@@ -33,15 +33,9 @@ today_isoformat = datetime.date.today().isoformat()
 }@
 RUN echo "@today_isoformat"
 
-RUN mkdir /tmp/wrapper_scripts
-@[for filename, content in wrapper_scripts.items()]@
-RUN echo "@('\\n'.join(content.replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
-@[end for]@
-
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update
-
+# for each dependency: echo version, apt-get update, apt-get install
 @[for d in dependencies]@
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y @d
+RUN echo "@d: @dependency_versions[d]" && python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y @d
 @[end for]@
 
 USER buildfarm

@@ -26,10 +26,13 @@ RUN echo deb http://archive.ubuntu.com/ubuntu @os_code_name multiverse | tee -a 
 RUN echo deb http://http.debian.net/debian @os_code_name contrib non-free | tee -a /etc/apt/sources.list
 @[end if]@
 
-# if any dependency version has changed invalidate cache
-@[for k in sorted(dependency_versions.keys())]@
-RUN echo "@k: @dependency_versions[k]"
+RUN mkdir /tmp/wrapper_scripts
+@[for filename, content in wrapper_scripts.items()]@
+RUN echo "@('\\n'.join(content.replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
 @[end for]@
+
+# optionally manual cache invalidation for core dependencies
+RUN echo "2014-10-20"
 
 # automatic invalidation once every day
 @{
@@ -38,15 +41,9 @@ today_isoformat = datetime.date.today().isoformat()
 }@
 RUN echo "@today_isoformat"
 
-RUN mkdir /tmp/wrapper_scripts
-@[for filename, content in wrapper_scripts.items()]@
-RUN echo "@('\\n'.join(content.replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
-@[end for]@
-
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update
-
+# for each dependency: echo version, apt-get update, apt-get install
 @[for d in dependencies]@
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y @d
+RUN echo "@d: @dependency_versions[d]" && python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y @d
 @[end for]@
 
 USER buildfarm
