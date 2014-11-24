@@ -1,3 +1,17 @@
+from collections import namedtuple
+
+
+class OSTarget(namedtuple('OSTarget', 'os_name os_code_name')):
+    """
+    Specifies the target OS of a build.
+
+    The target OS is given as a combination of OS name and OS code name.
+    """
+
+    def __str__(self):
+        return '%s %s' % (self.os_name, self.os_code_name)
+
+
 class JobValidationError(Exception):
     """
     Indicates that the validation of a build job failed.
