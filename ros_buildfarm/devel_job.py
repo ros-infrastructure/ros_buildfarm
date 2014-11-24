@@ -19,10 +19,14 @@ from ros_buildfarm.jenkins import remove_jobs
 from ros_buildfarm.templates import expand_template
 
 
-# For every source repository and target
-# which matches the build file criteria  invoke configure_devel_job().
 def configure_devel_jobs(
         config_url, rosdistro_name, source_build_name):
+    """
+    Configure all Jenkins devel jobs.
+
+    L{configure_release_job} will be invoked for source repository and target
+    which matches the build file criteria.
+    """
     config = get_config_index(config_url)
     build_files = get_source_build_files(config, rosdistro_name)
     build_file = build_files[source_build_name]
@@ -79,17 +83,21 @@ def configure_devel_jobs(
     remove_jobs(jenkins, '%s__' % view_name, job_names)
 
 
-# Configure a Jenkins devel job which
-# - clones the source repository to use
-# - clones the ros_buildfarm repository
-# - writes the distribution repository keys into files
-# - invokes the run_devel_job script
 def configure_devel_job(
         config_url, rosdistro_name, source_build_name,
         repo_name, os_name, os_code_name, arch,
         config=None, build_file=None,
         index=None, dist_file=None, dist_cache=None,
         jenkins=None, view=None):
+    """
+    Configure a single Jenkins devel job.
+
+    This includes the following steps:
+    - clone the source repository to use
+    - clone the ros_buildfarm repository
+    - write the distribution repository keys into files
+    - invoke the release/run_devel_job.py script
+    """
     if config is None:
         config = get_config_index(config_url)
     if build_file is None:
