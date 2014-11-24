@@ -28,7 +28,7 @@ today_isoformat = datetime.date.today().isoformat()
 }@
 RUN echo "@today_isoformat"
 
-ADD apt-get.py /tmp/
+COPY apt-get.py /tmp/apt-get.py
 RUN python3 -u /tmp/apt-get.py update
 RUN python3 -u /tmp/apt-get.py install -q -y python3-catkin-pkg python3-empy python3-pip python3-yaml
 RUN pip3 install https://github.com/dirk-thomas/jenkinsapi/archive/feature/config_view.zip

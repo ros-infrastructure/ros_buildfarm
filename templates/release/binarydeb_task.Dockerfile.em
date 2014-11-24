@@ -33,7 +33,7 @@ today_isoformat = datetime.date.today().isoformat()
 }@
 RUN echo "@today_isoformat"
 
-ADD apt-get.py /tmp/
+COPY apt-get.py /tmp/apt-get.py
 RUN python3 -u /tmp/apt-get.py update
 
 @[for d in dependencies]@
