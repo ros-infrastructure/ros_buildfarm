@@ -1,3 +1,16 @@
+class JobValidationError(Exception):
+    """
+    Indicates that the validation of a build job failed.
+
+    This exception is raised by the reconfigure_*_job functions
+    if validation fails, e.g. because the requested package
+    is not available in the specified index.yaml
+    """
+
+    def __init__(self, message):
+        self.message = message
+
+
 class Scope(object):
 
     def __init__(self, scope_name, description):
