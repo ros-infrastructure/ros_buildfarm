@@ -2,6 +2,7 @@ from em import Error
 from em import Interpreter
 from io import StringIO
 import os
+import shutil
 import sys
 from xml.sax.saxutils import escape
 
@@ -54,3 +55,21 @@ def _expand_snippet(snippet_name, **kwargs):
         print("%s in snippet '%s': %s" %
               (e.__class__.__name__, snippet_name, str(e)), file=sys.stderr)
         sys.exit(1)
+
+
+def create_dockerfile(template_name, data, dockerfile_dir):
+    content = expand_template(template_name, data)
+    dockerfile = os.path.join(dockerfile_dir, 'Dockerfile')
+    print("Generating Dockerfile '%s':" % dockerfile)
+    for line in content.splitlines():
+        print(' ', line)
+    with open(dockerfile, 'w') as h:
+        h.write(content)
+
+    wrapper_script_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), 'scripts', 'wrapper')
+    for filename in os.listdir(wrapper_script_path):
+        if not filename.endswith('.py'):
+            continue
+        abs_file_path = os.path.join(wrapper_script_path, filename)
+        shutil.copy(abs_file_path, dockerfile_dir)

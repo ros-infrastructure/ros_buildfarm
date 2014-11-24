@@ -15,7 +15,7 @@ from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_download_sourcedeb
 from ros_buildfarm.common import get_distribution_repository_keys
-from ros_buildfarm.templates import expand_template
+from ros_buildfarm.templates import create_dockerfile
 
 
 def main(argv=sys.argv[1:]):
@@ -65,15 +65,9 @@ def main(argv=sys.argv[1:]):
         'binarydeb_dir': '/tmp/binarydeb',
         'dockerfile_dir': '/tmp/docker_build_binarydeb',
     })
-
-    content = expand_template(
-        'release/binarydeb_create_task.Dockerfile.em', data)
-    dockerfile = os.path.join(args.dockerfile_dir, 'Dockerfile')
-    print("Generating Dockerfile '%s':" % dockerfile)
-    for line in content.splitlines():
-        print(' ', line)
-    with open(dockerfile, 'w') as h:
-        h.write(content)
+    create_dockerfile(
+        'release/binarydeb_create_task.Dockerfile.em',
+        data, args.dockerfile_dir)
 
 
 if __name__ == '__main__':

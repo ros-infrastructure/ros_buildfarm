@@ -18,7 +18,7 @@ from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_distribution_repository_keys
-from ros_buildfarm.templates import expand_template
+from ros_buildfarm.templates import create_dockerfile
 
 
 def main(argv=sys.argv[1:]):
@@ -97,13 +97,8 @@ def main(argv=sys.argv[1:]):
         'package_name': args.package_name,
         'binarydeb_dir': args.binarydeb_dir,
     }
-    content = expand_template('release/binarydeb_task.Dockerfile.em', data)
-    dockerfile = os.path.join(args.dockerfile_dir, 'Dockerfile')
-    print("Generating Dockerfile '%s':" % dockerfile)
-    for line in content.splitlines():
-        print(' ', line)
-    with open(dockerfile, 'w') as h:
-        h.write(content)
+    create_dockerfile(
+        'release/binarydeb_task.Dockerfile.em', data, args.dockerfile_dir)
 
     # output hints about necessary volumes to mount
     ros_buildfarm_basepath = os.path.normpath(

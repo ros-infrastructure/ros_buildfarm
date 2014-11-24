@@ -13,7 +13,7 @@ from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_distribution_repository_keys
-from ros_buildfarm.templates import expand_template
+from ros_buildfarm.templates import create_dockerfile
 
 
 def main(argv=sys.argv[1:]):
@@ -63,14 +63,8 @@ def main(argv=sys.argv[1:]):
 
         'uid': os.getuid(),
     })
-
-    content = expand_template('devel/devel_create_tasks.Dockerfile.em', data)
-    dockerfile = os.path.join(args.dockerfile_dir, 'Dockerfile')
-    print("Generating Dockerfile '%s':" % dockerfile)
-    for line in content.splitlines():
-        print(' ', line)
-    with open(dockerfile, 'w') as h:
-        h.write(content)
+    create_dockerfile(
+        'devel/devel_create_tasks.Dockerfile.em', data, args.dockerfile_dir)
 
 
 if __name__ == '__main__':

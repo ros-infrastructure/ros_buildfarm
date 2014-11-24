@@ -8,7 +8,7 @@ from apt import Cache
 from catkin_pkg.packages import find_packages
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
-from ros_buildfarm.templates import expand_template
+from ros_buildfarm.templates import create_dockerfile
 from rosdep2 import create_default_installer_context
 from rosdep2.catkin_support import get_catkin_view
 from rosdep2.catkin_support import resolve_for_os
@@ -127,13 +127,8 @@ def main(argv=sys.argv[1:]):
 
         'testing': args.testing,
     }
-    content = expand_template('devel/devel_task.Dockerfile.em', data)
-    dockerfile = os.path.join(args.dockerfile_dir, 'Dockerfile')
-    print("Generating Dockerfile '%s':" % dockerfile)
-    for line in content.splitlines():
-        print(' ', line)
-    with open(dockerfile, 'w') as h:
-        h.write(content)
+    create_dockerfile(
+        'devel/devel_task.Dockerfile.em', data, args.dockerfile_dir)
 
     # output hints about necessary volumes to mount
     ros_buildfarm_basepath = os.path.normpath(

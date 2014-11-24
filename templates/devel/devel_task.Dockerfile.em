@@ -38,10 +38,11 @@ today_isoformat = datetime.date.today().isoformat()
 }@
 RUN echo "@today_isoformat"
 
-RUN apt-get update
+ADD apt-get.py /tmp/
+RUN python3 -u /tmp/apt-get.py update
 
 @[for d in dependencies]@
-RUN apt-get install -q -y @d
+RUN python3 -u /tmp/apt-get.py install -q -y @d
 @[end for]@
 
 USER buildfarm
