@@ -7,6 +7,7 @@ from ros_buildfarm.argument import add_argument_append_timestamp
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.build_configuration import BuildConfiguration
 from ros_buildfarm.release_job import configure_release_jobs
 
 
@@ -19,9 +20,7 @@ def main(argv=sys.argv[1:]):
     add_argument_append_timestamp(parser)
     args = parser.parse_args(argv)
 
-    return configure_release_jobs(
-        args.rosdistro_index_url, args.rosdistro_name, args.release_build_name,
-        append_timestamp=args.append_timestamp)
+    return configure_release_jobs(BuildConfiguration.from_args(args))
 
 
 if __name__ == '__main__':

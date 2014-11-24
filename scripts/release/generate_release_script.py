@@ -12,6 +12,9 @@ from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.build_configuration import BuildConfiguration
+from ros_buildfarm.build_configuration import BuildType
+from ros_buildfarm.common import OSTarget
 from ros_buildfarm.release_job import configure_release_job
 from ros_buildfarm.release_job import get_binarydeb_job_name
 from ros_buildfarm.release_job import get_sourcedeb_job_name
@@ -47,8 +50,9 @@ def main(argv=sys.argv[1:]):
     templates.template_hook = template_hook
 
     configure_release_job(
-        args.rosdistro_index_url, args.rosdistro_name, args.release_build_name,
-        args.package_name, args.os_name, args.os_code_name,
+        config=BuildConfiguration.from_args(args).resolve(BuildType.release),
+        pkg_name=args.package_name,
+        os_target=OSTarget(args.os_name, args.os_code_name),
         jenkins=False, view=False, generate_import_package_job=False,
         filter_arches=args.arch)
 

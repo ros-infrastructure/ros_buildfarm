@@ -14,7 +14,7 @@ from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import \
     get_apt_mirrors_and_script_generating_key_files
 from ros_buildfarm.common import get_release_view_name
-from ros_buildfarm.git import get_repository_url
+from ros_buildfarm.git import get_ros_buildfarm_url
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
@@ -83,7 +83,7 @@ def _get_job_config(args, build_file, template_name):
         'release_build_name': args.release_build_name,
         'apt_mirror_args': apt_mirror_args,
 
-        'ros_buildfarm_url': get_repository_url('.'),
+        'ros_buildfarm_url': get_ros_buildfarm_url(),
 
         'credentials_src': os.path.join(
             '/var/lib/jenkins',

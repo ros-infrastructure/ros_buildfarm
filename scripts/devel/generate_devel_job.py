@@ -10,6 +10,10 @@ from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.build_configuration import BuildConfiguration
+from ros_buildfarm.build_configuration import BuildType
+from ros_buildfarm.common import OSArchTarget
+from ros_buildfarm.common import OSTarget
 from ros_buildfarm.devel_job import configure_devel_job
 
 
@@ -26,8 +30,10 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
 
     return configure_devel_job(
-        args.rosdistro_index_url, args.rosdistro_name, args.source_build_name,
-        args.repository_name, args.os_name, args.os_code_name, args.arch)
+        config=BuildConfiguration.from_args(args).resolve(BuildType.source),
+        repo_name=args.repository_name,
+        os_arch_target=OSArchTarget(OSTarget(args.os_name, args.os_code_name), args.arch)
+    )
 
 
 if __name__ == '__main__':

@@ -102,11 +102,43 @@ def add_argument_output_dir(parser):
         help='The output directory')
 
 
+def add_argument_dockerfile_dir(parser):
+    parser.add_argument(
+        '--dockerfile-dir',
+        default=os.curdir,
+        help="The directory where the 'Dockerfile' will be generated")
+
+
+def add_argument_workspace_root(parser):
+    parser.add_argument(
+        '--workspace-root',
+        required=True,
+        help='The root path of the workspace to compile')
+
+
 def add_argument_debian_repository_urls(parser, nargs='+'):
     parser.add_argument(
         'debian_repository_urls',
         nargs=nargs,
         help='The URLs of Debian repositories')
+
+
+def add_argument_distribution_repository_urls(parser):
+    parser.add_argument(
+        '--distribution-repository-urls',
+        nargs='*',
+        default=[],
+        help='The list of distribution repository URLs to use for installing '
+             'dependencies')
+
+
+def add_argument_distribution_repository_key_files(parser):
+    parser.add_argument(
+        '--distribution-repository-key-files',
+        nargs='*',
+        default=[],
+        help='The list of distribution repository key files to verify the '
+             'corresponding URLs')
 
 
 def add_argument_cache_dir(parser, default=None):
