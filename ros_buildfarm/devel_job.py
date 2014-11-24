@@ -15,8 +15,10 @@ from ros_buildfarm.templates import expand_template
 
 def configure_devel_jobs(build_cfg: BuildConfiguration):
     """
-    For every source repository and target
-    which matches the build file criteria  invoke configure_devel_job().
+    Configure all available devel jobs.
+
+    For every source repository and target which matches the
+    build file criteria invoke configure_devel_job().
     """
     config = build_cfg.resolve(build_type=BuildType.source)
 
@@ -61,11 +63,13 @@ def configure_devel_job(
         os_arch_target: OSArchTarget,
         jenkins=None, view=None):
     """
-    Configure a Jenkins devel job which
-    - clones the source repository to use
-    - clones the ros_buildfarm repository
-    - writes the distribution repository keys into files
-    - invokes the run_devel_job script
+    Configure a single Jenkins devel job.
+
+    This includes the following steps:
+    - clone the source repository to use
+    - clone the ros_buildfarm repository
+    - write the distribution repository keys into files
+    - invoke the run_devel_job script
     """
 
     config.verify_repository_name(repo_name)
