@@ -1,15 +1,15 @@
 from enum import Enum
 
-from rosdistro import get_index
-from rosdistro import get_doc_build_files
-from rosdistro import get_release_build_files
-from rosdistro import get_source_build_files
-from rosdistro import get_distribution_file
 from rosdistro import DistributionCache
-from rosdistro import get_distribution_cache
-from rosdistro import Index
 from rosdistro import DistributionFile
 from rosdistro import DocBuildFile
+from rosdistro import get_distribution_file
+from rosdistro import get_distribution_cache
+from rosdistro import get_doc_build_files
+from rosdistro import get_index
+from rosdistro import get_release_build_files
+from rosdistro import get_source_build_files
+from rosdistro import Index
 from rosdistro import ReleaseBuildFile
 from rosdistro import SourceBuildFile
 from rosdistro.package import Package
@@ -33,6 +33,13 @@ class BuildType(Enum):
 
 
 class BuildConfiguration(object):
+    """
+    Represents the basic configuration for a build.
+
+    Most of the time, this will be read from the command line
+    using L{from_args}.
+    """
+
     def __init__(self, rosdistro_index_url, rosdistro_name,
                  release_build_name,
                  source_build_name,
@@ -49,10 +56,6 @@ class BuildConfiguration(object):
             if ros_buildfarm_url is None \
             else ros_buildfarm_url
 
-    """
-    Represents the basic configuration for a build,
-    as specified on the command line.
-    """
 
     @staticmethod
     def from_args(args):
