@@ -28,7 +28,7 @@ today_isoformat = datetime.date.today().isoformat()
 }@
 RUN echo "@today_isoformat"
 
-COPY apt-get.py /tmp/apt-get.py
+ADD apt-get.py /tmp/
 RUN python3 -u /tmp/apt-get.py update
 RUN python3 -u /tmp/apt-get.py install -q -y python3-apt python3-catkin-pkg python3-empy python3-rosdep
 

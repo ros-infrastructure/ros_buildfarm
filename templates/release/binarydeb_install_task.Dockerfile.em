@@ -23,7 +23,7 @@ now_isoformat = datetime.datetime.now().isoformat()
 }@
 RUN echo "@now_isoformat"
 
-COPY apt-get.py /tmp/apt-get.py
+ADD apt-get.py /tmp/
 RUN python3 -u /tmp/apt-get.py update
 
 ENTRYPOINT ["sh", "-c"]
