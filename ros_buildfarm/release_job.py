@@ -4,6 +4,7 @@ from jenkinsapi.jenkins import Jenkins
 from rosdistro.repository import Repository
 
 from ros_buildfarm.build_configuration import BuildConfiguration
+from ros_buildfarm.build_configuration import BuildType
 from ros_buildfarm.build_configuration import PackageInfo
 from ros_buildfarm.build_configuration import ReleaseBuildConfiguration
 from ros_buildfarm.common \
@@ -29,7 +30,7 @@ def configure_release_jobs(build_cfg: BuildConfiguration):
     """
 
     # Load the index.yaml file
-    config = build_cfg.resolve()
+    config = build_cfg.resolve(BuildType.release)
 
     # get targets
     targets = config.get_target_os()

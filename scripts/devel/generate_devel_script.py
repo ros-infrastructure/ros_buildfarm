@@ -12,6 +12,10 @@ from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.build_configuration import BuildConfiguration
+from ros_buildfarm.build_configuration import BuildType
+from ros_buildfarm.common import OSTarget
+from ros_buildfarm.common import OSArchTarget
 from ros_buildfarm.devel_job import configure_devel_job
 from ros_buildfarm.devel_job import get_devel_job_name
 from ros_buildfarm.templates import expand_template
@@ -42,9 +46,11 @@ def main(argv=sys.argv[1:]):
     templates.template_hook = template_hook
 
     configure_devel_job(
-        args.rosdistro_index_url, args.rosdistro_name, args.source_build_name,
-        args.repository_name, args.os_name, args.os_code_name, args.arch,
-        jenkins=False, view=False)
+        config=BuildConfiguration.from_args(args).resolve(BuildType.source),
+        repo_name=args.repository_name,
+        os_arch_target=OSArchTarget(OSTarget(args.os_name, args.os_code_name), args.arch),
+        jenkins=False, view=False
+    )
 
     templates.template_hook = None
 
