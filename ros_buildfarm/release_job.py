@@ -17,11 +17,16 @@ from ros_buildfarm.jenkins import JENKINS_MANAGEMENT_VIEW
 from ros_buildfarm.templates import expand_template
 
 
-# For every package in the release repository and target
-# which matches the build file criteria invoke configure_release_job().
 def configure_release_jobs(
         rosdistro_index_url, rosdistro_name, release_build_name,
         append_timestamp=False):
+    """
+    Configure all Jenkins release jobs.
+
+    L{configure_release_job} will be invoked for every package
+    in the release repository and target which matches the
+    build file criteria.
+    """
     index = get_index(rosdistro_index_url)
     build_files = get_release_build_files(index, rosdistro_name)
     build_file = build_files[release_build_name]
@@ -79,15 +84,19 @@ def configure_release_jobs(
 
 # Use a wrapper to transform JobValidationErrors into return values
 def configure_release_job(*args, **kwargs):
+    """
+    Configure a Jenkins release job.
+
+    The following jobs are created for each invocation:
+    - N source deb job, one for each os_code_name
+    - N*M binary debs, one for each (os_code_name, architecture) tuple
+    """
     try:
         return configure_release_job_with_validation(*args, **kwargs)
     except JobValidationError as error:
         return error.message
 
 
-# Configure a Jenkins release job which consists of
-# - a source deb job
-# - N binary debs, one for each archicture
 def configure_release_job_with_validation(
         rosdistro_index_url, rosdistro_name, release_build_name,
         pkg_name, os_name, os_code_name, append_timestamp=False,
