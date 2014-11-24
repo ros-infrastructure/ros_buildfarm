@@ -20,11 +20,18 @@ from ros_buildfarm.jenkins import remove_jobs
 from ros_buildfarm.templates import expand_template
 
 
-# For every package in the release repository and target
-# which matches the build file criteria invoke configure_release_job().
 def configure_release_jobs(
         config_url, rosdistro_name, release_build_name,
         append_timestamp=False):
+    """
+    Configure all Jenkins release jobs.
+
+    L{configure_release_job} will be invoked for every released package and
+    target which matches the build file criteria.
+
+    Additionally a job to import Debian packages into the Debian repository is
+    created.
+    """
     config = get_config_index(config_url)
     build_files = get_release_build_files(config, rosdistro_name)
     build_file = build_files[release_build_name]
@@ -102,6 +109,13 @@ def configure_release_job(
         jenkins=None, view=None,
         generate_import_package_job=True,
         filter_arches=None):
+    """
+    Configure a Jenkins release job.
+
+    The following jobs are created for each package:
+    - M source jobs, one for each OS node name
+    - M * N binary jobs, one for each combination of OS code name and arch
+    """
     if config is None:
         config = get_config_index(config_url)
     if build_file is None:
