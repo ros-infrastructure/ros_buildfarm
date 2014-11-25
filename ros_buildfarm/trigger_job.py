@@ -2,12 +2,13 @@ from collections import namedtuple
 
 from rosdistro import get_distribution_file
 from rosdistro import get_index
-from rosdistro import get_release_build_files
 
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.jenkins import invoke_job
 
 from .common import get_debian_package_name
+from .config import get_index as get_config_index
+from .config import get_release_build_files
 from .debian_repo import get_debian_repo_data
 from .release_job import get_binarydeb_job_name
 from .release_job import get_sourcedeb_job_name
@@ -15,11 +16,13 @@ from .status_page import _strip_version_suffix
 
 
 def trigger_release_jobs(
-        rosdistro_index_url, rosdistro_name, release_build_name,
+        config_url, rosdistro_name, release_build_name,
         missing_only, source_only, cache_dir):
-    index = get_index(rosdistro_index_url)
-    build_files = get_release_build_files(index, rosdistro_name)
+    config = get_config_index(config_url)
+    build_files = get_release_build_files(config, rosdistro_name)
     build_file = build_files[release_build_name]
+
+    index = get_index(config.rosdistro_index_url)
 
     # get targets
     Target = namedtuple('Target', 'os_name os_code_name arch')
@@ -45,15 +48,12 @@ def trigger_release_jobs(
 
     dist_file = get_distribution_file(index, rosdistro_name)
 
-    conf = build_file.get_target_configuration()
-    assert 'apt_target_repository' in conf
-    repo_url = conf['apt_target_repository']
-
     repo_data = None
     if missing_only:
-        repo_data = get_debian_repo_data(repo_url, targets, cache_dir)
+        repo_data = get_debian_repo_data(
+            build_file.target_repository, targets, cache_dir)
 
-    jenkins = connect(build_file.jenkins_url)
+    jenkins = connect(config.jenkins_url)
     jenkins_queue = jenkins.get_queue()
 
     pkg_names = dist_file.release_packages.keys()

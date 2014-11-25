@@ -71,12 +71,12 @@
         'mkdir -p $WORKSPACE/docker_generating_docker',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         '$WORKSPACE/ros_buildfarm/scripts/release/run_binarydeb_job.py' +
-        ' --rosdistro-index-url %s' % rosdistro_index_url +
-        ' %s' % rosdistro_name +
-        ' %s' % pkg_name +
-        ' %s' % os_name +
-        ' %s' % os_code_name +
-        ' %s' % arch +
+        ' --rosdistro-index-url ' + rosdistro_index_url +
+        ' ' + rosdistro_name +
+        ' ' + pkg_name +
+        ' ' + os_name +
+        ' ' + os_code_name +
+        ' ' + arch +
         ' ' + ' '.join(apt_mirror_args) +
         ' --binarydeb-dir $WORKSPACE/binarydeb' +
         ' --dockerfile-dir $WORKSPACE/docker_generating_docker' +
@@ -128,9 +128,9 @@
         'mkdir -p $WORKSPACE/docker_install_binarydeb',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         '$WORKSPACE/ros_buildfarm/scripts/release/create_binarydeb_install_task_generator.py' +
-        ' %s' % os_name +
-        ' %s' % os_code_name +
-        ' %s' % arch +
+        ' ' + os_name +
+        ' ' + os_code_name +
+        ' ' + arch +
         ' ' + ' '.join(apt_mirror_args) +
         ' --binarydeb-dir $WORKSPACE/binarydeb' +
         ' --dockerfile-dir $WORKSPACE/docker_install_binarydeb',

@@ -43,7 +43,7 @@ ENTRYPOINT ["sh", "-c"]
 cmd = \
     'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/release/generate_release_jobs.py' + \
-    ' --rosdistro-index-url ' + rosdistro_index_url + \
+    ' ' + config_url + \
     ' ' + rosdistro_name + \
     ' ' + source_build_name
 }@

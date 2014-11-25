@@ -3,13 +3,14 @@ from datetime import datetime
 from rosdistro import get_distribution_cache
 from rosdistro import get_distribution_file
 from rosdistro import get_index
-from rosdistro import get_release_build_files
 
 from ros_buildfarm.common import get_debian_package_name
-from ros_buildfarm.common \
-    import get_apt_mirrors_and_script_generating_key_files
 from ros_buildfarm.common import get_release_view_name
+from ros_buildfarm.common \
+    import get_repositories_and_script_generating_key_files
 from ros_buildfarm.common import JobValidationError
+from ros_buildfarm.config import get_index as get_config_index
+from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
@@ -20,11 +21,13 @@ from ros_buildfarm.templates import expand_template
 # For every package in the release repository and target
 # which matches the build file criteria invoke configure_release_job().
 def configure_release_jobs(
-        rosdistro_index_url, rosdistro_name, release_build_name,
+        config_url, rosdistro_name, release_build_name,
         append_timestamp=False):
-    index = get_index(rosdistro_index_url)
-    build_files = get_release_build_files(index, rosdistro_name)
+    config = get_config_index(config_url)
+    build_files = get_release_build_files(config, rosdistro_name)
     build_file = build_files[release_build_name]
+
+    index = get_index(config.rosdistro_index_url)
 
     dist_cache = None
     if build_file.notify_maintainers or build_file.abi_incompatibility_assumed:
@@ -32,21 +35,21 @@ def configure_release_jobs(
 
     # get targets
     targets = []
-    for os_name in build_file.get_target_os_names():
-        for os_code_name in build_file.get_target_os_code_names(os_name):
+    for os_name in build_file.targets.keys():
+        for os_code_name in build_file.targets[os_name].keys():
             targets.append((os_name, os_code_name))
     print('The build file contains the following targets:')
     for os_name, os_code_name in targets:
         print('  - %s %s: %s' % (os_name, os_code_name, ', '.join(
-            build_file.get_target_arches(os_name, os_code_name))))
+            build_file.targets[os_name][os_code_name])))
 
     dist_file = get_distribution_file(index, rosdistro_name)
 
-    jenkins = connect(build_file.jenkins_url)
+    jenkins = connect(config.jenkins_url)
 
     configure_import_package_job(
-        rosdistro_index_url, rosdistro_name, release_build_name,
-        index=index, build_file=build_file, jenkins=jenkins)
+        config_url, rosdistro_name, release_build_name,
+        config=config, build_file=build_file, jenkins=jenkins)
 
     view_name = get_release_view_name(rosdistro_name, release_build_name)
     view = configure_release_view(jenkins, view_name)
@@ -69,11 +72,12 @@ def configure_release_jobs(
 
         for os_name, os_code_name in targets:
             configure_release_job(
-                rosdistro_index_url, rosdistro_name, release_build_name,
+                config_url, rosdistro_name, release_build_name,
                 pkg_name, os_name, os_code_name,
                 append_timestamp=append_timestamp,
-                index=index, build_file=build_file, dist_file=dist_file,
-                dist_cache=dist_cache, jenkins=jenkins, view=view,
+                config=config, build_file=build_file,
+                index=index, dist_file=dist_file, dist_cache=dist_cache,
+                jenkins=jenkins, view=view,
                 generate_import_package_job=False)
 
 
@@ -89,17 +93,21 @@ def configure_release_job(*args, **kwargs):
 # - a source deb job
 # - N binary debs, one for each archicture
 def configure_release_job_with_validation(
-        rosdistro_index_url, rosdistro_name, release_build_name,
+        config_url, rosdistro_name, release_build_name,
         pkg_name, os_name, os_code_name, append_timestamp=False,
-        index=None, build_file=None, dist_file=None, dist_cache=None,
+        config=None, build_file=None,
+        index=None, dist_file=None, dist_cache=None,
         jenkins=None, view=None,
         generate_import_package_job=True,
         filter_arches=None):
-    if index is None:
-        index = get_index(rosdistro_index_url)
+    if config is None:
+        config = get_config_index(config_url)
     if build_file is None:
-        build_files = get_release_build_files(index, rosdistro_name)
+        build_files = get_release_build_files(config, rosdistro_name)
         build_file = build_files[release_build_name]
+
+    if index is None:
+        index = get_index(config.rosdistro_index_url)
     if dist_file is None:
         dist_file = get_distribution_file(index, rosdistro_name)
 
@@ -123,44 +131,41 @@ def configure_release_job_with_validation(
         raise JobValidationError(
             "Repository '%s' has no release version" % repo_name)
 
-    if os_name not in build_file.get_target_os_names():
+    if os_name not in build_file.targets.keys():
         raise JobValidationError(
             "Invalid OS name '%s' " % os_name +
             'choose one of the following: ' +
-            ', '.join(sorted(build_file.get_target_os_names())))
+            ', '.join(sorted(build_file.targets.keys())))
 
-    if os_code_name not in build_file.get_target_os_code_names(os_name):
+    if os_code_name not in build_file.targets[os_name].keys():
         raise JobValidationError(
             "Invalid OS code name '%s' " % os_code_name +
             'choose one of the following: ' +
-            ', '.join(sorted(build_file.get_target_os_code_names(os_name))))
+            ', '.join(sorted(build_file.targets[os_name].keys())))
 
     if dist_cache is None and \
             (build_file.notify_maintainers or
              build_file.abi_incompatibility_assumed):
         dist_cache = get_distribution_cache(index, rosdistro_name)
     if jenkins is None:
-        jenkins = connect(build_file.jenkins_url)
+        jenkins = connect(config.jenkins_url)
     if view is None:
         view_name = get_release_view_name(rosdistro_name, release_build_name)
         configure_release_view(jenkins, view_name)
 
     if generate_import_package_job:
         configure_import_package_job(
-            rosdistro_index_url, rosdistro_name, release_build_name,
-            index=index, build_file=build_file, jenkins=jenkins)
+            config_url, rosdistro_name, release_build_name,
+            config=config, build_file=build_file, jenkins=jenkins)
 
     # sourcedeb job
-    conf = build_file.get_target_configuration(
-        os_name=os_name, os_code_name=os_code_name)
-
     job_name = get_sourcedeb_job_name(
         rosdistro_name, release_build_name,
         pkg_name, os_name, os_code_name)
 
     job_config = _get_sourcedeb_job_config(
-        rosdistro_index_url, rosdistro_name, release_build_name,
-        build_file, os_name, os_code_name, conf, _get_target_arches(
+        config_url, rosdistro_name, release_build_name,
+        config, build_file, os_name, os_code_name, _get_target_arches(
             build_file, os_name, os_code_name, print_skipped=False),
         repo.release_repository, pkg_name,
         repo_name, dist_cache=dist_cache)
@@ -180,9 +185,6 @@ def configure_release_job_with_validation(
         if filter_arches and arch not in filter_arches:
             continue
 
-        conf = build_file.get_target_configuration(
-            os_name=os_name, os_code_name=os_code_name, arch=arch)
-
         job_name = get_binarydeb_job_name(
             rosdistro_name, release_build_name,
             pkg_name, os_name, os_code_name, arch)
@@ -194,8 +196,8 @@ def configure_release_job_with_validation(
             for dependency_name in dependency_names]
 
         job_config = _get_binarydeb_job_config(
-            rosdistro_index_url, rosdistro_name, release_build_name,
-            build_file, os_name, os_code_name, arch, conf,
+            config_url, rosdistro_name, release_build_name,
+            config, build_file, os_name, os_code_name, arch,
             repo.release_repository, pkg_name, append_timestamp,
             repo_name, dist_cache=dist_cache,
             upstream_job_names=upstream_job_names)
@@ -218,7 +220,7 @@ def get_sourcedeb_job_name(rosdistro_name, release_build_name,
 
 def _get_target_arches(build_file, os_name, os_code_name, print_skipped=True):
     arches = []
-    for arch in build_file.get_target_arches(os_name, os_code_name):
+    for arch in build_file.targets[os_name][os_code_name]:
         # TODO support for non amd64 arch missing
         if arch not in ['amd64']:
             if print_skipped:
@@ -254,8 +256,8 @@ def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
 
 
 def _get_sourcedeb_job_config(
-        rosdistro_index_url, rosdistro_name, release_build_name,
-        build_file, os_name, os_code_name, conf, binary_arches,
+        config_url, rosdistro_name, release_build_name,
+        config, build_file, os_name, os_code_name, binary_arches,
         release_repo_spec, pkg_name,
         repo_name, dist_cache=None):
     template_name = 'release/sourcedeb_job.xml.em'
@@ -263,7 +265,7 @@ def _get_sourcedeb_job_config(
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     apt_mirror_args, script_generating_key_files = \
-        get_apt_mirrors_and_script_generating_key_files(conf)
+        get_repositories_and_script_generating_key_files(config, build_file)
 
     sourcedeb_files = [
         'sourcedeb/*.debian.tar.gz',
@@ -292,7 +294,7 @@ def _get_sourcedeb_job_config(
 
         'script_generating_key_files': script_generating_key_files,
 
-        'rosdistro_index_url': rosdistro_index_url,
+        'rosdistro_index_url': config.rosdistro_index_url,
         'rosdistro_name': rosdistro_name,
         'release_build_name': release_build_name,
         'pkg_name': pkg_name,
@@ -309,7 +311,7 @@ def _get_sourcedeb_job_config(
 
         'child_projects': binary_job_names,
 
-        'notify_emails': build_file.notify_emails,
+        'notify_emails': set(config.notify_emails + build_file.notify_emails),
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
 
@@ -320,8 +322,8 @@ def _get_sourcedeb_job_config(
 
 
 def _get_binarydeb_job_config(
-        rosdistro_index_url, rosdistro_name, release_build_name,
-        build_file, os_name, os_code_name, arch, conf,
+        config_url, rosdistro_name, release_build_name,
+        config, build_file, os_name, os_code_name, arch,
         release_repo_spec, pkg_name, append_timestamp,
         repo_name, dist_cache=None, upstream_job_names=None):
     template_name = 'release/binarydeb_job.xml.em'
@@ -329,7 +331,7 @@ def _get_binarydeb_job_config(
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     apt_mirror_args, script_generating_key_files = \
-        get_apt_mirrors_and_script_generating_key_files(conf)
+        get_repositories_and_script_generating_key_files(config, build_file)
 
     binarydeb_files = [
         'binarydeb/*.changes',
@@ -352,7 +354,7 @@ def _get_binarydeb_job_config(
 
         'script_generating_key_files': script_generating_key_files,
 
-        'rosdistro_index_url': rosdistro_index_url,
+        'rosdistro_index_url': config.rosdistro_index_url,
         'rosdistro_name': rosdistro_name,
         'release_build_name': release_build_name,
         'pkg_name': pkg_name,
@@ -370,7 +372,7 @@ def _get_binarydeb_job_config(
         'debian_package_name': get_debian_package_name(
             rosdistro_name, pkg_name),
 
-        'notify_emails': build_file.notify_emails,
+        'notify_emails': set(config.notify_emails + build_file.notify_emails),
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
 
@@ -381,15 +383,15 @@ def _get_binarydeb_job_config(
 
 
 def configure_import_package_job(
-        rosdistro_index_url, rosdistro_name, release_build_name,
-        index=None, build_file=None, jenkins=None):
-    if index is None:
-        index = get_index(rosdistro_index_url)
+        config_url, rosdistro_name, release_build_name,
+        config=None, build_file=None, jenkins=None):
+    if config is None:
+        config = get_config_index(config_url)
     if build_file is None:
-        build_files = get_release_build_files(index, rosdistro_name)
+        build_files = get_release_build_files(config, rosdistro_name)
         build_file = build_files[release_build_name]
     if jenkins is None:
-        jenkins = connect(build_file.jenkins_url)
+        jenkins = connect(config.jenkins_url)
 
     job_name = get_import_package_job_name(rosdistro_name, release_build_name)
     job_config = _get_import_package_job_config(build_file)

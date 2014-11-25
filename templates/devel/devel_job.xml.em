@@ -63,13 +63,13 @@
         'mkdir -p $WORKSPACE/docker_generating_dockers',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         '$WORKSPACE/ros_buildfarm/scripts/devel/run_devel_job.py' +
-        ' --rosdistro-index-url %s' % rosdistro_index_url +
-        ' %s' % rosdistro_name +
-        ' %s' % source_build_name +
-        ' %s' % source_repo_spec.name +
-        ' %s' % os_name +
-        ' %s' % os_code_name +
-        ' %s' % arch +
+        ' --rosdistro-index-url ' + rosdistro_index_url +
+        ' ' + rosdistro_name +
+        ' ' + source_build_name +
+        ' ' + source_repo_spec.name +
+        ' ' + os_name +
+        ' ' + os_code_name +
+        ' ' + arch +
         ' ' + ' '.join(apt_mirror_args) +
         ' --workspace-root $WORKSPACE/catkin_workspace' +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',

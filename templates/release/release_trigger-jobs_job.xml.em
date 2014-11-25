@@ -70,9 +70,9 @@
         'mkdir -p $WORKSPACE/docker_trigger_jobs',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         '$WORKSPACE/ros_buildfarm/scripts/release/run_trigger_job.py' +
-        ' --rosdistro-index-url %s' % rosdistro_index_url +
-        ' %s' % rosdistro_name +
-        ' %s' % release_build_name +
+        ' ' + config_url +
+        ' ' + rosdistro_name +
+        ' ' + release_build_name +
         ' ' + ' '.join(apt_mirror_args) +
         ' $args' +
         ' --cache-dir /tmp/debian_repo_cache' +

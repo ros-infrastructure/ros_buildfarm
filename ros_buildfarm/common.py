@@ -24,29 +24,46 @@ class Scope(object):
         print('# END %s' % self.scope_name)
 
 
-def get_apt_mirrors_and_script_generating_key_files(conf):
+def get_repositories_and_script_generating_key_files(config, build_file):
     # extract the distribution repository urls and keys from the build file
     # and pass them as command line arguments and files
     # so that the job must not parse the build file
-    apt_mirror_args = []
+    repository_urls = []
+    repository_keys = []
+    if 'debian_repositories' in config.prerequisites:
+        repository_urls += config.prerequisites['debian_repositories']
+    if 'debian_repository_keys' in config.prerequisites:
+        repository_keys += config.prerequisites['debian_repository_keys']
+    assert len(repository_urls) == len(repository_keys)
+
+    assert len(build_file.repository_urls) == len(build_file.repository_keys)
+    repository_urls += build_file.repository_urls
+    repository_keys += build_file.repository_keys
+
+    # remove duplicate urls
+    unique_repository_urls = []
+    unique_repository_keys = []
+    for i, url in enumerate(repository_urls):
+        if url not in unique_repository_urls:
+            unique_repository_urls.append(url)
+            unique_repository_keys.append(repository_keys[i])
+
+    repository_args = []
+    if unique_repository_urls:
+        repository_args.append('--distribution-repository-urls')
+        repository_args += unique_repository_urls
+
     script_generating_key_files = []
-    if 'apt_mirrors' in conf:
-        apt_mirrors = conf['apt_mirrors']
-        if apt_mirrors:
-            apt_mirror_args.append('--distribution-repository-urls')
-            apt_mirror_args += apt_mirrors
-    if 'apt_mirror_keys' in conf:
-        apt_mirror_keys = conf['apt_mirror_keys']
-        if apt_mirror_keys:
-            apt_mirror_args.append('--distribution-repository-key-files')
-            script_generating_key_files.append("mkdir -p $WORKSPACE/keys")
-            script_generating_key_files.append("rm -fr $WORKSPACE/keys/*")
-            for i, apt_mirror_key in enumerate(apt_mirror_keys):
-                apt_mirror_args.append('$WORKSPACE/keys/%d.key' % i)
-                script_generating_key_files.append(
-                    'echo "%s" > $WORKSPACE/keys/%d.key' % (apt_mirror_key, i)
-                )
-    return apt_mirror_args, script_generating_key_files
+    if unique_repository_keys:
+        repository_args.append('--distribution-repository-key-files')
+        script_generating_key_files.append("mkdir -p $WORKSPACE/keys")
+        script_generating_key_files.append("rm -fr $WORKSPACE/keys/*")
+        for i, repository_key in enumerate(unique_repository_keys):
+            repository_args.append('$WORKSPACE/keys/%d.key' % i)
+            script_generating_key_files.append(
+                'echo "%s" > $WORKSPACE/keys/%d.key' % (repository_key, i))
+
+    return repository_args, script_generating_key_files
 
 
 def get_distribution_repository_keys(urls, key_files):

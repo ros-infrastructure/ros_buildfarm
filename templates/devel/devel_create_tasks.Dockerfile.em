@@ -42,6 +42,7 @@ import datetime
 now_isoformat = datetime.datetime.today().isoformat()
 }@
 RUN echo "@now_isoformat"
+ENV ROSDISTRO_INDEX_URL @rosdistro_index_url
 RUN rosdep init
 
 USER buildfarm

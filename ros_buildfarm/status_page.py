@@ -6,10 +6,11 @@ import time
 
 from rosdistro import get_cached_distribution
 from rosdistro import get_index
-from rosdistro import get_release_build_files
 
 from .common import get_debian_package_name
 from .common import get_release_view_name
+from .config import get_index as get_config_index
+from .config import get_release_build_files
 from .debian_repo import get_debian_repo_data
 from .status_page_input import get_rosdistro_info
 from .status_page_input import RosPackage
@@ -19,25 +20,25 @@ from .templates import template_basepath
 
 
 def build_release_status_page(
-        rosdistro_index_url, rosdistro_name, release_build_name,
+        config_url, rosdistro_name, release_build_name,
         building_repo_url, testing_repo_url, main_repo_url,
         cache_dir, output_dir):
     start_time = time.localtime()
 
-    index = get_index(rosdistro_index_url)
-    release_build_files = get_release_build_files(index, rosdistro_name)
+    config = get_config_index(config_url)
+    release_build_files = get_release_build_files(config, rosdistro_name)
     build_file = release_build_files[release_build_name]
+
+    index = get_index(config.rosdistro_index_url)
 
     # get targets
     targets = []
-    for os_name in sorted(build_file.get_target_os_names()):
+    for os_name in sorted(build_file.targets.keys()):
         if os_name != 'ubuntu':
             continue
-        for os_code_name in sorted(
-                build_file.get_target_os_code_names(os_name)):
+        for os_code_name in sorted(build_file.targets[os_name].keys()):
             targets.append(Target(os_code_name, 'source'))
-            for arch in sorted(
-                    build_file.get_target_arches(os_name, os_code_name)):
+            for arch in sorted(build_file.targets[os_name][os_code_name]):
                 targets.append(Target(os_code_name, arch))
     print('The build file contains the following targets:')
     for os_code_name, arch in targets:
@@ -76,7 +77,7 @@ def build_release_status_page(
         package_descriptors, targets, repos_data)
 
     jenkins_job_urls = get_jenkins_job_urls(
-        rosdistro_name, build_file.jenkins_url, release_build_name, targets)
+        rosdistro_name, config.jenkins_url, release_build_name, targets)
 
     # generate output
     repo_urls = [building_repo_url, testing_repo_url, main_repo_url]

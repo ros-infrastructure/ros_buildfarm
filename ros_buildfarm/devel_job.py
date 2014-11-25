@@ -4,11 +4,12 @@ from catkin_pkg.package import parse_package_string
 from rosdistro import get_distribution_cache
 from rosdistro import get_distribution_file
 from rosdistro import get_index
-from rosdistro import get_source_build_files
 
-from ros_buildfarm.common \
-    import get_apt_mirrors_and_script_generating_key_files
 from ros_buildfarm.common import get_devel_view_name
+from ros_buildfarm.common \
+    import get_repositories_and_script_generating_key_files
+from ros_buildfarm.config import get_index as get_config_index
+from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
@@ -18,10 +19,12 @@ from ros_buildfarm.templates import expand_template
 # For every source repository and target
 # which matches the build file criteria  invoke configure_devel_job().
 def configure_devel_jobs(
-        rosdistro_index_url, rosdistro_name, source_build_name):
-    index = get_index(rosdistro_index_url)
-    build_files = get_source_build_files(index, rosdistro_name)
+        config_url, rosdistro_name, source_build_name):
+    config = get_config_index(config_url)
+    build_files = get_source_build_files(config, rosdistro_name)
     build_file = build_files[source_build_name]
+
+    index = get_index(config.rosdistro_index_url)
 
     dist_cache = None
     if build_file.notify_maintainers:
@@ -29,9 +32,9 @@ def configure_devel_jobs(
 
     # get targets
     targets = []
-    for os_name in build_file.get_target_os_names():
-        for os_code_name in build_file.get_target_os_code_names(os_name):
-            for arch in build_file.get_target_arches(os_name, os_code_name):
+    for os_name in build_file.targets.keys():
+        for os_code_name in build_file.targets[os_name].keys():
+            for arch in build_file.targets[os_name][os_code_name]:
                 targets.append((os_name, os_code_name, arch))
     print('The build file contains the following targets:')
     for os_name, os_code_name, arch in targets:
@@ -39,7 +42,7 @@ def configure_devel_jobs(
 
     dist_file = get_distribution_file(index, rosdistro_name)
 
-    jenkins = connect(build_file.jenkins_url)
+    jenkins = connect(config.jenkins_url)
 
     view_name = get_devel_view_name(rosdistro_name, source_build_name)
     view = configure_devel_view(jenkins, view_name)
@@ -58,10 +61,11 @@ def configure_devel_jobs(
 
         for os_name, os_code_name, arch in targets:
             configure_devel_job(
-                rosdistro_index_url, rosdistro_name, source_build_name,
+                config_url, rosdistro_name, source_build_name,
                 repo_name, os_name, os_code_name, arch,
-                index=index, build_file=build_file, dist_file=dist_file,
-                dist_cache=dist_cache, jenkins=jenkins, view=view)
+                config=config, build_file=build_file,
+                index=index, dist_file=dist_file, dist_cache=dist_cache,
+                jenkins=jenkins, view=view)
 
 
 # Configure a Jenkins devel job which
@@ -70,15 +74,19 @@ def configure_devel_jobs(
 # - writes the distribution repository keys into files
 # - invokes the run_devel_job script
 def configure_devel_job(
-        rosdistro_index_url, rosdistro_name, source_build_name,
+        config_url, rosdistro_name, source_build_name,
         repo_name, os_name, os_code_name, arch,
-        index=None, build_file=None, dist_file=None, dist_cache=None,
+        config=None, build_file=None,
+        index=None, dist_file=None, dist_cache=None,
         jenkins=None, view=None):
-    if index is None:
-        index = get_index(rosdistro_index_url)
+    if config is None:
+        config = get_config_index(config_url)
     if build_file is None:
-        build_files = get_source_build_files(index, rosdistro_name)
+        build_files = get_source_build_files(config, rosdistro_name)
         build_file = build_files[source_build_name]
+
+    if index is None:
+        index = get_index(config.rosdistro_index_url)
     if dist_file is None:
         dist_file = get_distribution_file(index, rosdistro_name)
 
@@ -97,38 +105,35 @@ def configure_devel_job(
     if not repo.source_repository.version:
         return "Repository '%s' has no source version" % repo_name
 
-    if os_name not in build_file.get_target_os_names():
+    if os_name not in build_file.targets.keys():
         return "Invalid OS name '%s' " % os_name + \
             'choose one of the following: ' + \
-            ', '.join(sorted(build_file.get_target_os_names()))
-    if os_code_name not in build_file.get_target_os_code_names(os_name):
+            ', '.join(sorted(build_file.targets.keys()))
+    if os_code_name not in build_file.targets[os_name].keys():
         return "Invalid OS code name '%s' " % os_code_name + \
             'choose one of the following: ' + \
-            ', '.join(sorted(build_file.get_target_os_code_names(os_name)))
-    if arch not in build_file.get_target_arches(os_name, os_code_name):
+            ', '.join(sorted(build_file.targets[os_name].keys()))
+    if arch not in build_file.targets[os_name][os_code_name]:
         return "Invalid architecture '%s' " % arch + \
             'choose one of the following: ' + \
             ', '.join(sorted(
-                build_file.get_target_arches(os_name, os_code_name)))
+                build_file.targets[os_name][os_code_name]))
 
     if dist_cache is None and build_file.notify_maintainers:
         dist_cache = get_distribution_cache(index, rosdistro_name)
     if jenkins is None:
-        jenkins = connect(build_file.jenkins_url)
+        jenkins = connect(config.jenkins_url)
     if view is None:
         view_name = get_devel_view_name(rosdistro_name, source_build_name)
         configure_devel_view(jenkins, view_name)
-
-    conf = build_file.get_target_configuration(
-        os_name=os_name, os_code_name=os_code_name, arch=arch)
 
     job_name = get_devel_job_name(
         rosdistro_name, source_build_name,
         repo_name, os_name, os_code_name, arch)
 
     job_config = _get_devel_job_config(
-        rosdistro_index_url, rosdistro_name, source_build_name,
-        build_file, os_name, os_code_name, arch, conf, repo.source_repository,
+        config, rosdistro_name, source_build_name,
+        build_file, os_name, os_code_name, arch, repo.source_repository,
         repo_name, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
@@ -148,15 +153,15 @@ def configure_devel_view(jenkins, view_name):
 
 
 def _get_devel_job_config(
-        rosdistro_index_url, rosdistro_name, source_build_name,
-        build_file, os_name, os_code_name, arch, conf, source_repo_spec,
+        config, rosdistro_name, source_build_name,
+        build_file, os_name, os_code_name, arch, source_repo_spec,
         repo_name, dist_cache=None):
     template_name = 'devel/devel_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     apt_mirror_args, script_generating_key_files = \
-        get_apt_mirrors_and_script_generating_key_files(conf)
+        get_repositories_and_script_generating_key_files(config, build_file)
 
     maintainer_emails = set([])
     if build_file.notify_maintainers and dist_cache:
@@ -181,7 +186,7 @@ def _get_devel_job_config(
 
         'script_generating_key_files': script_generating_key_files,
 
-        'rosdistro_index_url': rosdistro_index_url,
+        'rosdistro_index_url': config.rosdistro_index_url,
         'rosdistro_name': rosdistro_name,
         'source_build_name': source_build_name,
         'os_name': os_name,
@@ -189,7 +194,7 @@ def _get_devel_job_config(
         'arch': arch,
         'apt_mirror_args': apt_mirror_args,
 
-        'notify_emails': build_file.notify_emails,
+        'notify_emails': set(config.notify_emails + build_file.notify_emails),
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
         'notify_committers': build_file.notify_committers,

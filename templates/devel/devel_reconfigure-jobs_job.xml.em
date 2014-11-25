@@ -54,9 +54,9 @@
         'mkdir -p $WORKSPACE/docker_generate_devel_jobs',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         '$WORKSPACE/ros_buildfarm/scripts/devel/run_devel_reconfigure_job.py' +
-        ' --rosdistro-index-url %s' % rosdistro_index_url +
-        ' %s' % rosdistro_name +
-        ' %s' % source_build_name +
+        ' ' + config_url +
+        ' ' + rosdistro_name +
+        ' ' + source_build_name +
         ' ' + ' '.join(apt_mirror_args) +
         ' --dockerfile-dir $WORKSPACE/docker_generate_devel_jobs',
         'echo "# END SECTION"',

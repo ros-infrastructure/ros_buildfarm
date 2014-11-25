@@ -4,6 +4,8 @@ import argparse
 from datetime import datetime
 import sys
 
+from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.config import get_index
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
@@ -14,19 +16,13 @@ from ros_buildfarm.templates import expand_template
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
         description="Generate the 'dashboard' job on Jenkins")
-    parser.add_argument(
-        'jenkins_url',
-        help='The Jenkins url')
-    parser.add_argument(
-        '--notification-emails',
-        nargs='*',
-        default=[],
-        help='The list of emails to notify when the job is not stable')
+    add_argument_config_url(parser)
     args = parser.parse_args(argv)
 
-    job_config = get_job_config(args.notification_emails)
+    config = get_index(args.config_url)
+    job_config = get_job_config(config.notify_emails)
 
-    jenkins = connect(args.jenkins_url)
+    jenkins = connect(config.jenkins_url)
 
     view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
 

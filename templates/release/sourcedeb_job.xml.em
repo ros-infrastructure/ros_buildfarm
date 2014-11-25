@@ -61,11 +61,11 @@
         'mkdir -p $WORKSPACE/docker_sourcedeb',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         '$WORKSPACE/ros_buildfarm/scripts/release/run_sourcedeb_job.py' +
-        ' --rosdistro-index-url %s' % rosdistro_index_url +
-        ' %s' % rosdistro_name +
-        ' %s' % pkg_name +
-        ' %s' % os_name +
-        ' %s' % os_code_name +
+        ' --rosdistro-index-url ' + rosdistro_index_url +
+        ' ' + rosdistro_name +
+        ' ' + pkg_name +
+        ' ' + os_name +
+        ' ' + os_code_name +
         ' ' + ' '.join(apt_mirror_args) +
         ' --source-dir $WORKSPACE/sourcedeb/source' +
         ' --dockerfile-dir $WORKSPACE/docker_sourcedeb',

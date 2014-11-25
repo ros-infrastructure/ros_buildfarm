@@ -1,6 +1,12 @@
 import os
 
 
+def add_argument_config_url(parser):
+    parser.add_argument(
+        'config_url',
+        help='The url of the ROS buildfarm configuration index')
+
+
 def add_argument_rosdistro_index_url(parser, required=False):
     help_msg = 'The URL to the ROS distro index'
     if not required:

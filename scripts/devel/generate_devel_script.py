@@ -7,10 +7,10 @@ import sys
 from ros_buildfarm import templates
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
+from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_repository_name
-from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.devel_job import configure_devel_job
 from ros_buildfarm.devel_job import get_devel_job_name
@@ -21,7 +21,7 @@ def main(argv=sys.argv[1:]):
     global templates
     parser = argparse.ArgumentParser(
         description="Generate a 'devel' script")
-    add_argument_rosdistro_index_url(parser)
+    add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_build_name(parser, 'source')
     add_argument_repository_name(parser)
@@ -42,7 +42,7 @@ def main(argv=sys.argv[1:]):
     templates.template_hook = template_hook
 
     configure_devel_job(
-        args.rosdistro_index_url, args.rosdistro_name, args.source_build_name,
+        args.config_url, args.rosdistro_name, args.source_build_name,
         args.repository_name, args.os_name, args.os_code_name, args.arch,
         jenkins=False, view=False)
 
