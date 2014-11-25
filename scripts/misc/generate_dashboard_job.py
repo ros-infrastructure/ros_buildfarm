@@ -31,7 +31,7 @@ def main(argv=sys.argv[1:]):
 
 
 def get_job_config(notification_emails):
-    template_name = 'dashboard_job.xml.em'
+    template_name = 'misc/dashboard_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
