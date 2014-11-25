@@ -1,9 +1,8 @@
-    <jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin plugin="publish-over-ssh@@1.12">
+    <jenkins.plugins.publish__over__ssh.BapSshPublisherPlugin plugin="publish-over-ssh@@1.12">
+      <consolePrefix>SSH:</consolePrefix>
       <delegate>
-        <consolePrefix>SSH:</consolePrefix>
-        <delegate>
-          <publishers>
-            <jenkins.plugins.publish__over__ssh.BapSshPublisher>
+        <publishers>
+          <jenkins.plugins.publish__over__ssh.BapSshPublisher>
             <configName>@config_name</configName>
             <verbose>false</verbose>
             <transfers>
@@ -25,12 +24,11 @@
             </transfers>
             <useWorkspaceInPromotion>false</useWorkspaceInPromotion>
             <usePromotionTimestamp>false</usePromotionTimestamp>
-            </jenkins.plugins.publish__over__ssh.BapSshPublisher>
-          </publishers>
-          <continueOnError>false</continueOnError>
-          <failOnError>true</failOnError>
-          <alwaysPublishFromMaster>false</alwaysPublishFromMaster>
-          <hostConfigurationAccess class="jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin" reference="../.."/>
-        </delegate>
+          </jenkins.plugins.publish__over__ssh.BapSshPublisher>
+        </publishers>
+        <continueOnError>false</continueOnError>
+        <failOnError>false</failOnError>
+        <alwaysPublishFromMaster>false</alwaysPublishFromMaster>
+        <hostConfigurationAccess class="jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin" reference="../.."/>
       </delegate>
-    </jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin>
+    </jenkins.plugins.publish__over__ssh.BapSshPublisherPlugin>

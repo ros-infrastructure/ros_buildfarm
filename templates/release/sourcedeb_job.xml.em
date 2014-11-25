@@ -90,6 +90,7 @@
 ))@
 @(SNIPPET(
     'builder_publish-over-ssh',
+    config_name='repo',
     remote_directory='%s/${JOB_NAME}__${BUILD_NUMBER}' % os_code_name,
     source_files=sourcedeb_files,
     remove_prefix='sourcedeb',

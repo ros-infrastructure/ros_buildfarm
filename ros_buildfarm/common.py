@@ -24,7 +24,7 @@ class Scope(object):
         print('# END %s' % self.scope_name)
 
 
-def get_repositories_and_script_generating_key_files(config, build_file):
+def get_repositories_and_script_generating_key_files(config, build_file=None):
     # extract the distribution repository urls and keys from the build file
     # and pass them as command line arguments and files
     # so that the job must not parse the build file
@@ -36,9 +36,11 @@ def get_repositories_and_script_generating_key_files(config, build_file):
         repository_keys += config.prerequisites['debian_repository_keys']
     assert len(repository_urls) == len(repository_keys)
 
-    assert len(build_file.repository_urls) == len(build_file.repository_keys)
-    repository_urls += build_file.repository_urls
-    repository_keys += build_file.repository_keys
+    if build_file:
+        assert len(build_file.repository_urls) == \
+            len(build_file.repository_keys)
+        repository_urls += build_file.repository_urls
+        repository_keys += build_file.repository_keys
 
     # remove duplicate urls
     unique_repository_urls = []
