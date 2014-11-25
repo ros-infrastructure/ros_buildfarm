@@ -43,4 +43,4 @@ def call_apt_get_update(argv):
     return rc, known_error_conditions
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
