@@ -68,7 +68,6 @@ def create_dockerfile(template_name, data, dockerfile_dir):
         with open(abs_file_path, 'r') as h:
             content = h.read()
             wrapper_scripts[filename] = content
-            print(content)
     data['wrapper_scripts'] = wrapper_scripts
 
     content = expand_template(template_name, data)
