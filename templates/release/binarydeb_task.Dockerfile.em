@@ -1,3 +1,5 @@
+# generated from @template_name
+
 FROM @os_name:@os_code_name
 MAINTAINER @maintainer_name @maintainer_email
 

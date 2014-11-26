@@ -58,6 +58,8 @@ def _expand_snippet(snippet_name, **kwargs):
 
 
 def create_dockerfile(template_name, data, dockerfile_dir):
+    data['template_name'] = template_name
+
     wrapper_scripts = {}
     wrapper_script_path = os.path.join(
         os.path.dirname(os.path.dirname(__file__)), 'scripts', 'wrapper')
