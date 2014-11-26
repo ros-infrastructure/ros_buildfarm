@@ -41,7 +41,7 @@
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone custom rosdistro"',
         'rm -fr rosdistro',
-        'git clone https://github.com/dirk-thomas/ros-infrastructure_rosdistro.git rosdistro',
+        'git clone -b rep143 https://github.com/ros-infrastructure/rosdistro.git rosdistro',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Clone ros_buildfarm"',

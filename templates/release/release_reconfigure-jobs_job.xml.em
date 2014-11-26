@@ -45,7 +45,7 @@
         '# TODO replace with python3-rosdistro',
         'echo "# BEGIN SECTION: Clone custom rosdistro"',
         'rm -fr rosdistro',
-        'git clone https://github.com/dirk-thomas/ros-infrastructure_rosdistro.git rosdistro',
+        'git clone -b rep143 https://github.com/ros-infrastructure/rosdistro.git rosdistro',
         'echo "# END SECTION"',
         '',
         '# generate Dockerfile, build and run it',
