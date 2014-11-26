@@ -18,6 +18,12 @@ RUN apt-key add /tmp/keys/@(i).key
 RUN echo deb @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.list
 @[end for]@
 
+@# Ubuntu before Trusty explicitly needs python3
+@[if os_name == 'ubuntu' and os_code_name[0] < 't']@
+RUN apt-get update
+RUN apt-get install -q -y python3
+@[end if]@
+
 # always invalidate
 @{
 import datetime
