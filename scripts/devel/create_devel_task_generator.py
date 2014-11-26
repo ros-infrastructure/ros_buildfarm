@@ -75,6 +75,10 @@ def main(argv=sys.argv[1:]):
         'build-essential',
         get_debian_package_name(args.rosdistro_name, 'catkin'),
         'python3']
+    print('Always install the following generic dependencies:')
+    for debian_pkg_name in sorted(debian_pkg_names):
+        print('  -', debian_pkg_name)
+
     debian_pkg_versions = {}
 
     # get build dependencies and map them to binary packages
