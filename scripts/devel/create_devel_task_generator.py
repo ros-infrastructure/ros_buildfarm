@@ -10,6 +10,7 @@ from ros_buildfarm.argument import add_argument_distribution_repository_key_file
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.common import get_binary_package_versions
+from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.templates import create_dockerfile
 from rosdep2 import create_default_installer_context
@@ -70,7 +71,10 @@ def main(argv=sys.argv[1:]):
 
     apt_cache = Cache()
 
-    debian_pkg_names = ['build-essential', 'python3']
+    debian_pkg_names = [
+        'build-essential',
+        get_debian_package_name(args.rosdistro_name, 'catkin'),
+        'python3']
     debian_pkg_versions = {}
 
     # get build dependencies and map them to binary packages
