@@ -48,7 +48,7 @@
     script='\n'.join([
         'echo "# BEGIN SECTION: import debian package"',
         'export PYTHONPATH=$WORKSPACE/reprepro-updater/src:$PYTHONPATH',
-        '$WORKSPACE/reprepro-updater/scripts/include_folder.py --folder /var/repos/ubuntu/building/queue/$subfolder --package $debian_package_name --delete-folder --commit',
+        'python -u $WORKSPACE/reprepro-updater/scripts/include_folder.py --folder /var/repos/ubuntu/building/queue/$subfolder --package $debian_package_name --delete-folder --commit',
         'echo "# END SECTION"',
     ]),
 ))@
@@ -56,7 +56,7 @@
   <publishers>
 @(SNIPPET(
     'publisher_description-setter',
-    regexp="Imported package: ([^\s]+)",
+    regexp="Imported package: (\S+)",
 ))@
 @(SNIPPET(
     'publisher_mailer',
