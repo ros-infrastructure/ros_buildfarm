@@ -27,16 +27,15 @@ def trigger_release_jobs(
     # get targets
     Target = namedtuple('Target', 'os_name os_code_name arch')
     targets = []
-    for os_name in sorted(build_file.get_target_os_names()):
+    for os_name in sorted(build_file.targets.keys()):
         if os_name != 'ubuntu':
             continue
-        for os_code_name in sorted(
-                build_file.get_target_os_code_names(os_name)):
+        for os_code_name in sorted(build_file.targets[os_name].keys()):
             targets.append(Target('ubuntu', os_code_name, 'source'))
             if source_only:
                 continue
             for arch in sorted(
-                    build_file.get_target_arches(os_name, os_code_name)):
+                    build_file.targets[os_name][os_code_name].keys()):
                 # TODO support for non amd64 arch missing
                 if arch not in ['amd64']:
                     print('Skipping arch:', arch)

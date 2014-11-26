@@ -101,6 +101,9 @@ class ReleaseBuildFile(object):
                 self.repository_urls = data['repositories']['urls']
             assert len(self.repository_keys) == len(self.repository_urls)
 
+        assert 'target_repository' in data
+        self.target_repository = data['target_repository']
+
         assert 'targets' in data
         self.targets = {}
         for os_name in data['targets'].keys():
