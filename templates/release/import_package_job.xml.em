@@ -56,7 +56,8 @@
   <publishers>
 @(SNIPPET(
     'publisher_description-setter',
-    regexp="Imported package: (\S+)",
+    regexp='Imported package: (\S+)',
+    regexp_for_failed='Imported package: (\S+)',
 ))@
 @(SNIPPET(
     'publisher_mailer',

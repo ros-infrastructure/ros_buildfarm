@@ -111,6 +111,7 @@
 @(SNIPPET(
     'publisher_description-setter',
     regexp="Package '[^']+' version: (\S+)",
+    regexp_for_failed='',
 ))@
 @[if notify_maintainers]@
 @(SNIPPET(
