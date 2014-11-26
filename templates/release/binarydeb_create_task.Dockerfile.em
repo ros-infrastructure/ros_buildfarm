@@ -22,7 +22,7 @@ RUN echo deb-src @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildf
 @[end for]@
 
 # optionally manual cache invalidation for core Python packages
-RUN echo "2014-10-20"
+RUN echo "2014-11-20"
 
 @# Ubuntu before Trusty explicitly needs python3
 @[if os_name == 'ubuntu' and os_code_name[0] < 't']@

@@ -34,7 +34,7 @@ RUN echo "@('\\n'.join(content.replace('"', '\\"').splitlines()))" > /tmp/wrappe
 @[end for]@
 
 # optionally manual cache invalidation for core dependencies
-RUN echo "2014-10-20"
+RUN echo "2014-11-20"
 
 @# Ubuntu before Trusty explicitly needs python3
 @[if os_name == 'ubuntu' and os_code_name[0] < 't']@
