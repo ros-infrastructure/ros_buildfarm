@@ -99,12 +99,23 @@ def main(argv=sys.argv[1:]):
 
 
 def get_dsc_file(basepath, debian_package_name, debian_package_version):
+    print("Looking for the '.dsc' file of package '%s' with version '%s'" %
+          (debian_package_name, debian_package_version))
+    any_dsc_files = []
     dsc_files = []
     for filename in os.listdir(basepath):
-        if filename.startswith(
-                '%s_%s' % (debian_package_name, debian_package_version)) and \
-                filename.endswith('.dsc'):
-            dsc_files.append(os.path.join(basepath, filename))
+        if filename.endswith('.dsc'):
+            any_dsc_files.append(filename)
+            if filename.startswith(
+                    '%s_%s' % (debian_package_name, debian_package_version)):
+                dsc_files.append(os.path.join(basepath, filename))
+    if not dsc_files:
+        print("Could not find the right '.dsc' file", file=sys.stderr)
+        if any_dsc_files:
+            print("The following '.dsc' files did not match:", file=sys.stderr)
+            for any_dsc_file in any_dsc_files:
+                print(' - %s' % any_dsc_file, file=sys.stderr)
+
     assert len(dsc_files) == 1
     return dsc_files[0]
 
