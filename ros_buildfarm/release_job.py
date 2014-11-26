@@ -1,4 +1,5 @@
 from datetime import datetime
+import sys
 
 from rosdistro import get_distribution_cache
 from rosdistro import get_distribution_file
@@ -15,6 +16,7 @@ from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.jenkins import JENKINS_MANAGEMENT_VIEW
+from ros_buildfarm.jenkins import remove_jobs
 from ros_buildfarm.templates import expand_template
 
 
@@ -57,6 +59,7 @@ def configure_release_jobs(
     pkg_names = dist_file.release_packages.keys()
     pkg_names = build_file.filter_packages(pkg_names)
 
+    all_job_names = []
     for pkg_name in sorted(pkg_names):
         pkg = dist_file.release_packages[pkg_name]
         repo_name = pkg.repository_name
@@ -71,28 +74,27 @@ def configure_release_jobs(
             continue
 
         for os_name, os_code_name in targets:
-            configure_release_job(
-                config_url, rosdistro_name, release_build_name,
-                pkg_name, os_name, os_code_name,
-                append_timestamp=append_timestamp,
-                config=config, build_file=build_file,
-                index=index, dist_file=dist_file, dist_cache=dist_cache,
-                jenkins=jenkins, view=view,
-                generate_import_package_job=False)
+            try:
+                job_names = configure_release_job(
+                    config_url, rosdistro_name, release_build_name,
+                    pkg_name, os_name, os_code_name,
+                    append_timestamp=append_timestamp,
+                    config=config, build_file=build_file,
+                    index=index, dist_file=dist_file, dist_cache=dist_cache,
+                    jenkins=jenkins, view=view,
+                    generate_import_package_job=False)
+                all_job_names += job_names
+            except JobValidationError as e:
+                print(e.message, file=sys.stderr)
 
-
-# Use a wrapper to transform JobValidationErrors into return values
-def configure_release_job(*args, **kwargs):
-    try:
-        return configure_release_job_with_validation(*args, **kwargs)
-    except JobValidationError as error:
-        return error.message
+    # delete obsolete jobs in this view
+    remove_jobs(jenkins, '%s__' % view_name, all_job_names)
 
 
 # Configure a Jenkins release job which consists of
 # - a source deb job
 # - N binary debs, one for each archicture
-def configure_release_job_with_validation(
+def configure_release_job(
         config_url, rosdistro_name, release_build_name,
         pkg_name, os_name, os_code_name, append_timestamp=False,
         config=None, build_file=None,
@@ -158,6 +160,8 @@ def configure_release_job_with_validation(
             config_url, rosdistro_name, release_build_name,
             config=config, build_file=build_file, jenkins=jenkins)
 
+    job_names = []
+
     # sourcedeb job
     job_name = get_sourcedeb_job_name(
         rosdistro_name, release_build_name,
@@ -172,13 +176,16 @@ def configure_release_job_with_validation(
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, job_name, job_config)
+    job_names.append(job_name)
 
     dependency_names = []
     if build_file.abi_incompatibility_assumed:
         dependency_names = _get_direct_dependencies(
             pkg_name, dist_cache, pkg_names)
+        # if dependencies are not yet available in rosdistro cache
+        # skip binary jobs
         if dependency_names is None:
-            return
+            return job_names
 
     # binarydeb jobs
     for arch in _get_target_arches(build_file, os_name, os_code_name):
@@ -204,6 +211,9 @@ def configure_release_job_with_validation(
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
             configure_job(jenkins, job_name, job_config)
+        job_names.append(job_name)
+
+    return job_names
 
 
 def configure_release_view(jenkins, view_name):

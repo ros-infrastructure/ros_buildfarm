@@ -1,4 +1,5 @@
 from datetime import datetime
+import sys
 
 from catkin_pkg.package import parse_package_string
 from rosdistro import get_distribution_cache
@@ -8,11 +9,13 @@ from rosdistro import get_index
 from ros_buildfarm.common import get_devel_view_name
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
+from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
+from ros_buildfarm.jenkins import remove_jobs
 from ros_buildfarm.templates import expand_template
 
 
@@ -50,6 +53,7 @@ def configure_devel_jobs(
     repo_names = dist_file.repositories.keys()
     repo_names = build_file.filter_repositories(repo_names)
 
+    job_names = []
     for repo_name in sorted(repo_names):
         repo = dist_file.repositories[repo_name]
         if not repo.source_repository:
@@ -60,12 +64,19 @@ def configure_devel_jobs(
             continue
 
         for os_name, os_code_name, arch in targets:
-            configure_devel_job(
-                config_url, rosdistro_name, source_build_name,
-                repo_name, os_name, os_code_name, arch,
-                config=config, build_file=build_file,
-                index=index, dist_file=dist_file, dist_cache=dist_cache,
-                jenkins=jenkins, view=view)
+            try:
+                job_name = configure_devel_job(
+                    config_url, rosdistro_name, source_build_name,
+                    repo_name, os_name, os_code_name, arch,
+                    config=config, build_file=build_file,
+                    index=index, dist_file=dist_file, dist_cache=dist_cache,
+                    jenkins=jenkins, view=view)
+                job_names.append(job_name)
+            except JobValidationError as e:
+                print(e.message, file=sys.stderr)
+
+    # delete obsolete jobs in this view
+    remove_jobs(jenkins, '%s__' % view_name, job_names)
 
 
 # Configure a Jenkins devel job which
@@ -94,30 +105,34 @@ def configure_devel_job(
     repo_names = build_file.filter_repositories(repo_names)
 
     if repo_name not in repo_names:
-        return "Invalid repository name '%s' " % repo_name + \
-            'choose one of the following: ' + \
-            ', '.join(sorted(repo_names))
+        raise JobValidationError(
+            "Invalid repository name '%s' " % repo_name +
+            'choose one of the following: %s' % ', '.join(sorted(repo_names)))
 
     repo = dist_file.repositories[repo_name]
 
     if not repo.source_repository:
-        return "Repository '%s' has no source section" % repo_name
+        raise JobValidationError(
+            "Repository '%s' has no source section" % repo_name)
     if not repo.source_repository.version:
-        return "Repository '%s' has no source version" % repo_name
+        raise JobValidationError(
+            "Repository '%s' has no source version" % repo_name)
 
     if os_name not in build_file.targets.keys():
-        return "Invalid OS name '%s' " % os_name + \
-            'choose one of the following: ' + \
-            ', '.join(sorted(build_file.targets.keys()))
+        raise JobValidationError(
+            "Invalid OS name '%s' " % os_name +
+            'choose one of the following: ' +
+            ', '.join(sorted(build_file.targets.keys())))
     if os_code_name not in build_file.targets[os_name].keys():
-        return "Invalid OS code name '%s' " % os_code_name + \
-            'choose one of the following: ' + \
-            ', '.join(sorted(build_file.targets[os_name].keys()))
+        raise JobValidationError(
+            "Invalid OS code name '%s' " % os_code_name +
+            'choose one of the following: ' +
+            ', '.join(sorted(build_file.targets[os_name].keys())))
     if arch not in build_file.targets[os_name][os_code_name]:
-        return "Invalid architecture '%s' " % arch + \
-            'choose one of the following: ' + \
-            ', '.join(sorted(
-                build_file.targets[os_name][os_code_name]))
+        raise JobValidationError(
+            "Invalid architecture '%s' " % arch +
+            'choose one of the following: %s' % ', '.join(sorted(
+                build_file.targets[os_name][os_code_name])))
 
     if dist_cache is None and build_file.notify_maintainers:
         dist_cache = get_distribution_cache(index, rosdistro_name)
@@ -138,6 +153,8 @@ def configure_devel_job(
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, job_name, job_config)
+
+    return job_name
 
 
 def get_devel_job_name(rosdistro_name, source_build_name,

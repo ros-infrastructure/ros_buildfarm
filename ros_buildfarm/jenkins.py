@@ -135,3 +135,13 @@ def _diff_configs(remote_config, new_config):
     lines2 = ElementTree.tostringlist(new_root, encoding='unicode')
     return difflib.unified_diff(
         lines1, lines2, 'remote config', 'new config', n=0)
+
+
+def remove_jobs(jenkins, job_prefix, excluded_job_names):
+    for job_name in jenkins.jobs.keys():
+        if not job_name.startswith(job_prefix):
+            continue
+        if job_name in excluded_job_names:
+            continue
+        print("Deleting job '%s'" % job_name)
+        jenkins.delete_job(job_name)
