@@ -121,7 +121,7 @@ def build_release_status_page(
     }
     html = expand_template(template_name, data)
     output_filename = os.path.join(
-        output_dir, '%s_%s.html' % (rosdistro_name, release_build_name))
+        output_dir, 'ros_%s_%s.html' % (rosdistro_name, release_build_name))
     print("Generating status page '%s':" % output_filename)
     with open(output_filename, 'w') as h:
         h.write(html)
