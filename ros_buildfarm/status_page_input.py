@@ -38,6 +38,8 @@ def get_rosdistro_info(dist, build_file):
         pkg = dist.release_packages[pkg_name]
         repo = dist.repositories[pkg.repository_name].release_repository
         # package version
+        if not repo.version:
+            continue
         ros_pkg.version = repo.version
 
         # repository name and url
