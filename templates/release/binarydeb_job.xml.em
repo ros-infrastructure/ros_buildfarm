@@ -77,7 +77,7 @@
         ' ' + os_name +
         ' ' + os_code_name +
         ' ' + arch +
-        ' ' + ' '.join(apt_mirror_args) +
+        ' ' + ' '.join(repository_args) +
         ' --binarydeb-dir $WORKSPACE/binarydeb' +
         ' --dockerfile-dir $WORKSPACE/docker_generating_docker' +
         (' --append-timestamp' if append_timestamp else ''),
@@ -134,7 +134,7 @@
         ' ' + os_name +
         ' ' + os_code_name +
         ' ' + arch +
-        ' ' + ' '.join(apt_mirror_args) +
+        ' ' + ' '.join(repository_args) +
         ' --binarydeb-dir $WORKSPACE/binarydeb' +
         ' --dockerfile-dir $WORKSPACE/docker_install_binarydeb',
         'echo "# END SECTION"',

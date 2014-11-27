@@ -70,7 +70,7 @@
         ' ' + os_name +
         ' ' + os_code_name +
         ' ' + arch +
-        ' ' + ' '.join(apt_mirror_args) +
+        ' ' + ' '.join(repository_args) +
         ' --workspace-root $WORKSPACE/catkin_workspace' +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',

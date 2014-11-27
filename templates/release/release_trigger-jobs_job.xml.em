@@ -73,7 +73,7 @@
         ' ' + config_url +
         ' ' + rosdistro_name +
         ' ' + release_build_name +
-        ' ' + ' '.join(apt_mirror_args) +
+        ' ' + ' '.join(repository_args) +
         ' $args' +
         ' --cache-dir /tmp/debian_repo_cache' +
         ' --dockerfile-dir $WORKSPACE/docker_trigger_jobs',

@@ -66,7 +66,7 @@
         ' ' + pkg_name +
         ' ' + os_name +
         ' ' + os_code_name +
-        ' ' + ' '.join(apt_mirror_args) +
+        ' ' + ' '.join(repository_args) +
         ' --source-dir $WORKSPACE/sourcedeb/source' +
         ' --dockerfile-dir $WORKSPACE/docker_sourcedeb',
         'echo "# END SECTION"',

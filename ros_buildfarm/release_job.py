@@ -274,7 +274,7 @@ def _get_sourcedeb_job_config(
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    apt_mirror_args, script_generating_key_files = \
+    repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config, build_file)
 
     sourcedeb_files = [
@@ -310,7 +310,7 @@ def _get_sourcedeb_job_config(
         'pkg_name': pkg_name,
         'os_name': os_name,
         'os_code_name': os_code_name,
-        'apt_mirror_args': apt_mirror_args,
+        'repository_args': repository_args,
 
         'sourcedeb_files': sourcedeb_files,
 
@@ -340,7 +340,7 @@ def _get_binarydeb_job_config(
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    apt_mirror_args, script_generating_key_files = \
+    repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config, build_file)
 
     binarydeb_files = [
@@ -371,7 +371,7 @@ def _get_binarydeb_job_config(
         'os_name': os_name,
         'os_code_name': os_code_name,
         'arch': arch,
-        'apt_mirror_args': apt_mirror_args,
+        'repository_args': repository_args,
 
         'append_timestamp': append_timestamp,
 

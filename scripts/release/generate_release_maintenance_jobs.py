@@ -77,7 +77,7 @@ def _get_job_config(args, config, build_file, template_name):
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    apt_mirror_args, script_generating_key_files = \
+    repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config, build_file)
 
     job_data = {
@@ -89,7 +89,7 @@ def _get_job_config(args, config, build_file, template_name):
         'config_url': args.config_url,
         'rosdistro_name': args.rosdistro_name,
         'release_build_name': args.release_build_name,
-        'apt_mirror_args': apt_mirror_args,
+        'repository_args': repository_args,
 
         'ros_buildfarm_url': get_repository_url('.'),
 

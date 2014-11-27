@@ -57,7 +57,7 @@
         ' ' + config_url +
         ' ' + rosdistro_name +
         ' ' + release_build_name +
-        ' ' + ' '.join(apt_mirror_args) +
+        ' ' + ' '.join(repository_args) +
         ' --dockerfile-dir $WORKSPACE/docker_generate_release_jobs',
         'echo "# END SECTION"',
         '',

@@ -177,7 +177,7 @@ def _get_devel_job_config(
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    apt_mirror_args, script_generating_key_files = \
+    repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config, build_file)
 
     maintainer_emails = set([])
@@ -209,7 +209,7 @@ def _get_devel_job_config(
         'os_name': os_name,
         'os_code_name': os_code_name,
         'arch': arch,
-        'apt_mirror_args': apt_mirror_args,
+        'repository_args': repository_args,
 
         'notify_emails': set(config.notify_emails + build_file.notify_emails),
         'maintainer_emails': maintainer_emails,

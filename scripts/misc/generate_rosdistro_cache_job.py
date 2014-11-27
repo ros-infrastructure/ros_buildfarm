@@ -41,7 +41,7 @@ def get_job_config(args, config):
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    apt_mirror_args, script_generating_key_files = \
+    repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config)
 
     job_data = copy.deepcopy(args.__dict__)
@@ -55,7 +55,7 @@ def get_job_config(args, config):
 
         'rosdistro_index_url': config.rosdistro_index_url,
 
-        'repository_args': apt_mirror_args,
+        'repository_args': repository_args,
 
         'notification_emails': config.notify_emails,
     })
