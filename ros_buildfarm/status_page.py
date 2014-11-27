@@ -2,10 +2,8 @@ from collections import namedtuple
 from distutils.version import LooseVersion
 import os
 import re
+import shutil
 import time
-
-from rosdistro import get_cached_distribution
-from rosdistro import get_index
 
 from .common import get_debian_package_name
 from .common import get_release_view_name
@@ -21,8 +19,10 @@ from .templates import template_basepath
 
 def build_release_status_page(
         config_url, rosdistro_name, release_build_name,
-        building_repo_url, testing_repo_url, main_repo_url,
-        cache_dir, output_dir):
+        cache_dir, output_dir, copy_resources=False):
+    from rosdistro import get_cached_distribution
+    from rosdistro import get_index
+
     start_time = time.localtime()
 
     config = get_config_index(config_url)
@@ -48,6 +48,12 @@ def build_release_status_page(
     dist = get_cached_distribution(index, rosdistro_name)
 
     rosdistro_info = get_rosdistro_info(dist, build_file)
+
+    # derive testing and main urls from building url
+    building_repo_url = build_file.target_repository
+    base_url = os.path.dirname(building_repo_url)
+    testing_repo_url = os.path.join(base_url, 'testing')
+    main_repo_url = os.path.join(base_url, 'main')
 
     building_repo_data = get_debian_repo_data(
         building_repo_url, targets, cache_dir)
@@ -120,7 +126,7 @@ def build_release_status_page(
     with open(output_filename, 'w') as h:
         h.write(html)
 
-    additional_resources(output_dir)
+    additional_resources(output_dir, copy_resources=copy_resources)
 
 
 def build_debian_repos_status_page(
@@ -471,12 +477,15 @@ def get_jenkins_job_urls(
     return urls
 
 
-def additional_resources(output_dir):
+def additional_resources(output_dir, copy_resources=False):
     for subfolder in ['css', 'js']:
         dst = os.path.join(output_dir, subfolder)
         if not os.path.exists(dst):
             src = os.path.join(template_basepath, 'status', subfolder)
-            os.symlink(os.path.abspath(src), dst)
+            if copy_resources:
+                shutil.copytree(src, dst)
+            else:
+                os.symlink(os.path.abspath(src), dst)
 
 
 def get_resource_hashes():

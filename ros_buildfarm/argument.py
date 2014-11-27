@@ -167,3 +167,19 @@ def add_argument_source_only(parser):
         '--source-only',
         action='store_true',
         help='Only trigger source jobs')
+
+
+def add_argument_os_code_name_and_arch_tuples(parser):
+    parser.add_argument(
+        '--os-code-name-and-arch-tuples',
+        nargs='+',
+        required=True,
+        help="The colon separated tuple containing an OS code name and an " +
+             "architecture (e.g. 'trusty:amd64')")
+
+
+def add_argument_output_name(parser):
+    parser.add_argument(
+        '--output-name',
+        required=True,
+        help='The name of the generated file (without the extensions)')
