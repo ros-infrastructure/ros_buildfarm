@@ -32,7 +32,7 @@ def main(argv=sys.argv[1:]):
 
     view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
 
-    job_name = '%s_rosdistro_cache' % args.rosdistro_name
+    job_name = '%s_rosdistro-cache' % args.rosdistro_name
     configure_job(jenkins, job_name, job_config, view=view)
 
 

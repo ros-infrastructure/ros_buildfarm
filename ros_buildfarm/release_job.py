@@ -414,7 +414,7 @@ def configure_import_package_job(
 
 def get_import_package_job_name(rosdistro_name, release_build_name):
     view_name = get_release_view_name(rosdistro_name, release_build_name)
-    return '%s_import_package' % view_name
+    return '%s_import-package' % view_name
 
 
 def _get_import_package_job_config(build_file):
