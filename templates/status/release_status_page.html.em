@@ -182,7 +182,7 @@ if regressions and True in regressions[pkg.name].values():
 @
 @ @# a square for each repo
 @
-@ @ @[if status == 'equal']@
+@ @ @[if status == 'equal' and repos_data[i][target][pkg.debian_name] == pkg.version]@
 @ @ @ <a/>@
 @ @ @[elif status in ['ignore', 'missing']]@
 @ @ @ <a class="@status[0]"/>@

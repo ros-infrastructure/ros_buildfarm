@@ -153,7 +153,7 @@ def build_debian_repos_status_page(
     package_descriptors = get_repos_package_descriptors(repos_data, targets)
 
     version_status = get_version_status(
-        package_descriptors, targets, repos_data)
+        package_descriptors, targets, repos_data, strip_os_code_name=True)
 
     homogeneous = get_homogeneous(package_descriptors, targets, repos_data)
 
@@ -230,22 +230,24 @@ def get_rosdistro_package_descriptors(rosdistro_info, rosdistro_name):
 
 def get_repos_package_descriptors(repos_data, targets):
     descriptors = {}
-
-    # the first repo / target is the reference version
-    target = targets[0]
-    repo_data = repos_data[0]
-    repo_index = repo_data[target]
-    for debian_pkg_name, version in repo_index.items():
-        descriptors[debian_pkg_name] = PackageDescriptor(
-            debian_pkg_name, debian_pkg_name, version)
-
-    for i, target in enumerate(targets):
-        for j, repo_data in enumerate(repos_data):
-            if i == 0 and j == 0:
-                continue
+    # the highest version is the reference
+    for target in targets:
+        for repo_data in repos_data:
             repo_index = repo_data[target]
             for debian_pkg_name, version in repo_index.items():
+                version = _strip_os_code_name_suffix(
+                    version, target.os_code_name)
                 if debian_pkg_name not in descriptors:
+                    descriptors[debian_pkg_name] = PackageDescriptor(
+                        debian_pkg_name, debian_pkg_name, version)
+                    continue
+                if not version:
+                    continue
+                other_version = descriptors[debian_pkg_name].version
+                if not other_version:
+                    continue
+                # update version if higher
+                if LooseVersion(version) > LooseVersion(other_version):
                     descriptors[debian_pkg_name] = PackageDescriptor(
                         debian_pkg_name, debian_pkg_name, version)
     return descriptors
@@ -334,7 +336,8 @@ def get_regressions(
 
 
 def get_version_status(
-        package_descriptors, targets, repos_data, strip_version=False):
+        package_descriptors, targets, repos_data,
+        strip_version=False, strip_os_code_name=False):
     """
     For each package and target check if it is affected by a sync.
 
@@ -350,6 +353,8 @@ def get_version_status(
         pkg_name = package_descriptor.pkg_name
         debian_pkg_name = package_descriptor.debian_pkg_name
         ref_version = package_descriptor.version
+        if strip_version:
+            ref_version = _strip_version_suffix(ref_version)
 
         status[pkg_name] = {}
         for target in targets:
@@ -361,6 +366,9 @@ def get_version_status(
                     if target in repo_data else None
                 if strip_version:
                     version = _strip_version_suffix(version)
+                if strip_os_code_name:
+                    version = _strip_os_code_name_suffix(
+                        version, target.os_code_name)
 
                 if ref_version:
                     if not version:
@@ -402,6 +410,14 @@ def _strip_version_suffix(version):
         return version
     match = version_regex.search(version)
     return match.group(0) if match else version
+
+
+def _strip_os_code_name_suffix(version, os_code_name):
+    if version:
+        index = version.find(os_code_name)
+        if index != -1:
+            version = version[:index]
+    return version
 
 
 def get_homogeneous(package_descriptors, targets, repos_data):
