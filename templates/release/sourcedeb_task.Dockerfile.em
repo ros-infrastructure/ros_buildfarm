@@ -25,8 +25,7 @@ RUN echo "2014-11-20"
 
 @# Ubuntu before Trusty explicitly needs python3
 @[if os_name == 'ubuntu' and os_code_name[0] < 't']@
-RUN apt-get update
-RUN apt-get install -q -y python3
+RUN apt-get update && apt-get install -q -y python3
 @[end if]@
 
 # automatic invalidation once every day
@@ -41,15 +40,8 @@ RUN mkdir /tmp/wrapper_scripts
 RUN echo "@('\\n'.join(content.replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
 @[end for]@
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update
-
-# get_sources dependencies
 # TODO use python3-rosdistro instead of source checkout
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y git python3 python3-catkin-pkg python3-yaml
-# build_sourcedeb dependencies
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y debhelper dpkg dpkg-dev git-buildpackage
-# upload_sourcedeb dependencies
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y openssh-client
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y debhelper dpkg dpkg-dev git git-buildpackage python3 python3-catkin-pkg python3-yaml
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]

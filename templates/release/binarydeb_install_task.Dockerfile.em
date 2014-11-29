@@ -20,8 +20,7 @@ RUN echo deb @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.
 
 @# Ubuntu before Trusty explicitly needs python3
 @[if os_name == 'ubuntu' and os_code_name[0] < 't']@
-RUN apt-get update
-RUN apt-get install -q -y python3
+RUN apt-get update && apt-get install -q -y python3
 @[end if]@
 
 # always invalidate

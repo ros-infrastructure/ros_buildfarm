@@ -38,8 +38,7 @@ RUN echo "2014-11-20"
 
 @# Ubuntu before Trusty explicitly needs python3
 @[if os_name == 'ubuntu' and os_code_name[0] < 't']@
-RUN apt-get update
-RUN apt-get install -q -y python3
+RUN apt-get update && apt-get install -q -y python3
 @[end if]@
 
 # automatic invalidation once every day
