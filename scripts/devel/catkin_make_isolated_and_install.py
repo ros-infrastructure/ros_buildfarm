@@ -42,7 +42,7 @@ def main(argv=sys.argv[1:]):
         test_results_dir = os.path.join(args.workspace_root, 'test_results')
         rc = call_catkin_make_isolated(
             args.rosdistro_name, args.workspace_root,
-            ['--install', '--cmake-args', '-DCATKIN_ENABLE_TESTING=0',
+            ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1',
              '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir])
     finally:
         if args.clean_after:
