@@ -77,7 +77,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - generating devel tasks"',
         'cd $WORKSPACE/docker_generating_dockers',
-        'docker build -t devel .',
+        'docker build -t devel_task_generation__%s_%s .' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generating devel tasks"',
@@ -88,7 +88,7 @@
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
         ' -v $WORKSPACE/docker_build_and_test:/tmp/docker_build_and_test' +
-        ' devel',
+        ' devel_task_generation__%s_%s' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
     ]),
 ))@
@@ -98,14 +98,14 @@
         'echo "# BEGIN SECTION: Build Dockerfile - build and install"',
         '# build and run build_and_install Dockerfile',
         'cd $WORKSPACE/docker_build_and_install',
-        'docker build -t build_and_install .',
+        'docker build -t devel_build_and_install__%s_%s .' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
         'docker run' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
-        ' build_and_install',
+        ' devel_build_and_install__%s_%s' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
     ]),
 ))@
@@ -115,14 +115,14 @@
         'echo "# BEGIN SECTION: Build Dockerfile - build and test"',
         '# build and run build_and_test Dockerfile',
         'cd $WORKSPACE/docker_build_and_test',
-        'docker build -t build_and_test .',
+        'docker build -t devel_build_and_test__%s_%s .' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
         'docker run' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
-        ' build_and_test',
+        ' devel_build_and_test__%s_%s' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
     ]),
 ))@
