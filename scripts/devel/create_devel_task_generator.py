@@ -73,8 +73,11 @@ def main(argv=sys.argv[1:]):
 
     debian_pkg_names = [
         'build-essential',
-        get_debian_package_name(args.rosdistro_name, 'catkin'),
-        'python3']
+        'python3',
+    ]
+    if 'catkin' not in pkg_names:
+        debian_pkg_names.append(
+            get_debian_package_name(args.rosdistro_name, 'catkin'))
     print('Always install the following generic dependencies:')
     for debian_pkg_name in sorted(debian_pkg_names):
         print('  -', debian_pkg_name)
@@ -137,10 +140,14 @@ def main(argv=sys.argv[1:]):
 
 
 def get_dependencies(pkgs, label, get_dependencies_callback):
+    pkg_names = [pkg.name for pkg in pkgs]
     depend_names = set([])
     for pkg in pkgs:
-        depend_names.update([d.name for d in get_dependencies_callback(pkg)])
-    print('Identified the following %s dependencies:' % label)
+        depend_names.update(
+            [d.name for d in get_dependencies_callback(pkg)
+             if d.name not in pkg_names])
+    print('Identified the following %s dependencies ' % label +
+          '(ignoring packages available from source:')
     for depend_name in sorted(depend_names):
         print('  -', depend_name)
     return depend_names
