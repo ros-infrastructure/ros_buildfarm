@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import sys
 
 from ros_buildfarm.catkin_workspace import call_catkin_make_isolated
@@ -38,9 +39,11 @@ def main(argv=sys.argv[1:]):
         clean_workspace(args.workspace_root)
 
     try:
+        test_results_dir = os.path.join(args.workspace_root, 'test_results')
         rc = call_catkin_make_isolated(
             args.rosdistro_name, args.workspace_root,
-            ['--install', '--cmake-args', '-DCATKIN_ENABLE_TESTING=0'])
+            ['--install', '--cmake-args', '-DCATKIN_ENABLE_TESTING=0',
+             '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir])
     finally:
         if args.clean_after:
             clean_workspace(args.workspace_root)

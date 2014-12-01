@@ -23,6 +23,9 @@ def clean_workspace(workspace_root):
     install_space = os.path.join(workspace_root, 'install_isolated')
     if os.path.exists(install_space):
         shutil.rmtree(install_space)
+    test_results_dir = os.path.join(workspace_root, 'test_results')
+    if os.path.exists(test_results_dir):
+        shutil.rmtree(test_results_dir)
 
 
 def call_catkin_make_isolated(rosdistro_name, workspace_root, args):

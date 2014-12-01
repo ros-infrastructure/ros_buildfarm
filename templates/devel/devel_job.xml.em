@@ -130,7 +130,7 @@
   <publishers>
 @(SNIPPET(
     'publisher_xunit',
-    pattern='catkin_workspace/build_isolated/**/*.xml',
+    pattern='catkin_workspace/test_results/**/*.xml',
 ))@
 @[if notify_maintainers]@
 @(SNIPPET(
