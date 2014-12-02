@@ -2,13 +2,16 @@
 
 import subprocess
 import sys
+from time import sleep
 
 
 def main(argv=sys.argv[1:]):
     max_tries = 10
     for i in range(max_tries):
         if i > 0:
-            print("Reinvoke 'apt-get' (%d/%d)" % (i, max_tries))
+            print("Reinvoke 'apt-get' (%d/%d) after sleeping %s seconds" %
+                  (i, max_tries, i))
+            sleep(i)
         rc, known_error_conditions = call_apt_get_update(argv)
         if rc == 0:
             break
