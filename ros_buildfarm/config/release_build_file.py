@@ -89,7 +89,7 @@ class ReleaseBuildFile(object):
             if 'package_count' in data['sync']:
                 self.sync_package_count = int(data['sync']['package_count'])
             if 'packages' in data['sync']:
-                self.notify_maintainers = data['sync']['packages']
+                self.sync_packages = data['sync']['packages']
                 assert isinstance(self.sync_packages, list)
 
         self.repository_keys = []

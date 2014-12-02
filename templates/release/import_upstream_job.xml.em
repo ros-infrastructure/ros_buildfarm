@@ -26,7 +26,7 @@
 @(SNIPPET(
     'scm_git',
     url='https://github.com/ros-infrastructure/reprepro-updater.git',
-    refspec='upstream_config',
+    refspec='refactor',
     relative_target_dir='reprepro-updater',
 ))@
   <assignedNode>building_repository</assignedNode>
