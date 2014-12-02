@@ -43,7 +43,8 @@ def main(argv=sys.argv[1:]):
         rc = call_catkin_make_isolated(
             args.rosdistro_name, args.workspace_root,
             ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1',
-             '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir])
+             '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir,
+             '--catkin-make-args', '-j1'])
     finally:
         if args.clean_after:
             clean_workspace(args.workspace_root)
