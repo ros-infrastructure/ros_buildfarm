@@ -57,7 +57,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - check sync condition"',
         'cd $WORKSPACE/docker_check_sync_criteria',
-        'docker build -t check_sync_condition .',
+        '/tmp/wrapper_scripts/retry.py -- docker build -t check_sync_condition .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - check sync condition"',

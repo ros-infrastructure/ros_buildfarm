@@ -63,7 +63,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',
         'cd $WORKSPACE/docker_generate_devel_jobs',
-        'docker build -t devel_reconfigure_jobs .',
+        '/tmp/wrapper_scripts/retry.py -- docker build -t devel_reconfigure_jobs .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs"',
