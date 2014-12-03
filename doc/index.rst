@@ -36,7 +36,7 @@ one which fits your scenario since they build on-top of each other.
   * uses the same rosdistro database as well as
   * the unmodified ROS buildfarm code
 
-* run a `customized buildfarm <how_to_deploy_customized_buildfarm.rst>` which
+* run a `customized buildfarm <how_to_deploy_customized_buildfarm.rst>`_ which
   uses:
 
   * a modified configuration to build:
