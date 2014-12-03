@@ -12,6 +12,7 @@ from ros_buildfarm.common \
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_source_build_files
+from ros_buildfarm.git import get_repository_url
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
@@ -208,6 +209,8 @@ def _get_devel_job_config(
         'job_priority': build_file.jenkins_job_priority,
 
         'source_repo_spec': source_repo_spec,
+
+        'ros_buildfarm_url': get_repository_url('.'),
 
         'script_generating_key_files': script_generating_key_files,
 

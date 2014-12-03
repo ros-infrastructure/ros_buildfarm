@@ -205,8 +205,7 @@ def configure_release_job(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name, _get_target_arches(
             build_file, os_name, os_code_name, print_skipped=False),
-        repo.release_repository, pkg_name,
-        repo_name, dist_cache=dist_cache)
+        pkg_name, repo_name, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, job_name, job_config)
@@ -239,9 +238,8 @@ def configure_release_job(
         job_config = _get_binarydeb_job_config(
             config_url, rosdistro_name, release_build_name,
             config, build_file, os_name, os_code_name, arch,
-            repo.release_repository, pkg_name, append_timestamp,
-            repo_name, dist_cache=dist_cache,
-            upstream_job_names=upstream_job_names)
+            pkg_name, append_timestamp, repo_name,
+            dist_cache=dist_cache, upstream_job_names=upstream_job_names)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
             configure_job(jenkins, job_name, job_config)
@@ -302,8 +300,7 @@ def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
 def _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name, binary_arches,
-        release_repo_spec, pkg_name,
-        repo_name, dist_cache=None):
+        pkg_name, repo_name, dist_cache=None):
     template_name = 'release/sourcedeb_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -334,7 +331,7 @@ def _get_sourcedeb_job_config(
 
         'job_priority': build_file.jenkins_job_priority,
 
-        'release_repo_spec': release_repo_spec,
+        'ros_buildfarm_url': get_repository_url('.'),
 
         'script_generating_key_files': script_generating_key_files,
 
@@ -368,8 +365,8 @@ def _get_sourcedeb_job_config(
 def _get_binarydeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name, arch,
-        release_repo_spec, pkg_name, append_timestamp,
-        repo_name, dist_cache=None, upstream_job_names=None):
+        pkg_name, append_timestamp, repo_name,
+        dist_cache=None, upstream_job_names=None):
     template_name = 'release/binarydeb_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -397,7 +394,7 @@ def _get_binarydeb_job_config(
 
         'upstream_projects': upstream_job_names,
 
-        'release_repo_spec': release_repo_spec,
+        'ros_buildfarm_url': get_repository_url('.'),
 
         'script_generating_key_files': script_generating_key_files,
 
