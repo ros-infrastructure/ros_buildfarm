@@ -81,7 +81,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',
         'cd $WORKSPACE/docker_trigger_jobs',
-        'docker build -t release_trigger_jobs .',
+        '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t release_trigger_jobs .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs"',

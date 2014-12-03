@@ -73,7 +73,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - generate sourcedeb"',
         'cd $WORKSPACE/docker_sourcedeb',
-        'docker build -t sourcedeb__%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, pkg_name),
+        '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t sourcedeb__%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generate sourcedeb"',
