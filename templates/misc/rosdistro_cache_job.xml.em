@@ -62,7 +62,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - rosdistro cache"',
         'cd $WORKSPACE/docker_generate_rosdistro_cache',
-        'docker build -t rosdistro_cache_generation .',
+        '/tmp/wrapper_scripts/retry.py -- docker build -t rosdistro_cache_generation .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - rosdistro cache"',
