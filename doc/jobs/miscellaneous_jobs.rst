@@ -15,3 +15,20 @@ package repositories:
   * *main / ros / public*.
 
   Each page shows the packages and targets defined by a release build file.
+
+* ``build_repos_status_page.py`` shows all packages for a set of three
+  repositories:
+
+  * *building*,
+  * *testing / shadow-fixed*
+  * *main / ros / public*.
+
+  Each page shows the targets defined by all the release build files using
+  the building repository as a target repository.
+
+
+ROS distro cache
+----------------
+
+* ``rosdistro_cache`` generates the rosdistro cache for a specific ROS
+  distribution.

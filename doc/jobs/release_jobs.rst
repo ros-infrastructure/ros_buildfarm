@@ -19,6 +19,12 @@ The set of packages is identified by the *release build files* in the used
 rosdistro.
 For each *release build file* a separate Jenkins view is created.
 
+Whenever a ``source`` or ``binary`` has created a package it is being imported
+into the repository using the ``import-package`` job.
+Once all jobs have finished the ``sync-packages-to-testing`` job will check if
+the sync criteria is fulfilled and sync the packages from the ``building`` to
+the ``testing`` repository.
+
 
 Entry points
 ------------

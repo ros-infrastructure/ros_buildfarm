@@ -1,22 +1,51 @@
-ROS buildfarm: *insert-codename-here*
-=====================================
+ROS buildfarm based on Docker
+=============================
 
-The ROS buildfarm with the code name *insert-codename-here* is a new implementation based around the ROS distro spec (REP143_) and Docker_
+The ROS buildfarm is a new implementation using
+`Docker <http://www.docker.com>`_ for each step in the process.
+It is based on the ROS distro specification
+`REP 143 <https://github.com/ros-infrastructure/rep/pull/87>`_ and uses a
+separate
+`configuration for the buildfarm <https://github.com/ros-infrastructure/ros_buildfarm_config>`_.
 
-.. _REP143: https://github.com/ros-infrastructure/rep/pull/87
-.. _Docker: http://www.docker.com
+
+What does it do?
+----------------
+
+The buildfarm performs various different jobs.
+For each job type you will find a detailed description what they do and how
+they work.
+
+* `release jobs <jobs/release_jobs.rst>`_
+* `devel jobs <jobs/devel_jobs.rst>`_
+* doc jobs (to be done)
+* `miscellaneous jobs <jobs/miscellaneous_jobs.rst>`_
 
 
-Different job types
--------------------
+How to deploy a ROS buildfarm
+-----------------------------
 
-The buildfarm performs jobs of various different types:
+There are various different use cases for running your own ROS buildfarm.
+The most common ones are listed below.
 
-* `release_jobs`_
-* `devel_jobs`_
-* doc_jobs (to be done)
-* `miscellaneous_jobs`_
+If you want to deploy your own buildfarm please read all how-to's before the
+one which fits your scenario since they build on-top of each other.
 
-.. _release_jobs: release_jobs.rst
-.. _devel_jobs: devel_jobs.rst
-.. _miscellaneous_jobs: miscellaneous_jobs.rst
+* run the `same buildfarm <how_to_deploy_buildfarm.rst>`_ locally which:
+
+  * uses the same rosdistro database as well as
+  * the unmodified ROS buildfarm code
+
+* run a `customized buildfarm <how_to_deploy_customized_buildfarm.rst>` which
+  uses:
+
+  * a modified configuration to build:
+
+    * only a subset of packages
+    * a different set of targets
+
+  * a modified codebase to perform the tasks differently
+
+* run a `buildfarm with a forked rosdistro database <how_to_fork_rosdistro_database.rst>`_
+
+* run a `buildfarm with custom packages <how_to_build_and_release_custom_packages.rst>`_
