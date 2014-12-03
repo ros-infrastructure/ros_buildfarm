@@ -338,6 +338,8 @@ def _get_sourcedeb_job_config(
 
         'script_generating_key_files': script_generating_key_files,
 
+        'ros_buildfarm_repo': config.ros_buildfarm_repo,
+
         'rosdistro_index_url': config.rosdistro_index_url,
         'rosdistro_name': rosdistro_name,
         'release_build_name': release_build_name,
@@ -400,6 +402,8 @@ def _get_binarydeb_job_config(
         'release_repo_spec': release_repo_spec,
 
         'script_generating_key_files': script_generating_key_files,
+
+        'ros_buildfarm_repo': config.ros_buildfarm_repo,
 
         'rosdistro_index_url': config.rosdistro_index_url,
         'rosdistro_name': rosdistro_name,
