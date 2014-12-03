@@ -83,11 +83,11 @@ def configure_release_jobs(
         repo = dist_file.repositories[repo_name]
         if not repo.release_repository:
             print(("Skipping package '%s' in repository '%s': no release " +
-                   "section") % (pkg_name, repo_name))
+                   "section") % (pkg_name, repo_name), file=sys.stderr)
             continue
         if not repo.release_repository.version:
             print(("Skipping package '%s' in repository '%s': no release " +
-                   "version") % (pkg_name, repo_name))
+                   "version") % (pkg_name, repo_name), file=sys.stderr)
             continue
 
         for os_name, os_code_name in targets:
@@ -268,7 +268,7 @@ def _get_target_arches(build_file, os_name, os_code_name, print_skipped=True):
         # TODO support for non amd64 arch missing
         if arch not in ['amd64']:
             if print_skipped:
-                print('Skipping arch:', arch)
+                print('Skipping arch:', arch, file=sys.stderr)
             continue
         arches.append(arch)
     return arches
@@ -338,6 +338,8 @@ def _get_sourcedeb_job_config(
 
         'script_generating_key_files': script_generating_key_files,
 
+        'ros_buildfarm_repo': config.ros_buildfarm_repo,
+
         'rosdistro_index_url': config.rosdistro_index_url,
         'rosdistro_name': rosdistro_name,
         'release_build_name': release_build_name,
@@ -400,6 +402,8 @@ def _get_binarydeb_job_config(
         'release_repo_spec': release_repo_spec,
 
         'script_generating_key_files': script_generating_key_files,
+
+        'ros_buildfarm_repo': config.ros_buildfarm_repo,
 
         'rosdistro_index_url': config.rosdistro_index_url,
         'rosdistro_name': rosdistro_name,

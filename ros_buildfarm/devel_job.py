@@ -211,6 +211,8 @@ def _get_devel_job_config(
 
         'script_generating_key_files': script_generating_key_files,
 
+        'ros_buildfarm_repo': config.ros_buildfarm_repo,
+
         'rosdistro_index_url': config.rosdistro_index_url,
         'rosdistro_name': rosdistro_name,
         'source_build_name': source_build_name,

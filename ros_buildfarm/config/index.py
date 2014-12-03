@@ -89,3 +89,4 @@ class Index(object):
         self.prerequisites = data['prerequisites']
 
         self.rosdistro_index_url = data['rosdistro_index_url']
+        self.ros_buildfarm_repo = data['ros_buildfarm_repo']

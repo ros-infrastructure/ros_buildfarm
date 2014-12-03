@@ -49,7 +49,7 @@
         '',
         'echo "# BEGIN SECTION: Clone ros_buildfarm"',
         'rm -fr ros_buildfarm',
-        'git clone https://github.com/ros-infrastructure/ros_buildfarm.git ros_buildfarm',
+        'git clone ' + ros_buildfarm_repo + ' ros_buildfarm',
         'echo "# END SECTION"',
     ]),
 ))@
