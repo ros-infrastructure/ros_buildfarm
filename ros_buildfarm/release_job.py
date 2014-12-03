@@ -61,6 +61,9 @@ def configure_release_jobs(
         config_url, rosdistro_name, release_build_name,
         config=config, build_file=build_file, jenkins=jenkins)
 
+    configure_sync_packages_to_main_job(
+        config_url, rosdistro_name, release_build_name,
+        config=config, build_file=build_file, jenkins=jenkins)
     for os_name, os_code_name in targets:
         if os_name != 'ubuntu':
             continue
@@ -100,7 +103,7 @@ def configure_release_jobs(
                     index=index, dist_file=dist_file, dist_cache=dist_cache,
                     jenkins=jenkins, view=view,
                     generate_import_package_job=False,
-                    generate_sync_packages_to_testing_job=False)
+                    generate_sync_packages_jobs=False)
                 all_job_names += job_names
             except JobValidationError as e:
                 print(e.message, file=sys.stderr)
@@ -119,7 +122,7 @@ def configure_release_job(
         index=None, dist_file=None, dist_cache=None,
         jenkins=None, view=None,
         generate_import_package_job=True,
-        generate_sync_packages_to_testing_job=True,
+        generate_sync_packages_jobs=True,
         filter_arches=None):
     """
     Configure a Jenkins release job.
@@ -186,8 +189,11 @@ def configure_release_job(
             config_url, rosdistro_name, release_build_name,
             config=config, build_file=build_file, jenkins=jenkins)
 
-    if generate_sync_packages_to_testing_job:
-        if os_name != 'ubuntu':
+    if generate_sync_packages_jobs:
+        if os_name == 'ubuntu':
+            configure_sync_packages_to_main_job(
+                config_url, rosdistro_name, release_build_name,
+                config=config, build_file=build_file, jenkins=jenkins)
             for arch in _get_target_arches(build_file, os_name, os_code_name):
                 configure_sync_packages_to_testing_job(
                     config_url, rosdistro_name, release_build_name,
@@ -379,7 +385,7 @@ def _get_binarydeb_job_config(
         'binarydeb/*.deb',
     ]
 
-    sync_job_name = [get_sync_packages_to_testing_job_name(
+    sync_to_testing_job_name = [get_sync_packages_to_testing_job_name(
         rosdistro_name, release_build_name, os_code_name, arch)]
 
     maintainer_emails = get_maintainer_emails(dist_cache, repo_name) \
@@ -416,7 +422,7 @@ def _get_binarydeb_job_config(
         'debian_package_name': get_debian_package_name(
             rosdistro_name, pkg_name),
 
-        'child_projects': sync_job_name,
+        'child_projects': sync_to_testing_job_name,
 
         'notify_emails': set(config.notify_emails + build_file.notify_emails),
         'maintainer_emails': maintainer_emails,
@@ -522,6 +528,50 @@ def _get_sync_packages_to_testing_job_config(
         'os_code_name': os_code_name,
         'arch': arch,
         'repository_args': repository_args,
+
+        'notify_emails': build_file.notify_emails,
+    }
+    job_config = expand_template(template_name, job_data)
+    return job_config
+
+
+def configure_sync_packages_to_main_job(
+        config_url, rosdistro_name, release_build_name,
+        config=None, build_file=None, jenkins=None):
+    if config is None:
+        config = get_config_index(config_url)
+    if build_file is None:
+        build_files = get_release_build_files(config, rosdistro_name)
+        build_file = build_files[release_build_name]
+    if jenkins is None:
+        jenkins = connect(config.jenkins_url)
+
+    job_name = get_sync_packages_to_main_job_name(
+        rosdistro_name, release_build_name)
+    job_config = _get_sync_packages_to_main_job_config(
+        rosdistro_name, build_file)
+    view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
+
+    # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
+    if isinstance(jenkins, object) and jenkins is not False:
+        configure_job(jenkins, job_name, job_config, view)
+
+
+def get_sync_packages_to_main_job_name(rosdistro_name, release_build_name):
+    view_name = get_release_view_name(rosdistro_name, release_build_name)
+    return '%s_sync-packages-to-main' % view_name
+
+
+def _get_sync_packages_to_main_job_config(rosdistro_name, build_file):
+    template_name = 'release/sync_packages_to_main_job.xml.em'
+    now = datetime.utcnow()
+    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    job_data = {
+        'template_name': template_name,
+        'now_str': now_str,
+
+        'rosdistro_name': rosdistro_name,
 
         'notify_emails': build_file.notify_emails,
     }
