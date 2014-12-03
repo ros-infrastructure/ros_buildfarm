@@ -122,35 +122,36 @@
         'echo "# END SECTION"',
     ]),
 ))@
-@(SNIPPET(
-    'builder_shell',
-    script='\n'.join([
-        '# generate Dockerfile, build and run it',
-        '# trying to install the built binarydeb',
-        'echo "# BEGIN SECTION: Generate Dockerfile - install"',
-        'mkdir -p $WORKSPACE/docker_install_binarydeb',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        '$WORKSPACE/ros_buildfarm/scripts/release/create_binarydeb_install_task_generator.py' +
-        ' ' + os_name +
-        ' ' + os_code_name +
-        ' ' + arch +
-        ' ' + ' '.join(repository_args) +
-        ' --binarydeb-dir $WORKSPACE/binarydeb' +
-        ' --dockerfile-dir $WORKSPACE/docker_install_binarydeb',
-        'echo "# END SECTION"',
-        '',
-        'echo "# BEGIN SECTION: Build Dockerfile - install"',
-        'cd $WORKSPACE/docker_install_binarydeb',
-        '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t binarydeb_install__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
-        'echo "# END SECTION"',
-        '',
-        'echo "# BEGIN SECTION: Run Dockerfile - install"',
-        'docker run' +
-        ' -v $WORKSPACE/binarydeb:/tmp/binarydeb:ro' +
-        ' binarydeb_install__%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
-        'echo "# END SECTION"',
-    ]),
-))@
+@# disable installation check due to huge performance hit
+@# @(SNIPPET(
+@#     'builder_shell',
+@#     script='\n'.join([
+@#         '# generate Dockerfile, build and run it',
+@#         '# trying to install the built binarydeb',
+@#         'echo "# BEGIN SECTION: Generate Dockerfile - install"',
+@#         'mkdir -p $WORKSPACE/docker_install_binarydeb',
+@#         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
+@#         '$WORKSPACE/ros_buildfarm/scripts/release/create_binarydeb_install_task_generator.py' +
+@#         ' ' + os_name +
+@#         ' ' + os_code_name +
+@#         ' ' + arch +
+@#         ' ' + ' '.join(repository_args) +
+@#         ' --binarydeb-dir $WORKSPACE/binarydeb' +
+@#         ' --dockerfile-dir $WORKSPACE/docker_install_binarydeb',
+@#         'echo "# END SECTION"',
+@#         '',
+@#         'echo "# BEGIN SECTION: Build Dockerfile - install"',
+@#         'cd $WORKSPACE/docker_install_binarydeb',
+@#         '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t binarydeb_install__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+@#         'echo "# END SECTION"',
+@#         '',
+@#         'echo "# BEGIN SECTION: Run Dockerfile - install"',
+@#         'docker run' +
+@#         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb:ro' +
+@#         ' binarydeb_install__%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+@#         'echo "# END SECTION"',
+@#     ]),
+@# ))@
 @(SNIPPET(
     'builder_publish-over-ssh',
     config_name='repo',
