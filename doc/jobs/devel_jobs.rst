@@ -64,10 +64,18 @@ The task performs the following steps:
   folder ``catkin_workspace/src``.
 * Remove any ``build``, ``devel`` and ``install`` folder left over from
   previous runs.
-* Invoke ``catkin_make_isolated --install``.
+* Invoke
+  ``catkin_make_isolated --install -DCATKIN_SKIP_TESTING=1 --catkin-make-args -j1``.
+
   Since the CMake option ``CATKIN_ENABLE_TESTING`` is not enabled explicitly
   the packages must neither configure any tests nor use any test-only
-  dependencies.
+  dependencies. The option ``CATKIN_SKIP_TESTING`` prevents CMake from failing
+  if packages violate this restriction and only outputs a CMake warning
+  instead.
+
+  The build is performed single threaded to achieve deterministic build results
+  (a different target order could break the build if it lacks correct target
+  dependencies) and make errors more easy to read.
 
 
 Build and test
@@ -82,9 +90,10 @@ The task performs the following steps:
 * The content of the source repository is expected to be available in the
   folder ``catkin_workspace/src``.
 * Invoke
-  ``catkin_make_isolated --cmake-args -DCATKIN_ENABLE_TESTING=1 --catkin-make-args run_tests``.
-  The XUnit test results for each package will be created in the ``build``
-  folder and shown by Jenkins.
+  ``catkin_make_isolated --cmake-args -DCATKIN_ENABLE_TESTING=1 -DCATKIN_TEST_RESULTS_DIR=path/to/catkin_workspace/test_results --catkin-make-args -j1 run_tests``.
+
+  The XUnit test results for each package will be created in the subfolder
+  ``test_results`` in the catkn workspace and be shown by Jenkins.
 
 
 Run the *devel* job locally
