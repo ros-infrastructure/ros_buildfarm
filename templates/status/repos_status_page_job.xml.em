@@ -45,7 +45,7 @@
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'rm -fr $WORKSPACE/status_page',
         'mkdir -p $WORKSPACE/status_page',
-        '$WORKSPACE/ros_buildfarm/scripts/status/build_repos_status_page.py' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/status/build_repos_status_page.py' +
         ' ' + ' '.join(debian_repository_urls) +
         ' --os-code-name-and-arch-tuples ' +
         ' '.join(os_code_name_and_arch_tuples) +

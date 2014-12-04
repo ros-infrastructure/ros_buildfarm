@@ -56,7 +56,7 @@
         'echo "# BEGIN SECTION: Generate Dockerfile - reconfigure jobs"',
         'mkdir -p $WORKSPACE/docker_generate_devel_jobs',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        '$WORKSPACE/ros_buildfarm/scripts/devel/run_devel_reconfigure_job.py' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/devel/run_devel_reconfigure_job.py' +
         ' ' + config_url +
         ' ' + rosdistro_name +
         ' ' + source_build_name +
@@ -66,7 +66,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',
         'cd $WORKSPACE/docker_generate_devel_jobs',
-        '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t devel_reconfigure_jobs .',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t devel_reconfigure_jobs .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs"',

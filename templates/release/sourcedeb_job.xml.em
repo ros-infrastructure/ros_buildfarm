@@ -63,7 +63,7 @@
         'echo "# BEGIN SECTION: Generate Dockerfile - sourcedeb task"',
         'mkdir -p $WORKSPACE/docker_sourcedeb',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        '$WORKSPACE/ros_buildfarm/scripts/release/run_sourcedeb_job.py' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_sourcedeb_job.py' +
         ' --rosdistro-index-url ' + rosdistro_index_url +
         ' ' + rosdistro_name +
         ' ' + pkg_name +
@@ -76,7 +76,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - generate sourcedeb"',
         'cd $WORKSPACE/docker_sourcedeb',
-        '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t sourcedeb__%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, pkg_name),
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t sourcedeb__%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generate sourcedeb"',

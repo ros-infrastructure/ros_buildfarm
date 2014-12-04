@@ -72,7 +72,7 @@
         'echo "# BEGIN SECTION: Generate Dockerfile - trigger jobs"',
         'mkdir -p $WORKSPACE/docker_trigger_jobs',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        '$WORKSPACE/ros_buildfarm/scripts/release/run_trigger_job.py' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_trigger_job.py' +
         ' ' + config_url +
         ' ' + rosdistro_name +
         ' ' + release_build_name +
@@ -84,7 +84,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',
         'cd $WORKSPACE/docker_trigger_jobs',
-        '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t release_trigger_jobs .',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t release_trigger_jobs .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs"',

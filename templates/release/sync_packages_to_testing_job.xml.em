@@ -47,7 +47,7 @@
         'echo "# BEGIN SECTION: Generate Dockerfile - check sync condition"',
         'mkdir -p $WORKSPACE/docker_check_sync_criteria',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        '$WORKSPACE/ros_buildfarm/scripts/release/run_check_sync_criteria_job.py' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_check_sync_criteria_job.py' +
         ' ' + config_url +
         ' ' + rosdistro_name +
         ' ' + release_build_name +
@@ -60,7 +60,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - check sync condition"',
         'cd $WORKSPACE/docker_check_sync_criteria',
-        '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t check_sync_condition .',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t check_sync_condition .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - check sync condition"',
@@ -84,7 +84,7 @@
         '',
         'echo "# BEGIN SECTION: sync packages to testing repo"',
         'export PYTHONPATH=$WORKSPACE/reprepro-updater/src:$PYTHONPATH',
-        '$WORKSPACE/reprepro-updater/scripts/sync_ros_packages.py ubuntu_testing --upstream-ros ubuntu_building -r %s -d %s -a %s -c' % (rosdistro_name, os_code_name, arch),
+        'python -u $WORKSPACE/reprepro-updater/scripts/sync_ros_packages.py ubuntu_testing --upstream-ros ubuntu_building -r %s -d %s -a %s -c' % (rosdistro_name, os_code_name, arch),
         'echo "# END SECTION"',
     ]),
 ))@

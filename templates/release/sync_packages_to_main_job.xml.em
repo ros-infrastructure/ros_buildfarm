@@ -34,7 +34,7 @@
     script='\n'.join([
         'echo "# BEGIN SECTION: sync packages to main repo"',
         'export PYTHONPATH=$WORKSPACE/reprepro-updater/src:$PYTHONPATH',
-        '$WORKSPACE/reprepro-updater/scripts/sync_ros_packages.py ubuntu_main --upstream-ros ubuntu_testing -r %s -c' % rosdistro_name,
+        'python -u $WORKSPACE/reprepro-updater/scripts/sync_ros_packages.py ubuntu_main --upstream-ros ubuntu_testing -r %s -c' % rosdistro_name,
         'echo "# END SECTION"',
     ]),
 ))@

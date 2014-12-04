@@ -56,7 +56,7 @@
         'echo "# BEGIN SECTION: Generate Dockerfile - status page"',
         'mkdir -p $WORKSPACE/docker_generate_status_page',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        '$WORKSPACE/ros_buildfarm/scripts/status/run_release_status_page_job.py' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/status/run_release_status_page_job.py' +
         ' ' + config_url +
         ' ' + rosdistro_name +
         ' ' + release_build_name +
@@ -66,7 +66,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - status page"',
         'cd $WORKSPACE/docker_generate_status_page',
-        '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t status_page_generation .',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t status_page_generation .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - status page"',

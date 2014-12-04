@@ -56,7 +56,7 @@
         'echo "# BEGIN SECTION: Generate Dockerfile - rosdistro cache"',
         'mkdir -p $WORKSPACE/docker_generate_rosdistro_cache',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        '$WORKSPACE/ros_buildfarm/scripts/misc/run_rosdistro_cache_job.py' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/run_rosdistro_cache_job.py' +
         ' --rosdistro-index-url ' + rosdistro_index_url +
         ' ' + rosdistro_name +
         ' ' + ' '.join(repository_args) +
@@ -65,7 +65,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - rosdistro cache"',
         'cd $WORKSPACE/docker_generate_rosdistro_cache',
-        '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t rosdistro_cache_generation .',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t rosdistro_cache_generation .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - rosdistro cache"',

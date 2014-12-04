@@ -73,7 +73,7 @@
         'echo "# BEGIN SECTION: Generate Dockerfile - binarydeb task"',
         'mkdir -p $WORKSPACE/docker_generating_docker',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        '$WORKSPACE/ros_buildfarm/scripts/release/run_binarydeb_job.py' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_binarydeb_job.py' +
         ' --rosdistro-index-url ' + rosdistro_index_url +
         ' ' + rosdistro_name +
         ' ' + pkg_name +
@@ -88,7 +88,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - binarydeb task"',
         'cd $WORKSPACE/docker_generating_docker',
-        '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t binarydeb_task_generation__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t binarydeb_task_generation__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - binarydeb task"',
@@ -110,7 +110,7 @@
         'echo "# BEGIN SECTION: Build Dockerfile - build binarydeb"',
         '# build and run build_binarydeb Dockerfile',
         'cd $WORKSPACE/docker_build_binarydeb',
-        '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t binarydeb_build__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t binarydeb_build__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build binarydeb"',
@@ -134,7 +134,7 @@
 @#         'echo "# BEGIN SECTION: Generate Dockerfile - install"',
 @#         'mkdir -p $WORKSPACE/docker_install_binarydeb',
 @#         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-@#         '$WORKSPACE/ros_buildfarm/scripts/release/create_binarydeb_install_task_generator.py' +
+@#         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/create_binarydeb_install_task_generator.py' +
 @#         ' ' + os_name +
 @#         ' ' + os_code_name +
 @#         ' ' + arch +
@@ -145,7 +145,7 @@
 @#         '',
 @#         'echo "# BEGIN SECTION: Build Dockerfile - install"',
 @#         'cd $WORKSPACE/docker_install_binarydeb',
-@#         '$WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t binarydeb_install__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+@#         'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t binarydeb_install__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
 @#         'echo "# END SECTION"',
 @#         '',
 @#         'echo "# BEGIN SECTION: Run Dockerfile - install"',
