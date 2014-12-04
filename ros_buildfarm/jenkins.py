@@ -131,8 +131,11 @@ def _diff_configs(remote_config, new_config):
     if ElementTree.tostring(remote_root) == ElementTree.tostring(new_root):
         return []
 
-    lines1 = ElementTree.tostringlist(remote_root, encoding='unicode')
-    lines2 = ElementTree.tostringlist(new_root, encoding='unicode')
+    xml1 = ElementTree.tostring(remote_root, encoding='unicode')
+    xml2 = ElementTree.tostring(new_root, encoding='unicode')
+    lines1 = xml1.splitlines()
+    lines2 = xml2.splitlines()
+
     return difflib.unified_diff(
         lines1, lines2, 'remote config', 'new config', n=0)
 
