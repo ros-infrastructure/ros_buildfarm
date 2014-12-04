@@ -48,7 +48,7 @@ def get_job_config(args, config):
         'template_name': template_name,
         'now_str': now_str,
 
-        'ros_buildfarm_url': get_repository_url('.'),
+        'ros_buildfarm_url': get_repository_url(),
 
         'notification_emails': config.notify_emails,
     })

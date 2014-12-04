@@ -3,7 +3,9 @@ import subprocess
 
 
 def get_repository_url(path=None):
-    url = _get_git_remote_origin(path if path is not None else '.')
+    if path is None:
+        path = os.path.dirname(os.path.dirname(__file__))
+    url = _get_git_remote_origin(path)
     assert url
 
     prefix_mapping = {

@@ -223,7 +223,7 @@ def _get_devel_job_config(
 
         'source_repo_spec': source_repo_spec,
 
-        'ros_buildfarm_url': get_repository_url('.'),
+        'ros_buildfarm_url': get_repository_url(),
 
         'script_generating_key_files': script_generating_key_files,
 

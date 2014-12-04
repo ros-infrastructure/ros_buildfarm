@@ -70,7 +70,7 @@ def get_reconfigure_jobs_job_config(args, config, build_file):
         'source_build_name': args.source_build_name,
         'repository_args': repository_args,
 
-        'ros_buildfarm_url': get_repository_url('.'),
+        'ros_buildfarm_url': get_repository_url(),
 
         'credentials_src': os.path.join(
             '/var/lib/jenkins',

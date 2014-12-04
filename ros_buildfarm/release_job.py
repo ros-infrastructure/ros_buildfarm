@@ -337,7 +337,7 @@ def _get_sourcedeb_job_config(
 
         'job_priority': build_file.jenkins_job_priority,
 
-        'ros_buildfarm_url': get_repository_url('.'),
+        'ros_buildfarm_url': get_repository_url(),
 
         'script_generating_key_files': script_generating_key_files,
 
@@ -400,7 +400,7 @@ def _get_binarydeb_job_config(
 
         'upstream_projects': upstream_job_names,
 
-        'ros_buildfarm_url': get_repository_url('.'),
+        'ros_buildfarm_url': get_repository_url(),
 
         'script_generating_key_files': script_generating_key_files,
 
@@ -518,7 +518,7 @@ def _get_sync_packages_to_testing_job_config(
         'template_name': template_name,
         'now_str': now_str,
 
-        'ros_buildfarm_url': get_repository_url('.'),
+        'ros_buildfarm_url': get_repository_url(),
 
         'script_generating_key_files': script_generating_key_files,
 
