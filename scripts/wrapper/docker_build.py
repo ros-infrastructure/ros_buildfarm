@@ -19,10 +19,10 @@ def main(argv=sys.argv[1:]):
         if not known_error_conditions:
             break
         # retry in case of failure with known error condition
-        print('', file=sys.stderr)
+        print('')
         print('Invocation failed due to: %s' %
-              ', '.join(known_error_conditions), file=sys.stderr)
-        print('', file=sys.stderr)
+              ', '.join(known_error_conditions))
+        print('')
     return rc
 
 
