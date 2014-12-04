@@ -81,7 +81,7 @@ rosdep database:
 * Download the custom rosdep list file::
 
     cd /etc/ros/rosdep/sources.list.d
-    sudo https://raw.github.com/YOUR_FORK/rosdistro/master/rosdep/sources.list.d/20-default.list
+    sudo wget https://raw.github.com/YOUR_FORK/rosdistro/master/rosdep/sources.list.d/20-default.list
 
 * Update the local rosdep database::
 
