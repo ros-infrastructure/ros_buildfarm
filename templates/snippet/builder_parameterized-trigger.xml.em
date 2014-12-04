@@ -31,8 +31,8 @@
               <ordinal>2</ordinal>
               <color>RED</color>
               <completeBuild>true</completeBuild>
-              </failureThreshold>
-            </block>
+            </failureThreshold>
+          </block>
           <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
         </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
       </configs>

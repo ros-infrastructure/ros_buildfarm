@@ -1,8 +1,7 @@
 @(SNIPPET(
     'builder_system-groovy',
     command=
-"""
-// VERFIY THAT NO UPSTREAM PROJECT IS BROKEN
+"""// VERFIY THAT NO UPSTREAM PROJECT IS BROKEN
 import hudson.model.Result
 
 println ""

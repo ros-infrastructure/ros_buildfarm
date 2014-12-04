@@ -4,7 +4,7 @@
       </strategy>
       <operationList>
         <hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
-        <description>Build timed out after {0} minutes</description>
+          <description>Build timed out after {0} minutes</description>
         </hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
       </operationList>
     </hudson.plugins.build__timeout.BuildTimeoutWrapper>
