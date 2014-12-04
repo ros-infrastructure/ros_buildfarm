@@ -27,19 +27,22 @@ def main(argv=sys.argv[1:]):
 
 
 def call_docker_build(argv):
+    # ensure that the content of this file is not matched by the patterns
+    # because the 'docker build' invocation might echo the content of this file
     known_error_patterns = [
-        '.* An error occured while creating the container.*',
-        '.* Cannot find child for .*',
-        '.* Error getting container .* no such file or directory.*',
-        '.* Error mounting .* no such file or directory.*',
-        '.* failed to create image .* no such file or directory.*',
-        '.* failed to get image parent .* no such file or directory.*',
-        '.* failed to get image parent .* Unknown device.*',
-        '.* lstat .* input/output error.*',
-        '.* No such container: .*',
-        '.* No such id: .*',
-        '.* open .* no such file or directory.*',
+        'An error occured while creating the container.*',
+        'Cannot find child for .*',
+        'Error getting container .* no such file or directory.*',
+        'Error mounting .* no such file or directory.*',
+        'failed to create image .* no such file or directory.*',
+        'failed to get image parent .* no such file or directory.*',
+        'failed to get image parent .* Unknown device.*',
+        'lstat .* input/output error.*',
+        'No such container: .*',
+        'No such id: .*',
+        'open .* no such file or directory.*',
     ]
+    known_error_patterns = ['.* %s' % p for p in known_error_patterns]
     known_error_conditions = []
 
     cmd = ['docker', 'build'] + argv
@@ -53,7 +56,8 @@ def call_docker_build(argv):
             sys.stdout.write(line)
             for known_error_pattern in known_error_patterns:
                 if re.match(known_error_pattern, line):
-                    known_error_conditions.append(known_error_pattern)
+                    if known_error_pattern not in known_error_conditions:
+                        known_error_conditions.append(known_error_pattern)
         proc.wait()
         rc = proc.returncode
     return rc, known_error_conditions

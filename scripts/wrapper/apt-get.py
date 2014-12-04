@@ -40,7 +40,8 @@ def call_apt_get_update(argv):
             sys.stdout.write(line)
             for known_error_string in known_error_strings:
                 if known_error_string in line:
-                    known_error_conditions.append(known_error_string)
+                    if known_error_string not in known_error_conditions:
+                        known_error_conditions.append(known_error_string)
         proc.wait()
         rc = proc.returncode
     return rc, known_error_conditions
