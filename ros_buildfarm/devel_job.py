@@ -67,6 +67,19 @@ def configure_devel_jobs(
         if not repo.source_repository.version:
             print("Skipping repository '%s': no source version" % repo_name)
             continue
+        if build_file.test_commits_force is False:
+            print(("Skipping repository '%s': 'test_commits' is forced to " +
+                   "false in the build file") % repo_name)
+            continue
+        if repo.source_repository.test_commits is False:
+            print(("Skipping repository '%s': 'test_commits' of the " +
+                   "repository set to false") % repo_name)
+            continue
+        if repo.source_repository.test_commits is None and \
+                not build_file.test_commits_default:
+            print(("Skipping repository '%s': 'test_commits' defaults to " +
+                   "false in the build file") % repo_name)
+            continue
 
         for os_name, os_code_name, arch in targets:
             try:

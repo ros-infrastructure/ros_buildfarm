@@ -45,7 +45,7 @@ class SourceBuildFile(object):
         assert data['type'] == SourceBuildFile._type, "Expected file type is '%s', not '%s'" % (SourceBuildFile._type, data['type'])
 
         assert 'version' in data, "Source build file for '%s' lacks required version information" % self.name
-        assert int(data['version']) in [1, 2], "Unable to handle '%s' format version '%d', please update rosdistro (e.g. on Ubuntu/Debian use: sudo apt-get update && sudo apt-get install --only-upgrade python-rosdistro)" % (SourceBuildFile._type, int(data['version']))
+        assert int(data['version']) in [1, 2, 3], "Unable to handle '%s' format version '%d', please update rosdistro (e.g. on Ubuntu/Debian use: sudo apt-get update && sudo apt-get install --only-upgrade python-rosdistro)" % (SourceBuildFile._type, int(data['version']))
         self.version = int(data['version'])
 
         self.jenkins_job_priority = None
@@ -94,6 +94,26 @@ class SourceBuildFile(object):
                 self.targets[os_name][os_code_name] = {}
                 for arch in data['targets'][os_name][os_code_name]:
                     self.targets[os_name][os_code_name][arch] = data['targets'][os_name][os_code_name][arch]
+
+        self.test_commits_default = False
+        self.test_commits_force = None
+        if 'test_commits' in data:
+            if 'default' in data['test_commits']:
+                    self.test_commits_default = bool(
+                        data['test_commits']['default'])
+            if 'force' in data['test_commits']:
+                    self.test_commits_force = bool(
+                        data['test_commits']['force'])
+
+        self.test_pull_requests_default = False
+        self.test_pull_requests_force = None
+        if 'test_pull_requests' in data:
+            if 'default' in data['test_pull_requests']:
+                    self.test_pull_requests_default = bool(
+                        data['test_pull_requests']['default'])
+            if 'force' in data['test_pull_requests']:
+                    self.test_pull_requests_force = bool(
+                        data['test_pull_requests']['force'])
 
     def filter_repositories(self, repository_names):
         res = copy.copy(set(repository_names))
