@@ -17,6 +17,9 @@
 @(SNIPPET(
     'property_requeue-job',
 ))@
+@(SNIPPET(
+    'property_disk-usage',
+))@
   </properties>
 @(SNIPPET(
     'scm',
