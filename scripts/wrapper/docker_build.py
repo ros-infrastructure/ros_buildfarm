@@ -32,6 +32,8 @@ def call_docker_build(argv):
         '.* Cannot find child for .*',
         '.* Error getting container .* no such file or directory.*',
         '.* Error mounting .* no such file or directory.*',
+        '.* failed to create image .* no such file or directory.*',
+        '.* failed to get image parent .* no such file or directory.*',
         '.* failed to get image parent .* Unknown device.*',
         '.* lstat .* input/output error.*',
         '.* No such container: .*',
