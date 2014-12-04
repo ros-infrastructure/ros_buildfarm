@@ -31,8 +31,8 @@ today_isoformat = datetime.date.today().isoformat()
 RUN echo "@today_isoformat"
 
 RUN mkdir /tmp/wrapper_scripts
-@[for filename, content in wrapper_scripts.items()]@
-RUN echo "@('\\n'.join(content.replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
+@[for filename in sorted(wrapper_scripts.keys())]@
+RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
 @[end for]@
 
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y git python3-apt python3-catkin-pkg python3-empy python3-rosdep

@@ -21,8 +21,8 @@ RUN echo deb @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.
 @[end for]@
 
 RUN mkdir /tmp/wrapper_scripts
-@[for filename, content in wrapper_scripts.items()]@
-RUN echo "@('\\n'.join(content.replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
+@[for filename in sorted(wrapper_scripts.keys())]@
+RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
 @[end for]@
 
 # optionally manual cache invalidation for core dependencies

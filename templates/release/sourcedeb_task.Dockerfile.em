@@ -36,8 +36,8 @@ today_isoformat = datetime.date.today().isoformat()
 RUN echo "@today_isoformat"
 
 RUN mkdir /tmp/wrapper_scripts
-@[for filename, content in wrapper_scripts.items()]@
-RUN echo "@('\\n'.join(content.replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
+@[for filename in sorted(wrapper_scripts.keys())]@
+RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
 @[end for]@
 
 # TODO use python3-rosdistro instead of source checkout
