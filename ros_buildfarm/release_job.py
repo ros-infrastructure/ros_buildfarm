@@ -39,10 +39,6 @@ def configure_release_jobs(
 
     index = get_index(config.rosdistro_index_url)
 
-    dist_cache = None
-    if build_file.notify_maintainers or build_file.abi_incompatibility_assumed:
-        dist_cache = get_distribution_cache(index, rosdistro_name)
-
     # get targets
     targets = []
     for os_name in build_file.targets.keys():
@@ -57,6 +53,50 @@ def configure_release_jobs(
     if not dist_file:
         print('No distribution file matches the build file')
         return
+
+    fetch_dist_cache = build_file.notify_maintainers or \
+        build_file.abi_incompatibility_assumed
+
+    pkg_names = dist_file.release_packages.keys()
+    filtered_pkg_names = build_file.filter_packages(pkg_names)
+    explicitly_ignored_pkg_names = set(pkg_names) - set(filtered_pkg_names)
+    if explicitly_ignored_pkg_names:
+        print('The following packages are being ignored because of ' +
+              'white-/blacklisting:')
+        for pkg_name in sorted(explicitly_ignored_pkg_names):
+            print('  -', pkg_name)
+        fetch_dist_cache = True
+
+    dist_cache = None
+    if fetch_dist_cache:
+        dist_cache = get_distribution_cache(index, rosdistro_name)
+
+    if explicitly_ignored_pkg_names:
+        # get direct dependencies from distro cache for each package
+        direct_dependencies = {}
+        for pkg_name in pkg_names:
+            direct_dependencies[pkg_name] = _get_direct_dependencies(
+                pkg_name, dist_cache, pkg_names) or set([])
+
+        # find recursive downstream deps for all explicitly ignored packages
+        ignored_pkg_names = set(explicitly_ignored_pkg_names)
+        while True:
+            implicitly_ignored_pkg_names = _get_downstream_package_names(
+                ignored_pkg_names, direct_dependencies)
+            if implicitly_ignored_pkg_names - ignored_pkg_names:
+                ignored_pkg_names |= implicitly_ignored_pkg_names
+                continue
+            break
+        implicitly_ignored_pkg_names = \
+            ignored_pkg_names - explicitly_ignored_pkg_names
+
+        if implicitly_ignored_pkg_names:
+            print('The following packages are being ignored because their ' +
+                  'dependencies are being ignored:')
+            for pkg_name in sorted(implicitly_ignored_pkg_names):
+                print('  -', pkg_name)
+            filtered_pkg_names = \
+                set(filtered_pkg_names) - implicitly_ignored_pkg_names
 
     jenkins = connect(config.jenkins_url)
 
@@ -79,11 +119,8 @@ def configure_release_jobs(
     view_name = get_release_view_name(rosdistro_name, release_build_name)
     view = configure_release_view(jenkins, view_name)
 
-    pkg_names = dist_file.release_packages.keys()
-    pkg_names = build_file.filter_packages(pkg_names)
-
     all_job_names = []
-    for pkg_name in sorted(pkg_names):
+    for pkg_name in sorted(filtered_pkg_names):
         pkg = dist_file.release_packages[pkg_name]
         repo_name = pkg.repository_name
         repo = dist_file.repositories[repo_name]
@@ -113,6 +150,14 @@ def configure_release_jobs(
 
     # delete obsolete jobs in this view
     remove_jobs(jenkins, '%s__' % view_name, all_job_names)
+
+
+def _get_downstream_package_names(pkg_names, dependencies):
+    downstream_pkg_names = set([])
+    for pkg_name, deps in dependencies.items():
+        if deps.intersection(pkg_names):
+            downstream_pkg_names.add(pkg_name)
+    return downstream_pkg_names
 
 
 # Configure a Jenkins release job which consists of
@@ -154,7 +199,6 @@ def configure_release_job(
     if pkg_name not in pkg_names:
         raise JobValidationError(
             "Invalid package name '%s' " % pkg_name +
-
             'choose one of the following: ' + ', '.join(sorted(pkg_names)))
 
     pkg = dist_file.release_packages[pkg_name]
