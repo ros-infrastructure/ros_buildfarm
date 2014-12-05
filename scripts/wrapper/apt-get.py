@@ -26,7 +26,7 @@ def main(argv=sys.argv[1:]):
 
 
 def call_apt_get_update(argv):
-    known_error_strings = ['Hash Sum mismatch']
+    known_error_strings = ['E: Failed to fetch', 'Hash Sum mismatch']
     known_error_conditions = []
 
     cmd = ['apt-get'] + argv
