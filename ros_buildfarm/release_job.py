@@ -54,9 +54,6 @@ def configure_release_jobs(
         print('No distribution file matches the build file')
         return
 
-    fetch_dist_cache = build_file.notify_maintainers or \
-        build_file.abi_incompatibility_assumed
-
     pkg_names = dist_file.release_packages.keys()
     filtered_pkg_names = build_file.filter_packages(pkg_names)
     explicitly_ignored_pkg_names = set(pkg_names) - set(filtered_pkg_names)
@@ -65,10 +62,11 @@ def configure_release_jobs(
               'white-/blacklisting:')
         for pkg_name in sorted(explicitly_ignored_pkg_names):
             print('  -', pkg_name)
-        fetch_dist_cache = True
 
     dist_cache = None
-    if fetch_dist_cache:
+    if build_file.notify_maintainers or \
+            build_file.abi_incompatibility_assumed or \
+            explicitly_ignored_pkg_names:
         dist_cache = get_distribution_cache(index, rosdistro_name)
 
     if explicitly_ignored_pkg_names:
