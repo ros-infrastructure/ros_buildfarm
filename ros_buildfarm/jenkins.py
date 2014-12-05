@@ -4,6 +4,7 @@ import sys
 from xml.etree import ElementTree
 
 from jenkinsapi.jenkins import Jenkins
+from jenkinsapi.job import Job
 
 from .jenkins_credentials import get_credentials
 from .templates import expand_template
@@ -56,11 +57,11 @@ def _get_view_config(view_name, include_regex):
 
 def configure_job(jenkins, job_name, job_config, view=None):
     try:
-        if not jenkins.has_job(job_name):
+        if not _has_job(jenkins, job_name):
             print("Creating job '%s'" % job_name)
             job = jenkins.create_job(job_name, job_config)
         else:
-            job = jenkins.get_job(job_name)
+            job = _get_job(jenkins, job_name)
             remote_job_config = job.get_config()
             diff = _diff_configs(remote_job_config, job_config)
             if not diff:
@@ -87,7 +88,7 @@ def configure_job(jenkins, job_name, job_config, view=None):
 
 def invoke_job(jenkins, job_name, prevent_multiple=True, queue=None):
     try:
-        if not jenkins.has_job(job_name):
+        if not _has_job(jenkins, job_name):
             print("Failed to invoke job '%s' because it does not exist" %
                   job_name, file=sys.stderr)
             return False
@@ -99,7 +100,7 @@ def invoke_job(jenkins, job_name, prevent_multiple=True, queue=None):
                        "in the queue") % job_name)
                 return False
 
-        job = jenkins.get_job(job_name)
+        job = _get_job(jenkins, job_name)
         if not job.is_enabled():
             print("Failed to invoke job '%s' because it is disabled" %
                   job_name, file=sys.stderr)
@@ -148,3 +149,22 @@ def remove_jobs(jenkins, job_prefix, excluded_job_names):
             continue
         print("Deleting job '%s'" % job_name)
         jenkins.delete_job(job_name)
+
+
+# override for performance reason
+def _has_job(jenkins, job_name):
+    # return jenkins.has_job(job_name)
+    jobs_info = jenkins.get_jobs_info()
+    job_names = [job_info[1] for job_info in jobs_info]
+    return job_name in job_names
+
+
+# override for performance reason
+def _get_job(jenkins, job_name):
+    # return jenkins.get_job(job_name)
+    if not _has_job(jenkins, job_name):
+        return None
+    jobs_info = jenkins.get_jobs_info()
+    job_info = [
+        job_info for job_info in jobs_info if job_info[1] == job_name][0]
+    return Job(job_info[0], job_info[1], jenkins)
