@@ -2,7 +2,6 @@ from datetime import datetime
 import sys
 
 from rosdistro import get_distribution_cache
-from rosdistro import get_distribution_file
 from rosdistro import get_index
 
 from ros_buildfarm.common import get_debian_package_name
@@ -10,6 +9,7 @@ from ros_buildfarm.common import get_release_view_name
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
 from ros_buildfarm.common import JobValidationError
+from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.git import get_repository_url
@@ -53,7 +53,10 @@ def configure_release_jobs(
         print('  - %s %s: %s' % (os_name, os_code_name, ', '.join(
             build_file.targets[os_name][os_code_name])))
 
-    dist_file = get_distribution_file(index, rosdistro_name)
+    dist_file = get_distribution_file(index, rosdistro_name, build_file)
+    if not dist_file:
+        print('No distribution file matches the build file')
+        return
 
     jenkins = connect(config.jenkins_url)
 
@@ -141,6 +144,9 @@ def configure_release_job(
         index = get_index(config.rosdistro_index_url)
     if dist_file is None:
         dist_file = get_distribution_file(index, rosdistro_name)
+        if not dist_file:
+            raise JobValidationError(
+                'No distribution file matches the build file')
 
     pkg_names = dist_file.release_packages.keys()
     pkg_names = build_file.filter_packages(pkg_names)
@@ -148,6 +154,7 @@ def configure_release_job(
     if pkg_name not in pkg_names:
         raise JobValidationError(
             "Invalid package name '%s' " % pkg_name +
+
             'choose one of the following: ' + ', '.join(sorted(pkg_names)))
 
     pkg = dist_file.release_packages[pkg_name]

@@ -12,7 +12,7 @@ def get_sources(
     index = get_index(rosdistro_index_url)
     dist_file = get_distribution_file(index, rosdistro_name)
     if pkg_name not in dist_file.release_packages:
-        return "Not a released package name: %s" % pkg_name
+        return 'Not a released package name: %s' % pkg_name
 
     pkg = dist_file.release_packages[pkg_name]
     repo_name = pkg.repository_name

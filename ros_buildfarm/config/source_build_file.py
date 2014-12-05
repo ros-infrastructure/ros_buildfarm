@@ -31,22 +31,31 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import copy
+from .build_file import BuildFile
 
 
-class SourceBuildFile(object):
+class SourceBuildFile(BuildFile):
 
     _type = 'source-build'
 
     def __init__(self, name, data):
-        self.name = name
+        assert 'type' in data, "Expected file type is '%s'" % \
+            SourceBuildFile._type
+        assert data['type'] == SourceBuildFile._type, \
+            "Expected file type is '%s', not '%s'" % \
+            (SourceBuildFile._type, data['type'])
 
-        assert 'type' in data, "Expected file type is '%s'" % SourceBuildFile._type
-        assert data['type'] == SourceBuildFile._type, "Expected file type is '%s', not '%s'" % (SourceBuildFile._type, data['type'])
-
-        assert 'version' in data, "Source build file for '%s' lacks required version information" % self.name
-        assert int(data['version']) in [1, 2, 3], "Unable to handle '%s' format version '%d', please update rosdistro (e.g. on Ubuntu/Debian use: sudo apt-get update && sudo apt-get install --only-upgrade python-rosdistro)" % (SourceBuildFile._type, int(data['version']))
+        assert 'version' in data, \
+            "Source build file for '%s' lacks required version information" % \
+            self.name
+        assert int(data['version']) in [1, 2, 3], \
+            ("Unable to handle '%s' format version '%d', please update " +
+             "rosdistro (e.g. on Ubuntu/Debian use: sudo apt-get update && " +
+             "sudo apt-get install --only-upgrade python-rosdistro)") % \
+            (SourceBuildFile._type, int(data['version']))
         self.version = int(data['version'])
+
+        super(SourceBuildFile, self).__init__(name, data)
 
         self.jenkins_job_priority = None
         if 'jenkins_job_priority' in data:
@@ -57,25 +66,10 @@ class SourceBuildFile(object):
             self.jenkins_job_timeout = int(data['jenkins_job_timeout'])
 
         self.notify_committers = None
-        self.notify_emails = []
-        self.notify_maintainers = None
         if 'notifications' in data:
-            if 'committers' in data['notifications'] and data['notifications']['committers']:
-                self.notify_committers = True
-            if 'emails' in data['notifications']:
-                self.notify_emails = data['notifications']['emails']
-                assert isinstance(self.notify_emails, list)
-            if 'maintainers' in data['notifications'] and data['notifications']['maintainers']:
-                self.notify_maintainers = True
-
-        self.repository_keys = []
-        self.repository_urls = []
-        if 'repositories' in data:
-            if 'keys' in data['repositories']:
-                self.repository_keys = data['repositories']['keys']
-            if 'urls' in data['repositories']:
-                self.repository_urls = data['repositories']['urls']
-            assert len(self.repository_keys) == len(self.repository_urls)
+            if 'committers' in data['notifications']:
+                self.notify_committers = \
+                    bool(data['notifications']['committers'])
 
         self.repository_blacklist = []
         if 'repository_blacklist' in data:
@@ -85,15 +79,6 @@ class SourceBuildFile(object):
         if 'repository_whitelist' in data:
             self.repository_whitelist = data['repository_whitelist']
             assert isinstance(self.repository_whitelist, list)
-
-        assert 'targets' in data
-        self.targets = {}
-        for os_name in data['targets'].keys():
-            self.targets[os_name] = {}
-            for os_code_name in data['targets'][os_name]:
-                self.targets[os_name][os_code_name] = {}
-                for arch in data['targets'][os_name][os_code_name]:
-                    self.targets[os_name][os_code_name][arch] = data['targets'][os_name][os_code_name][arch]
 
         self.test_commits_default = False
         self.test_commits_force = None
@@ -116,7 +101,7 @@ class SourceBuildFile(object):
                         data['test_pull_requests']['force'])
 
     def filter_repositories(self, repository_names):
-        res = copy.copy(set(repository_names))
+        res = set(repository_names)
         if self.repository_whitelist:
             res &= set(self.repository_whitelist)
         res -= set(self.repository_blacklist)

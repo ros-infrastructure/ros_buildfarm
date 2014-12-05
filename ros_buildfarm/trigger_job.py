@@ -1,12 +1,12 @@
 from collections import namedtuple
 
-from rosdistro import get_distribution_file
 from rosdistro import get_index
 
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.jenkins import invoke_job
 
 from .common import get_debian_package_name
+from ros_buildfarm.config import get_distribution_file
 from .config import get_index as get_config_index
 from .config import get_release_build_files
 from .debian_repo import get_debian_repo_data
@@ -45,7 +45,10 @@ def trigger_release_jobs(
     for os_name, os_code_name, arch in targets:
         print('  - %s %s %s' % ('ubuntu', os_code_name, arch))
 
-    dist_file = get_distribution_file(index, rosdistro_name)
+    dist_file = get_distribution_file(index, rosdistro_name, build_file)
+    if not dist_file:
+        print('No distribution file matches the build file')
+        return
 
     repo_data = None
     if missing_only:

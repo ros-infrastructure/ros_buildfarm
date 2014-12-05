@@ -3,13 +3,13 @@ import sys
 
 from catkin_pkg.package import parse_package_string
 from rosdistro import get_distribution_cache
-from rosdistro import get_distribution_file
 from rosdistro import get_index
 
 from ros_buildfarm.common import get_devel_view_name
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
 from ros_buildfarm.common import JobValidationError
+from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.git import get_repository_url
@@ -48,7 +48,10 @@ def configure_devel_jobs(
     for os_name, os_code_name, arch in targets:
         print('  -', os_name, os_code_name, arch)
 
-    dist_file = get_distribution_file(index, rosdistro_name)
+    dist_file = get_distribution_file(index, rosdistro_name, build_file)
+    if not dist_file:
+        print('No distribution file matches the build file')
+        return
 
     jenkins = connect(config.jenkins_url)
 
@@ -121,7 +124,10 @@ def configure_devel_job(
     if index is None:
         index = get_index(config.rosdistro_index_url)
     if dist_file is None:
-        dist_file = get_distribution_file(index, rosdistro_name)
+        dist_file = get_distribution_file(index, rosdistro_name, build_file)
+        if not dist_file:
+            raise JobValidationError(
+                'No distribution file matches the build file')
 
     repo_names = dist_file.repositories.keys()
     repo_names = build_file.filter_repositories(repo_names)

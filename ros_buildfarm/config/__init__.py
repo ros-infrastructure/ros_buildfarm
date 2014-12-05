@@ -54,6 +54,16 @@ def get_index(url):
     return Index(data, base_url)
 
 
+def get_distribution_file(index, rosdistro_name, build_file):
+    from rosdistro import get_distribution_files
+    dist_files = get_distribution_files(index, rosdistro_name)
+    dist_files = build_file.filter_distribution_files_by_tags(dist_files)
+    while len(dist_files) > 1:
+        dist_files[0].merge(dist_files[1])
+        del dist_files[1]
+    return dist_files[0] if dist_files else []
+
+
 def get_release_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'release_builds')
     build_files = {}
