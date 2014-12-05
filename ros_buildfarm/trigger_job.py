@@ -36,8 +36,8 @@ def trigger_release_jobs(
                 continue
             for arch in sorted(
                     build_file.targets[os_name][os_code_name].keys()):
-                # TODO support for non amd64 arch missing
-                if arch not in ['amd64']:
+                # TODO support for i386 missing
+                if arch in ['i386']:
                     print('Skipping arch:', arch)
                     continue
                 targets.append(Target('ubuntu', os_code_name, arch))

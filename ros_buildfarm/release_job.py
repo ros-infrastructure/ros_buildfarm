@@ -320,8 +320,8 @@ def get_sourcedeb_job_name(rosdistro_name, release_build_name,
 def _get_target_arches(build_file, os_name, os_code_name, print_skipped=True):
     arches = []
     for arch in build_file.targets[os_name][os_code_name]:
-        # TODO support for non amd64 arch missing
-        if arch not in ['amd64']:
+        # TODO support for i386 missing
+        if arch in ['i386']:
             if print_skipped:
                 print('Skipping arch:', arch, file=sys.stderr)
             continue
