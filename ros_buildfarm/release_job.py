@@ -108,8 +108,6 @@ def configure_release_jobs(
         config_url, rosdistro_name, release_build_name,
         config=config, build_file=build_file, jenkins=jenkins)
     for os_name, os_code_name in targets:
-        if os_name != 'ubuntu':
-            continue
         for arch in sorted(build_file.targets[os_name][os_code_name]):
             configure_sync_packages_to_testing_job(
                 config_url, rosdistro_name, release_build_name,
@@ -241,15 +239,14 @@ def configure_release_job(
             config=config, build_file=build_file, jenkins=jenkins)
 
     if generate_sync_packages_jobs:
-        if os_name == 'ubuntu':
-            configure_sync_packages_to_main_job(
+        configure_sync_packages_to_main_job(
+            config_url, rosdistro_name, release_build_name,
+            config=config, build_file=build_file, jenkins=jenkins)
+        for arch in _get_target_arches(build_file, os_name, os_code_name):
+            configure_sync_packages_to_testing_job(
                 config_url, rosdistro_name, release_build_name,
+                os_code_name, arch,
                 config=config, build_file=build_file, jenkins=jenkins)
-            for arch in _get_target_arches(build_file, os_name, os_code_name):
-                configure_sync_packages_to_testing_job(
-                    config_url, rosdistro_name, release_build_name,
-                    os_code_name, arch,
-                    config=config, build_file=build_file, jenkins=jenkins)
 
     job_names = []
 

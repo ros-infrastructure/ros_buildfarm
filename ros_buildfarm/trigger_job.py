@@ -28,10 +28,8 @@ def trigger_release_jobs(
     Target = namedtuple('Target', 'os_name os_code_name arch')
     targets = []
     for os_name in sorted(build_file.targets.keys()):
-        if os_name != 'ubuntu':
-            continue
         for os_code_name in sorted(build_file.targets[os_name].keys()):
-            targets.append(Target('ubuntu', os_code_name, 'source'))
+            targets.append(Target(os_name, os_code_name, 'source'))
             if source_only:
                 continue
             for arch in sorted(
@@ -40,10 +38,10 @@ def trigger_release_jobs(
                 if arch in ['i386']:
                     print('Skipping arch:', arch)
                     continue
-                targets.append(Target('ubuntu', os_code_name, arch))
+                targets.append(Target(os_name, os_code_name, arch))
     print('The build file contains the following targets:')
     for os_name, os_code_name, arch in targets:
-        print('  - %s %s %s' % ('ubuntu', os_code_name, arch))
+        print('  - %s %s %s' % (os_name, os_code_name, arch))
 
     dist_file = get_distribution_file(index, rosdistro_name, build_file)
     if not dist_file:
