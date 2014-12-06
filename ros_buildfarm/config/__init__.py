@@ -93,7 +93,7 @@ def _get_build_file_data(index, dist_name, type_):
         raise RuntimeError("Unknown release: '{0}'. Valid release names are: {1}".format(dist_name, ', '.join(["'%s'" % d for d in index.distributions.keys()])))
     dist = index.distributions[dist_name]
     if type_ not in dist.keys():
-        raise RuntimeError("unknown release type '%s'" % type_)
+        return {}
     url = dist[type_]
 
     def _load_yaml_data(url):
