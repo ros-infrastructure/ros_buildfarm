@@ -270,6 +270,8 @@ def configure_release_job(
         # if dependencies are not yet available in rosdistro cache
         # skip binary jobs
         if dependency_names is None:
+            print(('Dependencies of %s are not yet in  ' % pkg_name) +
+                  ' rosdistro cache, skipping binary jobs.')
             return job_names
 
     # binarydeb jobs
