@@ -1,6 +1,12 @@
 How to deploy a customized buildfarm locally?
 =============================================
 
+This how-to describes how you can customize your ROS buildfarm:
+
+* to build / document subsets of packages / repositories
+* to build different targets
+* modify the ROS buildfarm code and use it on your custom buildfarm
+
 
 Change buildfarm configuration
 ------------------------------
@@ -68,10 +74,13 @@ Change ROS buildfarm code
 -------------------------
 
 You can fork the
-[ros_buildfarm](https://github.com/ros-infrastructure/ros_buildfarm) repository
-and commit arbitrary changes to the default branch of the forked repository
-(and optionally change the default branch).
+`ros_buildfarm <https://github.com/ros-infrastructure/ros_buildfarm>`_
+repository and commit arbitrary changes to the default branch of the forked
+repository (and optionally change the default branch).
 
 If you use this forked repository to generate the administrative jobs and
 afterwards reconfigure all other jobs the buildfarm will utilize your modified
 version of the code to perform all jobs and tasks.
+
+You might want to double check the console output of several jobs to ensure
+that they actually clone and use your custom repository.

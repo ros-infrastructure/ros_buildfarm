@@ -16,10 +16,12 @@ The buildfarm performs various different jobs.
 For each job type you will find a detailed description what they do and how
 they work.
 
-* `release jobs <jobs/release_jobs.rst>`_
-* `devel jobs <jobs/devel_jobs.rst>`_
-* doc jobs (to be done)
-* `miscellaneous jobs <jobs/miscellaneous_jobs.rst>`_
+* `release jobs <jobs/release_jobs.rst>`_ generate binary package
+* `devel jobs <jobs/devel_jobs.rst>`_ build and test ROS repositories
+* doc jobs (to be done) generate the API documentation of packages
+* `miscellaneous jobs <jobs/miscellaneous_jobs.rst>`_ perform maintenance tasks
+  and generate informational data to visualize the status of the buildfarm and
+  its generated artifacts
 
 
 How to deploy a ROS buildfarm

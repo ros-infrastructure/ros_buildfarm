@@ -1,12 +1,68 @@
 How to release custom packages to a forked rosdistro database?
 ==============================================================
 
-* add second distribution file
+There are two options for running a custom ROS buildfarm with custom packages.
+You can either:
 
-* optionally update the build files to only build packages from the second
-  distribution file
-  (not yet implemented, requires identification of distribution files)
+* use the existing ROS packages from the official Debian repository and only
+  build / test / document your custom ROS packages or
 
-* releasing packages into distributions with multiple distribution files
-  requires a
-  [custom bloom version](https://github.com/ros-infrastructure/bloom/pull/330).
+* you can build a complete custom ROS distribution
+
+The advantage of the first option is that is only requires a smaller amount of
+computational resources.
+The disadvantage is that your packages depend on the release schedule of the
+official ROS distribution and the status of the official repository.
+
+On the other hand the second option allows maximum control over which versions
+of ROS packages you want to build for the extra cost of requiring to rebuild
+all ROS packages.
+
+
+Add a custom distribution file
+------------------------------
+
+In order to keep your custom packages separate from the packages listed in the
+official distribution file it is recommended to create a custom distribution
+file.
+It should be a sibling to the existing file ``indigo/YOUR_NAME.yaml`` in your
+fork of the rosdistro repository and a reference must be added in the index
+file.
+
+For more flexible configuration options you should also add a ``tag`` to your
+custom distribution file::
+
+    tags:
+    - YOUR_TAG
+
+
+Configure the build files
+-------------------------
+
+You can customize the build files to only build the targets you are interested
+in.
+
+If you chose option one (only build packages on-top of the official ROS
+distribution) you must configure the build files to only operate on your custom
+distribution file by adding the following option::
+
+    tag_whitelist:
+    - YOUR_TAG
+
+
+Release packages using bloom
+----------------------------
+
+Currently you need a custom version of bloom:
+`custom bloom version <https://github.com/ros-infrastructure/bloom/pull/330>`_
+
+Every developer invoking ``bloom-release`` must have the environment variable
+``ROSDISTRO_INDEX_URL`` set to point to your forked rosdistro index file.
+This is the same as for any user using your custom distribution.
+
+
+Users using your custom binary packages
+---------------------------------------
+
+In case of option one the users must list both - the official ROS repository as
+well as your custom Debian repository - in order to get all ROS packages.

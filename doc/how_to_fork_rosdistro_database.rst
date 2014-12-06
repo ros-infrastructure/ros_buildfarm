@@ -7,7 +7,6 @@ This enables you to decide when changes from the official database are being
 merged in order to:
 
 * achieve a more conservative release strategy
-
 * lock the version number of specific repositories / packages
 
 After the initial for it is your responsibility to keep the fork in sync if you
@@ -89,3 +88,10 @@ rosdep database:
 
 rosdep always uses the ROS packages defined by the ROSDISTRO_INDEX_URL variable
 when updating the rosdep database.
+
+
+Ongoing operations
+------------------
+
+On a regular basis you should consider to merge in changes from the upstream
+rosdistro repository if you want to avoid diverging from it too far.
