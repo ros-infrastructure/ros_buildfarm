@@ -31,6 +31,29 @@ The configuration options are ``package_blacklist`` and ``package_whitelist``.
 
 If a package / repository is listed in both the blacklist takes precedence.
 
+Import Excluded Packages
+,,,,,,,,,,,,,,,,,,,,,,,,
+
+If you choose not to build a section of the rosdistro. You will need to import
+the upstream dependencies into your repository before you will be able to build.
+To do this you will need to create an import config file.
+
+
+Create a file like import_indigo.yaml on the repository machine and invoke
+the job `import_upstream` with this yaml files path as the parameter. In addition
+to invoking `import_upstream` without a parameter.
+
+``` yaml
+name: backfill-ros
+method: http://packages.ros.org/ros/ubuntu/
+suites: [trusty]
+component: main
+architectures: [amd64, source]
+filter_formula: Package (% ros-indigo-* )
+```
+
+In the future this will be more parameterized but it will always be an
+administrators task.
 
 Change which targets are being built
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -55,8 +78,7 @@ The release build file can only list targets which have been created by
 ``bloom`` when the ROS package was released.
 
 
-Change the sync criteria
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Change the sync criteria
 
 You can configure the sync criteria when packages are being synced from the
 ``building`` to the ``testing`` repository.

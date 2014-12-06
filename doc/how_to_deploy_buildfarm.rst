@@ -127,6 +127,11 @@ in to the Jenkins master, e.g.::
     password=changeme
 
 
+Theses packages will be released. For now there is a helper script in this repo:
+https://github.com/tfoote/buildfarm_inprogress_helpers which will set up this environment for you inside a docker instance.
+
+
+
 Generate the Jenkins jobs
 -------------------------
 

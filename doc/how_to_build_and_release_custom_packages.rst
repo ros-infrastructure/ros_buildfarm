@@ -60,9 +60,5 @@ Every developer invoking ``bloom-release`` must have the environment variable
 ``ROSDISTRO_INDEX_URL`` set to point to your forked rosdistro index file.
 This is the same as for any user using your custom distribution.
 
-
-Users using your custom binary packages
----------------------------------------
-
-In case of option one the users must list both - the official ROS repository as
-well as your custom Debian repository - in order to get all ROS packages.
+Theses packages will be released. For now there is a helper script in this repo:
+https://github.com/tfoote/buildfarm_inprogress_helpers which will set up this environment for you inside a docker instance.
