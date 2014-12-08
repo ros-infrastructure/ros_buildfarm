@@ -66,7 +66,7 @@
         'echo "# BEGIN SECTION: Run Dockerfile - check sync condition"',
         'rm -fr $WORKSPACE/debian_repo_cache',
         'mkdir -p $WORKSPACE/debian_repo_cache',
-        'docker run' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
         ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/debian_repo_cache:/tmp/debian_repo_cache' +

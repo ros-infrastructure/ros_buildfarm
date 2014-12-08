@@ -71,7 +71,7 @@
         'echo "# BEGIN SECTION: Run Dockerfile - rosdistro cache"',
         'rm -fr $WORKSPACE/rosdistro_cache',
         'mkdir -p $WORKSPACE/rosdistro_cache',
-        'docker run' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
         ' --net=host' +
         ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
         ' -v $WORKSPACE/rosdistro_cache:/tmp/rosdistro_cache' +

@@ -86,7 +86,7 @@
         'echo "# BEGIN SECTION: Run Dockerfile - generating devel tasks"',
         'mkdir -p $WORKSPACE/docker_build_and_install',
         'mkdir -p $WORKSPACE/docker_build_and_test',
-        'docker run' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
@@ -105,7 +105,7 @@
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
-        'docker run' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' devel_build_and_install__%s_%s' % (rosdistro_name, source_repo_spec.name),
@@ -122,7 +122,7 @@
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
-        'docker run' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' devel_build_and_test__%s_%s' % (rosdistro_name, source_repo_spec.name),

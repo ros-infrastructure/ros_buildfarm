@@ -10,10 +10,10 @@ def main(argv=sys.argv[1:]):
     max_tries = 10
     for i in range(max_tries):
         if i > 0:
-            print("Reinvoke 'docker build' (%d/%d) after sleeping %s seconds" %
+            print("Reinvoke 'docker run' (%d/%d) after sleeping %s seconds" %
                   (i, max_tries, i))
             sleep(i)
-        rc, known_error_conditions = call_docker_build(argv)
+        rc, known_error_conditions = call_docker_run(argv)
         if rc == 0:
             break
         if not known_error_conditions:
@@ -26,28 +26,16 @@ def main(argv=sys.argv[1:]):
     return rc
 
 
-def call_docker_build(argv):
+def call_docker_run(argv):
     # ensure that the content of this file is not matched by the patterns
-    # because the 'docker build' invocation might echo the content of this file
+    # because the 'docker run' invocation might echo the content of this file
     known_error_patterns = [
-        'An error occured while creating the container.*',
-        'ApplyLayer exit status 1 unexpected EOF.*',
-        'Cannot find child for .*',
-        'Error getting container .* no such file or directory.*',
-        'Error mounting .* no such file or directory.*',
-        'failed to create image .* no such file or directory.*',
-        'failed to get image parent .* no such file or directory.*',
-        'failed to get image parent .* Unknown device.*',
-        'lstat .* input/output error.*',
-        'lstat .* no such file or directory.*',
-        'No such container: .*',
-        'No such id: .*',
-        'open .* no such file or directory.*',
+        'Error response from daemon: No such container: .*',
     ]
     known_error_patterns = ['.* %s' % p for p in known_error_patterns]
     known_error_conditions = []
 
-    cmd = ['docker', 'build'] + argv
+    cmd = ['docker', 'run'] + argv
     with subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
         while True:

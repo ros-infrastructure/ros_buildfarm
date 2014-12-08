@@ -95,7 +95,7 @@
         'rm -fr $WORKSPACE/binarydeb',
         'mkdir -p $WORKSPACE/binarydeb',
         'mkdir -p $WORKSPACE/docker_build_binarydeb',
-        'docker run' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
@@ -116,7 +116,7 @@
         'echo "# BEGIN SECTION: Run Dockerfile - build binarydeb"',
         '# -e=HOME= is required to set a reasonable HOME for the user (not /)',
         '# otherwise apt-src will fail',
-        'docker run' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
         ' -e=HOME=' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
@@ -149,7 +149,7 @@
 @#         'echo "# END SECTION"',
 @#         '',
 @#         'echo "# BEGIN SECTION: Run Dockerfile - install"',
-@#         'docker run' +
+@#         'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
 @#         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb:ro' +
 @#         ' binarydeb_install__%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
 @#         'echo "# END SECTION"',

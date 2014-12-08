@@ -82,7 +82,7 @@
         'echo "# BEGIN SECTION: Run Dockerfile - generate sourcedeb"',
         'rm -fr $WORKSPACE/sourcedeb',
         'mkdir -p $WORKSPACE/sourcedeb/source',
-        'docker run' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
