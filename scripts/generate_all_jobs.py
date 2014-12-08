@@ -62,7 +62,7 @@ def main(argv=sys.argv[1:]):
                 args.config_url, ros_distro_name, source_build_name)
 
         generate_repos_status_page_jobs(
-            args.config_url, config, ros_distro_name)
+            args.config_url, ros_distro_name)
 
 
 def generate_dashboard_job(config_url):
@@ -93,66 +93,12 @@ def generate_release_status_page_job(
     _check_call(cmd)
 
 
-def generate_repos_status_page_jobs(
-        config_url, config, ros_distro_name):
-    # collect all target repositories (building) and their targets
-    # from all release build files
-    names_by_repo = {}
-    targets_by_repo = {}
-    release_build_files = get_release_build_files(config, ros_distro_name)
-    for release_build_name, release_build_file in release_build_files.items():
-        target_repository = release_build_file.target_repository
-        if target_repository not in names_by_repo:
-            names_by_repo[target_repository] = set([])
-        names_by_repo[target_repository].add(release_build_name)
-        if target_repository not in targets_by_repo:
-            targets_by_repo[target_repository] = []
-        # TODO support other OS names
-        if 'ubuntu' in release_build_file.targets:
-            targets = release_build_file.targets['ubuntu']
-            for os_code_name in sorted(targets.keys()):
-                target = '%s:source' % os_code_name
-                if target not in targets_by_repo[target_repository]:
-                    targets_by_repo[target_repository].append(target)
-                for arch in sorted(targets[os_code_name].keys()):
-                    target = '%s:%s' % (os_code_name, arch)
-                    if target not in targets_by_repo[target_repository]:
-                        targets_by_repo[target_repository].append(target)
-
-    # generate a repos status page for each unique building repo
-    # using all targets listed in any release build file with that target repo
-    for target_repository in sorted(targets_by_repo.keys()):
-        if not target_repository.endswith('/building'):
-            print("Skipped target repository '%s' " % target_repository +
-                  " because it does not end with '/building'", file=sys.stderr)
-            continue
-
-        os_code_name_and_arch_tuples = targets_by_repo[target_repository]
-
-        # derive testing and main urls from building url
-        base_url = os.path.dirname(target_repository)
-        testing_url = os.path.join(base_url, 'testing')
-        main_url = os.path.join(base_url, 'main')
-
-        output_name = 'all_%s_%s' % \
-            (ros_distro_name, '_'.join(names_by_repo[target_repository]))
-        generate_repos_status_page_job(
-            config_url,
-            [target_repository, testing_url, main_url],
-            os_code_name_and_arch_tuples,
-            output_name)
-
-
-def generate_repos_status_page_job(
-        config_url, debian_repository_urls, os_code_name_and_arch_tuples,
-        output_name):
+def generate_repos_status_page_jobs(config_url, ros_distro_name):
     cmd = [
         'status/generate_repos_status_page_job.py',
-        config_url
+        config_url,
+        ros_distro_name,
     ]
-    cmd += debian_repository_urls
-    cmd += ['--os-code-name-and-arch-tuples'] + os_code_name_and_arch_tuples
-    cmd += ['--output-name', output_name]
     _check_call(cmd)
 
 

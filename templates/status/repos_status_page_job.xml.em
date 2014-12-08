@@ -41,19 +41,31 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'echo "# BEGIN SECTION: generate repos status page"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'rm -fr $WORKSPACE/status_page',
         'mkdir -p $WORKSPACE/status_page',
+    ]),
+))@
+@[for status_page_name in sorted(status_pages.keys())]@
+@{
+status_page = status_pages[status_page_name]
+debian_repository_urls = status_page['debian_repository_urls']
+os_code_name_and_arch_tuples = status_page['os_code_name_and_arch_tuples']
+}@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: generate repos status page: %s"' % status_page_name,
+        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/status/build_repos_status_page.py' +
         ' ' + ' '.join(debian_repository_urls) +
         ' --os-code-name-and-arch-tuples ' +
         ' '.join(os_code_name_and_arch_tuples) +
-        ' --output-name ' + output_name +
+        ' --output-name %s_%s' % (rosdistro_name, status_page_name) +
         ' --output-dir $WORKSPACE/status_page',
         'echo "# END SECTION"',
     ]),
 ))@
+@[end for]@
   </builders>
   <publishers>
 @(SNIPPET(

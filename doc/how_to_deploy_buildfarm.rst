@@ -41,14 +41,15 @@ Then you can update the configuration files:
     index.yaml:
       jenkins_url: http://jenkins_hostname.example.com:8080
 
-* Change the repository URLs  to point to your earlier provisioned ``repo``
+* Change the repository URLs to point to your earlier provisioned ``repo``
   host::
 
-    status_page_repositories:
-      CUSTOM_NAME:
-      - http://repo_hostname.example.com/ubuntu/building
-      - http://repo_hostname.example.com/ubuntu/testing
-      - http://repo_hostname.example.com/ubuntu/main
+    index.yaml:
+      status_page_repositories:
+        CUSTOM_NAME:
+        - http://repo_hostname.example.com/ubuntu/building
+        - http://repo_hostname.example.com/ubuntu/testing
+        - http://repo_hostname.example.com/ubuntu/main
 
 * Change the email address which gets notified about any administrative
   events::

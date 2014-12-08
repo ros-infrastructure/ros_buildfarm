@@ -41,7 +41,7 @@ def build_release_status_page(
             for arch in sorted(build_file.targets[os_name][os_code_name]):
                 targets.append(Target(os_name, os_code_name, arch))
     print('The build file contains the following targets:')
-    for os_code_name, arch in targets:
+    for _, os_code_name, arch in targets:
         print('  - %s %s' % (os_code_name, arch))
 
     # get all input data
@@ -141,7 +141,7 @@ def build_debian_repos_status_page(
             'The string (%s) does not contain single colon separating an ' + \
             'OS code name and an architecture'
         os_code_name, arch = os_code_name_and_arch.split(':')
-        targets.append(Target(os_code_name, arch))
+        targets.append(Target('ubuntu', os_code_name, arch))
 
     # get all input data
     repos_data = []

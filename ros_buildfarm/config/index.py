@@ -89,3 +89,11 @@ class Index(object):
         self.prerequisites = data['prerequisites']
 
         self.rosdistro_index_url = data['rosdistro_index_url']
+
+        self.status_page_repositories = {}
+        if 'status_page_repositories' in data:
+            assert isinstance(data['status_page_repositories'], dict)
+            for status_page_name, repo_urls in \
+                    data['status_page_repositories'].items():
+                assert isinstance(repo_urls, list)
+                self.status_page_repositories[status_page_name] = repo_urls
