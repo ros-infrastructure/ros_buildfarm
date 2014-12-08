@@ -31,7 +31,7 @@
           </jenkins.plugins.publish__over__ssh.BapSshPublisher>
         </publishers>
         <continueOnError>false</continueOnError>
-        <failOnError>false</failOnError>
+        <failOnError>true</failOnError>
         <alwaysPublishFromMaster>false</alwaysPublishFromMaster>
         <hostConfigurationAccess class="jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin" reference="../.."/>
       </delegate>
