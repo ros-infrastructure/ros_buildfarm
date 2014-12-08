@@ -35,11 +35,6 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'echo "# BEGIN SECTION: Clone custom rosdistro"',
-        'rm -fr rosdistro',
-        'git clone -b rep143 https://github.com/ros-infrastructure/rosdistro.git rosdistro',
-        'echo "# END SECTION"',
-        '',
         'echo "# BEGIN SECTION: Clone ros_buildfarm"',
         'rm -fr ros_buildfarm',
         'git clone %s ros_buildfarm' % ros_buildfarm_url,
@@ -85,7 +80,6 @@
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
         ' -v $WORKSPACE/sourcedeb:/tmp/sourcedeb' +
         ' sourcedeb__%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, pkg_name),
         'echo "# END SECTION"',

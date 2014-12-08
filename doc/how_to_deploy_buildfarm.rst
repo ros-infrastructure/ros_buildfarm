@@ -99,9 +99,9 @@ For generating Jenkins jobs you need the following software:
 
 * Python 3
 * Python 3 package ``empy``
+* Python 3 ROS package ``rosdistro`` >= 0.4.0
 * a checkout of the `ros_buildfarm <https://github.com/ros-infrastructure/ros_buildfarm) repository>`_
 * a forked version of `jenkinsapi <https://github.com/dirk-thomas/jenkinsapi/tree/feature/config_view>`_
-* a forked version of `rosdistro <https://github.com/ros-infrastructure/rosdistro/tree/rep143>`_
 
 E.g. using the following commands on Ubuntu Trusty::
 
@@ -112,8 +112,8 @@ E.g. using the following commands on Ubuntu Trusty::
     pyvenv-3.4 venv
     . venv/bin/activate
     pip3 install empy
+    pip3 install rosdistro
     pip3 install git+git://github.com/dirk-thomas/jenkinsapi.git@feature/config_view
-    pip3 install git+git://github.com/ros-infrastructure/rosdistro.git@rep143
 
     git clone https://github.com/ros-infrastructure/ros_buildfarm.git
     cd ros_buildfarm
@@ -126,9 +126,9 @@ in to the Jenkins master, e.g.::
     username=admin
     password=changeme
 
-For now there is a helper script in
-`this <https://github.com/tfoote/buildfarm_inprogress_helpers>`_ repo which
-will set up this environment for you inside a docker instance.
+You can use the helper script in
+`this <https://github.com/tfoote/buildfarm_inprogress_helpers>`_ repository
+which will set up the described environment for you inside a Docker instance.
 
 
 Generate the Jenkins jobs

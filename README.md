@@ -3,7 +3,7 @@
 The ROS buildfarm is a new implementation using
 [Docker](http://www.docker.com) for each step in the process.
 It is based on the ROS distro specification
-[REP 143](https://github.com/ros-infrastructure/rep/pull/87) and uses a
+[REP 143](http://www.ros.org/reps/rep-0143.html) and uses a
 separate
 [configuration for the buildfarm](https://github.com/ros-infrastructure/ros_buildfarm_config).
 

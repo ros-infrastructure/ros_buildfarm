@@ -35,14 +35,14 @@ RUN mkdir /tmp/wrapper_scripts
 RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
 @[end for]@
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y python3-catkin-pkg python3-empy python3-pip python3-yaml
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y python3-catkin-pkg python3-empy python3-pip python3-rosdistro python3-yaml
 RUN pip3 install https://github.com/dirk-thomas/jenkinsapi/archive/feature/config_view.zip
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
 cmd = \
-    'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' + \
+    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/devel/generate_devel_jobs.py' + \
     ' ' + config_url + \
     ' ' + rosdistro_name + \

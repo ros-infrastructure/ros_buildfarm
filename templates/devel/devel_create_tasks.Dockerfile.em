@@ -35,7 +35,7 @@ RUN mkdir /tmp/wrapper_scripts
 RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
 @[end for]@
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y git python3-apt python3-catkin-pkg python3-empy python3-rosdep
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y git python3-apt python3-catkin-pkg python3-empy python3-rosdep python3-rosdistro
 
 # TODO improve rosdep init/update performance, enable on-change invalidation
 @{
@@ -44,19 +44,14 @@ now_isoformat = datetime.datetime.today().isoformat()
 }@
 RUN echo "@now_isoformat"
 ENV ROSDISTRO_INDEX_URL @rosdistro_index_url
-# TODO forked rosdistro requires custom python3-rosdistro
-RUN git clone -b rep143 https://github.com/ros-infrastructure/rosdistro.git /tmp/rosdistro
-RUN git clone -b rep143 https://github.com/ros-infrastructure/rosdep.git /tmp/rosdep
-RUN cd /tmp/rosdep && python3 setup.py install
-ENV PYTHONPATH /tmp/rosdistro/src
 RUN rosdep init
 
 USER buildfarm
 
 ENTRYPOINT ["sh", "-c"]
 @{
-cmds =[
-'python3 -c \\"import sys; sys.path.insert(0, \'/tmp/rosdistro/src\'); import pkg_resources; pkg_resources.run_script(\'rosdep\', \'rosdep\')\\" update',
+cmds = [
+'rosdep update',
 ]
 cmd = \
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \

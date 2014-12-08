@@ -35,13 +35,13 @@ RUN mkdir /tmp/wrapper_scripts
 RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
 @[end for]@
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y git python3-catkin-pkg python3-empy python3-yaml
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y git python3-catkin-pkg python3-empy python3-rosdistro python3-yaml
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
 cmd = \
-    'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' + \
+    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/status/build_release_status_page.py' + \
     ' ' + config_url + \
     ' ' + rosdistro_name + \

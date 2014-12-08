@@ -36,12 +36,6 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        '# TODO replace with python3-rosdistro',
-        'echo "# BEGIN SECTION: Clone custom rosdistro"',
-        'rm -fr rosdistro',
-        'git clone -b rep143 https://github.com/ros-infrastructure/rosdistro.git rosdistro',
-        'echo "# END SECTION"',
-        '',
         '# generate Dockerfile, build and run it',
         '# checking the sync criteria',
         'echo "# BEGIN SECTION: Generate Dockerfile - check sync condition"',
@@ -67,7 +61,6 @@
         'rm -fr $WORKSPACE/debian_repo_cache',
         'mkdir -p $WORKSPACE/debian_repo_cache',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
-        ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/debian_repo_cache:/tmp/debian_repo_cache' +
         ' check_sync_condition',
