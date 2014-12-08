@@ -40,14 +40,13 @@ RUN mkdir /tmp/wrapper_scripts
 RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
 @[end for]@
 
-# TODO use python3-rosdistro instead of source checkout
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y debhelper dpkg dpkg-dev git git-buildpackage python3 python3-catkin-pkg python3-yaml
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y debhelper dpkg dpkg-dev git git-buildpackage python3 python3-catkin-pkg python3-rosdistro python3-yaml
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
 cmds = [
-    'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' +
+    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' +
     ' /tmp/ros_buildfarm/scripts/release/get_sources.py' +
     ' --rosdistro-index-url ' + rosdistro_index_url +
     ' ' + rosdistro_name +
@@ -56,7 +55,7 @@ cmds = [
     ' ' + os_code_name +
     ' --source-dir /tmp/sourcedeb/source',
 
-    'PYTHONPATH=/tmp/ros_buildfarm:/tmp/rosdistro/src:$PYTHONPATH python3 -u' +
+    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' +
     ' /tmp/ros_buildfarm/scripts/release/build_sourcedeb.py' +
     ' --source-dir /tmp/sourcedeb/source',
 ]

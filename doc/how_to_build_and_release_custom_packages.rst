@@ -53,13 +53,6 @@ distribution file by adding the following option::
 Release packages using bloom
 ----------------------------
 
-Currently you need a custom version of bloom:
-`custom bloom version <https://github.com/ros-infrastructure/bloom/pull/330>`_
-
 Every developer invoking ``bloom-release`` must have the environment variable
 ``ROSDISTRO_INDEX_URL`` set to point to your forked rosdistro index file.
 This is the same as for any user using your custom distribution.
-
-For now there is a helper script in
-`this <https://github.com/tfoote/buildfarm_inprogress_helpers>`_ repo which
-will set up this environment for you inside a docker instance.

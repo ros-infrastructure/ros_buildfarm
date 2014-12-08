@@ -61,12 +61,6 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        '# TODO replace with python3-rosdistro',
-        'echo "# BEGIN SECTION: Clone custom rosdistro"',
-        'rm -fr rosdistro',
-        'git clone -b rep143 https://github.com/ros-infrastructure/rosdistro.git rosdistro',
-        'echo "# END SECTION"',
-        '',
         '# generate Dockerfile, build and run it',
         '# generating the Dockerfiles for the actual trigger jobs tasks',
         'echo "# BEGIN SECTION: Generate Dockerfile - trigger jobs"',
@@ -93,7 +87,6 @@
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/rosdistro:/tmp/rosdistro:ro' +
         ' -v %s:%s:ro' % (credentials_src, credentials_dst) +
         ' -v $WORKSPACE/debian_repo_cache:/tmp/debian_repo_cache' +
         ' release_trigger_jobs',
