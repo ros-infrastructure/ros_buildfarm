@@ -24,6 +24,10 @@
             </transfers>
             <useWorkspaceInPromotion>false</useWorkspaceInPromotion>
             <usePromotionTimestamp>false</usePromotionTimestamp>
+            <retry class="jenkins.plugins.publish_over_ssh.BapSshRetry">
+              <retries>10</retries>
+              <retryDelay>5000</retryDelay>
+            </retry>
           </jenkins.plugins.publish__over__ssh.BapSshPublisher>
         </publishers>
         <continueOnError>false</continueOnError>
