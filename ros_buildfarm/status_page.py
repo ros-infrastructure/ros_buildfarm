@@ -7,12 +7,12 @@ import time
 
 from .common import get_debian_package_name
 from .common import get_release_view_name
+from .common import Target
 from .config import get_index as get_config_index
 from .config import get_release_build_files
 from .debian_repo import get_debian_repo_data
 from .status_page_input import get_rosdistro_info
 from .status_page_input import RosPackage
-from .status_page_input import Target
 from .templates import expand_template
 from .templates import template_basepath
 
@@ -37,9 +37,9 @@ def build_release_status_page(
         if os_name != 'ubuntu':
             continue
         for os_code_name in sorted(build_file.targets[os_name].keys()):
-            targets.append(Target(os_code_name, 'source'))
+            targets.append(Target(os_name, os_code_name, 'source'))
             for arch in sorted(build_file.targets[os_name][os_code_name]):
-                targets.append(Target(os_code_name, arch))
+                targets.append(Target(os_name, os_code_name, arch))
     print('The build file contains the following targets:')
     for os_code_name, arch in targets:
         print('  - %s %s' % (os_code_name, arch))

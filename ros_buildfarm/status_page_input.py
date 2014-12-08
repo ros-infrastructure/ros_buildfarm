@@ -4,8 +4,6 @@ from .common import get_debian_package_name
 
 MaintainerDescriptor = namedtuple('Maintainer', 'name email')
 
-Target = namedtuple('Target', 'os_code_name arch')
-
 
 class RosPackage(object):
 

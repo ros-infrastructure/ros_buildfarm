@@ -1,11 +1,10 @@
-from collections import namedtuple
-
 from rosdistro import get_index
 
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.jenkins import invoke_job
 
 from .common import get_debian_package_name
+from .common import Target
 from ros_buildfarm.config import get_distribution_file
 from .config import get_index as get_config_index
 from .config import get_release_build_files
@@ -25,7 +24,6 @@ def trigger_release_jobs(
     index = get_index(config.rosdistro_index_url)
 
     # get targets
-    Target = namedtuple('Target', 'os_name os_code_name arch')
     targets = []
     for os_name in sorted(build_file.targets.keys()):
         for os_code_name in sorted(build_file.targets[os_name].keys()):

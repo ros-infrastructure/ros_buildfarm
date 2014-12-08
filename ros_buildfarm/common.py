@@ -1,3 +1,6 @@
+from collections import namedtuple
+
+
 class JobValidationError(Exception):
     """
     Indicates that the validation of a build job failed.
@@ -22,6 +25,9 @@ class Scope(object):
 
     def __exit__(self, type, value, traceback):
         print('# END %s' % self.scope_name)
+
+
+Target = namedtuple('Target', 'os_name os_code_name arch')
 
 
 def get_repositories_and_script_generating_key_files(config, build_file=None):

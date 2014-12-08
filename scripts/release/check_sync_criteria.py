@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-from collections import namedtuple
 import sys
 
 from rosdistro import get_distribution_file
@@ -14,6 +13,7 @@ from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_debian_package_name
+from ros_buildfarm.common import Target
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.debian_repo import get_debian_repo_index
@@ -47,7 +47,6 @@ def check_sync_criteria(
     build_files = get_release_build_files(config, rosdistro_name)
     build_file = build_files[release_build_name]
 
-    Target = namedtuple('Target', 'os_name os_code_name arch')
     target = Target('ubuntu', os_code_name, arch)
 
     repo_index = get_debian_repo_index(
