@@ -225,7 +225,7 @@ def _get_devel_job_config(
         'template_name': template_name,
         'now_str': now_str,
 
-        'job_priority': build_file.jenkins_job_priority,
+        'job_priority': build_file.jenkins_commit_job_priority,
 
         'source_repo_spec': source_repo_spec,
 

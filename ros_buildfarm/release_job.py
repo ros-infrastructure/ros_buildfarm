@@ -383,7 +383,7 @@ def _get_sourcedeb_job_config(
         'template_name': template_name,
         'now_str': now_str,
 
-        'job_priority': build_file.jenkins_job_priority,
+        'job_priority': build_file.jenkins_source_job_priority,
 
         'ros_buildfarm_url': get_repository_url(),
 
@@ -410,7 +410,7 @@ def _get_sourcedeb_job_config(
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
 
-        'timeout_minutes': build_file.jenkins_sourcedeb_job_timeout,
+        'timeout_minutes': build_file.jenkins_source_job_timeout,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
@@ -444,7 +444,7 @@ def _get_binarydeb_job_config(
         'template_name': template_name,
         'now_str': now_str,
 
-        'job_priority': build_file.jenkins_job_priority,
+        'job_priority': build_file.jenkins_binary_job_priority,
 
         'upstream_projects': upstream_job_names,
 
@@ -476,7 +476,7 @@ def _get_binarydeb_job_config(
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
 
-        'timeout_minutes': build_file.jenkins_binarydeb_job_timeout,
+        'timeout_minutes': build_file.jenkins_binary_job_timeout,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

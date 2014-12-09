@@ -57,9 +57,14 @@ class SourceBuildFile(BuildFile):
 
         super(SourceBuildFile, self).__init__(name, data)
 
-        self.jenkins_job_priority = None
-        if 'jenkins_job_priority' in data:
-            self.jenkins_job_priority = int(data['jenkins_job_priority'])
+        self.jenkins_commit_job_priority = None
+        if 'jenkins_commit_job_priority' in data:
+            self.jenkins_commit_job_priority = \
+                int(data['jenkins_commit_job_priority'])
+        self.jenkins_pull_request_job_priority = None
+        if 'jenkins_pull_request_job_priority' in data:
+            self.jenkins_pull_request_job_priority = \
+                int(data['jenkins_pull_request_job_priority'])
 
         self.jenkins_job_timeout = None
         if 'jenkins_job_timeout' in data:

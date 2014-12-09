@@ -62,17 +62,23 @@ class ReleaseBuildFile(BuildFile):
             self.abi_incompatibility_assumed = \
                 bool(data['abi_incompatibility_assumed'])
 
-        self.jenkins_binarydeb_job_timeout = None
-        if 'jenkins_binarydeb_job_timeout' in data:
-            self.jenkins_binarydeb_job_timeout = \
-                int(data['jenkins_binarydeb_job_timeout'])
-        self.jenkins_job_priority = None
-        if 'jenkins_job_priority' in data:
-            self.jenkins_job_priority = int(data['jenkins_job_priority'])
-        self.jenkins_sourcedeb_job_timeout = None
-        if 'jenkins_sourcedeb_job_timeout' in data:
-            self.jenkins_sourcedeb_job_timeout = \
-                int(data['jenkins_sourcedeb_job_timeout'])
+        self.jenkins_binary_job_priority = None
+        if 'jenkins_binary_job_priority' in data:
+            self.jenkins_binary_job_priority = \
+                int(data['jenkins_binary_job_priority'])
+        self.jenkins_binary_job_timeout = None
+        if 'jenkins_binary_job_timeout' in data:
+            self.jenkins_binary_job_timeout = \
+                int(data['jenkins_binary_job_timeout'])
+
+        self.jenkins_source_job_priority = None
+        if 'jenkins_source_job_priority' in data:
+            self.jenkins_source_job_priority = \
+                int(data['jenkins_source_job_priority'])
+        self.jenkins_source_job_timeout = None
+        if 'jenkins_source_job_timeout' in data:
+            self.jenkins_source_job_timeout = \
+                int(data['jenkins_source_job_timeout'])
 
         self.package_whitelist = []
         if 'package_whitelist' in data:

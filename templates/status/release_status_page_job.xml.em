@@ -10,7 +10,7 @@
   <properties>
 @(SNIPPET(
     'property_job-priority',
-    priority=10,
+    priority=20,
 ))@
 @(SNIPPET(
     'property_requeue-job',
@@ -25,7 +25,7 @@
     refspec='master',
     relative_target_dir='ros_buildfarm',
 ))@
-  <assignedNode>master</assignedNode>
+  <assignedNode>slave-on-master</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
