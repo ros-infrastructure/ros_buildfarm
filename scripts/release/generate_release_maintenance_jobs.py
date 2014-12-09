@@ -10,7 +10,7 @@ from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
-from ros_buildfarm.common import get_release_view_name
+from ros_buildfarm.common import get_release_view_prefix
 from ros_buildfarm.common import \
     get_repositories_and_script_generating_key_files
 from ros_buildfarm.git import get_repository_url
@@ -45,7 +45,7 @@ def main(argv=sys.argv[1:]):
 
     view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
 
-    group_name = get_release_view_name(
+    group_name = get_release_view_prefix(
         args.rosdistro_name, args.release_build_name)
 
     job_name = '%s_%s' % (group_name, 'reconfigure-jobs')

@@ -114,5 +114,30 @@ def get_devel_view_name(rosdistro_name, source_build_name):
     return '%sdev%s' % (rosdistro_name[0].upper(), source_build_name)
 
 
-def get_release_view_name(rosdistro_name, release_build_name):
+def get_release_view_prefix(rosdistro_name, release_build_name):
     return '%srel%s' % (rosdistro_name[0].upper(), release_build_name)
+
+
+def get_release_view_name(
+        rosdistro_name, release_build_name, os_code_name, arch):
+    prefix = get_release_view_prefix(rosdistro_name, release_build_name)
+    os_code_name = get_short_os_code_name(os_code_name)
+    arch = get_short_arch(arch)
+    return '%s_%s%s' % (prefix, os_code_name, arch)
+
+
+def get_short_os_code_name(os_code_name):
+    os_code_name_mappings = {
+        'saucy': 'S',
+        'trusty': 'T',
+    }
+    return os_code_name_mappings.get(os_code_name, os_code_name)
+
+
+def get_short_arch(arch):
+    arch_mappings = {
+        'amd64': '64',
+        'i386': '32',
+        'source': 'src',
+    }
+    return arch_mappings.get(arch, arch)

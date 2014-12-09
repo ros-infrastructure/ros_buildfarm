@@ -6,6 +6,7 @@ from rosdistro import get_index
 
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_release_view_name
+from ros_buildfarm.common import get_release_view_prefix
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
 from ros_buildfarm.common import JobValidationError
@@ -40,12 +41,12 @@ def configure_release_jobs(
     index = get_index(config.rosdistro_index_url)
 
     # get targets
-    targets = []
+    platforms = []
     for os_name in build_file.targets.keys():
         for os_code_name in build_file.targets[os_name].keys():
-            targets.append((os_name, os_code_name))
+            platforms.append((os_name, os_code_name))
     print('The build file contains the following targets:')
-    for os_name, os_code_name in targets:
+    for os_name, os_code_name in platforms:
         print('  - %s %s: %s' % (os_name, os_code_name, ', '.join(
             build_file.targets[os_name][os_code_name])))
 
@@ -105,15 +106,20 @@ def configure_release_jobs(
     configure_sync_packages_to_main_job(
         config_url, rosdistro_name, release_build_name,
         config=config, build_file=build_file, jenkins=jenkins)
-    for os_name, os_code_name in targets:
+    for os_name, os_code_name in platforms:
         for arch in sorted(build_file.targets[os_name][os_code_name]):
             configure_sync_packages_to_testing_job(
                 config_url, rosdistro_name, release_build_name,
                 os_code_name, arch,
                 config=config, build_file=build_file, jenkins=jenkins)
 
-    view_name = get_release_view_name(rosdistro_name, release_build_name)
-    view = configure_release_view(jenkins, view_name)
+    targets = []
+    for os_name, os_code_name in platforms:
+        targets.append((os_name, os_code_name, 'source'))
+        for arch in _get_target_arches(build_file, os_name, os_code_name):
+            targets.append((os_name, os_code_name, arch))
+    views = configure_release_views(
+        jenkins, rosdistro_name, release_build_name, targets)
 
     all_job_names = []
     for pkg_name in sorted(filtered_pkg_names):
@@ -129,7 +135,7 @@ def configure_release_jobs(
                    "version") % (pkg_name, repo_name), file=sys.stderr)
             continue
 
-        for os_name, os_code_name in targets:
+        for os_name, os_code_name in platforms:
             try:
                 job_names = configure_release_job(
                     config_url, rosdistro_name, release_build_name,
@@ -137,7 +143,7 @@ def configure_release_jobs(
                     append_timestamp=append_timestamp,
                     config=config, build_file=build_file,
                     index=index, dist_file=dist_file, dist_cache=dist_cache,
-                    jenkins=jenkins, view=view,
+                    jenkins=jenkins, views=views,
                     generate_import_package_job=False,
                     generate_sync_packages_jobs=False)
                 all_job_names += job_names
@@ -145,7 +151,8 @@ def configure_release_jobs(
                 print(e.message, file=sys.stderr)
 
     # delete obsolete jobs in this view
-    remove_jobs(jenkins, '%s__' % view_name, all_job_names)
+    view_prefix = get_release_view_prefix(rosdistro_name, release_build_name)
+    remove_jobs(jenkins, '%s__' % view_prefix, all_job_names)
 
 
 def _get_downstream_package_names(pkg_names, dependencies):
@@ -164,7 +171,7 @@ def configure_release_job(
         pkg_name, os_name, os_code_name, append_timestamp=False,
         config=None, build_file=None,
         index=None, dist_file=None, dist_cache=None,
-        jenkins=None, view=None,
+        jenkins=None, views=None,
         generate_import_package_job=True,
         generate_sync_packages_jobs=True,
         filter_arches=None):
@@ -227,9 +234,13 @@ def configure_release_job(
         dist_cache = get_distribution_cache(index, rosdistro_name)
     if jenkins is None:
         jenkins = connect(config.jenkins_url)
-    if view is None:
-        view_name = get_release_view_name(rosdistro_name, release_build_name)
-        configure_release_view(jenkins, view_name)
+    if views is None:
+        targets = []
+        targets.append((os_name, os_code_name, 'source'))
+        for arch in _get_target_arches(build_file, os_name, os_code_name):
+            targets.append((os_name, os_code_name, arch))
+        configure_release_views(
+            jenkins, rosdistro_name, release_build_name, targets)
 
     if generate_import_package_job:
         configure_import_package_job(
@@ -302,14 +313,32 @@ def configure_release_job(
     return job_names
 
 
-def configure_release_view(jenkins, view_name):
-    return configure_view(
-        jenkins, view_name, include_regex='%s__.+' % view_name)
+def configure_release_views(
+        jenkins, rosdistro_name, release_build_name, targets):
+    views = []
+
+    view_prefix = get_release_view_prefix(rosdistro_name, release_build_name)
+    views.append(configure_view(
+        jenkins, view_prefix, include_regex='%s__.+' % view_prefix))
+
+    for os_name, os_code_name, arch in targets:
+        view_name = get_release_view_name(
+            rosdistro_name, release_build_name, os_code_name, arch)
+        if arch == 'source':
+            include_regex = '%s__.+_%s__source' % (view_prefix, os_code_name)
+        else:
+            include_regex = '%s__.+_%s_%s__binary' % \
+                (view_prefix, os_code_name, arch)
+        views.append(configure_view(
+            jenkins, view_name, include_regex=include_regex))
+
+    return views
 
 
 def get_sourcedeb_job_name(rosdistro_name, release_build_name,
                            pkg_name, os_name, os_code_name):
-    view_name = get_release_view_name(rosdistro_name, release_build_name)
+    view_name = get_release_view_name(
+        rosdistro_name, release_build_name, os_code_name, 'source')
     return '%s__%s__%s_%s__source' % \
         (view_name, pkg_name, os_name, os_code_name)
 
@@ -328,7 +357,8 @@ def _get_target_arches(build_file, os_name, os_code_name, print_skipped=True):
 
 def get_binarydeb_job_name(rosdistro_name, release_build_name,
                            pkg_name, os_name, os_code_name, arch):
-    view_name = get_release_view_name(rosdistro_name, release_build_name)
+    view_name = get_release_view_name(
+        rosdistro_name, release_build_name, os_code_name, arch)
     return '%s__%s__%s_%s_%s__binary' % \
         (view_name, pkg_name, os_name, os_code_name, arch)
 
@@ -503,7 +533,7 @@ def configure_import_package_job(
 
 
 def get_import_package_job_name(rosdistro_name, release_build_name):
-    view_name = get_release_view_name(rosdistro_name, release_build_name)
+    view_name = get_release_view_prefix(rosdistro_name, release_build_name)
     return '%s_import-package' % view_name
 
 
@@ -547,7 +577,7 @@ def configure_sync_packages_to_testing_job(
 
 def get_sync_packages_to_testing_job_name(
         rosdistro_name, release_build_name, os_code_name, arch):
-    view_name = get_release_view_name(rosdistro_name, release_build_name)
+    view_name = get_release_view_prefix(rosdistro_name, release_build_name)
     return '%s_sync-packages-to-testing_%s_%s' % \
         (view_name, os_code_name, arch)
 
@@ -606,7 +636,7 @@ def configure_sync_packages_to_main_job(
 
 
 def get_sync_packages_to_main_job_name(rosdistro_name, release_build_name):
-    view_name = get_release_view_name(rosdistro_name, release_build_name)
+    view_name = get_release_view_prefix(rosdistro_name, release_build_name)
     return '%s_sync-packages-to-main' % view_name
 
 
