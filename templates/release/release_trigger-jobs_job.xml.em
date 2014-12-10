@@ -41,7 +41,7 @@
     refspec='master',
     relative_target_dir='ros_buildfarm',
 ))@
-  <assignedNode>slave-on-master</assignedNode>
+  <assignedNode>slave_on_master</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
