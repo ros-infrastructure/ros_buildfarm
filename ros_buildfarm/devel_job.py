@@ -6,6 +6,8 @@ from rosdistro import get_distribution_cache
 from rosdistro import get_index
 
 from ros_buildfarm.common import get_devel_view_name
+from ros_buildfarm.common import git_github_orgunit
+from ros_buildfarm.common import get_github_project_url
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
 from ros_buildfarm.common import JobValidationError
@@ -70,31 +72,52 @@ def configure_devel_jobs(
         if not repo.source_repository.version:
             print("Skipping repository '%s': no source version" % repo_name)
             continue
+
+        job_types = []
+        # check for testing commits
         if build_file.test_commits_force is False:
             print(("Skipping repository '%s': 'test_commits' is forced to " +
                    "false in the build file") % repo_name)
-            continue
-        if repo.source_repository.test_commits is False:
+        elif repo.source_repository.test_commits is False:
             print(("Skipping repository '%s': 'test_commits' of the " +
                    "repository set to false") % repo_name)
-            continue
-        if repo.source_repository.test_commits is None and \
+        elif repo.source_repository.test_commits is None and \
                 not build_file.test_commits_default:
             print(("Skipping repository '%s': 'test_commits' defaults to " +
                    "false in the build file") % repo_name)
-            continue
+        else:
+            job_types.append('commit')
+        # check for testing commits
+        if build_file.test_pull_requests_force is False:
+            # print(("Skipping repository '%s': 'test_pull_requests' is forced to " +
+            #        "false in the build file") % repo_name)
+            pass
+        elif repo.source_repository.test_pull_requests is False:
+            # print(("Skipping repository '%s': 'test_pull_requests' of the " +
+            #        "repository set to false") % repo_name)
+            pass
+        elif repo.source_repository.test_pull_requests is None and \
+                not build_file.test_pull_requests_default:
+            # print(("Skipping repository '%s': 'test_pull_requests' defaults to " +
+            #        "false in the build file") % repo_name)
+            pass
+        else:
+            print("Pull request job for repository '%s'" % repo_name)
+            job_types.append('pull_request')
 
-        for os_name, os_code_name, arch in targets:
-            try:
-                job_name = configure_devel_job(
-                    config_url, rosdistro_name, source_build_name,
-                    repo_name, os_name, os_code_name, arch,
-                    config=config, build_file=build_file,
-                    index=index, dist_file=dist_file, dist_cache=dist_cache,
-                    jenkins=jenkins, view=view)
-                job_names.append(job_name)
-            except JobValidationError as e:
-                print(e.message, file=sys.stderr)
+        for job_type in job_types:
+            pull_request = job_type == 'pull_request'
+            for os_name, os_code_name, arch in targets:
+                try:
+                    job_name = configure_devel_job(
+                        config_url, rosdistro_name, source_build_name,
+                        repo_name, os_name, os_code_name, arch, pull_request,
+                        config=config, build_file=build_file,
+                        index=index, dist_file=dist_file, dist_cache=dist_cache,
+                        jenkins=jenkins, view=view)
+                    job_names.append(job_name)
+                except JobValidationError as e:
+                    print(e.message, file=sys.stderr)
 
     # delete obsolete jobs in this view
     remove_jobs(jenkins, '%s__' % view_name, job_names)
@@ -102,7 +125,7 @@ def configure_devel_jobs(
 
 def configure_devel_job(
         config_url, rosdistro_name, source_build_name,
-        repo_name, os_name, os_code_name, arch,
+        repo_name, os_name, os_code_name, arch, pull_request,
         config=None, build_file=None,
         index=None, dist_file=None, dist_cache=None,
         jenkins=None, view=None):
@@ -172,12 +195,12 @@ def configure_devel_job(
 
     job_name = get_devel_job_name(
         rosdistro_name, source_build_name,
-        repo_name, os_name, os_code_name, arch)
+        repo_name, os_name, os_code_name, arch, pull_request)
 
     job_config = _get_devel_job_config(
         config, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, repo.source_repository,
-        repo_name, dist_cache=dist_cache)
+        repo_name, pull_request, job_name, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, job_name, job_config)
@@ -186,10 +209,14 @@ def configure_devel_job(
 
 
 def get_devel_job_name(rosdistro_name, source_build_name,
-                       repo_name, os_name, os_code_name, arch):
+                       repo_name, os_name, os_code_name, arch,
+                       pull_request=False):
     view_name = get_devel_view_name(rosdistro_name, source_build_name)
-    return '%s__%s__%s_%s_%s' % \
+    job_name = '%s__%s__%s_%s_%s' % \
         (view_name, repo_name, os_name, os_code_name, arch)
+    if pull_request:
+        job_name += '__pull_request'
+    return job_name
 
 
 def configure_devel_view(jenkins, view_name):
@@ -200,7 +227,7 @@ def configure_devel_view(jenkins, view_name):
 def _get_devel_job_config(
         config, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, source_repo_spec,
-        repo_name, dist_cache=None):
+        repo_name, pull_request, job_name, dist_cache=None):
     template_name = 'devel/devel_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -221,13 +248,27 @@ def _get_devel_job_config(
                 for m in pkg.maintainers:
                     maintainer_emails.add(m.email)
 
+    job_priority = \
+        build_file.jenkins_commit_job_priority \
+        if not pull_request \
+        else build_file.jenkins_pull_request_job_priority
+
     job_data = {
         'template_name': template_name,
         'now_str': now_str,
 
-        'job_priority': build_file.jenkins_commit_job_priority,
+        'github_url': get_github_project_url(source_repo_spec.url),
+
+        'job_priority': job_priority,
+
+        'pull_request': pull_request,
 
         'source_repo_spec': source_repo_spec,
+
+        # this should not be necessary
+        'job_name': job_name,
+
+        'github_orgunit': git_github_orgunit(source_repo_spec.url),
 
         'ros_buildfarm_url': get_repository_url(),
 

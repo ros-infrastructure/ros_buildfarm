@@ -5,6 +5,7 @@ from rosdistro import get_distribution_cache
 from rosdistro import get_index
 
 from ros_buildfarm.common import get_debian_package_name
+from ros_buildfarm.common import get_github_project_url
 from ros_buildfarm.common import get_release_view_name
 from ros_buildfarm.common import get_release_view_prefix
 from ros_buildfarm.common \
@@ -268,7 +269,7 @@ def configure_release_job(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name, _get_target_arches(
             build_file, os_name, os_code_name, print_skipped=False),
-        pkg_name, repo_name, dist_cache=dist_cache)
+        pkg_name, repo_name, repo.release_repository, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, job_name, job_config)
@@ -303,7 +304,7 @@ def configure_release_job(
         job_config = _get_binarydeb_job_config(
             config_url, rosdistro_name, release_build_name,
             config, build_file, os_name, os_code_name, arch,
-            pkg_name, append_timestamp, repo_name,
+            pkg_name, append_timestamp, repo_name, repo.release_repository,
             dist_cache=dist_cache, upstream_job_names=upstream_job_names)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
@@ -384,7 +385,7 @@ def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
 def _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name, binary_arches,
-        pkg_name, repo_name, dist_cache=None):
+        pkg_name, repo_name, release_repository, dist_cache=None):
     template_name = 'release/sourcedeb_job.xml.em'
     now = datetime.utcnow()
     now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -412,6 +413,8 @@ def _get_sourcedeb_job_config(
     job_data = {
         'template_name': template_name,
         'now_str': now_str,
+
+        'github_url': get_github_project_url(release_repository.url),
 
         'job_priority': build_file.jenkins_source_job_priority,
 
@@ -449,7 +452,7 @@ def _get_sourcedeb_job_config(
 def _get_binarydeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name, arch,
-        pkg_name, append_timestamp, repo_name,
+        pkg_name, append_timestamp, repo_name, release_repository,
         dist_cache=None, upstream_job_names=None):
     template_name = 'release/binarydeb_job.xml.em'
     now = datetime.utcnow()
@@ -473,6 +476,8 @@ def _get_binarydeb_job_config(
     job_data = {
         'template_name': template_name,
         'now_str': now_str,
+
+        'github_url': get_github_project_url(release_repository.url),
 
         'job_priority': build_file.jenkins_binary_job_priority,
 

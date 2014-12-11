@@ -8,6 +8,10 @@
 ))@
   <keepDependencies>false</keepDependencies>
   <properties>
+@(SNIPPET(
+    'property_github-project',
+    project_url=github_url,
+))@
 @[if job_priority is not None]@
 @(SNIPPET(
     'property_job-priority',

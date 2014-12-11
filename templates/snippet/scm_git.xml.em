@@ -2,12 +2,15 @@
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
+@[if refspec]@
+        <refspec>@ESCAPE(refspec)</refspec>
+@[end if]@
         <url>@ESCAPE(url)</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>@ESCAPE(refspec)</name>
+        <name>@ESCAPE(branch_name)</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>

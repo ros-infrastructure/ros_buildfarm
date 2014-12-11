@@ -2,7 +2,6 @@ from em import Error
 from em import Interpreter
 from io import StringIO
 import os
-import shutil
 import sys
 from xml.sax.saxutils import escape
 

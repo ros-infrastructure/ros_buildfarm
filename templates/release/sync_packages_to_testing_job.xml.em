@@ -18,8 +18,9 @@
 @(SNIPPET(
     'scm_git',
     url=ros_buildfarm_url,
-    refspec='master',
+    branch_name='master',
     relative_target_dir='ros_buildfarm',
+    refspec=None,
 ))@
   <assignedNode>building_repository</assignedNode>
   <canRoam>false</canRoam>

@@ -8,10 +8,27 @@
 ))@
   <keepDependencies>false</keepDependencies>
   <properties>
+@[if github_url]@
+@(SNIPPET(
+    'property_github-project',
+    project_url=github_url,
+))@
+@[end if]@
 @[if job_priority is not None]@
 @(SNIPPET(
     'property_job-priority',
     priority=job_priority,
+))@
+@[end if]@
+@[if pull_request]@
+@(SNIPPET(
+    'property_parameters-definition',
+    parameters=[
+        {
+            'type': 'string',
+            'name': 'sha1',
+        },
+    ],
 ))@
 @[end if]@
 @(SNIPPET(
@@ -21,21 +38,42 @@
     'property_disk-usage',
 ))@
   </properties>
+@[if not pull_request]@
 @(SNIPPET(
     'scm',
     repo_spec=source_repo_spec,
-    path='catkin_workspace/src/%s' % source_repo_spec.name
+    path='catkin_workspace/src/%s' % source_repo_spec.name,
 ))@
+@[end if]@
+@[if pull_request]@
+@(SNIPPET(
+    'scm_git',
+    url=source_repo_spec.url,
+    refspec='+refs/pull/*:refs/remotes/origin/pr/*',
+    branch_name='${sha1}',
+    relative_target_dir='catkin_workspace/src/%s' % source_repo_spec.name,
+))@
+@[end if]@
   <assignedNode>buildslave</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
+@[if not pull_request]@
 @(SNIPPET(
     'trigger_poll',
     spec='H * * * *',
 ))@
+@[end if]@
+@[if pull_request]@
+@(SNIPPET(
+    'trigger_github-pull-request-builder',
+    github_orgunit=github_orgunit,
+    branch_name=source_repo_spec.version,
+    job_name=job_name,
+))@
+@[end if]@
   </triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>

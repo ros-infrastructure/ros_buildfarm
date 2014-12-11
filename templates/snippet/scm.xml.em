@@ -2,8 +2,9 @@
 @(SNIPPET(
     'scm_git',
     url=repo_spec.url,
-    refspec=repo_spec.version,
+    branch_name=repo_spec.version,
     relative_target_dir=path,
+    refspec=None,
 ))@
 @[elif repo_spec.type == 'hg']@
 @(SNIPPET(

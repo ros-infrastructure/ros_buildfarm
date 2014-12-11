@@ -15,7 +15,6 @@
             'type': 'string',
             'name': 'config_file',
             'description': 'A specific yaml file or files. If unset it defaults to aggregating all yaml files in the directory defined by upstream_config in reprepro-updater.ini',
-            'default_value': None,
         },
     ],
 ))@
@@ -29,8 +28,9 @@
 @(SNIPPET(
     'scm_git',
     url='https://github.com/ros-infrastructure/reprepro-updater.git',
-    refspec='refactor',
+    branch_name='refactor',
     relative_target_dir='reprepro-updater',
+    refspec=None,
 ))@
   <assignedNode>building_repository</assignedNode>
   <canRoam>false</canRoam>

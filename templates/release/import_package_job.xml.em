@@ -14,14 +14,10 @@
         {
             'type': 'string',
             'name': 'subfolder',
-            'description': '',
-            'default_value': None,
         },
         {
             'type': 'string',
             'name': 'debian_package_name',
-            'description': '',
-            'default_value': None,
         },
     ],
 ))@
@@ -35,8 +31,9 @@
 @(SNIPPET(
     'scm_git',
     url='https://github.com/ros-infrastructure/reprepro-updater.git',
-    refspec='refactor',
+    branch_name='refactor',
     relative_target_dir='reprepro-updater',
+    refspec=None,
 ))@
   <assignedNode>building_repository</assignedNode>
   <canRoam>false</canRoam>

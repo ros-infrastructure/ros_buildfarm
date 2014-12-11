@@ -141,3 +141,21 @@ def get_short_arch(arch):
         'source': 'src',
     }
     return arch_mappings.get(arch, arch)
+
+
+def git_github_orgunit(url):
+    prefix = 'https://github.com/'
+    assert url.startswith(prefix)
+    path = url[len(prefix):]
+    index = path.index('/')
+    return path[:index]
+
+
+def get_github_project_url(url):
+    if not url.startswith('https://github.com/'):
+        return None
+    git_suffix = '.git'
+    if not url.endswith(git_suffix):
+        return None
+    url = url[:-len(git_suffix)] + '/'
+    return url
