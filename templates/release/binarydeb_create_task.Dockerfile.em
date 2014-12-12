@@ -8,6 +8,7 @@ VOLUME ["/var/cache/apt/archives"]
 ENV DEBIAN_FRONTEND noninteractive
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
+ENV TZ @timezone
 
 RUN useradd -u @uid -m buildfarm
 

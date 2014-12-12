@@ -20,8 +20,11 @@ def expand_template(
     global template_hook
 
     if system_timezone is None and add_context_variables:
-        with open('/etc/timezone', 'r') as h:
-            system_timezone = h.read().strip()
+        if 'TZ' in os.environ:
+            system_timezone = os.environ['TZ']
+        else:
+            with open('/etc/timezone', 'r') as h:
+                system_timezone = h.read().strip()
 
     output = StringIO()
     try:
