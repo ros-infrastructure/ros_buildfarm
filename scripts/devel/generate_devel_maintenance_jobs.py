@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-from datetime import datetime
 import os
 import sys
 
@@ -53,16 +52,11 @@ def configure_reconfigure_jobs_job(
 
 def get_reconfigure_jobs_job_config(args, config, build_file):
     template_name = 'devel/devel_reconfigure-jobs_job.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config, build_file)
 
     job_data = {
-        'template_name': template_name,
-        'now_str': now_str,
-
         'script_generating_key_files': script_generating_key_files,
 
         'config_url': args.config_url,
@@ -94,13 +88,7 @@ def configure_trigger_jobs_job(
 
 def get_trigger_jobs_job_config(group_name, build_file):
     template_name = 'devel/devel_trigger-jobs_job.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
-
     job_data = {
-        'template_name': template_name,
-        'now_str': now_str,
-
         'project_name_pattern': '%s__.*' % group_name,
 
         'recipients': build_file.notify_emails,

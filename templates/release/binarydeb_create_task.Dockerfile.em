@@ -30,11 +30,7 @@ RUN apt-get update && apt-get install -q -y python3
 @[end if]@
 
 # automatic invalidation once every day
-@{
-import datetime
-today_isoformat = datetime.date.today().isoformat()
-}@
-RUN echo "@today_isoformat"
+RUN echo "@today_str"
 
 RUN mkdir /tmp/wrapper_scripts
 @[for filename in sorted(wrapper_scripts.keys())]@
@@ -43,11 +39,8 @@ RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('"', '\\"').splitlines(
 
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y devscripts dpkg-dev python3-apt python3-catkin-pkg python3-empy python3-rosdistro python3-yaml
 
-# always invalidate to actually have the latest repo state
-@{
-now_isoformat = datetime.datetime.now().isoformat()
-}@
-RUN echo "@now_isoformat"
+# always invalidate to actually have the latest apt repo state
+RUN echo "@now_str"
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update
 
 USER buildfarm

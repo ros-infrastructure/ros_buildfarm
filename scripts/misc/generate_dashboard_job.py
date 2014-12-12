@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-from datetime import datetime
 import sys
 
 from ros_buildfarm.argument import add_argument_config_url
@@ -32,13 +31,7 @@ def main(argv=sys.argv[1:]):
 
 def get_job_config(notification_emails):
     template_name = 'misc/dashboard_job.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
-
     job_data = {
-        'template_name': template_name,
-        'now_str': now_str,
-
         'notification_emails': notification_emails,
     }
     job_config = expand_template(template_name, job_data)

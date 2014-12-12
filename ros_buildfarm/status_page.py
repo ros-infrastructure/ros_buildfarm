@@ -97,7 +97,7 @@ def build_release_status_page(
     template_name = 'status/release_status_page.html.em'
     data = {
         'title': 'ROS %s - release status' % rosdistro_name.capitalize(),
-        'start_time': time.strftime('%Y-%m-%d %H:%M:%S %Z', start_time),
+        'start_time': time.strftime('%Y-%m-%d %H:%M:%S %z', start_time),
 
         'resource_hashes': get_resource_hashes(),
 
@@ -183,7 +183,7 @@ def build_debian_repos_status_page(
     template_name = 'status/release_status_page.html.em'
     data = {
         'title': 'ROS repository status',
-        'start_time': time.strftime('%Y-%m-%d %H:%M:%S %Z', start_time),
+        'start_time': time.strftime('%Y-%m-%d %H:%M:%S %z', start_time),
 
         'resource_hashes': get_resource_hashes(),
 

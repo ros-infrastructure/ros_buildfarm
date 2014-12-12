@@ -1,4 +1,3 @@
-from datetime import datetime
 import sys
 
 from rosdistro import get_distribution_cache
@@ -387,8 +386,6 @@ def _get_sourcedeb_job_config(
         config, build_file, os_name, os_code_name, binary_arches,
         pkg_name, repo_name, release_repository, dist_cache=None):
     template_name = 'release/sourcedeb_job.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config, build_file)
@@ -411,9 +408,6 @@ def _get_sourcedeb_job_config(
         else set([])
 
     job_data = {
-        'template_name': template_name,
-        'now_str': now_str,
-
         'github_url': get_github_project_url(release_repository.url),
 
         'job_priority': build_file.jenkins_source_job_priority,
@@ -455,8 +449,6 @@ def _get_binarydeb_job_config(
         pkg_name, append_timestamp, repo_name, release_repository,
         dist_cache=None, upstream_job_names=None):
     template_name = 'release/binarydeb_job.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config, build_file)
@@ -474,9 +466,6 @@ def _get_binarydeb_job_config(
         else set([])
 
     job_data = {
-        'template_name': template_name,
-        'now_str': now_str,
-
         'github_url': get_github_project_url(release_repository.url),
 
         'job_priority': build_file.jenkins_binary_job_priority,
@@ -544,13 +533,7 @@ def get_import_package_job_name(rosdistro_name, release_build_name):
 
 def _get_import_package_job_config(build_file):
     template_name = 'release/import_package_job.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
-
     job_data = {
-        'template_name': template_name,
-        'now_str': now_str,
-
         'notify_emails': build_file.notify_emails,
     }
     job_config = expand_template(template_name, job_data)
@@ -591,16 +574,11 @@ def _get_sync_packages_to_testing_job_config(
         config_url, rosdistro_name, release_build_name, os_code_name, arch,
         config, build_file):
     template_name = 'release/sync_packages_to_testing_job.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config, build_file)
 
     job_data = {
-        'template_name': template_name,
-        'now_str': now_str,
-
         'ros_buildfarm_url': get_repository_url(),
 
         'script_generating_key_files': script_generating_key_files,
@@ -647,13 +625,7 @@ def get_sync_packages_to_main_job_name(rosdistro_name, release_build_name):
 
 def _get_sync_packages_to_main_job_config(rosdistro_name, build_file):
     template_name = 'release/sync_packages_to_main_job.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
-
     job_data = {
-        'template_name': template_name,
-        'now_str': now_str,
-
         'rosdistro_name': rosdistro_name,
 
         'notify_emails': build_file.notify_emails,

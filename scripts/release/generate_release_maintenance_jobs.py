@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-from datetime import datetime
 import os
 import sys
 
@@ -74,16 +73,10 @@ def get_import_upstream_job_config(args, config, build_file):
 
 
 def _get_job_config(args, config, build_file, template_name):
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
-
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config, build_file)
 
     job_data = {
-        'template_name': template_name,
-        'now_str': now_str,
-
         'script_generating_key_files': script_generating_key_files,
 
         'config_url': args.config_url,

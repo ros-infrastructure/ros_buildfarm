@@ -34,11 +34,7 @@ RUN apt-get update && apt-get install -q -y python3
 @[end if]@
 
 # automatic invalidation once every day
-@{
-import datetime
-today_isoformat = datetime.date.today().isoformat()
-}@
-RUN echo "@today_isoformat"
+RUN echo "@today_str"
 
 # for each dependency: echo version, apt-get update, apt-get install
 @[for d in dependencies]@

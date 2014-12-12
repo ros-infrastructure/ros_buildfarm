@@ -23,12 +23,8 @@ RUN echo deb @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.
 RUN apt-get update && apt-get install -q -y python3
 @[end if]@
 
-# always invalidate
-@{
-import datetime
-now_isoformat = datetime.datetime.now().isoformat()
-}@
-RUN echo "@now_isoformat"
+# always invalidate to actually have the latest apt repo state
+RUN echo "@now_str"
 
 RUN mkdir /tmp/wrapper_scripts
 @[for filename in sorted(wrapper_scripts.keys())]@

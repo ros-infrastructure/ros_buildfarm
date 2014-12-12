@@ -24,11 +24,7 @@ RUN echo deb @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.
 RUN echo "2014-11-20"
 
 # automatic invalidation once every day
-@{
-import datetime
-today_isoformat = datetime.date.today().isoformat()
-}@
-RUN echo "@today_isoformat"
+RUN echo "@today_str"
 
 RUN mkdir /tmp/wrapper_scripts
 @[for filename in sorted(wrapper_scripts.keys())]@

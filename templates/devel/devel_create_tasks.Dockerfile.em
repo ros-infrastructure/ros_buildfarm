@@ -24,11 +24,7 @@ RUN echo deb @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.
 RUN echo "2014-11-20"
 
 # automatic invalidation once every day
-@{
-import datetime
-today_isoformat = datetime.date.today().isoformat()
-}@
-RUN echo "@today_isoformat"
+RUN echo "@today_str"
 
 RUN mkdir /tmp/wrapper_scripts
 @[for filename in sorted(wrapper_scripts.keys())]@
@@ -37,12 +33,8 @@ RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('"', '\\"').splitlines(
 
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y git python3-apt python3-catkin-pkg python3-empy python3-rosdep python3-rosdistro
 
-# TODO improve rosdep init/update performance, enable on-change invalidation
-@{
-import datetime
-now_isoformat = datetime.datetime.today().isoformat()
-}@
-RUN echo "@now_isoformat"
+# always invalidate to actually have the latest rosdep state
+RUN echo "@now_str"
 ENV ROSDISTRO_INDEX_URL @rosdistro_index_url
 RUN rosdep init
 

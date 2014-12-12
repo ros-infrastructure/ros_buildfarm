@@ -1,4 +1,3 @@
-from datetime import datetime
 import difflib
 import sys
 from xml.etree import ElementTree
@@ -40,13 +39,7 @@ def configure_view(jenkins, view_name, include_regex=None):
 
 def _get_view_config(view_name, include_regex):
     template_name = 'generic_view.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
-
     view_data = {
-        'template_name': template_name,
-        'now_str': now_str,
-
         'view_name': view_name,
 
         'include_regex': include_regex,

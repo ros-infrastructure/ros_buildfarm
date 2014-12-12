@@ -2,7 +2,6 @@
 
 import argparse
 import copy
-from datetime import datetime
 import sys
 
 from ros_buildfarm.argument import add_argument_config_url
@@ -38,17 +37,12 @@ def main(argv=sys.argv[1:]):
 
 def get_job_config(args, config):
     template_name = 'misc/rosdistro_cache_job.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config)
 
     job_data = copy.deepcopy(args.__dict__)
     job_data.update({
-        'template_name': template_name,
-        'now_str': now_str,
-
         'ros_buildfarm_url': get_repository_url(),
 
         'script_generating_key_files': script_generating_key_files,

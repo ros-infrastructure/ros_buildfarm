@@ -29,11 +29,7 @@ RUN apt-get update && apt-get install -q -y python3
 @[end if]@
 
 # automatic invalidation once every day
-@{
-import datetime
-today_isoformat = datetime.date.today().isoformat()
-}@
-RUN echo "@today_isoformat"
+RUN echo "@today_str"
 
 RUN mkdir /tmp/wrapper_scripts
 @[for filename in sorted(wrapper_scripts.keys())]@

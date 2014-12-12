@@ -1,4 +1,3 @@
-from datetime import datetime
 import sys
 
 from catkin_pkg.package import parse_package_string
@@ -89,8 +88,8 @@ def configure_devel_jobs(
             job_types.append('commit')
         # check for testing commits
         if build_file.test_pull_requests_force is False:
-            # print(("Skipping repository '%s': 'test_pull_requests' is forced to " +
-            #        "false in the build file") % repo_name)
+            # print(("Skipping repository '%s': 'test_pull_requests' is " +
+            #        "forced to false in the build file") % repo_name)
             pass
         elif repo.source_repository.test_pull_requests is False:
             # print(("Skipping repository '%s': 'test_pull_requests' of the " +
@@ -98,8 +97,8 @@ def configure_devel_jobs(
             pass
         elif repo.source_repository.test_pull_requests is None and \
                 not build_file.test_pull_requests_default:
-            # print(("Skipping repository '%s': 'test_pull_requests' defaults to " +
-            #        "false in the build file") % repo_name)
+            # print(("Skipping repository '%s': 'test_pull_requests' " +
+            #        "defaults to false in the build file") % repo_name)
             pass
         else:
             print("Pull request job for repository '%s'" % repo_name)
@@ -113,8 +112,8 @@ def configure_devel_jobs(
                         config_url, rosdistro_name, source_build_name,
                         repo_name, os_name, os_code_name, arch, pull_request,
                         config=config, build_file=build_file,
-                        index=index, dist_file=dist_file, dist_cache=dist_cache,
-                        jenkins=jenkins, view=view)
+                        index=index, dist_file=dist_file,
+                        dist_cache=dist_cache, jenkins=jenkins, view=view)
                     job_names.append(job_name)
                 except JobValidationError as e:
                     print(e.message, file=sys.stderr)
@@ -229,8 +228,6 @@ def _get_devel_job_config(
         build_file, os_name, os_code_name, arch, source_repo_spec,
         repo_name, pull_request, job_name, dist_cache=None):
     template_name = 'devel/devel_job.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config, build_file)
@@ -254,9 +251,6 @@ def _get_devel_job_config(
         else build_file.jenkins_pull_request_job_priority
 
     job_data = {
-        'template_name': template_name,
-        'now_str': now_str,
-
         'github_url': get_github_project_url(source_repo_spec.url),
 
         'job_priority': job_priority,

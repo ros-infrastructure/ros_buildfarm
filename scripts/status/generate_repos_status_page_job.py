@@ -2,7 +2,6 @@
 
 import argparse
 import copy
-from datetime import datetime
 import sys
 
 from ros_buildfarm.argument import add_argument_config_url
@@ -37,8 +36,6 @@ def main(argv=sys.argv[1:]):
 
 def get_job_config(args, config):
     template_name = 'status/repos_status_page_job.xml.em'
-    now = datetime.utcnow()
-    now_str = now.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     targets_by_repo = get_targets_by_repo(config, args.rosdistro_name)
     status_pages = {}
@@ -52,9 +49,6 @@ def get_job_config(args, config):
 
     job_data = copy.deepcopy(args.__dict__)
     job_data.update({
-        'template_name': template_name,
-        'now_str': now_str,
-
         'ros_buildfarm_url': get_repository_url(),
 
         'status_pages': status_pages,

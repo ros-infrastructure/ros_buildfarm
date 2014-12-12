@@ -3,6 +3,7 @@ from em import Interpreter
 from io import StringIO
 import os
 import sys
+import time
 from xml.sax.saxutils import escape
 
 template_basepath = os.path.normpath(
@@ -12,7 +13,8 @@ template_basepath = os.path.normpath(
 template_hook = None
 
 
-def expand_template(template_name, data, options=None):
+def expand_template(
+        template_name, data, options=None, add_context_variables=True):
     global template_hook
     output = StringIO()
     try:
@@ -20,6 +22,13 @@ def expand_template(template_name, data, options=None):
         template_path = os.path.join(template_basepath, template_name)
         # create copy before manipulating
         data = dict(data)
+        if add_context_variables:
+            data['template_name'] = template_name
+            now = time.localtime()
+            data['now_str'] = time.strftime(
+                '%Y-%m-%d %H:%M:%S %z', now)
+            data['today_str'] = time.strftime(
+                '%Y-%m-%d (%z)', now)
         data['ESCAPE'] = _escape_value
         data['SNIPPET'] = _expand_snippet
         interpreter.file(open(template_path), locals=data)
@@ -48,7 +57,8 @@ def _escape_value(value):
 def _expand_snippet(snippet_name, **kwargs):
     template_name = 'snippet/%s.xml.em' % snippet_name
     try:
-        value = expand_template(template_name, kwargs)
+        value = expand_template(
+            template_name, kwargs, add_context_variables=False)
         return value
     except Error as e:
         print("%s in snippet '%s': %s" %
