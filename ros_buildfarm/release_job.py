@@ -320,16 +320,16 @@ def configure_release_views(
 
     view_prefix = get_release_view_prefix(rosdistro_name, release_build_name)
     views.append(configure_view(
-        jenkins, view_prefix, include_regex='%s__.+' % view_prefix))
+        jenkins, view_prefix, include_regex='%s_.+__.+' % view_prefix))
 
     for os_name, os_code_name, arch in targets:
         view_name = get_release_view_name(
             rosdistro_name, release_build_name, os_code_name, arch)
         if arch == 'source':
-            include_regex = '%s__.+_%s__source' % (view_prefix, os_code_name)
+            include_regex = '%s__.+_%s__source' % (view_name, os_code_name)
         else:
             include_regex = '%s__.+_%s_%s__binary' % \
-                (view_prefix, os_code_name, arch)
+                (view_name, os_code_name, arch)
         views.append(configure_view(
             jenkins, view_name, include_regex=include_regex))
 
