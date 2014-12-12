@@ -96,6 +96,7 @@
         '# generate Dockerfile, build and run it',
         '# generating the Dockerfiles for the actual devel tasks',
         'echo "# BEGIN SECTION: Generate Dockerfile - devel tasks"',
+        'export TZ="%s"' % timezone,
         'mkdir -p $WORKSPACE/docker_generating_dockers',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/devel/run_devel_job.py' +

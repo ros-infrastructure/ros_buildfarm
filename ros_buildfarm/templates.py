@@ -10,12 +10,19 @@ template_basepath = os.path.normpath(
     os.path.join(os.path.dirname(__file__), '..', 'templates'))
 
 
+system_timezone = None
 template_hook = None
 
 
 def expand_template(
         template_name, data, options=None, add_context_variables=True):
+    global system_timezone
     global template_hook
+
+    if system_timezone is None and add_context_variables:
+        with open('/etc/timezone', 'r') as h:
+            system_timezone = h.read().strip()
+
     output = StringIO()
     try:
         interpreter = Interpreter(output=output, options=options)
@@ -29,6 +36,7 @@ def expand_template(
                 '%Y-%m-%d %H:%M:%S %z', now)
             data['today_str'] = time.strftime(
                 '%Y-%m-%d (%z)', now)
+            data['timezone'] = system_timezone
         data['ESCAPE'] = _escape_value
         data['SNIPPET'] = _expand_snippet
         interpreter.file(open(template_path), locals=data)

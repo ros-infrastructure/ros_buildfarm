@@ -60,6 +60,7 @@
         '# generate Dockerfile, build and run it',
         '# generating the Dockerfile for the actual sourcedeb task',
         'echo "# BEGIN SECTION: Generate Dockerfile - sourcedeb task"',
+        'export TZ="%s"' % timezone,
         'mkdir -p $WORKSPACE/docker_sourcedeb',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_sourcedeb_job.py' +

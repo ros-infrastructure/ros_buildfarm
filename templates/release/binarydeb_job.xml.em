@@ -70,6 +70,7 @@
         '# generate Dockerfile, build and run it',
         '# generating the Dockerfile for the actual binarydeb task',
         'echo "# BEGIN SECTION: Generate Dockerfile - binarydeb task"',
+        'export TZ="%s"' % timezone,
         'mkdir -p $WORKSPACE/docker_generating_docker',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_binarydeb_job.py' +
@@ -130,6 +131,7 @@
 @#         '# generate Dockerfile, build and run it',
 @#         '# trying to install the built binarydeb',
 @#         'echo "# BEGIN SECTION: Generate Dockerfile - install"',
+@#         'export TZ="%s"' % timezone,
 @#         'mkdir -p $WORKSPACE/docker_install_binarydeb',
 @#         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
 @#         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/create_binarydeb_install_task_generator.py' +

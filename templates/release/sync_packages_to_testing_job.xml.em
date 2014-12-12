@@ -40,6 +40,7 @@
         '# generate Dockerfile, build and run it',
         '# checking the sync criteria',
         'echo "# BEGIN SECTION: Generate Dockerfile - check sync condition"',
+        'export TZ="%s"' % timezone,
         'mkdir -p $WORKSPACE/docker_check_sync_criteria',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_check_sync_criteria_job.py' +
