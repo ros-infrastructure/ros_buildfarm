@@ -145,7 +145,8 @@ def get_short_arch(arch):
 
 def git_github_orgunit(url):
     prefix = 'https://github.com/'
-    assert url.startswith(prefix)
+    if not url.startswith(prefix):
+        return None
     path = url[len(prefix):]
     index = path.index('/')
     return path[:index]
