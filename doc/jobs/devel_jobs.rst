@@ -90,7 +90,7 @@ The task performs the following steps:
 * The content of the source repository is expected to be available in the
   folder ``catkin_workspace/src``.
 * Invoke
-  ``catkin_make_isolated --cmake-args -DCATKIN_ENABLE_TESTING=1 -DCATKIN_TEST_RESULTS_DIR=path/to/catkin_workspace/test_results --catkin-make-args -j1 run_tests``.
+  ``catkin_make_isolated --cmake-args -DCATKIN_ENABLE_TESTING=1 -DCATKIN_SKIP_TESTING=0 -DCATKIN_TEST_RESULTS_DIR=path/to/catkin_workspace/test_results --catkin-make-args -j1 run_tests``.
 
   The XUnit test results for each package will be created in the subfolder
   ``test_results`` in the catkn workspace and be shown by Jenkins.
