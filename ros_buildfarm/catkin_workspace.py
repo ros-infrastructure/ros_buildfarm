@@ -28,7 +28,8 @@ def clean_workspace(workspace_root):
         shutil.rmtree(test_results_dir)
 
 
-def call_catkin_make_isolated(rosdistro_name, workspace_root, args):
+def call_catkin_make_isolated(
+        rosdistro_name, workspace_root, args, parent_result_space=None):
     # command to run
     script_name = 'catkin_make_isolated'
     # use script from source space if available
@@ -40,7 +41,9 @@ def call_catkin_make_isolated(rosdistro_name, workspace_root, args):
     cmd = ' '.join(['PYTHONIOENCODING=utf_8', script_name] + args)
 
     # prepend setup file if available
-    setup_file = '/opt/ros/%s/setup.sh' % rosdistro_name
+    if not parent_result_space:
+        parent_result_space = '/opt/ros/%s' % rosdistro_name
+    setup_file = os.path.join(parent_result_space, 'setup.sh')
     if os.path.exists(setup_file):
         cmd = '. %s && %s' % (setup_file, cmd)
 

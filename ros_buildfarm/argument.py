@@ -101,10 +101,11 @@ def add_argument_append_timestamp(parser):
         help='Append timestamp to binarydeb version')
 
 
-def add_argument_output_dir(parser):
+def add_argument_output_dir(parser, required=False):
     parser.add_argument(
         '--output-dir',
         default=os.curdir,
+        required=required,
         help='The output directory')
 
 
@@ -113,13 +114,6 @@ def add_argument_dockerfile_dir(parser):
         '--dockerfile-dir',
         default=os.curdir,
         help="The directory where the 'Dockerfile' will be generated")
-
-
-def add_argument_workspace_root(parser):
-    parser.add_argument(
-        '--workspace-root',
-        required=True,
-        help='The root path of the workspace to compile')
 
 
 def add_argument_debian_repository_urls(parser, nargs='+'):

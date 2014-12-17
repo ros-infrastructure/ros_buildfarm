@@ -15,7 +15,6 @@ from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.argument import add_argument_workspace_root
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.templates import create_dockerfile
 
@@ -32,7 +31,10 @@ def main(argv=sys.argv[1:]):
     add_argument_arch(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
-    add_argument_workspace_root(parser)
+    parser.add_argument(
+        '--prerelease-overlay',
+        action='store_true',
+        help='Operate on two catkin workspaces')
     add_argument_dockerfile_dir(parser)
     args = parser.parse_args(argv)
 

@@ -55,10 +55,15 @@ ENTRYPOINT ["sh", "-c"]
 if not testing:
     cmd = 'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u ' + \
         '/tmp/ros_buildfarm/scripts/devel/catkin_make_isolated_and_install.py ' + \
-        '--rosdistro-name %s --workspace-root /tmp/catkin_workspace --clean-before' % rosdistro_name
+        '--rosdistro-name %s --clean-before' % rosdistro_name
 else:
     cmd = 'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u ' + \
         '/tmp/ros_buildfarm/scripts/devel/catkin_make_isolated_and_test.py ' + \
-        '--rosdistro-name %s --workspace-root /tmp/catkin_workspace' % rosdistro_name
+        '--rosdistro-name %s' % rosdistro_name
+if not prerelease_overlay:
+    cmd += ' --workspace-root /tmp/catkin_workspace'
+else:
+    cmd += ' --workspace-root /tmp/catkin_workspace_overlay ' + \
+        '--parent-result-space /tmp/catkin_workspace/install_isolated'
 }@
 CMD ["@cmd"]

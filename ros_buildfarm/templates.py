@@ -1,6 +1,11 @@
+from __future__ import print_function
+
 from em import Error
 from em import Interpreter
-from io import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
 import os
 import sys
 import time
@@ -41,8 +46,9 @@ def expand_template(
                 '%Y-%m-%d (%z)', now)
             data['timezone'] = system_timezone
         data['ESCAPE'] = _escape_value
+        data['TEMPLATE'] = _expand_template
         data['SNIPPET'] = _expand_snippet
-        interpreter.file(open(template_path), locals=data)
+        interpreter.file(open(template_path, 'r'), locals=data)
         value = output.getvalue()
         if template_hook:
             template_hook(template_name, data, value)
@@ -67,13 +73,17 @@ def _escape_value(value):
 
 def _expand_snippet(snippet_name, **kwargs):
     template_name = 'snippet/%s.xml.em' % snippet_name
+    return _expand_template(template_name, **kwargs)
+
+
+def _expand_template(template_name, **kwargs):
     try:
         value = expand_template(
             template_name, kwargs, add_context_variables=False)
         return value
     except Error as e:
-        print("%s in snippet '%s': %s" %
-              (e.__class__.__name__, snippet_name, str(e)), file=sys.stderr)
+        print("%s in template '%s': %s" %
+              (e.__class__.__name__, template_name, str(e)), file=sys.stderr)
         sys.exit(1)
 
 
