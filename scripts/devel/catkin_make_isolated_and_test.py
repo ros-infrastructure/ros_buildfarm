@@ -44,13 +44,25 @@ def main(argv=sys.argv[1:]):
 
     try:
         test_results_dir = os.path.join(args.workspace_root, 'test_results')
+        arguments = [
+            '--cmake-args', '-DCATKIN_ENABLE_TESTING=1',
+            '-DCATKIN_SKIP_TESTING=0',
+            '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir,
+            '--catkin-make-args', '-j1']
         rc = call_catkin_make_isolated(
             args.rosdistro_name, args.workspace_root,
-            ['--cmake-args', '-DCATKIN_ENABLE_TESTING=1',
-             '-DCATKIN_SKIP_TESTING=0',
-             '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir,
-             '--catkin-make-args', '-j1', 'run_tests'],
+            arguments,
             parent_result_space=args.parent_result_space)
+        if not rc:
+            rc = call_catkin_make_isolated(
+                args.rosdistro_name, args.workspace_root,
+                arguments + ['tests'],
+                parent_result_space=args.parent_result_space)
+            if not rc:
+                rc = call_catkin_make_isolated(
+                    args.rosdistro_name, args.workspace_root,
+                    arguments + ['run_tests'],
+                    parent_result_space=args.parent_result_space)
     finally:
         if args.clean_after:
             clean_workspace(args.workspace_root)
