@@ -1,4 +1,5 @@
 from collections import namedtuple
+import os
 
 
 class JobValidationError(Exception):
@@ -160,3 +161,9 @@ def get_github_project_url(url):
         return None
     url = url[:-len(git_suffix)] + '/'
     return url
+
+
+def get_user_id():
+    uid = os.getuid()
+    assert uid != 0, "You can not run this as user 'root'"
+    return uid

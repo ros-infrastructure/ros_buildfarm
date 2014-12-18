@@ -2,7 +2,6 @@
 
 import argparse
 import copy
-import os
 import sys
 
 from ros_buildfarm.argument import add_argument_config_url
@@ -13,6 +12,7 @@ from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_distribution_repository_keys
+from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
 
 
@@ -40,7 +40,7 @@ def main(argv=sys.argv[1:]):
             args.distribution_repository_urls,
             args.distribution_repository_key_files),
 
-        'uid': os.getuid(),
+        'uid': get_user_id(),
     })
     create_dockerfile(
         'status/release_status_page_task.Dockerfile.em',
