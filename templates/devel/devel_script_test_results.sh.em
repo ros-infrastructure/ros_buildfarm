@@ -1,8 +1,10 @@
+catkin_test_results_CMD="catkin_test_results $WORKSPACE/@workspace_path/test_results --all"
+echo "Invoking: $catkin_test_results_CMD"
+echo ""
 if type "catkin_test_results" > /dev/null; then
   set +e
-  (set -x; catkin_test_results $WORKSPACE/@workspace_path/test_results --all)
+  $catkin_test_results_CMD
   set -e
 else
-  echo "If 'catkin_test_results' would be available it would output a summary of all test results:"
-  echo "    $ catkin_test_results $WORKSPACE/@workspace_path/test_results --all"
+  echo "'catkin_test_results' not found on the PATH. Please install catkin and source the environment to output the test result summary."
 fi
