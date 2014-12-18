@@ -11,7 +11,7 @@ echo "Use workspace: $WORKSPACE"
 echo ""
 
 @(TEMPLATE(
-    'devel/devel_script_check.sh.em',
+    'prerelease/prerelease_script_check.sh.em',
 ))@
 
 echo ""
