@@ -106,10 +106,12 @@ def main(argv=sys.argv[1:]):
 
     args = parser.parse_args(argv)
 
+    print('Fetching buildfarm configuration...')
     config = get_config_index(args.config_url)
     build_files = get_source_build_files(config, args.rosdistro_name)
     build_file = build_files[args.source_build_name]
 
+    print('Fetching rosdistro cache...')
     index = get_index(config.rosdistro_index_url)
     dist_cache = get_distribution_cache(index, args.rosdistro_name)
     dist_file = dist_cache.distribution_file
@@ -117,7 +119,6 @@ def main(argv=sys.argv[1:]):
     # determine source repositories for underlay workspace
     repositories = {}
     for repo_name in args.source_repos:
-        print("Add repository '%s' to underlay workspace" % repo_name)
         if repo_name in repositories:
             print("The repository '%s' appears multiple times" % repo_name,
                   file=sys.stderr)
@@ -131,8 +132,6 @@ def main(argv=sys.argv[1:]):
             return 1
 
     for repo_name, custom_version in args.custom_branch:
-        print(("Add repository '%s' with custom version '%s' to underlay " +
-               "workspace") % (repo_name, custom_version))
         if repo_name in repositories:
             print("The repository '%s' appears multiple times" % repo_name,
                   file=sys.stderr)
@@ -148,8 +147,6 @@ def main(argv=sys.argv[1:]):
         repositories[repo_name] = source_repo
 
     for repo_name, repo_type, repo_url, version in args.custom_repo:
-        print(("Add '%s' repository '%s' with version '%s' to underlay " +
-               "workspace") % (repo_type, repo_url, version))
         if repo_name in repositories:
             print("The repository '%s' appears multiple times" % repo_name,
                   file=sys.stderr)
@@ -166,6 +163,7 @@ def main(argv=sys.argv[1:]):
             for k in sorted(repositories.keys())]
 
     # collect all template snippets of specific types from the devel job
+    print('Evaluating job templates...')
     scripts = []
 
     def template_hook(template_name, data, content):
@@ -237,6 +235,9 @@ def main(argv=sys.argv[1:]):
             os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
         'python_executable': sys.executable})
 
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
+
     # generate multiple scripts
     for script_name in [
             'prerelease',
@@ -251,6 +252,12 @@ def main(argv=sys.argv[1:]):
         with open(script_file, 'w') as h:
             h.write(content)
         os.chmod(script_file, os.stat(script_file).st_mode | stat.S_IEXEC)
+
+    print('')
+    print('Generated prerelease script - to execute it run:')
+    if os.path.abspath(args.output_dir) != os.path.abspath(os.curdir):
+        print('  cd %s' % args.output_dir)
+    print('  ./prerelease.sh')
 
 
 def _repository_name_and_branch(arg):

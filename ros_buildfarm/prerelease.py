@@ -120,5 +120,7 @@ def get_overlay_package_names(
 def get_next_level_of_dependencies(names, dependencies, excludes):
     next_level = set([])
     for name in names:
+        if name not in dependencies:
+            continue
         next_level |= (dependencies[name] - excludes)
     return next_level
