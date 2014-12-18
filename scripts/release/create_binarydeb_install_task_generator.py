@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
 import sys
 
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_binarydeb_dir
-from ros_buildfarm.argument import add_argument_distribution_repository_key_files
+from ros_buildfarm.argument import \
+    add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_os_code_name

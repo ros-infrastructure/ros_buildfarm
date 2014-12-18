@@ -27,41 +27,6 @@ from ros_buildfarm.devel_job import configure_devel_job
 from ros_buildfarm.prerelease import add_overlay_arguments
 from ros_buildfarm.templates import expand_template
 
-# 1st workspace - set of repos
-# - each repo:
-#   - repo by name from distro file using the branch specified there
-#   - repo by name from distro file using a specific branch
-#   - repo by type / url / version
-# - repos specified in a rosinstall file
-
-# 2nd workspace - set of pkgs
-# - release pkg names, resolve to their released version from the distro file, fetch sources from gbp
-# - by dependency level (default: 2)
-# - explicit pkg names
-# - blacklist pkg names
-
-# steps
-# - create empty 1st ws
-# - clone specified repos into 1st ws (doesn't require anything)
-# - devel job
-#   - without a specific repo
-#   - but with the set of repos specified
-#   - installs dependencies in the docker instance
-#   - runs cmi_and_install and cmi_and_test
-# - catkin_test_results on 1st workspace
-#
-# - clone specified pkgs into 2nd ws (doesn't require anything)
-# - run build_and_install dockerfile again but override CMD
-#   - pass in both workspaces
-#   - instance still has deps of 1st ws
-#   - clone all pkgs including the in-between pkgs from source into 2nd ws
-#     (need to do this incrementally since the dependencies might have changed)
-#     (requires rosdistro, catkin_pkg, etc. but runs in docker)
-#   - install all missing dependencies using rosdep
-#     (requires rosdep, etc. but runs in docker)
-#   - invoke cmi_and_test on 2nd ws
-# - catkin_test_results on 2nd workspace
-
 
 def main(argv=sys.argv[1:]):
     global templates

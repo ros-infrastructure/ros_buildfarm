@@ -3,6 +3,7 @@ import os
 
 
 class JobValidationError(Exception):
+
     """
     Indicates that the validation of a build job failed.
 
