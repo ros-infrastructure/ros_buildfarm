@@ -9,14 +9,13 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 
-RUN mkdir /tmp/keys
-@[for i, key in enumerate(distribution_repository_keys)]@
-RUN echo "@('\\n'.join(key.splitlines()))" > /tmp/keys/@(i).key
-RUN apt-key add /tmp/keys/@(i).key
-@[end for]@
-@[for url in distribution_repository_urls]@
-RUN echo deb @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.list
-@[end for]@
+@(TEMPLATE(
+    'snippet/add_distribution_repositories.Dockerfile.em',
+    distribution_repository_keys=distribution_repository_keys,
+    distribution_repository_urls=distribution_repository_urls,
+    os_code_name=os_code_name,
+    add_source=False,
+))@
 
 @# Ubuntu before Trusty explicitly needs python3
 @[if os_name == 'ubuntu' and os_code_name[0] < 't']@

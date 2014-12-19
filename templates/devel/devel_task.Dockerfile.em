@@ -11,14 +11,13 @@ ENV LANG en_US.UTF-8
 
 RUN useradd -u @uid -m buildfarm
 
-RUN mkdir /tmp/keys
-@[for i, key in enumerate(distribution_repository_keys)]@
-RUN echo "@('\\n'.join(key.splitlines()))" > /tmp/keys/@(i).key
-RUN apt-key add /tmp/keys/@(i).key
-@[end for]@
-@[for url in distribution_repository_urls]@
-RUN echo deb @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.list
-@[end for]@
+@(TEMPLATE(
+    'snippet/add_distribution_repositories.Dockerfile.em',
+    distribution_repository_keys=distribution_repository_keys,
+    distribution_repository_urls=distribution_repository_urls,
+    os_code_name=os_code_name,
+    add_source=False,
+))@
 
 @[if os_name == 'ubuntu']@
 # Add multiverse
@@ -44,10 +43,11 @@ RUN apt-get update && apt-get install -q -y python3
 # automatic invalidation once every day
 RUN echo "@today_str"
 
-# for each dependency: echo version, apt-get update, apt-get install
-@[for d in dependencies]@
-RUN echo "@d: @dependency_versions[d]" && python3 -u /tmp/wrapper_scripts/apt-get.py update && python3 -u /tmp/wrapper_scripts/apt-get.py install -q -y @d
-@[end for]@
+@(TEMPLATE(
+    'snippet/install_dependencies.Dockerfile.em',
+    dependencies=dependencies,
+    dependency_versions=dependency_versions,
+))@
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
