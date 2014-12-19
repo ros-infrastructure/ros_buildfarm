@@ -82,7 +82,7 @@ def main(argv=sys.argv[1:]):
             args.distribution_repository_urls,
             args.distribution_repository_key_files),
 
-        'dependencies': list(debian_pkg_names),
+        'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,
 
         'rosdistro_name': args.rosdistro_name,

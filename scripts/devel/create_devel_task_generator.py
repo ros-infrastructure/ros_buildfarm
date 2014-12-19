@@ -92,7 +92,8 @@ def main(argv=sys.argv[1:]):
     build_depends = get_dependencies(
         pkgs.values(), 'build', _get_build_dependencies)
     debian_pkg_names_building = resolve_names(build_depends, **context)
-    debian_pkg_names += sorted(debian_pkg_names_building)
+    debian_pkg_names_building -= set(debian_pkg_names)
+    debian_pkg_names += order_dependencies(debian_pkg_names_building)
     debian_pkg_versions.update(
         get_binary_package_versions(apt_cache, debian_pkg_names))
 
@@ -108,7 +109,7 @@ def main(argv=sys.argv[1:]):
     debian_pkg_versions.update(
         get_binary_package_versions(apt_cache, debian_pkg_names_testing))
     if args.testing:
-        debian_pkg_names += sorted(debian_pkg_names_testing)
+        debian_pkg_names += order_dependencies(debian_pkg_names_testing)
 
     # generate Dockerfile
     data = {
@@ -127,7 +128,7 @@ def main(argv=sys.argv[1:]):
 
         'uid': get_user_id(),
 
-        'dependencies': list(debian_pkg_names),
+        'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,
 
         'testing': args.testing,
@@ -199,6 +200,10 @@ def resolve_names(rosdep_keys, os_name, os_code_name, view, installer):
     for debian_pkg_name in sorted(debian_pkg_names):
         print('  -', debian_pkg_name)
     return debian_pkg_names
+
+
+def order_dependencies(binary_package_names):
+    return sorted(binary_package_names)
 
 
 if __name__ == '__main__':

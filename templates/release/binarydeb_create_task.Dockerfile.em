@@ -12,15 +12,13 @@ ENV TZ @timezone
 
 RUN useradd -u @uid -m buildfarm
 
-RUN mkdir /tmp/keys
-@[for i, key in enumerate(distribution_repository_keys)]@
-RUN echo "@('\\n'.join(key.splitlines()))" > /tmp/keys/@(i).key
-RUN apt-key add /tmp/keys/@(i).key
-@[end for]@
-@[for url in distribution_repository_urls]@
-RUN echo deb @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.list
-RUN echo deb-src @url @os_code_name main | tee -a /etc/apt/sources.list.d/buildfarm.list
-@[end for]@
+@(TEMPLATE(
+    'snippet/add_distribution_repositories.Dockerfile.em',
+    distribution_repository_keys=distribution_repository_keys,
+    distribution_repository_urls=distribution_repository_urls,
+    os_code_name=os_code_name,
+    add_source=True,
+))@
 
 # optionally manual cache invalidation for core Python packages
 RUN echo "2014-11-20"

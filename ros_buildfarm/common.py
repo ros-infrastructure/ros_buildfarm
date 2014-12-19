@@ -108,8 +108,14 @@ def get_binary_package_versions(apt_cache, debian_pkg_names):
     return versions
 
 
+def get_debian_package_name_prefix(rosdistro_name):
+    return 'ros-%s-' % rosdistro_name
+
+
 def get_debian_package_name(rosdistro_name, ros_package_name):
-    return 'ros-%s-%s' % (rosdistro_name, ros_package_name.replace('_', '-'))
+    return '%s%s' % \
+        (get_debian_package_name_prefix(rosdistro_name),
+         ros_package_name.replace('_', '-'))
 
 
 def get_devel_view_name(rosdistro_name, source_build_name):
