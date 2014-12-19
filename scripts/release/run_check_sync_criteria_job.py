@@ -2,19 +2,20 @@
 
 import argparse
 import copy
-import os
 import sys
 
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_cache_dir
 from ros_buildfarm.argument import add_argument_config_url
-from ros_buildfarm.argument import add_argument_distribution_repository_key_files
+from ros_buildfarm.argument import \
+    add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_distribution_repository_keys
+from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
 
 
@@ -45,7 +46,7 @@ def main(argv=sys.argv[1:]):
             args.distribution_repository_urls,
             args.distribution_repository_key_files),
 
-        'uid': os.getuid(),
+        'uid': get_user_id(),
     })
     create_dockerfile(
         'release/release_check_sync_criteria_task.Dockerfile.em',

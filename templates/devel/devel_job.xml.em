@@ -108,7 +108,6 @@
         ' ' + os_code_name +
         ' ' + arch +
         ' ' + ' '.join(repository_args) +
-        ' --workspace-root $WORKSPACE/catkin_workspace' +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',
         '',
@@ -122,7 +121,7 @@
         'mkdir -p $WORKSPACE/docker_build_and_test',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
+        ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace:ro' +
         ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
         ' -v $WORKSPACE/docker_build_and_test:/tmp/docker_build_and_test' +
         ' devel_task_generation__%s_%s' % (rosdistro_name, source_repo_spec.name),

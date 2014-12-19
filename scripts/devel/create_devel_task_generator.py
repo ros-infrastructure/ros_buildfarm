@@ -6,12 +6,14 @@ import sys
 
 from apt import Cache
 from catkin_pkg.packages import find_packages
-from ros_buildfarm.argument import add_argument_distribution_repository_key_files
+from ros_buildfarm.argument import \
+    add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_distribution_repository_keys
+from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
 from rosdep2 import create_default_installer_context
 from rosdep2.catkin_support import get_catkin_view
@@ -28,7 +30,7 @@ def main(argv=sys.argv[1:]):
              'sourced')
     parser.add_argument(
         '--workspace-root',
-        required=True,
+        nargs='+',
         help='The root path of the workspace to compile')
     parser.add_argument(
         '--os-name',
@@ -49,9 +51,11 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
 
     # get direct build dependencies
-    source_space = os.path.join(args.workspace_root, 'src')
-    print("Crawling for packages in workspace '%s'" % source_space)
-    pkgs = find_packages(source_space)
+    pkgs = {}
+    for workspace_root in args.workspace_root:
+        source_space = os.path.join(workspace_root, 'src')
+        print("Crawling for packages in workspace '%s'" % source_space)
+        pkgs.update(find_packages(source_space))
 
     pkg_names = [pkg.name for pkg in pkgs.values()]
     print("Found the following packages:")
@@ -121,12 +125,13 @@ def main(argv=sys.argv[1:]):
 
         'rosdistro_name': args.rosdistro_name,
 
-        'uid': os.getuid(),
+        'uid': get_user_id(),
 
         'dependencies': list(debian_pkg_names),
         'dependency_versions': debian_pkg_versions,
 
         'testing': args.testing,
+        'prerelease_overlay': len(args.workspace_root) > 1,
     }
     create_dockerfile(
         'devel/devel_task.Dockerfile.em', data, args.dockerfile_dir)
@@ -136,7 +141,7 @@ def main(argv=sys.argv[1:]):
         os.path.join(os.path.dirname(__file__), '..', '..'))
     print('Mount the following volumes when running the container:')
     print('  -v %s:/tmp/ros_buildfarm:ro' % ros_buildfarm_basepath)
-    print('  -v %s:/tmp/catkin_workspace' % args.workspace_root)
+    print('  -v %s:/tmp/catkin_workspace' % args.workspace_root[-1])
 
 
 def get_dependencies(pkgs, label, get_dependencies_callback):

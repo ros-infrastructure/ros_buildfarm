@@ -2,12 +2,12 @@
 
 import argparse
 import copy
-import os
 import sys
 
 from ros_buildfarm.argument import add_argument_append_timestamp
 from ros_buildfarm.argument import add_argument_binarydeb_dir
-from ros_buildfarm.argument import add_argument_distribution_repository_key_files
+from ros_buildfarm.argument import \
+    add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_os_code_name
@@ -18,6 +18,7 @@ from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_download_sourcedeb
 from ros_buildfarm.common import get_distribution_repository_keys
+from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
 
 
@@ -43,7 +44,7 @@ def main(argv=sys.argv[1:]):
         'maintainer_email': 'dthomas+buildfarm@osrfoundation.org',
         'maintainer_name': 'Dirk Thomas',
 
-        'uid': os.getuid(),
+        'uid': get_user_id(),
 
         'distribution_repository_urls': args.distribution_repository_urls,
         'distribution_repository_keys': get_distribution_repository_keys(

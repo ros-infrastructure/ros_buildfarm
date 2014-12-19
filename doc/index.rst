@@ -18,6 +18,8 @@ they work.
 
 * `release jobs <jobs/release_jobs.rst>`_ generate binary package
 * `devel jobs <jobs/devel_jobs.rst>`_ build and test ROS repositories
+* `prerelease jobs <jobs/prerelease_jobs.rst>`_ build and test ROS repositories
+  as well as build and test released ROS packages depending on them
 * doc jobs (to be done) generate the API documentation of packages
 * `miscellaneous jobs <jobs/miscellaneous_jobs.rst>`_ perform maintenance tasks
   and generate informational data to visualize the status of the buildfarm and

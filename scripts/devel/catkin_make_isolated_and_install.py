@@ -21,6 +21,9 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The root path of the workspace to compile')
     parser.add_argument(
+        '--parent-result-space',
+        help='The path of the parent result space')
+    parser.add_argument(
         '--clean-before',
         action='store_true',
         help='The flag if the workspace should be cleaned before the '
@@ -41,7 +44,8 @@ def main(argv=sys.argv[1:]):
         rc = call_catkin_make_isolated(
             args.rosdistro_name, args.workspace_root,
             ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1',
-             '--catkin-make-args', '-j1'])
+             '--catkin-make-args', '-j1'],
+            parent_result_space=args.parent_result_space)
     finally:
         if args.clean_after:
             clean_workspace(args.workspace_root)

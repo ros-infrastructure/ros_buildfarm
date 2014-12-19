@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 
 from catkin_pkg.package import parse_package_string
@@ -14,10 +16,6 @@ from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.git import get_repository_url
-from ros_buildfarm.jenkins import configure_job
-from ros_buildfarm.jenkins import configure_view
-from ros_buildfarm.jenkins import connect
-from ros_buildfarm.jenkins import remove_jobs
 from ros_buildfarm.templates import expand_template
 
 
@@ -54,6 +52,7 @@ def configure_devel_jobs(
         print('No distribution file matches the build file')
         return
 
+    from ros_buildfarm.jenkins import connect
     jenkins = connect(config.jenkins_url)
 
     view_name = get_devel_view_name(rosdistro_name, source_build_name)
@@ -119,6 +118,7 @@ def configure_devel_jobs(
                     print(e.message, file=sys.stderr)
 
     # delete obsolete jobs in this view
+    from ros_buildfarm.jenkins import remove_jobs
     remove_jobs(jenkins, '%s__' % view_name, job_names)
 
 
@@ -127,7 +127,8 @@ def configure_devel_job(
         repo_name, os_name, os_code_name, arch, pull_request,
         config=None, build_file=None,
         index=None, dist_file=None, dist_cache=None,
-        jenkins=None, view=None):
+        jenkins=None, view=None,
+        source_repository=None):
     """
     Configure a single Jenkins devel job.
 
@@ -154,19 +155,21 @@ def configure_devel_job(
     repo_names = dist_file.repositories.keys()
     repo_names = build_file.filter_repositories(repo_names)
 
-    if repo_name not in repo_names:
-        raise JobValidationError(
-            "Invalid repository name '%s' " % repo_name +
-            'choose one of the following: %s' % ', '.join(sorted(repo_names)))
+    if repo_name is not None:
+        if repo_name not in repo_names:
+            raise JobValidationError(
+                "Invalid repository name '%s' " % repo_name +
+                'choose one of the following: %s' %
+                ', '.join(sorted(repo_names)))
 
-    repo = dist_file.repositories[repo_name]
-
-    if not repo.source_repository:
-        raise JobValidationError(
-            "Repository '%s' has no source section" % repo_name)
-    if not repo.source_repository.version:
-        raise JobValidationError(
-            "Repository '%s' has no source version" % repo_name)
+        repo = dist_file.repositories[repo_name]
+        if not repo.source_repository:
+            raise JobValidationError(
+                "Repository '%s' has no source section" % repo_name)
+        if not repo.source_repository.version:
+            raise JobValidationError(
+                "Repository '%s' has no source version" % repo_name)
+        source_repository = repo.source_repository
 
     if os_name not in build_file.targets.keys():
         raise JobValidationError(
@@ -187,6 +190,7 @@ def configure_devel_job(
     if dist_cache is None and build_file.notify_maintainers:
         dist_cache = get_distribution_cache(index, rosdistro_name)
     if jenkins is None:
+        from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
     if view is None:
         view_name = get_devel_view_name(rosdistro_name, source_build_name)
@@ -198,10 +202,11 @@ def configure_devel_job(
 
     job_config = _get_devel_job_config(
         config, rosdistro_name, source_build_name,
-        build_file, os_name, os_code_name, arch, repo.source_repository,
+        build_file, os_name, os_code_name, arch, source_repository,
         repo_name, pull_request, job_name, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
+        from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config)
 
     return job_name
@@ -219,6 +224,7 @@ def get_devel_job_name(rosdistro_name, source_build_name,
 
 
 def configure_devel_view(jenkins, view_name):
+    from ros_buildfarm.jenkins import configure_view
     return configure_view(
         jenkins, view_name, include_regex='%s__.+' % view_name)
 
@@ -233,7 +239,7 @@ def _get_devel_job_config(
         get_repositories_and_script_generating_key_files(config, build_file)
 
     maintainer_emails = set([])
-    if build_file.notify_maintainers and dist_cache:
+    if build_file.notify_maintainers and dist_cache and repo_name:
         # add maintainers listed in latest release to recipients
         repo = dist_cache.distribution_file.repositories[repo_name]
         if repo.release_repository:
