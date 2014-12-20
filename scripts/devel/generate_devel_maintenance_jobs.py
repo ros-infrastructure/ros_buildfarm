@@ -67,8 +67,7 @@ def get_reconfigure_jobs_job_config(args, config, build_file):
         'ros_buildfarm_url': get_repository_url(),
 
         'credentials_src': os.path.join(
-            '/var/lib/jenkins',
-            os.path.dirname(get_relative_credential_path())),
+            '~', os.path.dirname(get_relative_credential_path())),
         'credentials_dst': os.path.join(
             '/home/buildfarm',
             os.path.dirname(get_relative_credential_path())),
