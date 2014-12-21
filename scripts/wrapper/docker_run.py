@@ -31,6 +31,9 @@ def call_docker_run(argv):
     # because the 'docker run' invocation might echo the content of this file
     known_error_patterns = [
         'failed to create image .* Unknown device.*',
+        'Error getting container .* no such file or directory.*',
+        'Error mounting .* no such file or directory.*',
+        'Error response from daemon: Cannot start container .*',
         'Error response from daemon: No such container: .*',
     ]
     known_error_patterns = ['.* %s' % p for p in known_error_patterns]
