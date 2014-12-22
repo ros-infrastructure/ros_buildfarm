@@ -226,7 +226,8 @@ def get_devel_job_name(rosdistro_name, source_build_name,
 def configure_devel_view(jenkins, view_name):
     from ros_buildfarm.jenkins import configure_view
     return configure_view(
-        jenkins, view_name, include_regex='%s__.+' % view_name)
+        jenkins, view_name, include_regex='%s__.+' % view_name,
+        template_name='dashboard_view_test_result_column.xml.em')
 
 
 def _get_devel_job_config(

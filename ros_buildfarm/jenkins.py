@@ -1,9 +1,11 @@
+import copy
 import difflib
 import sys
 from xml.etree import ElementTree
 
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.job import Job
+from jenkinsapi.views import Views
 
 from .jenkins_credentials import get_credentials
 from .templates import expand_template
@@ -19,33 +21,63 @@ def connect(jenkins_url):
     return jenkins
 
 
-def configure_view(jenkins, view_name, include_regex=None):
+def configure_view(
+        jenkins, view_name, include_regex=None,
+        template_name='generic_view.xml.em'):
+    view_config = get_view_config(
+        template_name, view_name, include_regex=include_regex)
+    view_type = _get_view_type(view_config)
     if view_name not in jenkins.views:
-        print("Creating view '%s'" % view_name)
-        view = jenkins.views.create(view_name)
+        print("Creating view '%s' of type '%s'" % (view_name, view_type))
+        view = jenkins.views.create(view_name, view_type=view_type)
+        remote_view_config = view.get_config()
     else:
         print("Ensure that view '%s' exists" % view_name)
         view = jenkins.views[view_name]
-    if include_regex:
-        view_config = _get_view_config(view_name, include_regex)
+        remote_view_config = view.get_config()
+        remote_view_type = _get_view_type(remote_view_config)
+        if remote_view_type != view_type:
+            del jenkins.views[view_name]
+            print("Recreating view '%s' of type '%s'" % (view_name, view_type))
+            view = jenkins.views.create(view_name, view_type=view_type)
+            remote_view_config = view.get_config()
+
+    diff = _diff_configs(remote_view_config, view_config)
+    if not diff:
+        print("Skipped '%s' because the config is the same" % view_name)
+    else:
+        print("Updating view '%s'" % view_name)
+        print('   ', '<<<')
+        for line in diff:
+            print('   ', line)
+        print('   ', '>>>')
         try:
             view.update_config(view_config)
         except Exception:
             print("Failed to configure view '%s' with config:\n%s" %
-                  (view_name, view_config), file=sys.stderr)
+                (view_name, view_config), file=sys.stderr)
             raise
     return view
 
 
-def _get_view_config(view_name, include_regex):
-    template_name = 'generic_view.xml.em'
-    view_data = {
+def get_view_config(template_name, view_name, include_regex=None, data=None):
+    view_data = copy.deepcopy(data) if data is not None else {}
+    view_data.update({
         'view_name': view_name,
-
         'include_regex': include_regex,
-    }
+    })
     view_config = expand_template(template_name, view_data)
     return view_config
+
+
+def _get_view_type(view_config):
+    root = ElementTree.fromstring(view_config)
+    root.tag
+    if root.tag == 'hudson.model.ListView':
+        return Views.LIST_VIEW
+    if root.tag == 'hudson.plugins.view.dashboard.Dashboard':
+        return Views.DASHBOARD_VIEW
+    assert False, 'Unknown list type: ' + root.tag
 
 
 def configure_job(jenkins, job_name, job_config, view=None):
@@ -119,8 +151,10 @@ def _diff_configs(remote_config, new_config):
     new_root = ElementTree.fromstring(new_config)
 
     # ignore description which contains timestamp
-    remote_root.find('description').text = ''
-    new_root.find('description').text = ''
+    if remote_root.find('description') is not None:
+        remote_root.find('description').text = ''
+    if new_root.find('description') is not None:
+        new_root.find('description').text = ''
 
     if ElementTree.tostring(remote_root) == ElementTree.tostring(new_root):
         return []
