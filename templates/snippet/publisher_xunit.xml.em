@@ -10,13 +10,13 @@
       </types>
       <thresholds>
         <org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
-          <unstableThreshold/>
+          <unstableThreshold>0</unstableThreshold>
           <unstableNewThreshold/>
           <failureThreshold/>
           <failureNewThreshold/>
         </org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
         <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
-          <unstableThreshold/>
+          <unstableThreshold>0</unstableThreshold>
           <unstableNewThreshold/>
           <failureThreshold/>
           <failureNewThreshold/>
