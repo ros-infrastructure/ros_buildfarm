@@ -1,11 +1,14 @@
 from configparser import ConfigParser
 import os
+import sys
 
 
 def get_credentials(jenkins_url=None):
     config = ConfigParser()
     config_file = get_credential_path()
     if not os.path.exists(config_file):
+        print("Could not find credential file '%s'" % config_file,
+              file=sys.stderr)
         return None, None
 
     config.read(config_file)
@@ -17,6 +20,8 @@ def get_credentials(jenkins_url=None):
 
     if section_name is None or 'username' not in config[section_name] or \
             'password' not in config[section_name]:
+        print("Could not find credentials in file '%s'" % config_file,
+              file=sys.stderr)
         return None, None
     return config[section_name]['username'], config[section_name]['password']
 
