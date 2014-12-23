@@ -35,6 +35,7 @@ def call_docker_run(argv):
         'Error mounting .* no such file or directory.*',
         'Error response from daemon: Cannot start container .*',
         'Error response from daemon: No such container: .*',
+        'Unable to find image .*',
     ]
     known_error_patterns = ['.* %s' % p for p in known_error_patterns]
     known_error_conditions = []
