@@ -21,6 +21,11 @@ def connect(jenkins_url):
     return jenkins
 
 
+def configure_management_view(jenkins):
+    return configure_view(
+        jenkins, JENKINS_MANAGEMENT_VIEW, include_regex='^((?!__).)*$')
+
+
 def configure_view(
         jenkins, view_name, include_regex=None,
         template_name='generic_view.xml.em'):
@@ -55,7 +60,7 @@ def configure_view(
             view.update_config(view_config)
         except Exception:
             print("Failed to configure view '%s' with config:\n%s" %
-                (view_name, view_config), file=sys.stderr)
+                  (view_name, view_config), file=sys.stderr)
             raise
     return view
 

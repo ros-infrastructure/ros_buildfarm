@@ -14,9 +14,8 @@ from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.git import get_repository_url
 from ros_buildfarm.jenkins import configure_job
-from ros_buildfarm.jenkins import configure_view
+from ros_buildfarm.jenkins import configure_management_view
 from ros_buildfarm.jenkins import connect
-from ros_buildfarm.jenkins import JENKINS_MANAGEMENT_VIEW
 from ros_buildfarm.jenkins_credentials import get_relative_credential_path
 from ros_buildfarm.templates import expand_template
 
@@ -34,20 +33,20 @@ def main(argv=sys.argv[1:]):
     build_file = build_files[args.source_build_name]
 
     jenkins = connect(config.jenkins_url)
-    view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
+    configure_management_view(jenkins)
     group_name = get_devel_view_name(
         args.rosdistro_name, args.source_build_name)
 
     configure_reconfigure_jobs_job(
-        jenkins, view, group_name, args, config, build_file)
-    configure_trigger_jobs_job(jenkins, view, group_name, build_file)
+        jenkins, group_name, args, config, build_file)
+    configure_trigger_jobs_job(jenkins, group_name, build_file)
 
 
 def configure_reconfigure_jobs_job(
-        jenkins, view, group_name, args, config, build_file):
+        jenkins, group_name, args, config, build_file):
     job_config = get_reconfigure_jobs_job_config(args, config, build_file)
     job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
-    configure_job(jenkins, job_name, job_config, view=view)
+    configure_job(jenkins, job_name, job_config)
 
 
 def get_reconfigure_jobs_job_config(args, config, build_file):
@@ -79,10 +78,10 @@ def get_reconfigure_jobs_job_config(args, config, build_file):
 
 
 def configure_trigger_jobs_job(
-        jenkins, view, group_name, build_file):
+        jenkins, group_name, build_file):
     job_config = get_trigger_jobs_job_config(group_name, build_file)
     job_name = '%s_%s' % (group_name, 'trigger-jobs')
-    configure_job(jenkins, job_name, job_config, view=view)
+    configure_job(jenkins, job_name, job_config)
 
 
 def get_trigger_jobs_job_config(group_name, build_file):

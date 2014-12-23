@@ -15,9 +15,9 @@ from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.git import get_repository_url
 from ros_buildfarm.jenkins import configure_job
+from ros_buildfarm.jenkins import configure_management_view
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
-from ros_buildfarm.jenkins import JENKINS_MANAGEMENT_VIEW
 from ros_buildfarm.jenkins import remove_jobs
 from ros_buildfarm.templates import expand_template
 
@@ -519,11 +519,11 @@ def configure_import_package_job(
 
     job_name = get_import_package_job_name(rosdistro_name, release_build_name)
     job_config = _get_import_package_job_config(build_file)
-    view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_job(jenkins, job_name, job_config, view)
+        configure_management_view(jenkins)
+        configure_job(jenkins, job_name, job_config)
 
 
 def get_import_package_job_name(rosdistro_name, release_build_name):
@@ -556,11 +556,11 @@ def configure_sync_packages_to_testing_job(
     job_config = _get_sync_packages_to_testing_job_config(
         config_url, rosdistro_name, release_build_name, os_code_name, arch,
         config, build_file)
-    view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_job(jenkins, job_name, job_config, view)
+        configure_management_view(jenkins)
+        configure_job(jenkins, job_name, job_config)
 
 
 def get_sync_packages_to_testing_job_name(
@@ -611,11 +611,11 @@ def configure_sync_packages_to_main_job(
         rosdistro_name, release_build_name)
     job_config = _get_sync_packages_to_main_job_config(
         rosdistro_name, build_file)
-    view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_job(jenkins, job_name, job_config, view)
+        configure_management_view(jenkins)
+        configure_job(jenkins, job_name, job_config)
 
 
 def get_sync_packages_to_main_job_name(rosdistro_name, release_build_name):

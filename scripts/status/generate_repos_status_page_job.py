@@ -10,9 +10,8 @@ from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.git import get_repository_url
 from ros_buildfarm.jenkins import configure_job
-from ros_buildfarm.jenkins import configure_view
+from ros_buildfarm.jenkins import configure_management_view
 from ros_buildfarm.jenkins import connect
-from ros_buildfarm.jenkins import JENKINS_MANAGEMENT_VIEW
 from ros_buildfarm.templates import expand_template
 
 
@@ -28,10 +27,10 @@ def main(argv=sys.argv[1:]):
 
     jenkins = connect(config.jenkins_url)
 
-    view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
+    configure_management_view(jenkins)
 
     job_name = '%s_repos-status-page' % args.rosdistro_name
-    configure_job(jenkins, job_name, job_config, view=view)
+    configure_job(jenkins, job_name, job_config)
 
 
 def get_job_config(args, config):

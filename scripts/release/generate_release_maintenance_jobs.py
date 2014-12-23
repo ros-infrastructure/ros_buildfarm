@@ -14,9 +14,8 @@ from ros_buildfarm.common import \
     get_repositories_and_script_generating_key_files
 from ros_buildfarm.git import get_repository_url
 from ros_buildfarm.jenkins import configure_job
-from ros_buildfarm.jenkins import configure_view
+from ros_buildfarm.jenkins import configure_management_view
 from ros_buildfarm.jenkins import connect
-from ros_buildfarm.jenkins import JENKINS_MANAGEMENT_VIEW
 from ros_buildfarm.jenkins_credentials import get_relative_credential_path
 from ros_buildfarm.templates import expand_template
 
@@ -42,19 +41,19 @@ def main(argv=sys.argv[1:]):
 
     jenkins = connect(config.jenkins_url)
 
-    view = configure_view(jenkins, JENKINS_MANAGEMENT_VIEW)
+    configure_management_view(jenkins)
 
     group_name = get_release_view_prefix(
         args.rosdistro_name, args.release_build_name)
 
     job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
-    configure_job(jenkins, job_name, reconfigure_jobs_job_config, view=view)
+    configure_job(jenkins, job_name, reconfigure_jobs_job_config)
 
     job_name = '%s_%s' % (group_name, 'trigger-jobs')
-    configure_job(jenkins, job_name, trigger_jobs_job_config, view=view)
+    configure_job(jenkins, job_name, trigger_jobs_job_config)
 
     job_name = 'import_upstream'
-    configure_job(jenkins, job_name, import_upstream_job_config, view=view)
+    configure_job(jenkins, job_name, import_upstream_job_config)
 
 
 def get_reconfigure_jobs_job_config(args, config, build_file):
