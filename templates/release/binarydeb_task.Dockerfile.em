@@ -19,10 +19,10 @@ RUN useradd -u @uid -m buildfarm
     add_source=False,
 ))@
 
-RUN mkdir /tmp/wrapper_scripts
-@[for filename in sorted(wrapper_scripts.keys())]@
-RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
-@[end for]@
+@(TEMPLATE(
+    'snippet/add_wrapper_scripts.Dockerfile.em',
+    wrapper_scripts=wrapper_scripts,
+))@
 
 # optionally manual cache invalidation for core dependencies
 RUN echo "2014-11-20"

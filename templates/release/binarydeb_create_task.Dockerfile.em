@@ -31,10 +31,10 @@ RUN apt-get update && apt-get install -q -y python3
 # automatic invalidation once every day
 RUN echo "@today_str"
 
-RUN mkdir /tmp/wrapper_scripts
-@[for filename in sorted(wrapper_scripts.keys())]@
-RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
-@[end for]@
+@(TEMPLATE(
+    'snippet/add_wrapper_scripts.Dockerfile.em',
+    wrapper_scripts=wrapper_scripts,
+))@
 
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y devscripts dpkg-dev python3-apt python3-catkin-pkg python3-empy python3-rosdistro python3-yaml
 
