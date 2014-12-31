@@ -78,6 +78,9 @@
   <concurrentBuild>true</concurrentBuild>
   <builders>
 @(SNIPPET(
+    'builder_shell_docker-info',
+))@
+@(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone ros_buildfarm"',

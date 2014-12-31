@@ -56,6 +56,9 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
 @(SNIPPET(
+    'builder_shell_docker-info',
+))@
+@(SNIPPET(
     'builder_shell_key-files',
     script_generating_key_files=script_generating_key_files,
 ))@
