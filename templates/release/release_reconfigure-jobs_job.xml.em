@@ -61,11 +61,11 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',
         'cd $WORKSPACE/docker_generate_release_jobs',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t release_reconfigure_jobs .',
+        'docker build -t release_reconfigure_jobs .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs"',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
+        'docker run' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v %s:%s:ro' % (credentials_src, credentials_dst) +

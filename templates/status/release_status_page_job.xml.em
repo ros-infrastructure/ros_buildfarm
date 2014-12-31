@@ -61,13 +61,13 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - status page"',
         'cd $WORKSPACE/docker_generate_status_page',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t status_page_generation .',
+        'docker build -t status_page_generation .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - status page"',
         'rm -fr $WORKSPACE/status_page',
         'mkdir -p $WORKSPACE/status_page',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
+        'docker run' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/status_page:/tmp/status_page' +

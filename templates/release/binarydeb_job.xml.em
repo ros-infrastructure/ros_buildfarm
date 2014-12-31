@@ -88,14 +88,14 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - binarydeb task"',
         'cd $WORKSPACE/docker_generating_docker',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t binarydeb_task_generation__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        'docker build -t binarydeb_task_generation__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - binarydeb task"',
         'rm -fr $WORKSPACE/binarydeb',
         'mkdir -p $WORKSPACE/binarydeb',
         'mkdir -p $WORKSPACE/docker_build_binarydeb',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
+        'docker run' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' -v $WORKSPACE/docker_build_binarydeb:/tmp/docker_build_binarydeb' +
@@ -109,13 +109,13 @@
         'echo "# BEGIN SECTION: Build Dockerfile - build binarydeb"',
         '# build and run build_binarydeb Dockerfile',
         'cd $WORKSPACE/docker_build_binarydeb',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t binarydeb_build__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        'docker build -t binarydeb_build__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build binarydeb"',
         '# -e=HOME= is required to set a reasonable HOME for the user (not /)',
         '# otherwise apt-src will fail',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
+        'docker run' +
         ' -e=HOME=' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
@@ -145,11 +145,11 @@
 @#         '',
 @#         'echo "# BEGIN SECTION: Build Dockerfile - install"',
 @#         'cd $WORKSPACE/docker_install_binarydeb',
-@#         'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t binarydeb_install__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+@#         'docker build -t binarydeb_install__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
 @#         'echo "# END SECTION"',
 @#         '',
 @#         'echo "# BEGIN SECTION: Run Dockerfile - install"',
-@#         'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
+@#         'docker run' +
 @#         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb:ro' +
 @#         ' binarydeb_install__%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
 @#         'echo "# END SECTION"',

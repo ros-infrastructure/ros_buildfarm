@@ -60,13 +60,13 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - rosdistro cache"',
         'cd $WORKSPACE/docker_generate_rosdistro_cache',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t rosdistro_cache_generation .',
+        'docker build -t rosdistro_cache_generation .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - rosdistro cache"',
         'rm -fr $WORKSPACE/rosdistro_cache',
         'mkdir -p $WORKSPACE/rosdistro_cache',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
+        'docker run' +
         ' --net=host' +
         ' -v $WORKSPACE/rosdistro_cache:/tmp/rosdistro_cache' +
         ' rosdistro_cache_generation',

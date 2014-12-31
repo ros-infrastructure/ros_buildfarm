@@ -56,13 +56,13 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - check sync condition"',
         'cd $WORKSPACE/docker_check_sync_criteria',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_build.py -t check_sync_condition .',
+        'docker build -t check_sync_condition .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - check sync condition"',
         'rm -fr $WORKSPACE/debian_repo_cache',
         'mkdir -p $WORKSPACE/debian_repo_cache',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/docker_run.py' +
+        'docker run' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/debian_repo_cache:/tmp/debian_repo_cache' +
         ' check_sync_condition',
