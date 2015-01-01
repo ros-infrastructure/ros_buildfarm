@@ -16,7 +16,7 @@ from .status_page import _strip_version_suffix
 
 def trigger_release_jobs(
         config_url, rosdistro_name, release_build_name,
-        missing_only, source_only, cache_dir):
+        missing_only, source_only, cache_dir, cause=None):
     config = get_config_index(config_url)
     build_files = get_release_build_files(config, rosdistro_name)
     build_file = build_files[release_build_name]
@@ -52,7 +52,6 @@ def trigger_release_jobs(
             build_file.target_repository, targets, cache_dir)
 
     jenkins = connect(config.jenkins_url)
-    jenkins_queue = jenkins.get_queue()
 
     pkg_names = dist_file.release_packages.keys()
     pkg_names = build_file.filter_packages(pkg_names)
@@ -100,7 +99,7 @@ def trigger_release_jobs(
                                "already up-to-date") % job_name)
                         continue
 
-            success = invoke_job(jenkins, job_name, queue=jenkins_queue)
+            success = invoke_job(jenkins, job_name, cause=cause)
             if success:
                 triggered_jobs.append(job_name)
             else:

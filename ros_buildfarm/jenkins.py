@@ -3,6 +3,7 @@ import difflib
 import sys
 from xml.etree import ElementTree
 
+from jenkinsapi.custom_exceptions import WillNotBuild
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.job import Job
 from jenkinsapi.views import Views
@@ -116,35 +117,27 @@ def configure_job(jenkins, job_name, job_config, view=None):
     return job
 
 
-def invoke_job(jenkins, job_name, prevent_multiple=True, queue=None):
+def invoke_job(
+        jenkins, job_name, cause=None, prevent_multiple=True):
     try:
         if not _has_job(jenkins, job_name):
             print("Failed to invoke job '%s' because it does not exist" %
                   job_name, file=sys.stderr)
             return False
 
-        if prevent_multiple and queue:
-            is_queued = queue.get_queue_items_for_job(job_name)
-            if is_queued:
-                print(("Skipped to invoke job '%s' because it is already " +
-                       "in the queue") % job_name)
-                return False
-
         job = _get_job(jenkins, job_name)
         if not job.is_enabled():
             print("Failed to invoke job '%s' because it is disabled" %
                   job_name, file=sys.stderr)
             return False
-        if prevent_multiple and job.is_queued():
-            print("Skipped to invoke job '%s' because it is already queued" %
-                  job_name)
-            return False
-        if prevent_multiple and job.is_running():
-            print("Skipped to invoke job '%s' because it is already running" %
-                  job_name)
-            return False
         print("Invoking job '%s'" % job_name)
-        job.invoke()
+        try:
+            job.invoke(
+                skip_if_running=prevent_multiple, invoke_pre_check_delay=0,
+                cause=cause)
+        except WillNotBuild as e:
+            print(str(e))
+            return False
     except Exception:
         print("Failed to invoke job '%s'" % job_name, file=sys.stderr)
         raise

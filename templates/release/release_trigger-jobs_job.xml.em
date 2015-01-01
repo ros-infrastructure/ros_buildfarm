@@ -76,6 +76,7 @@
         ' ' + release_build_name +
         ' ' + ' '.join(repository_args) +
         ' $args' +
+        ' --cause "$JOB_NAME#$BUILD_NUMBER"' +
         ' --cache-dir /tmp/debian_repo_cache' +
         ' --dockerfile-dir $WORKSPACE/docker_trigger_jobs',
         'echo "# END SECTION"',

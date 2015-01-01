@@ -177,3 +177,9 @@ def add_argument_output_name(parser):
         '--output-name',
         required=True,
         help='The name of the generated file (without the extensions)')
+
+
+def add_argument_cause(parser):
+    parser.add_argument(
+        '--cause',
+        help='The cause of the build trigger')

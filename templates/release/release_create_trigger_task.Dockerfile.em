@@ -42,10 +42,11 @@ cmd = \
     ' ' + config_url + \
     ' ' + rosdistro_name + \
     ' ' + release_build_name + \
+    ' --cause "%s"' % cause + \
     ' --cache-dir ' + cache_dir
 if missing_only:
     cmd += ' --missing-only'
 if source_only:
     cmd += ' --source-only'
 }@
-CMD ["@cmd"]
+CMD ["@(cmd.replace('"', '\\"'))"]
