@@ -27,10 +27,10 @@
               <string>failure</string>
               <string>aborted</string>
               <string>not_built</string>
-              </a>
+            </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
-        </parameterDefinitions>
+      </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
 @(SNIPPET(
     'property_requeue-job',
@@ -53,8 +53,7 @@
 @(SNIPPET(
     'builder_system-groovy',
     command=
-"""
-import java.util.regex.Matcher
+"""import java.util.regex.Matcher
 import java.util.regex.Pattern
 import hudson.model.AbstractProject
 import hudson.model.Result

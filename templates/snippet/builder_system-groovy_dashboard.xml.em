@@ -1,8 +1,7 @@
 @(SNIPPET(
     'builder_system-groovy',
     command=
-"""
-import hudson.model.Result
+"""import hudson.model.Result
 import jenkins.model.Jenkins
 
 view_stats = [:]
