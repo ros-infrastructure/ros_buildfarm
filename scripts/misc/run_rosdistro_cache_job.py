@@ -27,12 +27,6 @@ def main(argv=sys.argv[1:]):
 
     data = copy.deepcopy(args.__dict__)
     data.update({
-        'os_name': 'ubuntu',
-        'os_code_name': 'trusty',
-
-        'maintainer_email': 'dthomas+buildfarm@osrfoundation.org',
-        'maintainer_name': 'Dirk Thomas',
-
         'distribution_repository_urls': args.distribution_repository_urls,
         'distribution_repository_keys': get_distribution_repository_keys(
             args.distribution_repository_urls,

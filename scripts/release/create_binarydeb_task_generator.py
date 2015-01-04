@@ -72,9 +72,6 @@ def main(argv=sys.argv[1:]):
         'os_name': args.os_name,
         'os_code_name': args.os_code_name,
 
-        'maintainer_email': 'dthomas+buildfarm@osrfoundation.org',
-        'maintainer_name': 'Dirk Thomas',
-
         'uid': get_user_id(),
 
         'distribution_repository_urls': args.distribution_repository_urls,

@@ -1,7 +1,7 @@
 # generated from @template_name
 
-FROM @os_name:@os_code_name
-MAINTAINER @maintainer_name @maintainer_email
+FROM ubuntu:trusty
+MAINTAINER Dirk Thomas dthomas+buildfarm@@osrfoundation.org
 
 VOLUME ["/var/cache/apt/archives"]
 
@@ -15,7 +15,7 @@ RUN useradd -u @uid -m buildfarm
     'snippet/add_distribution_repositories.Dockerfile.em',
     distribution_repository_keys=distribution_repository_keys,
     distribution_repository_urls=distribution_repository_urls,
-    os_code_name=os_code_name,
+    os_code_name='trusty',
     add_source=False,
 ))@
 

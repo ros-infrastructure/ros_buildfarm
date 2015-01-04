@@ -41,9 +41,6 @@ def main(argv=sys.argv[1:]):
 
     data = copy.deepcopy(args.__dict__)
     data.update({
-        'maintainer_email': 'dthomas+buildfarm@osrfoundation.org',
-        'maintainer_name': 'Dirk Thomas',
-
         'uid': get_user_id(),
 
         'distribution_repository_urls': args.distribution_repository_urls,
