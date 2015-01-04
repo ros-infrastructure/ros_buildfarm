@@ -87,5 +87,8 @@ os_code_name_and_arch_tuples = status_page['os_code_name_and_arch_tuples']
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
+@(SNIPPET(
+    'build-wrapper_disk-check',
+))@
   </buildWrappers>
 </project>

@@ -99,5 +99,8 @@
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
+@(SNIPPET(
+    'build-wrapper_disk-check',
+))@
   </buildWrappers>
 </project>

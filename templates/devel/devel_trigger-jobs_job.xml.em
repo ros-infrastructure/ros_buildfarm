@@ -125,5 +125,8 @@ for (p in hudson.model.Hudson.instance.getAllItems(AbstractProject)) {
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
+@(SNIPPET(
+    'build-wrapper_disk-check',
+))@
   </buildWrappers>
 </project>

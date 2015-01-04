@@ -141,6 +141,9 @@
     'build-wrapper_timestamper',
 ))@
 @(SNIPPET(
+    'build-wrapper_disk-check',
+))@
+@(SNIPPET(
     'build-wrapper_ssh-agent_credential-id',
 ))@
   </buildWrappers>
