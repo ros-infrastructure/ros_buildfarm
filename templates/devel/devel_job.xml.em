@@ -171,6 +171,9 @@
     'publisher_xunit',
     pattern='catkin_workspace/test_results/**/*.xml',
 ))@
+@(SNIPPET(
+    'publisher_groovy-postbuild_slave-low-disk-space',
+))@
 @[if notify_maintainers]@
 @(SNIPPET(
     'publisher_groovy-postbuild_maintainer-notification',

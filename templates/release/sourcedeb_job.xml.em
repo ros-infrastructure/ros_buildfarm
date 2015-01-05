@@ -118,6 +118,9 @@
     regexp="Package '[^']+' version: (\S+)",
     regexp_for_failed='',
 ))@
+@(SNIPPET(
+    'publisher_groovy-postbuild_slave-low-disk-space',
+))@
 @[if notify_maintainers]@
 @(SNIPPET(
     'publisher_groovy-postbuild_maintainer-notification',
