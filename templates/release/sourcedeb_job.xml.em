@@ -60,11 +60,18 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'rm -fr $WORKSPACE/docker_sourcedeb',
+        'mkdir -p $WORKSPACE/docker_sourcedeb',
+        '',
+        '# monitor all subprocesses and enforce termination',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_sourcedeb/subprocess_reaper.log 2>&1 &',
+        '# sleep to give python time to startup',
+        'sleep 1',
+        '',
         '# generate Dockerfile, build and run it',
         '# generating the Dockerfile for the actual sourcedeb task',
         'echo "# BEGIN SECTION: Generate Dockerfile - sourcedeb task"',
         'export TZ="%s"' % timezone,
-        'mkdir -p $WORKSPACE/docker_sourcedeb',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_sourcedeb_job.py' +
         ' --rosdistro-index-url ' + rosdistro_index_url +
@@ -86,6 +93,7 @@
         'rm -fr $WORKSPACE/sourcedeb',
         'mkdir -p $WORKSPACE/sourcedeb/source',
         'docker run' +
+        ' --cidfile=$WORKSPACE/docker_sourcedeb/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/sourcedeb:/tmp/sourcedeb' +

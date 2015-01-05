@@ -70,11 +70,18 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'rm -fr $WORKSPACE/docker_generating_docker',
+        'mkdir -p $WORKSPACE/docker_generating_docker',
+        '',
+        '# monitor all subprocesses and enforce termination',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_generating_docker/subprocess_reaper.log 2>&1 &',
+        '# sleep to give python time to startup',
+        'sleep 1',
+        '',
         '# generate Dockerfile, build and run it',
         '# generating the Dockerfile for the actual binarydeb task',
         'echo "# BEGIN SECTION: Generate Dockerfile - binarydeb task"',
         'export TZ="%s"' % timezone,
-        'mkdir -p $WORKSPACE/docker_generating_docker',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_binarydeb_job.py' +
         ' --rosdistro-index-url ' + rosdistro_index_url +
@@ -96,9 +103,11 @@
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - binarydeb task"',
         'rm -fr $WORKSPACE/binarydeb',
+        'rm -fr $WORKSPACE/docker_build_binarydeb',
         'mkdir -p $WORKSPACE/binarydeb',
         'mkdir -p $WORKSPACE/docker_build_binarydeb',
         'docker run' +
+        ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' -v $WORKSPACE/docker_build_binarydeb:/tmp/docker_build_binarydeb' +
@@ -109,6 +118,11 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        '# monitor all subprocesses and enforce termination',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_build_binarydeb/subprocess_reaper.log 2>&1 &',
+        '# sleep to give python time to startup',
+        'sleep 1',
+        '',
         'echo "# BEGIN SECTION: Build Dockerfile - build binarydeb"',
         '# build and run build_binarydeb Dockerfile',
         'cd $WORKSPACE/docker_build_binarydeb',
@@ -119,6 +133,7 @@
         '# -e=HOME= is required to set a reasonable HOME for the user (not /)',
         '# otherwise apt-src will fail',
         'docker run' +
+        ' --cidfile=$WORKSPACE/docker_build_binarydeb/docker.cid' +
         ' -e=HOME=' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
@@ -131,11 +146,18 @@
 @# @(SNIPPET(
 @#     'builder_shell',
 @#     script='\n'.join([
+@#         'rm -fr $WORKSPACE/docker_install_binarydeb',
+@#         'mkdir -p $WORKSPACE/docker_install_binarydeb',
+@#         '',
+@#         '# monitor all subprocesses and enforce termination',
+@#         'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_install_binarydeb/subprocess_reaper.log 2>&1 &',
+@#         '# sleep to give python time to startup',
+@#         'sleep 1',
+@#         '',
 @#         '# generate Dockerfile, build and run it',
 @#         '# trying to install the built binarydeb',
 @#         'echo "# BEGIN SECTION: Generate Dockerfile - install"',
 @#         'export TZ="%s"' % timezone,
-@#         'mkdir -p $WORKSPACE/docker_install_binarydeb',
 @#         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
 @#         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/create_binarydeb_install_task_generator.py' +
 @#         ' ' + os_name +
@@ -153,6 +175,7 @@
 @#         '',
 @#         'echo "# BEGIN SECTION: Run Dockerfile - install"',
 @#         'docker run' +
+@#         ' --cidfile=$WORKSPACE/docker_install_binarydeb/docker.cid' +
 @#         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb:ro' +
 @#         ' binarydeb_install__%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
 @#         'echo "# END SECTION"',

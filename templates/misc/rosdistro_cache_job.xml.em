@@ -49,10 +49,17 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'rm -fr $WORKSPACE/docker_generate_rosdistro_cache',
+        'mkdir -p $WORKSPACE/docker_generate_rosdistro_cache',
+        '',
+        '# monitor all subprocesses and enforce termination',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_generate_rosdistro_cache/subprocess_reaper.log 2>&1 &',
+        '# sleep to give python time to startup',
+        'sleep 1',
+        '',
         '# generate Dockerfile, build and run it',
         '# generating the rosdistro cache',
         'echo "# BEGIN SECTION: Generate Dockerfile - rosdistro cache"',
-        'mkdir -p $WORKSPACE/docker_generate_rosdistro_cache',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/run_rosdistro_cache_job.py' +
         ' --rosdistro-index-url ' + rosdistro_index_url +
@@ -70,6 +77,7 @@
         'rm -fr $WORKSPACE/rosdistro_cache',
         'mkdir -p $WORKSPACE/rosdistro_cache',
         'docker run' +
+        ' --cidfile=$WORKSPACE/docker_generate_rosdistro_cache/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/rosdistro_cache:/tmp/rosdistro_cache' +
         ' rosdistro_cache_generation',

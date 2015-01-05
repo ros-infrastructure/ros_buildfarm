@@ -96,11 +96,18 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'rm -fr $WORKSPACE/docker_generating_dockers',
+        'mkdir -p $WORKSPACE/docker_generating_dockers',
+        '',
+        '# monitor all subprocesses and enforce termination',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_generating_dockers/subprocess_reaper.log 2>&1 &',
+        '# sleep to give python time to startup',
+        'sleep 1',
+        '',
         '# generate Dockerfile, build and run it',
         '# generating the Dockerfiles for the actual devel tasks',
         'echo "# BEGIN SECTION: Generate Dockerfile - devel tasks"',
         'export TZ="%s"' % timezone,
-        'mkdir -p $WORKSPACE/docker_generating_dockers',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/devel/run_devel_job.py' +
         ' --rosdistro-index-url ' + rosdistro_index_url +
@@ -120,9 +127,12 @@
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generating devel tasks"',
+        'rm -fr $WORKSPACE/docker_build_and_install',
+        'rm -fr $WORKSPACE/docker_build_and_test',
         'mkdir -p $WORKSPACE/docker_build_and_install',
         'mkdir -p $WORKSPACE/docker_build_and_test',
         'docker run' +
+        ' --cidfile=$WORKSPACE/docker_generating_dockers/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace:ro' +
         ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
@@ -134,6 +144,11 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        '# monitor all subprocesses and enforce termination',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_build_and_install/subprocess_reaper.log 2>&1 &',
+        '# sleep to give python time to startup',
+        'sleep 1',
+        '',
         'echo "# BEGIN SECTION: Build Dockerfile - build and install"',
         '# build and run build_and_install Dockerfile',
         'cd $WORKSPACE/docker_build_and_install',
@@ -142,6 +157,7 @@
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
         'docker run' +
+        ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' devel_build_and_install__%s_%s' % (rosdistro_name, source_repo_spec.name),
@@ -151,6 +167,11 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        '# monitor all subprocesses and enforce termination',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_build_and_test/subprocess_reaper.log 2>&1 &',
+        '# sleep to give python time to startup',
+        'sleep 1',
+        '',
         'echo "# BEGIN SECTION: Build Dockerfile - build and test"',
         '# build and run build_and_test Dockerfile',
         'cd $WORKSPACE/docker_build_and_test',
@@ -159,6 +180,7 @@
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
         'docker run' +
+        ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' devel_build_and_test__%s_%s' % (rosdistro_name, source_repo_spec.name),

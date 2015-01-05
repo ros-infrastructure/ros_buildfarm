@@ -49,10 +49,17 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'rm -fr $WORKSPACE/docker_generate_status_page',
+        'mkdir -p $WORKSPACE/docker_generate_status_page',
+        '',
+        '# monitor all subprocesses and enforce termination',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_generate_status_page/subprocess_reaper.log 2>&1 &',
+        '# sleep to give python time to startup',
+        'sleep 1',
+        '',
         '# generate Dockerfile, build and run it',
         '# generating the release status page',
         'echo "# BEGIN SECTION: Generate Dockerfile - status page"',
-        'mkdir -p $WORKSPACE/docker_generate_status_page',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/status/run_release_status_page_job.py' +
         ' ' + config_url +
@@ -71,6 +78,7 @@
         'rm -fr $WORKSPACE/status_page',
         'mkdir -p $WORKSPACE/status_page',
         'docker run' +
+        ' --cidfile=$WORKSPACE/docker_generate_status_page/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/status_page:/tmp/status_page' +

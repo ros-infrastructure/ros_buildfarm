@@ -49,10 +49,17 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'rm -fr $WORKSPACE/docker_generate_devel_jobs',
+        'mkdir -p $WORKSPACE/docker_generate_devel_jobs',
+        '',
+        '# monitor all subprocesses and enforce termination',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_generate_devel_jobs/subprocess_reaper.log 2>&1 &',
+        '# sleep to give python time to startup',
+        'sleep 1',
+        '',
         '# generate Dockerfile, build and run it',
         '# generating the Dockerfiles for the actual devel tasks',
         'echo "# BEGIN SECTION: Generate Dockerfile - reconfigure jobs"',
-        'mkdir -p $WORKSPACE/docker_generate_devel_jobs',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/devel/run_devel_reconfigure_job.py' +
         ' ' + config_url +
@@ -69,6 +76,7 @@
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs"',
         'docker run' +
+        ' --cidfile=$WORKSPACE/docker_generate_devel_jobs/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v %s:%s:ro' % (credentials_src, credentials_dst) +

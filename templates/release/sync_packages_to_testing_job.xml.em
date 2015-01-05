@@ -40,11 +40,18 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'rm -fr $WORKSPACE/docker_check_sync_criteria',
+        'mkdir -p $WORKSPACE/docker_check_sync_criteria',
+        '',
+        '# monitor all subprocesses and enforce termination',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_check_sync_criteria/subprocess_reaper.log 2>&1 &',
+        '# sleep to give python time to startup',
+        'sleep 1',
+        '',
         '# generate Dockerfile, build and run it',
         '# checking the sync criteria',
         'echo "# BEGIN SECTION: Generate Dockerfile - check sync condition"',
         'export TZ="%s"' % timezone,
-        'mkdir -p $WORKSPACE/docker_check_sync_criteria',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_check_sync_criteria_job.py' +
         ' ' + config_url +
@@ -66,6 +73,7 @@
         'rm -fr $WORKSPACE/debian_repo_cache',
         'mkdir -p $WORKSPACE/debian_repo_cache',
         'docker run' +
+        ' --cidfile=$WORKSPACE/docker_check_sync_criteria/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/debian_repo_cache:/tmp/debian_repo_cache' +
         ' check_sync_condition',

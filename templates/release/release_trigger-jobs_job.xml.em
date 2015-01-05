@@ -65,10 +65,17 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'rm -fr $WORKSPACE/docker_trigger_jobs',
+        'mkdir -p $WORKSPACE/docker_trigger_jobs',
+        '',
+        '# monitor all subprocesses and enforce termination',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_trigger_jobs/subprocess_reaper.log 2>&1 &',
+        '# sleep to give python time to startup',
+        'sleep 1',
+        '',
         '# generate Dockerfile, build and run it',
         '# generating the Dockerfiles for the actual trigger jobs tasks',
         'echo "# BEGIN SECTION: Generate Dockerfile - trigger jobs"',
-        'mkdir -p $WORKSPACE/docker_trigger_jobs',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_trigger_job.py' +
         ' ' + config_url +
@@ -90,6 +97,7 @@
         'rm -fr $WORKSPACE/debian_repo_cache',
         'mkdir -p $WORKSPACE/debian_repo_cache',
         'docker run' +
+        ' --cidfile=$WORKSPACE/docker_trigger_jobs/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v %s:%s:ro' % (credentials_src, credentials_dst) +
