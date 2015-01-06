@@ -1,7 +1,8 @@
 @(SNIPPET(
     'publisher_groovy-postbuild',
     script="""// CHECK SLAVE FOR LOW DISK SPACE AND DISABLE IT IF NECESSARY
-import hudson.slaves.OfflineCause.ByCLI
+import hudson.node_monitors.DiskSpaceMonitor
+import hudson.node_monitors.NodeMonitor
 import java.io.BufferedReader
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -14,11 +15,20 @@ def line
 while ((line = br.readLine()) != null) {
     matcher = pattern.matcher(line)
     if (matcher.matches()) {
-        build = manager.build
-        computer = build.executor.owner
-        cause = new ByCLI("Disk space is too low (reported by build '" + build.fullDisplayName + "')")
-        computer.setTemporarilyOffline(true, cause)
-        manager.addInfoBadge("Disabled slave '" + computer.name + "' because disk space is too low")
+        // get disk space monitor
+        diskSpaceMonitor = null
+        for (nodeMonitor in NodeMonitor.getAll()) {
+            if (nodeMonitor instanceof DiskSpaceMonitor) {
+                diskSpaceMonitor = nodeMonitor
+                break
+            }
+        }
+        if (diskSpaceMonitor) {
+            computer = manager.build.executor.owner
+            // this implicitly disables the slave
+            diskSpaceMonitor.data(computer)
+            manager.addInfoBadge("Disabled slave '" + computer.name + "' because disk space is too low")
+        }
         break
     }
 }""",
