@@ -26,9 +26,11 @@ def expand_template(
     if system_timezone is None and add_context_variables:
         if 'TZ' in os.environ:
             system_timezone = os.environ['TZ']
-        else:
+        elif os.path.exists('/etc/timezone'):
             with open('/etc/timezone', 'r') as h:
                 system_timezone = h.read().strip()
+        else:
+            system_timezone = time.tzname[time.daylight]
 
     output = StringIO()
     try:
