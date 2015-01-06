@@ -1,4 +1,6 @@
 import os
+import subprocess
+import sys
 
 from setuptools import find_packages
 from setuptools import setup
@@ -11,7 +13,8 @@ install_requires = [
 ]
 
 # Get the long description out of the readme.md
-with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
+this_dir = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(this_dir, 'README.md'), 'r') as f:
     long_description = f.read()
 
 # Get a list of scripts to install
@@ -19,6 +22,12 @@ scripts = []
 for root, dirnames, filenames in os.walk('scripts'):
     for filename in filenames:
         scripts.append(os.path.join(root, filename))
+
+# Attempt to get the default url based on current git environement
+git_module_path = os.path.join(this_dir, 'ros_buildfarm', 'git.py')
+output = subprocess.check_output([sys.executable, git_module_path])
+with open(os.path.join(this_dir, 'ros_buildfarm', 'defaults.py'), 'w') as f:
+    f.write(output.decode("utf-8"))
 
 setup(
     name='ros_buildfarm',
