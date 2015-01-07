@@ -11,8 +11,7 @@ import sys
 import time
 from xml.sax.saxutils import escape
 
-template_basepath = os.path.normpath(
-    os.path.join(os.path.dirname(__file__), '..', 'templates'))
+template_basepath = os.path.abspath(os.path.dirname(__file__))
 
 
 system_timezone = None
