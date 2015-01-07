@@ -9,10 +9,13 @@ mkdir -p @workspace_path/src
 if [ ! -d "@path" ]; then
 @[if repo_spec.type == 'git']@
     (set -x; git clone -b @repo_spec.version @repo_spec.url @path)
+    (set -x; git -C @path log -n 1)
 @[elif repo_spec.type == 'hg']@
     (set -x; hg clone -b @repo_spec.version @repo_spec.url @path)
+    (set -x; hg --cwd @path log -l 1)
 @[elif repo_spec.type == 'svn']@
     (set -x; svn checkout -r @repo_spec.version @repo_spec.url @path)
+    (set -x; svn log -l 1 @path)
 @[else]@
     echo "Unsupported repository type '@repo_spec.type' (@repo_spec.url)"
     exit 1

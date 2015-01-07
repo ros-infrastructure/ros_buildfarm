@@ -86,6 +86,7 @@
         'echo "# BEGIN SECTION: Clone custom reprepro-updater"',
         'rm -fr reprepro-updater',
         'git clone -b refactor https://github.com/ros-infrastructure/reprepro-updater.git reprepro-updater',
+        'git -C reprepro-updater log -n 1',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: sync packages to testing repo"',
