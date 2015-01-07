@@ -36,7 +36,7 @@ RUN echo "@now_str"
     wrapper_scripts=wrapper_scripts,
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update
+RUN python3 -u /tmp/wrapper_scripts/apt_get_wrapper.py update
 
 ENTRYPOINT ["sh", "-c"]
 CMD ["dpkg -i --force-depends /tmp/binarydeb/*.deb && apt-get -f -y install"]

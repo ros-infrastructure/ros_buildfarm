@@ -24,7 +24,7 @@ def get_run_command(index, dependencies, dependency_versions):
     name = dependencies[index]
     return \
         ('echo "{name}: {version}" && ' +
-         'python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y {name}').format(
+         'python3 -u /tmp/wrapper_scripts/apt_get_wrapper.py update-and-install -q -y {name}').format(
             name=name, version=dependency_versions[name])
 }@
 @[if fold_factor > 1]@

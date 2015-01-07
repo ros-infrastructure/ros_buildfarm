@@ -35,7 +35,7 @@ RUN echo "@today_str"
     wrapper_scripts=wrapper_scripts,
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y debhelper dpkg dpkg-dev git git-buildpackage python3 python3-catkin-pkg python3-rosdistro python3-yaml
+RUN python3 -u /tmp/wrapper_scripts/apt_get_wrapper.py update-and-install -q -y debhelper dpkg dpkg-dev git git-buildpackage python3 python3-catkin-pkg python3-rosdistro python3-yaml
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]

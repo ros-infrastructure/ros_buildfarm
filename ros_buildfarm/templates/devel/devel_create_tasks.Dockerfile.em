@@ -31,7 +31,7 @@ RUN echo "@today_str"
     wrapper_scripts=wrapper_scripts,
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y git python3-apt python3-catkin-pkg python3-empy python3-rosdep python3-rosdistro
+RUN python3 -u /tmp/wrapper_scripts/apt_get_wrapper.py update-and-install -q -y git python3-apt python3-catkin-pkg python3-empy python3-rosdep python3-rosdistro
 
 # always invalidate to actually have the latest rosdep state
 RUN echo "@now_str"
