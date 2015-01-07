@@ -27,8 +27,7 @@ def main(argv=sys.argv[1:]):
 
     return configure_devel_job(
         args.config_url, args.rosdistro_name, args.source_build_name,
-        args.repository_name, args.os_name, args.os_code_name, args.arch,
-        False)
+        args.repository_name, args.os_name, args.os_code_name, args.arch)
 
 
 if __name__ == '__main__':

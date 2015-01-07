@@ -15,7 +15,7 @@ from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_source_build_files
-from ros_buildfarm.git import get_repository_url
+from ros_buildfarm.git import get_repository
 from ros_buildfarm.templates import expand_template
 
 
@@ -124,7 +124,8 @@ def configure_devel_jobs(
 
 def configure_devel_job(
         config_url, rosdistro_name, source_build_name,
-        repo_name, os_name, os_code_name, arch, pull_request,
+        repo_name, os_name, os_code_name, arch,
+        pull_request=False,
         config=None, build_file=None,
         index=None, dist_file=None, dist_cache=None,
         jenkins=None, view=None,
@@ -271,7 +272,7 @@ def _get_devel_job_config(
 
         'github_orgunit': git_github_orgunit(source_repo_spec.url),
 
-        'ros_buildfarm_url': get_repository_url(),
+        'ros_buildfarm_repository': get_repository(),
 
         'script_generating_key_files': script_generating_key_files,
 

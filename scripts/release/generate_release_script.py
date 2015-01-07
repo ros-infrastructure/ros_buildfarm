@@ -49,7 +49,7 @@ def main(argv=sys.argv[1:]):
     configure_release_job(
         args.config_url, args.rosdistro_name, args.release_build_name,
         args.package_name, args.os_name, args.os_code_name,
-        jenkins=False, view=False, generate_import_package_job=False,
+        jenkins=False, views=[], generate_import_package_job=False,
         filter_arches=args.arch)
 
     templates.template_hook = None

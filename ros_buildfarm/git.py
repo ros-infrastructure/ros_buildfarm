@@ -1,8 +1,9 @@
+from collections import namedtuple
 import os
 import subprocess
 
 
-def get_repository_url(path=None):
+def get_repository(path=None):
     if path is None:
         path = os.path.dirname(os.path.dirname(__file__))
     url = _get_git_remote_origin(path)
@@ -14,7 +15,7 @@ def get_repository_url(path=None):
     for k, v in prefix_mapping.items():
         if url.startswith(k):
             url = v + url[len(k):]
-    return url
+    return namedtuple('Repository', 'url version')(url, _get_git_branch(path))
 
 
 def _get_git_remote_origin(path):
@@ -53,6 +54,15 @@ def _get_git_remote_origin(path):
                 return line_parts[1]
             index += 1
         return None
+
+
+def _get_git_branch(path):
+    git = _find_executable('git')
+    if git:
+        url = subprocess.check_output(
+            [git, 'rev-parse', '--abbrev-ref', 'HEAD'], cwd=path)
+        return url.decode().rstrip()
+    return None
 
 
 def _find_executable(file_name):

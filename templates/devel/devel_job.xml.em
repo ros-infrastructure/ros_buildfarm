@@ -85,7 +85,7 @@
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone ros_buildfarm"',
         'rm -fr ros_buildfarm',
-        'git clone %s ros_buildfarm' % ros_buildfarm_url,
+        'git clone %s%s ros_buildfarm' % ('-b %s ' % ros_buildfarm_repository.version if ros_buildfarm_repository.version else '', ros_buildfarm_repository.url),
         'git -C ros_buildfarm log -n 1',
         'echo "# END SECTION"',
     ]),

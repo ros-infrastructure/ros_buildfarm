@@ -12,7 +12,7 @@ from ros_buildfarm.common import \
     get_repositories_and_script_generating_key_files
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_source_build_files
-from ros_buildfarm.git import get_repository_url
+from ros_buildfarm.git import get_repository
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_management_view
 from ros_buildfarm.jenkins import connect
@@ -63,7 +63,7 @@ def get_reconfigure_jobs_job_config(args, config, build_file):
         'source_build_name': args.source_build_name,
         'repository_args': repository_args,
 
-        'ros_buildfarm_url': get_repository_url(),
+        'ros_buildfarm_repository': get_repository(),
 
         'credentials_src': os.path.join(
             '~', os.path.dirname(get_relative_credential_path())),

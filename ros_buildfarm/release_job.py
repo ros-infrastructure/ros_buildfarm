@@ -13,7 +13,7 @@ from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
-from ros_buildfarm.git import get_repository_url
+from ros_buildfarm.git import get_repository
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_management_view
 from ros_buildfarm.jenkins import configure_view
@@ -191,7 +191,7 @@ def configure_release_job(
     if index is None:
         index = get_index(config.rosdistro_index_url)
     if dist_file is None:
-        dist_file = get_distribution_file(index, rosdistro_name)
+        dist_file = get_distribution_file(index, rosdistro_name, build_file)
         if not dist_file:
             raise JobValidationError(
                 'No distribution file matches the build file')
@@ -400,7 +400,7 @@ def _get_sourcedeb_job_config(
 
         'job_priority': build_file.jenkins_source_job_priority,
 
-        'ros_buildfarm_url': get_repository_url(),
+        'ros_buildfarm_repository': get_repository(),
 
         'script_generating_key_files': script_generating_key_files,
 
@@ -460,7 +460,7 @@ def _get_binarydeb_job_config(
 
         'upstream_projects': upstream_job_names,
 
-        'ros_buildfarm_url': get_repository_url(),
+        'ros_buildfarm_repository': get_repository(),
 
         'script_generating_key_files': script_generating_key_files,
 
@@ -567,7 +567,7 @@ def _get_sync_packages_to_testing_job_config(
         get_repositories_and_script_generating_key_files(config, build_file)
 
     job_data = {
-        'ros_buildfarm_url': get_repository_url(),
+        'ros_buildfarm_repository': get_repository(),
 
         'script_generating_key_files': script_generating_key_files,
 

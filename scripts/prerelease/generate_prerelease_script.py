@@ -141,7 +141,7 @@ def main(argv=sys.argv[1:]):
     source_repository.name = 'prerelease'
     configure_devel_job(
         args.config_url, args.rosdistro_name, args.source_build_name,
-        None, args.os_name, args.os_code_name, args.arch, False,
+        None, args.os_name, args.os_code_name, args.arch,
         config=config, build_file=build_file,
         index=index, dist_file=dist_file, dist_cache=dist_cache,
         jenkins=False, view=False,
