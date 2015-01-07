@@ -116,7 +116,7 @@ def configure_release_jobs(
     targets = []
     for os_name, os_code_name in platforms:
         targets.append((os_name, os_code_name, 'source'))
-        for arch in _get_target_arches(build_file, os_name, os_code_name):
+        for arch in build_file.targets[os_name][os_code_name]:
             targets.append((os_name, os_code_name, arch))
     views = configure_release_views(
         jenkins, rosdistro_name, release_build_name, targets)
@@ -237,7 +237,7 @@ def configure_release_job(
     if views is None:
         targets = []
         targets.append((os_name, os_code_name, 'source'))
-        for arch in _get_target_arches(build_file, os_name, os_code_name):
+        for arch in build_file.targets[os_name][os_code_name]:
             targets.append((os_name, os_code_name, arch))
         configure_release_views(
             jenkins, rosdistro_name, release_build_name, targets)
@@ -251,7 +251,7 @@ def configure_release_job(
         configure_sync_packages_to_main_job(
             config_url, rosdistro_name, release_build_name,
             config=config, build_file=build_file, jenkins=jenkins)
-        for arch in _get_target_arches(build_file, os_name, os_code_name):
+        for arch in build_file.targets[os_name][os_code_name]:
             configure_sync_packages_to_testing_job(
                 config_url, rosdistro_name, release_build_name,
                 os_code_name, arch,
@@ -266,8 +266,8 @@ def configure_release_job(
 
     job_config = _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
-        config, build_file, os_name, os_code_name, _get_target_arches(
-            build_file, os_name, os_code_name, print_skipped=False),
+        config, build_file, os_name, os_code_name,
+        build_file.targets[os_name][os_code_name],
         pkg_name, repo_name, repo.release_repository, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
@@ -286,7 +286,7 @@ def configure_release_job(
             return job_names
 
     # binarydeb jobs
-    for arch in _get_target_arches(build_file, os_name, os_code_name):
+    for arch in build_file.targets[os_name][os_code_name]:
         if filter_arches and arch not in filter_arches:
             continue
 
@@ -341,18 +341,6 @@ def get_sourcedeb_job_name(rosdistro_name, release_build_name,
         rosdistro_name, release_build_name, os_code_name, 'source')
     return '%s__%s__%s_%s__source' % \
         (view_name, pkg_name, os_name, os_code_name)
-
-
-def _get_target_arches(build_file, os_name, os_code_name, print_skipped=True):
-    arches = []
-    for arch in build_file.targets[os_name][os_code_name]:
-        # TODO support for i386 missing
-        if arch in ['i386']:
-            if print_skipped:
-                print('Skipping arch:', arch, file=sys.stderr)
-            continue
-        arches.append(arch)
-    return arches
 
 
 def get_binarydeb_job_name(rosdistro_name, release_build_name,

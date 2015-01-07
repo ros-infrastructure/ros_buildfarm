@@ -40,6 +40,10 @@ def main(argv=sys.argv[1:]):
         '--os-code-name',
         required=True,
         help="The OS code name (e.g. 'trusty')")
+    parser.add_argument(
+        '--arch',
+        required=True,
+        help="The architecture (e.g. 'amd64')")
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
     add_argument_dockerfile_dir(parser)
@@ -115,6 +119,7 @@ def main(argv=sys.argv[1:]):
     data = {
         'os_name': args.os_name,
         'os_code_name': args.os_code_name,
+        'arch': args.arch,
 
         'distribution_repository_urls': args.distribution_repository_urls,
         'distribution_repository_keys': get_distribution_repository_keys(

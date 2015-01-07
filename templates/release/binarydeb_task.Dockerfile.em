@@ -1,6 +1,12 @@
 # generated from @template_name
 
-FROM @os_name:@os_code_name
+
+@(TEMPLATE(
+    'snippet/from_base_image.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+    arch=arch,
+))@
 MAINTAINER Dirk Thomas dthomas+buildfarm@@osrfoundation.org
 
 VOLUME ["/var/cache/apt/archives"]

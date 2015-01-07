@@ -32,10 +32,6 @@ def trigger_release_jobs(
                 continue
             for arch in sorted(
                     build_file.targets[os_name][os_code_name].keys()):
-                # TODO support for i386 missing
-                if arch in ['i386']:
-                    print('Skipping arch:', arch)
-                    continue
                 targets.append(Target(os_name, os_code_name, arch))
     print('The build file contains the following targets:')
     for os_name, os_code_name, arch in targets:

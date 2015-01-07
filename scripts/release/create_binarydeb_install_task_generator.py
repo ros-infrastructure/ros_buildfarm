@@ -20,7 +20,7 @@ def main(argv=sys.argv[1:]):
         description="Generate a 'Dockerfile' for installing the binarydeb")
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
-    add_argument_arch(parser)  # TODO not yet supported
+    add_argument_arch(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
     add_argument_binarydeb_dir(parser)
@@ -31,6 +31,7 @@ def main(argv=sys.argv[1:]):
     data = {
         'os_name': args.os_name,
         'os_code_name': args.os_code_name,
+        'arch': args.arch,
 
         'distribution_repository_urls': args.distribution_repository_urls,
         'distribution_repository_keys': get_distribution_repository_keys(

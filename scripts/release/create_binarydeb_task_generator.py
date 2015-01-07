@@ -34,7 +34,7 @@ def main(argv=sys.argv[1:]):
     add_argument_package_name(parser)
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
-    add_argument_arch(parser)  # TODO not yet supported
+    add_argument_arch(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
     add_argument_binarydeb_dir(parser)
@@ -71,6 +71,7 @@ def main(argv=sys.argv[1:]):
     data = {
         'os_name': args.os_name,
         'os_code_name': args.os_code_name,
+        'arch': args.arch,
 
         'uid': get_user_id(),
 
