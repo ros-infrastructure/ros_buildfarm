@@ -191,14 +191,16 @@ def main(argv=sys.argv[1:]):
 
         overlay_scripts.append(script)
 
+    from ros_buildfarm import __file__ as ros_buildfarm_file
     data = deepcopy(args.__dict__)
     data.update({
         'scms': scms,
         'scripts': scripts,
         'overlay_scripts': overlay_scripts,
-        'ros_buildfarm_path': os.path.dirname(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        'python_executable': sys.executable})
+        'ros_buildfarm_python_path': os.path.dirname(
+            os.path.dirname(os.path.abspath(ros_buildfarm_file))),
+        'python_executable': sys.executable,
+        'prerelease_script_path': os.path.dirname(os.path.abspath(__file__))})
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
