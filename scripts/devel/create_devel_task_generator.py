@@ -155,7 +155,7 @@ def get_dependencies(pkgs, label, get_dependencies_callback):
             [d.name for d in get_dependencies_callback(pkg)
              if d.name not in pkg_names])
     print('Identified the following %s dependencies ' % label +
-          '(ignoring packages available from source:')
+          '(ignoring packages available from source):')
     for depend_name in sorted(depend_names):
         print('  -', depend_name)
     return depend_names
