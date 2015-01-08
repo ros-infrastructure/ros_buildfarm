@@ -14,21 +14,12 @@ from xml.sax.saxutils import escape
 template_basepath = os.path.abspath(os.path.dirname(__file__))
 
 
-system_timezone = None
 template_hook = None
 
 
 def expand_template(
         template_name, data, options=None, add_context_variables=True):
-    global system_timezone
     global template_hook
-
-    if system_timezone is None and add_context_variables:
-        if 'TZ' in os.environ:
-            system_timezone = os.environ['TZ']
-        else:
-            with open('/etc/timezone', 'r') as h:
-                system_timezone = h.read().strip()
 
     output = StringIO()
     try:
@@ -43,7 +34,7 @@ def expand_template(
                 '%Y-%m-%d %H:%M:%S %z', now)
             data['today_str'] = time.strftime(
                 '%Y-%m-%d (%z)', now)
-            data['timezone'] = system_timezone
+            data['timezone'] = time.tzname[time.daylight]
         data['ESCAPE'] = _escape_value
         data['TEMPLATE'] = _expand_template
         data['SNIPPET'] = _expand_snippet
