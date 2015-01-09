@@ -82,7 +82,8 @@ def create_dockerfile(template_name, data, dockerfile_dir):
 
     wrapper_scripts = {}
     wrapper_script_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), 'scripts', 'wrapper')
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        'scripts', 'wrapper')
     for filename in os.listdir(wrapper_script_path):
         if not filename.endswith('.py'):
             continue
