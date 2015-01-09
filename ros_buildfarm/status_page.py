@@ -7,7 +7,6 @@ import time
 
 from .common import get_debian_package_name
 from .common import get_release_view_name
-from .common import get_release_view_prefix
 from .common import Target
 from .config import get_index as get_config_index
 from .config import get_release_build_files
@@ -483,13 +482,11 @@ def get_jenkins_job_urls(
     """
     urls = {}
     for target in targets:
-        view_prefix = get_release_view_prefix(
-            rosdistro_name, release_build_name)
         view_name = get_release_view_name(
             rosdistro_name, release_build_name,
             target.os_code_name, target.arch)
         base_url = jenkins_url + '/view/%s/job/%s__{pkg}__ubuntu_' % \
-            (view_name, view_prefix)
+            (view_name, view_name)
         if target.arch == 'source':
             urls[target] = base_url + '%s__source' % target.os_code_name
         else:
