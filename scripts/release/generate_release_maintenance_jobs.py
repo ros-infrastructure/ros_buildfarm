@@ -32,19 +32,22 @@ def main(argv=sys.argv[1:]):
     build_files = get_release_build_files(config, args.rosdistro_name)
     build_file = build_files[args.release_build_name]
 
+    group_name = get_release_view_prefix(
+        args.rosdistro_name, args.release_build_name)
+
     reconfigure_jobs_job_config = get_reconfigure_jobs_job_config(
         args, config, build_file)
     trigger_jobs_job_config = get_trigger_jobs_job_config(
         args, config, build_file)
     import_upstream_job_config = get_import_upstream_job_config(
         args, config, build_file)
+    trigger_broken_with_non_broken_upstream_job_config = \
+        _get_trigger_broken_with_non_broken_upstream_job_config(
+            group_name, build_file)
 
     jenkins = connect(config.jenkins_url)
 
     configure_management_view(jenkins)
-
-    group_name = get_release_view_prefix(
-        args.rosdistro_name, args.release_build_name)
 
     job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
     configure_job(jenkins, job_name, reconfigure_jobs_job_config)
@@ -54,6 +57,11 @@ def main(argv=sys.argv[1:]):
 
     job_name = 'import_upstream'
     configure_job(jenkins, job_name, import_upstream_job_config)
+
+    job_name = '%s_%s' % \
+        (group_name, 'trigger-broken-with-non-broken-upstream')
+    configure_job(
+        jenkins, job_name, trigger_broken_with_non_broken_upstream_job_config)
 
 
 def get_reconfigure_jobs_job_config(args, config, build_file):
@@ -90,6 +98,19 @@ def _get_job_config(args, config, build_file, template_name):
         'credentials_dst': os.path.join(
             '/home/buildfarm',
             os.path.dirname(get_relative_credential_path())),
+
+        'recipients': build_file.notify_emails,
+    }
+    job_config = expand_template(template_name, job_data)
+    return job_config
+
+
+def _get_trigger_broken_with_non_broken_upstream_job_config(
+        group_name, build_file):
+    template_name = \
+        'release/release_trigger-broken-with-non-broken-upstream_job.xml.em'
+    job_data = {
+        'project_name_prefix': '%s' % group_name,
 
         'recipients': build_file.notify_emails,
     }
