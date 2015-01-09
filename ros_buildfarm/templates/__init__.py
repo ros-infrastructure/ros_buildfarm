@@ -11,25 +11,15 @@ import sys
 import time
 from xml.sax.saxutils import escape
 
-template_basepath = os.path.normpath(
-    os.path.join(os.path.dirname(__file__), '..', 'templates'))
+template_basepath = os.path.abspath(os.path.dirname(__file__))
 
 
-system_timezone = None
 template_hook = None
 
 
 def expand_template(
         template_name, data, options=None, add_context_variables=True):
-    global system_timezone
     global template_hook
-
-    if system_timezone is None and add_context_variables:
-        if 'TZ' in os.environ:
-            system_timezone = os.environ['TZ']
-        else:
-            with open('/etc/timezone', 'r') as h:
-                system_timezone = h.read().strip()
 
     output = StringIO()
     try:
@@ -44,7 +34,7 @@ def expand_template(
                 '%Y-%m-%d %H:%M:%S %z', now)
             data['today_str'] = time.strftime(
                 '%Y-%m-%d (%z)', now)
-            data['timezone'] = system_timezone
+            data['timezone'] = time.tzname[time.daylight]
         data['ESCAPE'] = _escape_value
         data['TEMPLATE'] = _expand_template
         data['SNIPPET'] = _expand_snippet
@@ -92,7 +82,8 @@ def create_dockerfile(template_name, data, dockerfile_dir):
 
     wrapper_scripts = {}
     wrapper_script_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), 'scripts', 'wrapper')
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        'scripts', 'wrapper')
     for filename in os.listdir(wrapper_script_path):
         if not filename.endswith('.py'):
             continue
