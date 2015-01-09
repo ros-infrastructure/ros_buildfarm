@@ -14,11 +14,17 @@ fi
     scripts=overlay_scripts,
 ))@
 
-echo ""
-echo "Test results of overlay workspace"
-echo ""
+if [ -d "$WORKSPACE/catkin_workspace_overlay/test_results" ]; then
+    echo ""
+    echo "Test results of overlay workspace"
+    echo ""
 
-@(TEMPLATE(
-    'devel/devel_script_test_results.sh.em',
-    workspace_path='catkin_workspace_overlay',
-))@
+    @(TEMPLATE(
+        'devel/devel_script_test_results.sh.em',
+        workspace_path='catkin_workspace_overlay',
+    ))@
+else
+    echo ""
+    echo "No test results in overlay workspace"
+    echo ""
+fi
