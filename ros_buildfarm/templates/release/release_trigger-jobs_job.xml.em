@@ -90,6 +90,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',
         'cd $WORKSPACE/docker_trigger_jobs',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
         'docker build -t release_trigger_jobs .',
         'echo "# END SECTION"',
         '',

@@ -71,6 +71,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',
         'cd $WORKSPACE/docker_generate_devel_jobs',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
         'docker build -t devel_reconfigure_jobs .',
         'echo "# END SECTION"',
         '',

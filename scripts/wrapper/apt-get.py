@@ -99,5 +99,6 @@ def call_apt_get(argv, known_error_strings):
         rc = proc.returncode
     return rc, known_error_conditions
 
+
 if __name__ == '__main__':
     sys.exit(main())

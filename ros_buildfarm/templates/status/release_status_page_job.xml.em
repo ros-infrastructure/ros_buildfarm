@@ -71,6 +71,7 @@
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - status page"',
         'cd $WORKSPACE/docker_generate_status_page',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
         'docker build -t status_page_generation .',
         'echo "# END SECTION"',
         '',
