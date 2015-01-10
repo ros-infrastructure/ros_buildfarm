@@ -60,6 +60,7 @@
         '# generate Dockerfile, build and run it',
         '# generating the release status page',
         'echo "# BEGIN SECTION: Generate Dockerfile - status page"',
+        'export TZ="%s"' % timezone,
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/status/run_release_status_page_job.py' +
         ' ' + config_url +

@@ -34,7 +34,10 @@ def expand_template(
                 '%Y-%m-%d %H:%M:%S %z', now)
             data['today_str'] = time.strftime(
                 '%Y-%m-%d (%z)', now)
-            data['timezone'] = time.tzname[time.daylight]
+            tz_name = time.strftime('%Z', now)
+            tz_offset = time.strftime('%z', now)
+            data['timezone'] = '%s%s%s' % \
+                (tz_name, '+' if tz_offset[0] == '-' else '-', tz_offset[1:3])
         data['ESCAPE'] = _escape_value
         data['TEMPLATE'] = _expand_template
         data['SNIPPET'] = _expand_snippet
