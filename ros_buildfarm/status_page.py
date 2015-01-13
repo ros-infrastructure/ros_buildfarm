@@ -7,6 +7,7 @@ import time
 
 from .common import get_debian_package_name
 from .common import get_release_view_name
+from .common import get_short_arch
 from .common import Target
 from .config import get_index as get_config_index
 from .config import get_release_build_files
@@ -109,7 +110,8 @@ def build_release_status_page(
 
         'ordered_pkgs': ordered_pkgs,
         'targets': targets,
-        'target_prefix': rosdistro_name[0].upper(),
+        'short_arches': dict(
+            [(t.arch, get_short_arch(t.arch)) for t in targets]),
         'repos_data': repos_data,
 
         'affected_by_sync': affected_by_sync,
@@ -195,7 +197,8 @@ def build_debian_repos_status_page(
 
         'ordered_pkgs': ordered_pkgs,
         'targets': targets,
-        'target_prefix': '',
+        'short_arches': dict(
+            [(t.arch, get_short_arch(t.arch)) for t in targets]),
         'repos_data': repos_data,
 
         'affected_by_sync': None,

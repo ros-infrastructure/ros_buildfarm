@@ -95,7 +95,7 @@
         <th class="sortable"><div>Maintainer</div></th>
 @[end if]@
 @[for target in targets]@
-        <th><div>@target_prefix@('src' if target.arch == 'source' else 'bin')@(target.os_code_name[0].upper())@('32' if target.arch == 'i386' else ('64' if target.arch == 'amd64' else ''))</div>@
+        <th><div>@(target.os_code_name[0].upper())@(short_arches[target.arch])</div>@
 @[for count in package_counts[target]]@
 <span class="sum">@count</span>@
 @[end for]@

@@ -145,6 +145,7 @@ def get_short_os_code_name(os_code_name):
 def get_short_arch(arch):
     arch_mappings = {
         'amd64': '64',
+        'armhf': 'ahf',
         'i386': '32',
         'source': 'src',
     }
