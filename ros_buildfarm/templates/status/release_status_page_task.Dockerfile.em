@@ -42,6 +42,7 @@ cmd = \
     ' ' + config_url + \
     ' ' + rosdistro_name + \
     ' ' + release_build_name + \
+    ' --cache-dir /tmp/debian_repo_cache' + \
     ' --output-dir /tmp/status_page' + \
     ' --copy-resources'
 }@

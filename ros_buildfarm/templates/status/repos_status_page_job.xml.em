@@ -42,7 +42,9 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'rm -fr $WORKSPACE/debian_repo_cache',
         'rm -fr $WORKSPACE/status_page',
+        'mkdir -p $WORKSPACE/debian_repo_cache',
         'mkdir -p $WORKSPACE/status_page',
     ]),
 ))@
@@ -61,6 +63,7 @@ os_code_name_and_arch_tuples = status_page['os_code_name_and_arch_tuples']
         ' ' + ' '.join(debian_repository_urls) +
         ' --os-code-name-and-arch-tuples ' +
         ' '.join(os_code_name_and_arch_tuples) +
+        ' --cache-dir $WORKSPACE/debian_repo_cache' +
         ' --output-name %s_%s' % (rosdistro_name, status_page_name) +
         ' --output-dir $WORKSPACE/status_page',
         'echo "# END SECTION"',
