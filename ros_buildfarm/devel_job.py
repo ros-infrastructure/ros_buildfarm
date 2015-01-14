@@ -52,16 +52,25 @@ def configure_devel_jobs(
         print('No distribution file matches the build file')
         return
 
+    devel_view_name = get_devel_view_name(
+        rosdistro_name, source_build_name, pull_request=False)
+    pull_request_view_name = get_devel_view_name(
+        rosdistro_name, source_build_name, pull_request=True)
+
     from ros_buildfarm.jenkins import connect
     jenkins = connect(config.jenkins_url)
 
-    view_name = get_devel_view_name(rosdistro_name, source_build_name)
-    view = configure_devel_view(jenkins, view_name)
+    views = []
+    if build_file.test_commits_force is not False:
+        views.append(configure_devel_view(jenkins, devel_view_name))
+    if build_file.test_pull_requests_force is not False:
+        views.append(configure_devel_view(jenkins, pull_request_view_name))
 
     repo_names = dist_file.repositories.keys()
     repo_names = build_file.filter_repositories(repo_names)
 
-    job_names = []
+    devel_job_names = []
+    pull_request_job_names = []
     for repo_name in sorted(repo_names):
         repo = dist_file.repositories[repo_name]
         if not repo.source_repository:
@@ -112,14 +121,21 @@ def configure_devel_jobs(
                         repo_name, os_name, os_code_name, arch, pull_request,
                         config=config, build_file=build_file,
                         index=index, dist_file=dist_file,
-                        dist_cache=dist_cache, jenkins=jenkins, view=view)
-                    job_names.append(job_name)
+                        dist_cache=dist_cache, jenkins=jenkins, views=views)
+                    if not pull_request:
+                        devel_job_names.append(job_name)
+                    else:
+                        pull_request_job_names.append(job_name)
                 except JobValidationError as e:
                     print(e.message, file=sys.stderr)
 
-    # delete obsolete jobs in this view
+    # delete obsolete jobs in these views
     from ros_buildfarm.jenkins import remove_jobs
-    remove_jobs(jenkins, '%s__' % view_name, job_names)
+    print('Removing obsolete devel jobs')
+    remove_jobs(jenkins, '%s__' % devel_view_name, devel_job_names)
+    print('Removing obsolete pull request jobs')
+    remove_jobs(
+        jenkins, '%s__' % pull_request_view_name, pull_request_job_names)
 
 
 def configure_devel_job(
@@ -128,7 +144,7 @@ def configure_devel_job(
         pull_request=False,
         config=None, build_file=None,
         index=None, dist_file=None, dist_cache=None,
-        jenkins=None, view=None,
+        jenkins=None, views=None,
         source_repository=None):
     """
     Configure a single Jenkins devel job.
@@ -193,8 +209,9 @@ def configure_devel_job(
     if jenkins is None:
         from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
-    if view is None:
-        view_name = get_devel_view_name(rosdistro_name, source_build_name)
+    if views is None:
+        view_name = get_devel_view_name(
+            rosdistro_name, source_build_name, pull_request=pull_request)
         configure_devel_view(jenkins, view_name)
 
     job_name = get_devel_job_name(
@@ -216,11 +233,10 @@ def configure_devel_job(
 def get_devel_job_name(rosdistro_name, source_build_name,
                        repo_name, os_name, os_code_name, arch,
                        pull_request=False):
-    view_name = get_devel_view_name(rosdistro_name, source_build_name)
+    view_name = get_devel_view_name(
+        rosdistro_name, source_build_name, pull_request=pull_request)
     job_name = '%s__%s__%s_%s_%s' % \
         (view_name, repo_name, os_name, os_code_name, arch)
-    if pull_request:
-        job_name += '__pull_request'
     return job_name
 
 

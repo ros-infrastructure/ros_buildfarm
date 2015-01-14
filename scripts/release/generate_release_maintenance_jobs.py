@@ -9,7 +9,9 @@ from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
-from ros_buildfarm.common import get_release_view_prefix
+from ros_buildfarm.common import get_release_binary_view_prefix
+from ros_buildfarm.common import get_release_job_prefix
+from ros_buildfarm.common import get_release_source_view_prefix
 from ros_buildfarm.common import \
     get_repositories_and_script_generating_key_files
 from ros_buildfarm.git import get_repository
@@ -32,7 +34,7 @@ def main(argv=sys.argv[1:]):
     build_files = get_release_build_files(config, args.rosdistro_name)
     build_file = build_files[args.release_build_name]
 
-    group_name = get_release_view_prefix(
+    group_name = get_release_job_prefix(
         args.rosdistro_name, args.release_build_name)
 
     reconfigure_jobs_job_config = get_reconfigure_jobs_job_config(
@@ -43,7 +45,7 @@ def main(argv=sys.argv[1:]):
         args, config, build_file)
     trigger_broken_with_non_broken_upstream_job_config = \
         _get_trigger_broken_with_non_broken_upstream_job_config(
-            group_name, build_file)
+            args.rosdistro_name, args.release_build_name, build_file)
 
     jenkins = connect(config.jenkins_url)
 
@@ -106,11 +108,14 @@ def _get_job_config(args, config, build_file, template_name):
 
 
 def _get_trigger_broken_with_non_broken_upstream_job_config(
-        group_name, build_file):
+        rosdistro_name, release_build_name, build_file):
     template_name = \
         'release/release_trigger-broken-with-non-broken-upstream_job.xml.em'
     job_data = {
-        'project_name_prefix': '%s' % group_name,
+        'source_project_name_prefix': get_release_source_view_prefix(
+            rosdistro_name),
+        'binary_project_name_prefix': get_release_binary_view_prefix(
+            rosdistro_name, release_build_name),
 
         'recipients': build_file.notify_emails,
     }

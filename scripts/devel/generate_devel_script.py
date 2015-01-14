@@ -44,7 +44,7 @@ def main(argv=sys.argv[1:]):
     configure_devel_job(
         args.config_url, args.rosdistro_name, args.source_build_name,
         args.repository_name, args.os_name, args.os_code_name, args.arch,
-        jenkins=False, view=False)
+        jenkins=False, views=False)
 
     templates.template_hook = None
 

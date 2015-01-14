@@ -6,6 +6,7 @@ import sys
 
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.git import get_repository
@@ -29,7 +30,8 @@ def main(argv=sys.argv[1:]):
 
     configure_management_view(jenkins)
 
-    job_name = '%s_repos-status-page' % args.rosdistro_name
+    prefix = get_release_job_prefix(args.rosdistro_name)
+    job_name = '%s_repos-status-page' % prefix
     configure_job(jenkins, job_name, job_config)
 
 

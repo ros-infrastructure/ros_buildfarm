@@ -46,9 +46,10 @@ import hudson.model.Result
 
 println "Triggering builds for the following jobs:"
 
-def prefix = "%s"
-pattern_src = Pattern.compile(prefix + "_.+__.+__source")
-pattern_bin = Pattern.compile(prefix + "_.+__.+__binary")
+def source_prefix = "%s"
+def binary_prefix = "%s"
+pattern_src = Pattern.compile(source_prefix + "__.+__.+__source")
+pattern_bin = Pattern.compile(binary_prefix + "__.+__.+__binary")
 for (p in hudson.model.Hudson.instance.projects) {
     if (!pattern_src.matcher(p.name).matches() && !pattern_bin.matcher(p.name).matches()) continue
     if (p.isDisabled()) continue
@@ -91,7 +92,7 @@ for (p in hudson.model.Hudson.instance.projects) {
         println "  FAILED to schedule build"
     }
 }
-""" % project_name_prefix,
+""" % (source_project_name_prefix, binary_project_name_prefix),
 ))@
   </builders>
   <publishers>

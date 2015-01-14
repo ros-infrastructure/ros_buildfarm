@@ -87,7 +87,7 @@ def configure_trigger_jobs_job(
 def get_trigger_jobs_job_config(group_name, build_file):
     template_name = 'devel/devel_trigger-jobs_job.xml.em'
     job_data = {
-        'project_name_pattern': '%s__.*(?<!__pull_request)' % group_name,
+        'project_name_pattern': '%s__.*' % group_name,
 
         'recipients': build_file.notify_emails,
     }

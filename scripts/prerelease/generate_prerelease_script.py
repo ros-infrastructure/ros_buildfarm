@@ -144,7 +144,7 @@ def main(argv=sys.argv[1:]):
         None, args.os_name, args.os_code_name, args.arch,
         config=config, build_file=build_file,
         index=index, dist_file=dist_file, dist_cache=dist_cache,
-        jenkins=False, view=False,
+        jenkins=False, views=False,
         source_repository=source_repository)
 
     templates.template_hook = None

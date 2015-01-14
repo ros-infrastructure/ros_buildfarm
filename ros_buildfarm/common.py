@@ -118,26 +118,87 @@ def get_debian_package_name(rosdistro_name, ros_package_name):
          ros_package_name.replace('_', '-'))
 
 
-def get_devel_view_name(rosdistro_name, source_build_name):
-    return '%sdev%s' % (rosdistro_name[0].upper(), source_build_name)
+def get_devel_view_name(rosdistro_name, source_build_name, pull_request=False):
+    name = '%s%s' % (
+        rosdistro_name[0].upper(),
+        'dev' if not pull_request else 'pr')
+    short_source_build_name = get_short_build_name(source_build_name)
+    if short_source_build_name:
+        name += '_%s' % short_source_build_name
+    return name
 
 
-def get_release_view_prefix(rosdistro_name, release_build_name):
-    return '%srel%s' % (rosdistro_name[0].upper(), release_build_name)
+def get_release_job_prefix(rosdistro_name, release_build_name=None):
+    prefix = '%srel' % rosdistro_name[0].upper()
+    if release_build_name is not None:
+        short_release_build_name = get_short_build_name(release_build_name)
+        if short_release_build_name:
+            prefix += '_%s' % short_release_build_name
+    return prefix
 
 
 def get_release_view_name(
-        rosdistro_name, release_build_name, os_code_name, arch):
-    prefix = get_release_view_prefix(rosdistro_name, release_build_name)
+        rosdistro_name, release_build_name, os_name, os_code_name, arch):
+    if arch == 'source':
+        return get_release_source_view_name(
+            rosdistro_name, os_name, os_code_name)
+    else:
+        return get_release_binary_view_name(
+            rosdistro_name, release_build_name, os_name, os_code_name, arch)
+
+
+def get_release_source_view_prefix(rosdistro_name):
+    return '%s%s' % (rosdistro_name[0].upper(), 'src')
+
+
+def get_release_source_view_name(
+        rosdistro_name, os_name, os_code_name):
+    return '%s_%s%s' % (
+        get_release_source_view_prefix(rosdistro_name[0].upper()),
+        get_short_os_name(os_name),
+        get_short_os_code_name(os_code_name))
+
+
+def get_release_binary_view_prefix(rosdistro_name, release_build_name):
+    prefix = '%s%s' % (rosdistro_name[0].upper(), 'bin')
+    short_release_build_name = get_short_build_name(release_build_name)
+    if short_release_build_name:
+        prefix += '_%s' % short_release_build_name
+    return prefix
+
+
+def get_release_binary_view_name(
+        rosdistro_name, release_build_name, os_name, os_code_name, arch):
     os_code_name = get_short_os_code_name(os_code_name)
     arch = get_short_arch(arch)
-    return '%s_%s%s' % (prefix, os_code_name, arch)
+    return '%s_%s%s%s' % (
+        get_release_binary_view_prefix(
+            rosdistro_name[0].upper(), release_build_name),
+        get_short_os_name(os_name),
+        get_short_os_code_name(os_code_name),
+        get_short_arch(arch))
+
+
+def get_short_build_name(build_name):
+    build_name_mappings = {
+        'default': '',
+    }
+    return build_name_mappings.get(build_name, build_name)
+
+
+def get_short_os_name(os_name):
+    os_name_mappings = {
+        'ubuntu': 'u',
+    }
+    return os_name_mappings.get(os_name, os_name)
 
 
 def get_short_os_code_name(os_code_name):
     os_code_name_mappings = {
         'saucy': 'S',
         'trusty': 'T',
+        'utopic': 'U',
+        'vivid': 'V',
     }
     return os_code_name_mappings.get(os_code_name, os_code_name)
 
@@ -145,9 +206,8 @@ def get_short_os_code_name(os_code_name):
 def get_short_arch(arch):
     arch_mappings = {
         'amd64': '64',
-        'armhf': 'ahf',
+        'armhf': 'hf',
         'i386': '32',
-        'source': 'src',
     }
     return arch_mappings.get(arch, arch)
 
