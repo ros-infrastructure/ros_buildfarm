@@ -3,9 +3,7 @@ import difflib
 import sys
 from xml.etree import ElementTree
 
-from jenkinsapi.custom_exceptions import WillNotBuild
 from jenkinsapi.jenkins import Jenkins
-from jenkinsapi.job import Job
 from jenkinsapi.views import Views
 
 from .jenkins_credentials import get_credentials
@@ -14,10 +12,25 @@ from .templates import expand_template
 JENKINS_MANAGEMENT_VIEW = 'Manage'
 
 
+class JenkinsProxy(Jenkins):
+
+    """Proxy for Jenkins instance caching data for performance reasons."""
+
+    def __init__(self, *args, **kwargs):
+        super(JenkinsProxy, self).__init__(*args, **kwargs)
+        self.__jobs = None
+
+    @property
+    def jobs(self):
+        if self.__jobs is None:
+            self.__jobs = super(JenkinsProxy, self).jobs
+        return self.__jobs
+
+
 def connect(jenkins_url):
     print("Connecting to Jenkins '%s'" % jenkins_url)
     username, password = get_credentials(jenkins_url)
-    jenkins = Jenkins(jenkins_url, username, password)
+    jenkins = JenkinsProxy(jenkins_url, username, password)
     print("Connected to Jenkins version '%s'" % jenkins.version)
     return jenkins
 
@@ -88,11 +101,11 @@ def _get_view_type(view_config):
 
 def configure_job(jenkins, job_name, job_config, view=None):
     try:
-        if not _has_job(jenkins, job_name):
+        if not jenkins.has_job(job_name):
             print("Creating job '%s'" % job_name)
             job = jenkins.create_job(job_name, job_config)
         else:
-            job = _get_job(jenkins, job_name)
+            job = jenkins.get_job(job_name)
             remote_job_config = job.get_config()
             diff = _diff_configs(remote_job_config, job_config)
             if not diff:
@@ -120,24 +133,26 @@ def configure_job(jenkins, job_name, job_config, view=None):
 def invoke_job(
         jenkins, job_name, cause=None, prevent_multiple=True):
     try:
-        if not _has_job(jenkins, job_name):
+        if not jenkins.has_job(job_name):
             print("Failed to invoke job '%s' because it does not exist" %
                   job_name, file=sys.stderr)
             return False
 
-        job = _get_job(jenkins, job_name)
+        job = jenkins.get_job(job_name)
         if not job.is_enabled():
             print("Failed to invoke job '%s' because it is disabled" %
                   job_name, file=sys.stderr)
             return False
-        print("Invoking job '%s'" % job_name)
-        try:
-            job.invoke(
-                skip_if_running=prevent_multiple, invoke_pre_check_delay=0,
-                cause=cause)
-        except WillNotBuild as e:
-            print(str(e))
+        if prevent_multiple and not job.is_queued():
+            print("Skipped to invoke job '%s' because it is queued" %
+                  job_name, file=sys.stderr)
             return False
+        if prevent_multiple and not job.is_running():
+            print("Skipped to invoke job '%s' because it is running" %
+                  job_name, file=sys.stderr)
+            return False
+        print("Invoking job '%s'" % job_name)
+        job.invoke(cause=cause)
     except Exception:
         print("Failed to invoke job '%s'" % job_name, file=sys.stderr)
         raise
@@ -174,22 +189,3 @@ def remove_jobs(jenkins, job_prefix, excluded_job_names):
             continue
         print("Deleting job '%s'" % job_name)
         jenkins.delete_job(job_name)
-
-
-# override for performance reason
-def _has_job(jenkins, job_name):
-    # return jenkins.has_job(job_name)
-    jobs_info = jenkins.get_jobs_info()
-    job_names = [job_info[1] for job_info in jobs_info]
-    return job_name in job_names
-
-
-# override for performance reason
-def _get_job(jenkins, job_name):
-    # return jenkins.get_job(job_name)
-    if not _has_job(jenkins, job_name):
-        return None
-    jobs_info = jenkins.get_jobs_info()
-    job_info = [
-        job_info for job_info in jobs_info if job_info[1] == job_name][0]
-    return Job(job_info[0], job_info[1], jenkins)
