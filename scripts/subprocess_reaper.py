@@ -29,6 +29,9 @@ def main(argv=None):
     parser.add_argument(
         'pid', type=int, nargs='?', default=os.getppid(),
         help='The process ID to monitor (default: id of parent process)')
+    parser.add_argument(
+        '--cid-file',
+        help='The path to a .cid file containing a Docker container id')
     args = parser.parse_args(argv)
 
     mypid = os.getpid()
@@ -43,25 +46,13 @@ def main(argv=None):
     # wait until monitored process has died
     print('Monitoring PID %i...' % args.pid)
     children = []
+    cid_files = set([])
     while proc.is_running():
         try:
             children = proc.get_children(recursive=True)
         except psutil.NoSuchProcess:
             continue
-        # don't use small sleep values like 0.25s
-        # since that results in a high CPU load
-        time.sleep(10)
-
-    # remove myself from list of children
-    children = [c for c in children if c.pid != mypid]
-
-    if not children:
-        print('No child processes to terminate.')
-        return 0
-
-    if children:
-        docker_run_cid_files = []
-        print("Searching for 'docker run' child processes...")
+        # check for docker since the cmdline is unavailable after termination
         for c in children:
             try:
                 cmdline = c.cmdline
@@ -71,23 +62,40 @@ def main(argv=None):
                 cid_prefix = '--cidfile='
                 for arg in cmdline[2:]:
                     if arg.startswith(cid_prefix):
-                        docker_run_cid_files.append(arg[len(cid_prefix):])
-                        print('- %s: %s' %
-                              (docker_run_cid_files[-1], ' '.join(cmdline)))
+                        cid_file = arg[len(cid_prefix):]
+                        if cid_file not in cid_files:
+                            print("- detected .cid file '%s'" % cid_file)
+                            cid_files.add(cid_file)
                         break
-        if docker_run_cid_files:
-            print("Sending KILL signal to %i docker containers:" %
-                  len(docker_run_cid_files))
-            for cid_file in docker_run_cid_files:
-                with open(cid_file, 'r') as h:
-                    cid = h.read()
-                    try:
-                        subprocess.check_call(['docker', 'kill', cid])
-                        print('- %s: %s' % (cid, cid_file))
-                    except subprocess.CalledProcessError as e:
-                        print("Docker container '%s' could not be killed: %s" %
-                              (cid, e), file=sys.stderr)
+        # don't use small sleep values like 0.25s
+        # since that results in a high CPU load
+        time.sleep(10)
 
+    # remove myself from list of children
+    children = [c for c in children if c.pid != mypid]
+
+    if args.cid_file and os.path.exists(args.cid_file) and \
+            args.cid_file not in cid_files:
+        print("- found .cid file '%s'" % args.cid_file)
+        cid_files.add(args.cid_file)
+
+    if not children and not cid_files:
+        print('No child processes to terminate.')
+        return 0
+
+    if cid_files:
+        print("Sending KILL signal to %i docker containers:" % len(cid_files))
+        for cid_file in cid_files:
+            with open(cid_file, 'r') as h:
+                cid = h.read()
+                try:
+                    subprocess.check_call(['docker', 'kill', cid])
+                    print('- %s: %s' % (cid, cid_file))
+                except subprocess.CalledProcessError as e:
+                    print("Docker container '%s' could not be killed: %s" %
+                          (cid, e), file=sys.stderr)
+
+    if children:
         print('Sending TERM signal to %i child processes:' % len(children))
         for c in children:
             try:
