@@ -53,8 +53,8 @@ def call_apt_get_update_and_install(
             if set(known_error_conditions) & \
                     set(known_error_strings_redo_update):
                 # restart with update command
-                print("'apt-get %s' failed and likely requires 'apt-get " +
-                      "update' to run again" % command)
+                print(("'apt-get %s' failed and likely requires 'apt-get " +
+                       "update' to run again") % command)
                 command = 'update'
             # else try install again
 
