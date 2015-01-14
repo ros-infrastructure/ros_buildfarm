@@ -26,7 +26,7 @@
               </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
-        </parameterDefinitions>
+      </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
 @(SNIPPET(
     'property_requeue-job',
