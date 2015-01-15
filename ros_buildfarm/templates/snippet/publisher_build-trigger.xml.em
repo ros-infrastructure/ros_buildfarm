@@ -1,5 +1,5 @@
     <hudson.tasks.BuildTrigger>
-      <childProjects>@ESCAPE(','.join(child_projects))</childProjects>
+      <childProjects>@ESCAPE(','.join(sorted(child_projects)))</childProjects>
       <threshold>
         <name>UNSTABLE</name>
         <ordinal>1</ordinal>
