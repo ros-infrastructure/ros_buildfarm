@@ -22,8 +22,8 @@
               <string>--missing-only --source-only</string>
               <string>--missing-only</string>
               <string>--source-only</string>
-              <string></string>
-              </a>
+              <string> </string>
+            </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
       </parameterDefinitions>
