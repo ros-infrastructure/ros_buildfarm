@@ -56,3 +56,15 @@ Release packages using bloom
 Every developer invoking ``bloom-release`` must have the environment variable
 ``ROSDISTRO_INDEX_URL`` set to point to your forked rosdistro index file.
 This is the same as for any user using your custom distribution.
+
+
+Deploy your configuration to jenkins
+------------------------------------
+
+As documented in the `general process documentation<general_process.rst>`_.
+
+
+Run administrative tasks
+------------------------
+
+As documented in the `general process documentation<general_process.rst>`_.

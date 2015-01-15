@@ -107,3 +107,15 @@ version of the code to perform all jobs and tasks.
 
 You might want to double check the console output of several jobs to ensure
 that they actually clone and use your custom repository.
+
+
+Deploy your configuration to jenkins
+------------------------------------
+
+As documented in the `general process documentation<general_process.rst>`_.
+
+
+Run administrative tasks
+------------------------
+
+As documented in the `general process documentation<general_process.rst>`_.
