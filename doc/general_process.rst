@@ -36,7 +36,7 @@ which will set up the described environment for you inside a Docker container an
 
 
 Setup your machine to configure Jenkins
-.......................................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 For generating Jenkins jobs you need the following software:
@@ -75,7 +75,7 @@ in to the Jenkins master, e.g.::
 
 
 Generate the Jenkins jobs
-.........................
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To generate the administrative jobs invoke the following commands pointing to
 the URL of your buildfarm configuration::
@@ -125,7 +125,7 @@ Ongoing operations
 ------------------
 
 Generated jobs
-..............
+^^^^^^^^^^^^^^
 
 All management related jobs are shown in the ``Manage`` view in Jenkins.
 
@@ -140,7 +140,7 @@ For details please see the job specific documentation pages referenced from the
 index page.
 
 Monitoring
-..........
+^^^^^^^^^^
 
 You might want to check:
 
@@ -152,7 +152,7 @@ progress of the generated packages
 
 
 Manually sync packages
-......................
+^^^^^^^^^^^^^^^^^^^^^^
 
 
 Whenever you want to sync the current state of packages from the ``testing`` to
