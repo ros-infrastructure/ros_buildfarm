@@ -32,7 +32,7 @@ RUN echo "@today_str"
 ))@
 
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y python3-catkin-pkg python3-empy python3-pip python3-rosdistro python3-yaml
-RUN pip3 install https://github.com/dirk-thomas/jenkinsapi/archive/feature/config_view.zip
+RUN pip3 install jenkinsapi
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
