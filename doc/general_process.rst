@@ -45,7 +45,7 @@ For generating Jenkins jobs you need the following software:
 * Python 3 package ``empy``
 * Python 3 ROS package ``rosdistro`` >= 0.4.0
 * a checkout of the `ros_buildfarm <https://github.com/ros-infrastructure/ros_buildfarm) repository>`_
-* a forked version of `jenkinsapi <https://github.com/dirk-thomas/jenkinsapi/tree/feature/config_view>`_
+* Python 3 package ``jenkinsapi`` >= 0.2.26
 
 E.g. using the following commands on Ubuntu Trusty::
 
@@ -59,7 +59,7 @@ E.g. using the following commands on Ubuntu Trusty::
   curl https://bootstrap.pypa.io/get-pip.py | /tmp/env/bin/python3
   pip3 install empy
   pip3 install rosdistro
-  pip3 install git+git://github.com/dirk-thomas/jenkinsapi.git@feature/config_view
+  pip3 install jenkinsapi
 
   git clone https://github.com/ros-infrastructure/ros_buildfarm.git
   cd ros_buildfarm
