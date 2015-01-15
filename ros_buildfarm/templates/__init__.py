@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-from em import Error
 from em import Interpreter
 try:
     from cStringIO import StringIO

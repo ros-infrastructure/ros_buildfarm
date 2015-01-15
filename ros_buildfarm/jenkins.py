@@ -130,8 +130,7 @@ def configure_job(jenkins, job_name, job_config, view=None):
     return job
 
 
-def invoke_job(
-        jenkins, job_name, cause=None, prevent_multiple=True):
+def invoke_job(jenkins, job_name, cause=None):
     try:
         if not jenkins.has_job(job_name):
             print("Failed to invoke job '%s' because it does not exist" %
@@ -143,11 +142,11 @@ def invoke_job(
             print("Failed to invoke job '%s' because it is disabled" %
                   job_name, file=sys.stderr)
             return False
-        if prevent_multiple and job.is_queued():
+        if job.is_queued():
             print("Skipped to invoke job '%s' because it is queued" %
                   job_name, file=sys.stderr)
             return False
-        if prevent_multiple and job.is_running():
+        if job.is_running():
             print("Skipped to invoke job '%s' because it is running" %
                   job_name, file=sys.stderr)
             return False
