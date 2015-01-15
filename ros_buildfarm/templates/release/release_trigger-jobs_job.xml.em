@@ -66,7 +66,9 @@
     'builder_shell',
     script='\n'.join([
         'rm -fr $WORKSPACE/docker_trigger_jobs',
+        'rm -fr $WORKSPACE/trigger_jobs',
         'mkdir -p $WORKSPACE/docker_trigger_jobs',
+        'mkdir -p $WORKSPACE/trigger_jobs',
         '',
         '# monitor all subprocesses and enforce termination',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_trigger_jobs/subprocess_reaper.log 2>&1 &',
@@ -83,7 +85,7 @@
         ' ' + release_build_name +
         ' ' + ' '.join(repository_args) +
         ' $args' +
-        ' --cause "$JOB_NAME#$BUILD_NUMBER"' +
+        ' --groovy-script /tmp/trigger_jobs/trigger_jobs.groovy' +
         ' --cache-dir /tmp/debian_repo_cache' +
         ' --dockerfile-dir $WORKSPACE/docker_trigger_jobs',
         'echo "# END SECTION"',
@@ -102,10 +104,16 @@
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v %s:%s:ro' % (credentials_src, credentials_dst) +
+        ' -v $WORKSPACE/trigger_jobs:/tmp/trigger_jobs' +
         ' -v $WORKSPACE/debian_repo_cache:/tmp/debian_repo_cache' +
         ' release_trigger_jobs',
         'echo "# END SECTION"',
     ]),
+))@
+@(SNIPPET(
+    'builder_system-groovy',
+    command=None,
+    script_file='$WORKSPACE/trigger_jobs/trigger_jobs.groovy',
 ))@
   </builders>
   <publishers>

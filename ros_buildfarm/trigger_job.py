@@ -12,11 +12,12 @@ from .debian_repo import get_debian_repo_data
 from .release_job import get_binarydeb_job_name
 from .release_job import get_sourcedeb_job_name
 from .status_page import _strip_version_suffix
+from .templates import expand_template
 
 
 def trigger_release_jobs(
         config_url, rosdistro_name, release_build_name,
-        missing_only, source_only, cache_dir, cause=None):
+        missing_only, source_only, cache_dir, cause=None, groovy_script=None):
     config = get_config_index(config_url)
     build_files = get_release_build_files(config, rosdistro_name)
     build_file = build_files[release_build_name]
@@ -47,7 +48,8 @@ def trigger_release_jobs(
         repo_data = get_debian_repo_data(
             build_file.target_repository, targets, cache_dir)
 
-    jenkins = connect(config.jenkins_url)
+    if groovy_script is None:
+        jenkins = connect(config.jenkins_url)
 
     pkg_names = dist_file.release_packages.keys()
     pkg_names = build_file.filter_packages(pkg_names)
@@ -95,11 +97,24 @@ def trigger_release_jobs(
                                "already up-to-date") % job_name)
                         continue
 
-            success = invoke_job(jenkins, job_name, cause=cause)
+            if groovy_script is None:
+                success = invoke_job(jenkins, job_name, cause=cause)
+            else:
+                success = True
             if success:
                 triggered_jobs.append(job_name)
             else:
                 skipped_jobs.append(job_name)
 
-    print('Triggered %d jobs, skipped %d jobs.' %
-          (len(triggered_jobs), len(skipped_jobs)))
+    if groovy_script is None:
+        print('Triggered %d jobs, skipped %d jobs.' %
+              (len(triggered_jobs), len(skipped_jobs)))
+    else:
+        print("Writing groovy script '%s' to trigger %d jobs" %
+              (groovy_script, len(triggered_jobs)))
+        data = {
+            'job_names': sorted(triggered_jobs),
+        }
+        content = expand_template('release/trigger_jobs.groovy.em', data)
+        with open(groovy_script, 'w') as h:
+            h.write(content)

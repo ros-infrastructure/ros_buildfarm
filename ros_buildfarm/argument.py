@@ -183,3 +183,9 @@ def add_argument_cause(parser):
     parser.add_argument(
         '--cause',
         help='The cause of the build trigger')
+
+
+def add_argument_groovy_script(parser):
+    parser.add_argument(
+        '--groovy-script',
+        help='The path of the generated groovy script file')

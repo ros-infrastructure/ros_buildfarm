@@ -42,7 +42,7 @@ cmd = \
     ' ' + config_url + \
     ' ' + rosdistro_name + \
     ' ' + release_build_name + \
-    ' --cause "%s"' % cause + \
+    ' --groovy-script ' + groovy_script + \
     ' --cache-dir ' + cache_dir
 if missing_only:
     cmd += ' --missing-only'

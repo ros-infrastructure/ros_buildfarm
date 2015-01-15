@@ -110,6 +110,7 @@ for (p in hudson.model.Hudson.instance.getAllItems(AbstractProject)) {
     p.scheduleBuild()
 }
 """ % project_name_pattern,
+    script_file=None,
 ))@
   </builders>
   <publishers>

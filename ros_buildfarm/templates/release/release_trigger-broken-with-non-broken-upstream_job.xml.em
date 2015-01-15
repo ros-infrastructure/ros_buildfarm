@@ -93,6 +93,7 @@ for (p in hudson.model.Hudson.instance.projects) {
     }
 }
 """ % (source_project_name_prefix, binary_project_name_prefix),
+    script_file=None,
 ))@
   </builders>
   <publishers>

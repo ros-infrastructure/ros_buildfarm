@@ -135,4 +135,5 @@ for (v in view_stats) {
   println()
 }
 """,
+    script_file=None,
 ))@

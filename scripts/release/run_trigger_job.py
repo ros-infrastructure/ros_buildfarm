@@ -6,12 +6,12 @@ import sys
 
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_cache_dir
-from ros_buildfarm.argument import add_argument_cause
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
+from ros_buildfarm.argument import add_argument_groovy_script
 from ros_buildfarm.argument import add_argument_missing_only
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_source_only
@@ -30,7 +30,7 @@ def main(argv=sys.argv[1:]):
     add_argument_distribution_repository_key_files(parser)
     add_argument_missing_only(parser)
     add_argument_source_only(parser)
-    add_argument_cause(parser)
+    add_argument_groovy_script(parser)
     add_argument_cache_dir(parser)
     add_argument_dockerfile_dir(parser)
     args = parser.parse_args(argv)

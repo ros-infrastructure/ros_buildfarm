@@ -46,4 +46,5 @@ try {
   println ""
 }
 """,
+    script_file=None,
 ))@
