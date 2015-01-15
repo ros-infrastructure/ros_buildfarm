@@ -32,3 +32,27 @@ ROS distro cache
 
 * ``rosdistro_cache`` generates the rosdistro cache for a specific ROS
   distribution.
+
+
+Synchronize packages between repositories
+-----------------------------------------
+
+TODO
+
+
+Import third-party packages into repositories
+---------------------------------------------
+
+TODO
+
+
+Regenerate jobs automatically
+-----------------------------
+
+TODO
+
+
+Trigger jobs / retrigger failing jobs
+-------------------------------------
+
+TODO
