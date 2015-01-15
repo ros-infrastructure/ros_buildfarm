@@ -1,57 +1,68 @@
-ROS buildfarm based on Docker
-=============================
+ROS build farm based on Docker
+==============================
 
-The ROS buildfarm is a new implementation using
-`Docker <http://www.docker.com>`_ for each step in the process.
-It is based on the ROS distro specification
-`REP 143 <http://www.ros.org/reps/rep-0143.html>`_ and uses a
-separate
-`configuration for the buildfarm <https://github.com/ros-infrastructure/ros_buildfarm_config>`_.
+For an overview about the ROS build farm including how to deploy the necessary
+machine see the [ROS wiki page](http://wiki.ros.org/buildfarm).
 
 
-What does it do?
-----------------
+Job types
+---------
 
-The buildfarm performs various different jobs.
+The ROS build farm performs several different jobs.
 For each job type you will find a detailed description what they do and how
 they work.
 
 * `release jobs <jobs/release_jobs.rst>`_ generate binary package
+
 * `devel jobs <jobs/devel_jobs.rst>`_ build and test ROS repositories
-* `prerelease jobs <jobs/prerelease_jobs.rst>`_ build and test ROS repositories
-  as well as build and test released ROS packages depending on them
+
 * doc jobs (to be done) generate the API documentation of packages
+
 * `miscellaneous jobs <jobs/miscellaneous_jobs.rst>`_ perform maintenance tasks
-  and generate informational data to visualize the status of the buildfarm and
+  and generate informational data to visualize the status of the build farm and
   its generated artifacts
 
 
-How to deploy a ROS buildfarm
------------------------------
+Configuration
+-------------
 
-There are various different use cases for running your own ROS buildfarm.
-The most common ones are listed below.
+The ROS build farm needs to be configured to specify custom URLs, credentials,
+and which jobs should be generated for which platforms and architectures.
 
-If you want to deploy your own buildfarm please read all how-to's before the
-one which fits your scenario since they build on-top of each other.
+The configuration is stored in a separate repository (e.g.
+[https://github.com/ros-infrastructure/ros_buildfarm_config](https://github.com/ros-infrastructure/ros_buildfarm_config)
+for the official ROS build farm.
 
-Please make sure that you have the latest released version of the ROS Python
-tools installed, e.g. rosdistro >= 0.4.0, rosdep >= 0.11.0, bloom >= 0.5.15.
+Each use case describes the configuration option most commonly used.
+But reference there is also a list of\
+`all configuration options <configuration.rst>`_ available.
 
-To run a deployment you will need to follow this `general process <general_process.rst>`_
+
+Generate the Jenkins jobs
+-------------------------
+
+In order to setup a custom build farm you will need to follow the
+`general process <general_process.rst>`_ instructions.
+They describe how to setup your environment to generate the administrative
+Jenkins jobs as well as which jobs need to be triggered to generate all other
+Jenkins jobs.
+
+Please continue reading all use cases before starting the process to figure
+out which fits your scenario since they build on-top of each other.
 
 
-Example Use Cases
------------------
+Common use cases
+----------------
 
 Below are some common use cases which describe specifics about how to customize.
 
-* run the `same buildfarm <how_to_deploy_buildfarm.rst>`_ locally which:
+* run the `same build farm <how_to_deploy_buildfarm.rst>`_ locally which:
 
-  * uses the same rosdistro database as well as
-  * the unmodified ROS buildfarm code
+  * uses the same rosdistro database
+  * the unmodified ROS build farm code
+  * the unmodified configuration
 
-* run a `customized buildfarm <how_to_deploy_customized_buildfarm.rst>`_ which
+* run a `customized build farm <how_to_deploy_customized_buildfarm.rst>`_ which
   uses:
 
   * a modified configuration to build:
@@ -61,6 +72,23 @@ Below are some common use cases which describe specifics about how to customize.
 
   * a modified codebase to perform the tasks differently
 
-* run a `buildfarm with a forked rosdistro database <how_to_fork_rosdistro_database.rst>`_
+* run a `build farm with a forked rosdistro database <how_to_fork_rosdistro_database.rst>`_
 
-* run a `buildfarm with custom packages <how_to_build_and_release_custom_packages.rst>`_
+* run a `build farm with custom packages <how_to_build_and_release_custom_packages.rst>`_
+
+
+Run jobs locally
+----------------
+
+Some of the job types can be easily run locally.
+This allows to reproduce the behavior of the build farm locally, eases
+debugging, and shortens the round-trip time for testing.
+
+* `release jobs <jobs/release_jobs.rst>`_ generate binary package
+
+* `devel jobs <jobs/devel_jobs.rst>`_ build and test ROS repositories
+
+Another job type can be used locally which is not offered on the build farm.
+
+* `prerelease jobs <jobs/prerelease_jobs.rst>`_ build and test ROS repositories
+  as well as build and test released ROS packages depending on them
