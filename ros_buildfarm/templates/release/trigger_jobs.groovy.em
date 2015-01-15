@@ -1,16 +1,10 @@
-import hudson.model.Cause
+import hudson.model.Cause.UpstreamCause
 import jenkins.model.Jenkins
 
 job_names = []
 @[for job_name in job_names]@
 job_names << "@job_name"
 @[end for]@
-
-class CustomCause extends Cause {
-    public String getShortDescription() {
-        return "Triggered by " + binding.variables["build"]
-    }
-}
 
 println "Triggering jobs..."
 triggered = 0
@@ -34,7 +28,7 @@ for (job_name in job_names) {
             break
         }
         println job_name
-        p.scheduleBuild(new CustomCause())
+        p.scheduleBuild(new UpstreamCause(binding.variables["build"]))
         triggered += 1
         break
     }
