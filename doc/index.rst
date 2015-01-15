@@ -38,6 +38,14 @@ one which fits your scenario since they build on-top of each other.
 Please make sure that you have the latest released version of the ROS Python
 tools installed, e.g. rosdistro >= 0.4.0, rosdep >= 0.11.0, bloom >= 0.5.15.
 
+To run a deployment you will need to follow this `general process <general_process.rst>`_
+
+
+Example Use Cases
+-----------------
+
+Below are some common use cases which describe specifics about how to customize.
+
 * run the `same buildfarm <how_to_deploy_buildfarm.rst>`_ locally which:
 
   * uses the same rosdistro database as well as

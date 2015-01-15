@@ -1,100 +1,42 @@
-How to deploy the same buildfarm locally?
+Configuring a Jenkins based ROS Buildfarm
 =========================================
 
-This how-to will make you setup a ROS buildfarm which is identical to the
-official ROS buildfarm.
-It will:
+This documents the process for setting up the ROS buildfarm.
+It will require you to customize several configuration files.
+There is documentation for how to modify the configuration files `at the root<index.rst>`_.
 
-* generate release packages
-* run continuous integration on commits and pull requests
-* generate API documentation
+As a reminder this document also assumes that you have successfully completed a `buildfarm_deployment <https://github.com/ros-infrastructure/ros_buildfarm_config>`_ and have the infrastructure already running.
 
+You will have to do three main steps:
 
-Provision the build farm machines
----------------------------------
-
-To provision the build farm machines please follow the documentation in the
-`buildfarm_deployment <https://github.com/ros-infrastructure/buildfarm_deployment>`_
-repository.
+* Define your configuration.
+* Deploy your configuration onto Jenkins.
+* Bootstrap and ongoing administration.
 
 
-Configure your buildfarm
-------------------------
+Create your configuration
+-------------------------
+
+The ros_buildfarm is designed to be configurable.
+To hold these configurations we use the ros_buildfarm_config repository.
 
 First you need to either fork the
 `ros_buildfarm_config <https://github.com/ros-infrastructure/ros_buildfarm_config>`_
 repository or create a repository containing these configuration files.
 
-Then you can update the configuration files:
 
-* **Disable the notification of package maintainers and committers** in order to
-  not send emails to everybody about the results of your custom buildfarm::
+Deploy your configuration
+-------------------------
 
-    all build files:
-      notifications:
-        committers: false
-       maintainers
-        committers: false
+There are several specific dependencies needed to deploy to the jenkins below they are itemized.
 
-* Change the Jenkins URL to point to your earlier provisioned Jenkins master::
-
-    index.yaml:
-      jenkins_url: http://jenkins_hostname.example.com:8080
-
-* Change the repository URLs to point to your earlier provisioned ``repo``
-  host::
-
-    index.yaml:
-      status_page_repositories:
-        CUSTOM_NAME:
-        - http://repo_hostname.example.com/ubuntu/building
-        - http://repo_hostname.example.com/ubuntu/testing
-        - http://repo_hostname.example.com/ubuntu/main
-
-* Change the email address which gets notified about any administrative
-  events::
-
-    index.yaml:
-      notification_emails:
-      - ...
-
-    all build files:
-      notifications:
-        emails:
-        - ...
-
-* Change the repository URLS and keys to point to your earlier provisioned
-  *repo* machine.
-
-  The release build file usually points to the ``building`` repository::
-
-    release build files:
-      repositories:
-        urls:
-        - http://repo_hostname.example.com/ubuntu/building
-        keys
-        - |
-          ...
-          ...
-      target_repository: http://repo_hostname.example.com/ubuntu/building
-
-  The source / doc build files usually point to the ``testing`` repository::
-
-    release build files:
-      repositories:
-        urls:
-        - http://repo_hostname.example.com/ubuntu/testing
-        keys
-        - |
-          ...
-          ...
-
-  You can extract the repository key from the ``buildfarm_deployment``
-  configuration.
+If you would prefer to use a docker container
+`this <https://github.com/tfoote/buildfarm_inprogress_helpers>`_ repository
+which will set up the described environment for you inside a Docker container and you can skip the setup below.
 
 
 Setup your machine to configure Jenkins
----------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For generating Jenkins jobs you need the following software:
 
@@ -106,43 +48,41 @@ For generating Jenkins jobs you need the following software:
 
 E.g. using the following commands on Ubuntu Trusty::
 
-    sudo apt-get update && sudo apt-get install python3 python3-all python3-pip
+  sudo apt-get update && sudo apt-get install python3 python3-all python3-pip
 
-    mkdir /tmp/deploy_ros_buildfarm
-    cd /tmp/deploy_ros_buildfarm
-    pyvenv-3.4 venv
-    . venv/bin/activate
-    pip3 install empy
-    pip3 install rosdistro
-    pip3 install jenkinsapi
+  mkdir /tmp/deploy_ros_buildfarm
+  cd /tmp/deploy_ros_buildfarm
+  pyvenv-3.4 --without-pip venv
+  . venv/bin/activate
+  # workaround for https://bugs.launchpad.net/ubuntu/+source/python3.4/+bug/1290847
+  curl https://bootstrap.pypa.io/get-pip.py | /tmp/env/bin/python3
+  pip3 install empy
+  pip3 install rosdistro
+  pip3 install jenkinsapi
 
-    git clone https://github.com/ros-infrastructure/ros_buildfarm.git
-    cd ros_buildfarm
-    export PYTHONPATH=`pwd`:$PYTHONPATH
+  git clone https://github.com/ros-infrastructure/ros_buildfarm.git
+  cd ros_buildfarm
+  export PYTHONPATH=`pwd`:$PYTHONPATH
 
 Create the file ``~/.buildfarm/jenkins.ini`` containing your credentials to log
 in to the Jenkins master, e.g.::
 
-    [jenkins_hostname.example.com]
-    username=admin
-    password=changeme
-
-You can use the helper script in
-`this <https://github.com/tfoote/buildfarm_inprogress_helpers>`_ repository
-which will set up the described environment for you inside a Docker instance.
+  [jenkins_hostname.example.com]
+  username=admin
+  password=changeme
 
 
 Generate the Jenkins jobs
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To generate the administrative jobs invoke the following commands pointing to
 the URL of your buildfarm configuration::
 
-    /tmp/deploy_ros_buildfarm/ros_buildfarm/scripts/generate_all_jobs.py https://raw.githubusercontent.com/YOUR_FORK/ros_buildfarm_config/master/index.yaml
+  /tmp/deploy_ros_buildfarm/ros_buildfarm/scripts/generate_all_jobs.py https://raw.githubusercontent.com/YOUR_FORK/ros_buildfarm_config/master/index.yaml
 
 
-Run administrative tasks
-------------------------
+Run bootstrap administrative tasks
+----------------------------------
 
 Log in as the *admin* user to the Jenkins master.
 
@@ -177,8 +117,11 @@ Run the following jobs from the *Manage* view:
 * ``*__reconfigure-jobs`` to generate all the jobs
 
 
+Ongoing operations
+------------------
+
 Generated jobs
---------------
+^^^^^^^^^^^^^^
 
 All management related jobs are shown in the ``Manage`` view in Jenkins.
 
@@ -193,13 +136,13 @@ For details please see the job specific documentation pages referenced from the
 index page.
 
 
-Ongoing operations
-------------------
+Monitoring
+^^^^^^^^^^
 
 You might want to check:
 
-* the output of the ``dashboard`` job to get an overview about the status of all
-  jobs
+* the output of the ``dashboard`` job to get an overview about the status of
+  all jobs
 
 * the generated status pages http://REPO_HOSTNAME/status_page/ to see the
   progress of the generated packages
@@ -216,5 +159,14 @@ the ``main`` repository you must manually invoke the corresponding
 Users using your custom binary packages
 ---------------------------------------
 
-The users must replace the original ROS repository in their APY sources files
+The users must replace the original ROS repository in their APT sources files
 with the URL of your ``repo`` host in order to use your binary packages.
+
+They should also update their ROSDISTRO_INDEX_URL to point to the configured one so as to use the updated cache build by this buildfarm.
+
+
+Releasing into a custom rosdistro
+---------------------------------
+
+It is possible to release directly into the last rosdistro file in the ROSDISTRO index file.
+Bloom will choose the last element of the ROSDISTRO_INDEX distribution list.
