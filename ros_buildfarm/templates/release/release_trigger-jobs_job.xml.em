@@ -71,7 +71,7 @@
         'mkdir -p $WORKSPACE/trigger_jobs',
         '',
         '# monitor all subprocesses and enforce termination',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_trigger_jobs/subprocess_reaper.log 2>&1 &',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ --cid-file $WORKSPACE/docker_trigger_jobs/docker.cid > $WORKSPACE/docker_trigger_jobs/subprocess_reaper.log 2>&1 &',
         '# sleep to give python time to startup',
         'sleep 1',
         '',

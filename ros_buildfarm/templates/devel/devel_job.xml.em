@@ -101,7 +101,7 @@
         'mkdir -p $WORKSPACE/docker_generating_dockers',
         '',
         '# monitor all subprocesses and enforce termination',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_generating_dockers/subprocess_reaper.log 2>&1 &',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ --cid-file $WORKSPACE/docker_generating_dockers/docker.cid > $WORKSPACE/docker_generating_dockers/subprocess_reaper.log 2>&1 &',
         '# sleep to give python time to startup',
         'sleep 1',
         '',
@@ -148,7 +148,7 @@
     'builder_shell',
     script='\n'.join([
         '# monitor all subprocesses and enforce termination',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_build_and_install/subprocess_reaper.log 2>&1 &',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ --cid-file $WORKSPACE/docker_build_and_install/docker.cid > $WORKSPACE/docker_build_and_install/subprocess_reaper.log 2>&1 &',
         '# sleep to give python time to startup',
         'sleep 1',
         '',
@@ -172,7 +172,7 @@
     'builder_shell',
     script='\n'.join([
         '# monitor all subprocesses and enforce termination',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_build_and_test/subprocess_reaper.log 2>&1 &',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ --cid-file $WORKSPACE/docker_build_and_test/docker.cid > $WORKSPACE/docker_build_and_test/subprocess_reaper.log 2>&1 &',
         '# sleep to give python time to startup',
         'sleep 1',
         '',

@@ -44,7 +44,7 @@
         'mkdir -p $WORKSPACE/docker_check_sync_criteria',
         '',
         '# monitor all subprocesses and enforce termination',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ > $WORKSPACE/docker_check_sync_criteria/subprocess_reaper.log 2>&1 &',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ --cid-file $WORKSPACE/docker_check_sync_criteria/docker.cid > $WORKSPACE/docker_check_sync_criteria/subprocess_reaper.log 2>&1 &',
         '# sleep to give python time to startup',
         'sleep 1',
         '',
