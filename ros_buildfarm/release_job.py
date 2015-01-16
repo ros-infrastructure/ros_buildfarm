@@ -459,8 +459,7 @@ def _get_sourcedeb_job_config(
 
         'sourcedeb_files': sourcedeb_files,
 
-        'import_package_job_name': get_import_package_job_name(
-            rosdistro_name, release_build_name),
+        'import_package_job_name': get_import_package_job_name(rosdistro_name),
         'debian_package_name': get_debian_package_name(
             rosdistro_name, pkg_name),
 
@@ -520,8 +519,7 @@ def _get_binarydeb_job_config(
 
         'binarydeb_files': binarydeb_files,
 
-        'import_package_job_name': get_import_package_job_name(
-            rosdistro_name, release_build_name),
+        'import_package_job_name': get_import_package_job_name(rosdistro_name),
         'debian_package_name': get_debian_package_name(
             rosdistro_name, pkg_name),
 
@@ -548,7 +546,7 @@ def configure_import_package_job(
     if jenkins is None:
         jenkins = connect(config.jenkins_url)
 
-    job_name = get_import_package_job_name(rosdistro_name, release_build_name)
+    job_name = get_import_package_job_name(rosdistro_name)
     job_config = _get_import_package_job_config(build_file)
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
@@ -557,8 +555,8 @@ def configure_import_package_job(
         configure_job(jenkins, job_name, job_config)
 
 
-def get_import_package_job_name(rosdistro_name, release_build_name):
-    view_name = get_release_job_prefix(rosdistro_name, release_build_name)
+def get_import_package_job_name(rosdistro_name):
+    view_name = get_release_job_prefix(rosdistro_name)
     return '%s_import-package' % view_name
 
 
