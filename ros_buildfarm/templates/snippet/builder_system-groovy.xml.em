@@ -10,5 +10,5 @@
       </scriptSource>
 @[end if]@
       <bindings/>
-      <classpath/>
+      <classpath>@classpath</classpath>
     </hudson.plugins.groovy.SystemGroovy>

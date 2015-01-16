@@ -113,7 +113,7 @@ def trigger_release_jobs(
         print("Writing groovy script '%s' to trigger %d jobs" %
               (groovy_script, len(triggered_jobs)))
         data = {
-            'job_names': sorted(triggered_jobs),
+            'job_names': triggered_jobs,
         }
         content = expand_template('release/trigger_jobs.groovy.em', data)
         with open(groovy_script, 'w') as h:

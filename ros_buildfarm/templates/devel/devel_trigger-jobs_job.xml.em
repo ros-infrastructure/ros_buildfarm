@@ -111,6 +111,7 @@ for (p in hudson.model.Hudson.instance.getAllItems(AbstractProject)) {
 }
 """ % project_name_pattern,
     script_file=None,
+    classpath='',
 ))@
   </builders>
   <publishers>

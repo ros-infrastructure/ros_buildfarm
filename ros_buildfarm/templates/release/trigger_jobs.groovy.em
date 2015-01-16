@@ -2,11 +2,11 @@ import hudson.model.Cause.UpstreamCause
 import jenkins.model.Jenkins
 
 job_names = []
-@[for job_name in job_names]@
+@[for job_name in sorted(job_names)]@
 job_names << "@job_name"
 @[end for]@
 
-println "Triggering jobs..."
+println "Triggering " + job_names.size + " jobs..."
 triggered = 0
 skipped = 0
 for (job_name in job_names) {
