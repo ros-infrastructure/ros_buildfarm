@@ -307,19 +307,18 @@ def configure_release_job(
     binary_job_names = []
 
     # sourcedeb job
-    job_name = get_sourcedeb_job_name(
+    source_job_name = get_sourcedeb_job_name(
         rosdistro_name, release_build_name,
         pkg_name, os_name, os_code_name)
 
     job_config = _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name,
-        build_file.targets[os_name][os_code_name],
         pkg_name, repo_name, repo.release_repository, dist_cache=dist_cache)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_job(jenkins, job_name, job_config)
-    source_job_names.append(job_name)
+        configure_job(jenkins, source_job_name, job_config)
+    source_job_names.append(source_job_name)
 
     dependency_names = []
     if build_file.abi_incompatibility_assumed:
@@ -341,7 +340,7 @@ def configure_release_job(
             rosdistro_name, release_build_name,
             pkg_name, os_name, os_code_name, arch)
 
-        upstream_job_names = [
+        upstream_job_names = [source_job_name] + [
             get_binarydeb_job_name(
                 rosdistro_name, release_build_name,
                 dependency_name, os_name, os_code_name, arch)
@@ -423,7 +422,7 @@ def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
 
 def _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
-        config, build_file, os_name, os_code_name, binary_arches,
+        config, build_file, os_name, os_code_name,
         pkg_name, repo_name, release_repository, dist_cache=None):
     template_name = 'release/sourcedeb_job.xml.em'
 
@@ -436,12 +435,6 @@ def _get_sourcedeb_job_config(
         'sourcedeb/*.orig.tar.gz',
         'sourcedeb/*_source.changes',
     ]
-
-    binary_job_names = [
-        get_binarydeb_job_name(
-            rosdistro_name, release_build_name,
-            pkg_name, os_name, os_code_name, arch)
-        for arch in binary_arches]
 
     maintainer_emails = get_maintainer_emails(dist_cache, repo_name) \
         if build_file.notify_maintainers \
@@ -470,8 +463,6 @@ def _get_sourcedeb_job_config(
             rosdistro_name, release_build_name),
         'debian_package_name': get_debian_package_name(
             rosdistro_name, pkg_name),
-
-        'child_projects': binary_job_names,
 
         'notify_emails': set(config.notify_emails + build_file.notify_emails),
         'maintainer_emails': maintainer_emails,
