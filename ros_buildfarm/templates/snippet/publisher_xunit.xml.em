@@ -1,4 +1,4 @@
-    <xunit plugin="xunit@@1.92">
+    <xunit plugin="xunit@@1.93">
       <types>
         <JUnitType>
           <pattern>@ESCAPE(pattern)</pattern>
