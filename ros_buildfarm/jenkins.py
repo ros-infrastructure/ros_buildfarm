@@ -68,7 +68,7 @@ def configure_view(
         print("Updating view '%s'" % view_name)
         print('   ', '<<<')
         for line in diff:
-            print('   ', line)
+            print('   ', line.rstrip('\n'))
         print('   ', '>>>')
         try:
             view.update_config(view_config)
@@ -114,7 +114,7 @@ def configure_job(jenkins, job_name, job_config, view=None):
                 print("Updating job '%s'" % job_name)
                 print('   ', '<<<')
                 for line in diff:
-                    print('   ', line)
+                    print('   ', line.rstrip('\n'))
                 print('   ', '>>>')
                 job.update_config(job_config)
     except Exception:
