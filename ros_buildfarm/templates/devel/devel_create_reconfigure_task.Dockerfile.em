@@ -42,7 +42,8 @@ cmd = \
     ' /tmp/ros_buildfarm/scripts/devel/generate_devel_jobs.py' + \
     ' ' + config_url + \
     ' ' + rosdistro_name + \
-    ' ' + source_build_name + \
-    ' --groovy-script ' + groovy_script
+    ' ' + source_build_name
+if groovy_script:
+    cmd += ' --groovy-script ' + groovy_script
 }@
 CMD ["@cmd"]
