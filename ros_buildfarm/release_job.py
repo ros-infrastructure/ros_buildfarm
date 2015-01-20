@@ -489,7 +489,7 @@ def _get_binarydeb_job_config(
     ]
 
     sync_to_testing_job_name = [get_sync_packages_to_testing_job_name(
-        rosdistro_name, release_build_name, os_code_name, arch)]
+        rosdistro_name, os_code_name, arch)]
 
     maintainer_emails = get_maintainer_emails(dist_cache, repo_name) \
         if build_file.notify_maintainers \
@@ -581,7 +581,7 @@ def configure_sync_packages_to_testing_job(
         jenkins = connect(config.jenkins_url)
 
     job_name = get_sync_packages_to_testing_job_name(
-        rosdistro_name, release_build_name, os_code_name, arch)
+        rosdistro_name, os_code_name, arch)
     job_config = _get_sync_packages_to_testing_job_config(
         config_url, rosdistro_name, release_build_name, os_code_name, arch,
         config, build_file)
@@ -593,8 +593,8 @@ def configure_sync_packages_to_testing_job(
 
 
 def get_sync_packages_to_testing_job_name(
-        rosdistro_name, release_build_name, os_code_name, arch):
-    view_name = get_release_job_prefix(rosdistro_name, release_build_name)
+        rosdistro_name, os_code_name, arch):
+    view_name = get_release_job_prefix(rosdistro_name)
     return '%s_sync-packages-to-testing_%s_%s' % \
         (view_name, os_code_name, arch)
 
@@ -637,7 +637,7 @@ def configure_sync_packages_to_main_job(
         jenkins = connect(config.jenkins_url)
 
     job_name = get_sync_packages_to_main_job_name(
-        rosdistro_name, release_build_name)
+        rosdistro_name)
     job_config = _get_sync_packages_to_main_job_config(
         rosdistro_name, build_file)
 
@@ -647,8 +647,8 @@ def configure_sync_packages_to_main_job(
         configure_job(jenkins, job_name, job_config)
 
 
-def get_sync_packages_to_main_job_name(rosdistro_name, release_build_name):
-    view_name = get_release_job_prefix(rosdistro_name, release_build_name)
+def get_sync_packages_to_main_job_name(rosdistro_name):
+    view_name = get_release_job_prefix(rosdistro_name)
     return '%s_sync-packages-to-main' % view_name
 
 
