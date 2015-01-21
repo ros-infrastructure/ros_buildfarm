@@ -15,17 +15,39 @@ job_prefixes_and_names['@job_type'] = [
     'job_prefix': '@(job_prefixes_and_names[job_type][0])',
     'job_names': [],
 ]
-@[for job_name in sorted(job_prefixes_and_names[job_type][1])]@
-job_prefixes_and_names['@job_type'].job_names << '@job_name'
+@{
+job_names = sorted(job_prefixes_and_names[job_type][1])
+group_size = 1000
+}@
+// group job names in chunks of @group_size to not exceed groovy limits
+@[for i in range(0, len(job_names), group_size)]@
+def add_job_prefixes_and_names_@(job_type)_@(int(i / group_size) + 1)(job_names) {
+@[for j in range(i, min(i + group_size, len(job_names)))]@
+job_names << '@(job_names[j])'
 @[end for]@
-
+}
+add_job_prefixes_and_names_@(job_type)_@(int(i / group_size) + 1)(job_prefixes_and_names['@job_type'].job_names)
+@[end for]@
 @[end for]@
 
 // job configurations
 job_configs = [:]
-@[for job_name in sorted(job_configs.keys())]@
-job_configs['@job_name'] = '''@job_configs[job_name]'''
+@{
+job_config_keys = sorted(job_configs.keys())
+group_size = 1000
+}@
+// group job configs in chunks of @group_size to not exceed groovy limits
+@[for i in range(0, len(job_config_keys), group_size)]@
+def add_job_config_@(int(i / group_size) + 1)(job_configs) {
+@[for j in range(i, min(i + group_size, len(job_config_keys)))]@
+job_configs['@job_config_keys[j]'] = '''@(job_configs[job_config_keys[j]].replace('\\', '\\\\'))'''
+
 @[end for]@
+}
+add_job_config_@(int(i / group_size) + 1)(job_configs)
+
+@[end for]@
+
 
 
 def diff_configs(current_config_file, new_config) {
