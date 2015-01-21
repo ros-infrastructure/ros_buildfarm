@@ -101,10 +101,7 @@ def configure_release_jobs(
             filtered_pkg_names = \
                 set(filtered_pkg_names) - implicitly_ignored_pkg_names
 
-    if groovy_script is None:
-        jenkins = connect(config.jenkins_url)
-    else:
-        jenkins = False
+    jenkins = connect(config.jenkins_url)
 
     configure_import_package_job(
         config_url, rosdistro_name, release_build_name,
@@ -119,6 +116,9 @@ def configure_release_jobs(
                 config_url, rosdistro_name, release_build_name,
                 os_code_name, arch,
                 config=config, build_file=build_file, jenkins=jenkins)
+
+    if groovy_script is not None:
+        jenkins = False
 
     targets = []
     for os_name, os_code_name in platforms:
