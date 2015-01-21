@@ -2,7 +2,7 @@ ROS build farm based on Docker
 ==============================
 
 For an overview about the ROS build farm including how to deploy the necessary
-machine see the [ROS wiki page](http://wiki.ros.org/buildfarm).
+machine see the `ROS wiki page <http://wiki.ros.org/buildfarm>`_.
 
 
 Job types
@@ -12,7 +12,7 @@ The ROS build farm performs several different jobs.
 For each job type you will find a detailed description what they do and how
 they work.
 
-* `release jobs <jobs/release_jobs.rst>`_ generate binary package
+* `release jobs <jobs/release_jobs.rst>`_ generate binary packages
 
 * `devel jobs <jobs/devel_jobs.rst>`_ build and test ROS repositories
 
@@ -30,11 +30,11 @@ The ROS build farm needs to be configured to specify custom URLs, credentials,
 and which jobs should be generated for which platforms and architectures.
 
 The configuration is stored in a separate repository (e.g.
-[https://github.com/ros-infrastructure/ros_buildfarm_config](https://github.com/ros-infrastructure/ros_buildfarm_config)
+`ros_buildfarm_config <https://github.com/ros-infrastructure/ros_buildfarm_config>`_
 for the official ROS build farm.
 
-Each use case describes the configuration option most commonly used.
-But reference there is also a list of\
+Each use case below describes the configuration option most commonly used.
+But for reference there is also a list of
 `all configuration options <configuration.rst>`_ available.
 
 
@@ -84,9 +84,11 @@ Some of the job types can be easily run locally.
 This allows to reproduce the behavior of the build farm locally, eases
 debugging, and shortens the round-trip time for testing.
 
-* `release jobs <jobs/release_jobs.rst>`_ generate binary package
+* `release jobs#run-the-release-job-locally <jobs/release_jobs.rst#run-the-release-job-locally>`_
+  generate binary packages
 
-* `devel jobs <jobs/devel_jobs.rst>`_ build and test ROS repositories
+* `devel jobs#run-the-devel-job-locally <jobs/devel_jobs.rst#run-the-devel-job-locally>`_
+  build and test ROS repositories
 
 Another job type can be used locally which is not offered on the build farm.
 
