@@ -43,5 +43,7 @@ cmd = \
     ' ' + config_url + \
     ' ' + rosdistro_name + \
     ' ' + source_build_name
+if groovy_script:
+    cmd += ' --groovy-script ' + groovy_script
 }@
 CMD ["@cmd"]

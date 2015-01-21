@@ -48,9 +48,18 @@
 ))@
 @(SNIPPET(
     'builder_shell',
+    script="""rm -fr $WORKSPACE/classpath
+mkdir -p $WORKSPACE/classpath
+cd $WORKSPACE/classpath
+wget https://java-diff-utils.googlecode.com/files/diffutils-1.2.1.jar""",
+))@
+@(SNIPPET(
+    'builder_shell',
     script='\n'.join([
         'rm -fr $WORKSPACE/docker_generate_release_jobs',
+        'rm -fr $WORKSPACE/reconfigure_jobs',
         'mkdir -p $WORKSPACE/docker_generate_release_jobs',
+        'mkdir -p $WORKSPACE/reconfigure_jobs',
         '',
         '# monitor all subprocesses and enforce termination',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ --cid-file $WORKSPACE/docker_generate_release_jobs/docker.cid > $WORKSPACE/docker_generate_release_jobs/subprocess_reaper.log 2>&1 &',
@@ -66,6 +75,7 @@
         ' ' + rosdistro_name +
         ' ' + release_build_name +
         ' ' + ' '.join(repository_args) +
+        ' --groovy-script /tmp/reconfigure_jobs/reconfigure_jobs.groovy' +
         ' --dockerfile-dir $WORKSPACE/docker_generate_release_jobs',
         'echo "# END SECTION"',
         '',
@@ -81,9 +91,16 @@
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v %s:%s:ro' % (credentials_src, credentials_dst) +
+        ' -v $WORKSPACE/reconfigure_jobs:/tmp/reconfigure_jobs' +
         ' release_reconfigure_jobs',
         'echo "# END SECTION"',
     ]),
+))@
+@(SNIPPET(
+    'builder_system-groovy',
+    command=None,
+    script_file='$WORKSPACE/reconfigure_jobs/reconfigure_jobs.groovy',
+    classpath='$WORKSPACE/classpath/diffutils-1.2.1.jar',
 ))@
   </builders>
   <publishers>

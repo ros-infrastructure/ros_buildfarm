@@ -28,7 +28,7 @@ from ros_buildfarm.templates import expand_template
 
 def configure_release_jobs(
         config_url, rosdistro_name, release_build_name,
-        append_timestamp=False):
+        append_timestamp=False, groovy_script=None):
     """
     Configure all Jenkins release jobs.
 
@@ -101,7 +101,10 @@ def configure_release_jobs(
             filtered_pkg_names = \
                 set(filtered_pkg_names) - implicitly_ignored_pkg_names
 
-    jenkins = connect(config.jenkins_url)
+    if groovy_script is None:
+        jenkins = connect(config.jenkins_url)
+    else:
+        jenkins = False
 
     configure_import_package_job(
         config_url, rosdistro_name, release_build_name,
@@ -122,11 +125,15 @@ def configure_release_jobs(
         targets.append((os_name, os_code_name, 'source'))
         for arch in build_file.targets[os_name][os_code_name]:
             targets.append((os_name, os_code_name, arch))
-    views = configure_release_views(
-        jenkins, rosdistro_name, release_build_name, targets)
+    if groovy_script is None:
+        views = configure_release_views(
+            jenkins, rosdistro_name, release_build_name, targets)
+    else:
+        views = []
 
     all_source_job_names = []
     all_binary_job_names = []
+    all_job_configs = {}
     for pkg_name in sorted(filtered_pkg_names):
         pkg = dist_file.release_packages[pkg_name]
         repo_name = pkg.repository_name
@@ -142,29 +149,47 @@ def configure_release_jobs(
 
         for os_name, os_code_name in platforms:
             try:
-                source_job_names, binary_job_names = configure_release_job(
-                    config_url, rosdistro_name, release_build_name,
-                    pkg_name, os_name, os_code_name,
-                    append_timestamp=append_timestamp,
-                    config=config, build_file=build_file,
-                    index=index, dist_file=dist_file, dist_cache=dist_cache,
-                    jenkins=jenkins, views=views,
-                    generate_import_package_job=False,
-                    generate_sync_packages_jobs=False)
+                source_job_names, binary_job_names, job_configs = \
+                    configure_release_job(
+                        config_url, rosdistro_name, release_build_name,
+                        pkg_name, os_name, os_code_name,
+                        append_timestamp=append_timestamp,
+                        config=config, build_file=build_file,
+                        index=index, dist_file=dist_file,
+                        dist_cache=dist_cache,
+                        jenkins=jenkins, views=views,
+                        generate_import_package_job=False,
+                        generate_sync_packages_jobs=False,
+                        groovy_script=groovy_script)
                 all_source_job_names += source_job_names
                 all_binary_job_names += binary_job_names
+                if groovy_script is not None:
+                    print('Configuration for jobs: ' +
+                          ', '.join(source_job_names + binary_job_names))
+                    all_job_configs.update(job_configs)
             except JobValidationError as e:
                 print(e.message, file=sys.stderr)
 
-    # delete obsolete binary jobs
-    print('Removing obsolete binary jobs')
-    view_prefix = get_release_binary_view_prefix(
+    binary_view_prefix = get_release_binary_view_prefix(
         rosdistro_name, release_build_name)
-    remove_jobs(jenkins, '%s__' % view_prefix, all_binary_job_names)
+    binary_job_prefix = '%s__' % binary_view_prefix
+
+    if groovy_script is None:
+        # delete obsolete binary jobs
+        print('Removing obsolete binary jobs')
+        remove_jobs(jenkins, binary_job_prefix, all_binary_job_names)
+    else:
+        data = {
+            'job_configs': all_job_configs,
+            'job_prefixes_and_names': {
+                'binary': (binary_job_prefix, all_binary_job_names),
+            }
+        }
 
     # delete obsolete source jobs
     # requires knowledge about all other release build files
-    print('Removing obsolete source jobs')
+    if groovy_script is None:
+        print('Removing obsolete source jobs')
     for os_name, os_code_name in platforms:
         other_source_job_names = []
         # get source job names for all other release build files
@@ -195,10 +220,25 @@ def configure_release_jobs(
                     pkg_name, os_name, os_code_name)
                 other_source_job_names.append(other_job_name)
 
-        job_prefix = get_release_source_view_name(
+        source_view_prefix = get_release_source_view_name(
             rosdistro_name, os_name, os_code_name)
-        remove_jobs(jenkins, '%s__' % job_prefix,
-                    all_source_job_names + other_source_job_names)
+        source_job_prefix = '%s__' % source_view_prefix
+        if groovy_script is None:
+            remove_jobs(jenkins, source_job_prefix,
+                        all_source_job_names + other_source_job_names)
+        else:
+            source_key = 'source_%s_%s' % (os_name, os_code_name)
+            data['job_prefixes_and_names'][source_key] = (
+                source_job_prefix,
+                [j for j in (all_source_job_names + other_source_job_names)
+                 if j.startswith(source_job_prefix)])
+
+    if groovy_script is not None:
+        print("Writing groovy script '%s' to reconfigure %d jobs" %
+              (groovy_script, len(all_job_configs)))
+        content = expand_template('snippet/reconfigure_jobs.groovy.em', data)
+        with open(groovy_script, 'w') as h:
+            h.write(content)
 
 
 def _get_downstream_package_names(pkg_names, dependencies):
@@ -220,6 +260,7 @@ def configure_release_job(
         jenkins=None, views=None,
         generate_import_package_job=True,
         generate_sync_packages_jobs=True,
+        groovy_script=None,
         filter_arches=None):
     """
     Configure a Jenkins release job.
@@ -305,6 +346,7 @@ def configure_release_job(
 
     source_job_names = []
     binary_job_names = []
+    job_configs = {}
 
     # sourcedeb job
     source_job_name = get_sourcedeb_job_name(
@@ -319,6 +361,7 @@ def configure_release_job(
     if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, source_job_name, job_config)
     source_job_names.append(source_job_name)
+    job_configs[source_job_name] = job_config
 
     dependency_names = []
     if build_file.abi_incompatibility_assumed:
@@ -355,8 +398,9 @@ def configure_release_job(
         if isinstance(jenkins, object) and jenkins is not False:
             configure_job(jenkins, job_name, job_config)
         binary_job_names.append(job_name)
+        job_configs[job_name] = job_config
 
-    return source_job_names, binary_job_names
+    return source_job_names, binary_job_names, job_configs
 
 
 def configure_release_views(

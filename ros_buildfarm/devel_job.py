@@ -159,7 +159,7 @@ def configure_devel_jobs(
                     pull_request_job_prefix, pull_request_job_names),
             }
         }
-        content = expand_template('devel/reconfigure_jobs.groovy.em', data)
+        content = expand_template('snippet/reconfigure_jobs.groovy.em', data)
         with open(groovy_script, 'w') as h:
             h.write(content)
 
