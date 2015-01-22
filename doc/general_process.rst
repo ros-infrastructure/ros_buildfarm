@@ -1,18 +1,21 @@
-Configuring a Jenkins based ROS Buildfarm
-=========================================
+Configuring a Jenkins based ROS build farm
+==========================================
 
-This documents the process for setting up the ROS buildfarm.
+This documents the process for setting up the ROS build farm.
 It will require you to customize several configuration files.
-There is documentation for how to modify the configuration files `at the root<index.rst>`_.
+There is documentation for how to modify the configuration files  for common use cases `at the root<index.rst>`_.
 
-As a reminder this document also assumes that you have successfully completed a `buildfarm_deployment <https://github.com/ros-infrastructure/ros_buildfarm_config>`_ and have the infrastructure already running.
+As a reminder this document also assumes that you have successfully completed a `buildfarm_deployment <https://github.com/ros-infrastructure/buildfarm_deployment>`_ and have the infrastructure already running.
 
 You will have to do three main steps:
 
 * Define your configuration.
 * Deploy your configuration onto Jenkins.
-* Bootstrap and ongoing administration.
+* Bootstrap
 
+After completing the bootstrap there will also be ongoing administration.
+
+.. contents:: :depth: 2
 
 Create your configuration
 -------------------------
@@ -23,7 +26,7 @@ To hold these configurations we use the ros_buildfarm_config repository.
 First you need to either fork the
 `ros_buildfarm_config <https://github.com/ros-infrastructure/ros_buildfarm_config>`_
 repository or create a repository containing these configuration files.
-
+There is documentation for how to modify the configuration files `at the root<index.rst>`_.
 
 Deploy your configuration
 -------------------------
@@ -76,7 +79,7 @@ Generate the Jenkins jobs
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To generate the administrative jobs invoke the following commands pointing to
-the URL of your buildfarm configuration::
+the URL of your buildfarm configuration, substituting `YOUR_FORK` for the ::
 
   /tmp/deploy_ros_buildfarm/ros_buildfarm/scripts/generate_all_jobs.py https://raw.githubusercontent.com/YOUR_FORK/ros_buildfarm_config/master/index.yaml
 
@@ -84,13 +87,13 @@ the URL of your buildfarm configuration::
 Run bootstrap administrative tasks
 ----------------------------------
 
-Log in as the *admin* user to the Jenkins master.
+Log in as the *admin* user to the Jenkins master using your password defined in the configuration.
 
 
 Import packages
 ^^^^^^^^^^^^^^^
 
-Run the following jobs from the *Manage* view:
+Run the following job from the *Manage* view:
 
 * ``import_upstream`` to get all the required bootstrap packages into the
   repository
@@ -151,18 +154,39 @@ You might want to check:
 Manually sync packages
 ^^^^^^^^^^^^^^^^^^^^^^
 
+Packages are built in the ``building`` repository.
+When the automated sync threshold is passed, packages will automatically be synced into the ``testing repository``.
+It is the responsibility of the release manager to sync packages from ``testing`` into the ``main`` repsitory.
+This is specifically a manual process and should be done after adaquate testing the packages in the ``testing`` repository.
+
 Whenever you want to sync the current state of packages from the ``testing`` to
 the ``main`` repository you must manually invoke the corresponding
-``sync-packages-to-main`` job.
+``*sync-packages-to-main`` job.
+
+Guidelines for gating a sync to main
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+Note this job is ``Release`` specific, but unlike the jobs which sync into testing is not architecture specific.
+The lack of arch specific syncs to main is on purpose as the main repository should be maintained as uniform as possible between architectures.
+When preparing for a sync it is recommended to review the debbuild status page.
+It will be hosted by default on http://repo_hostame.example.com/status_page with pages for each ``Release``.
+There are filters for viewing regressions, and what packages will sync if the sync to main is run as well as the ability to search.
+
+Note: A version downgrade is also marked as a regression since users version of apt will not install a lower version automatically.
 
 
-Users using your custom binary packages
----------------------------------------
+Users + Developers Setup
+------------------------
 
-The users must replace the original ROS repository in their APT sources files
-with the URL of your ``repo`` host in order to use your binary packages.
+Apt Sources
+^^^^^^^^^^^
 
-They should also update their ROSDISTRO_INDEX_URL to point to the configured one so as to use the updated cache build by this buildfarm.
+To be able to use the repository all users must either replace or append to the original ROS repository in their APT sources files with the URL of your ``repo`` host in order to use your binary packages.
+
+ROSDISTRO_INDEX_URL
+^^^^^^^^^^^^^^^^^^^
+
+Users of the custom buildfarm should also update their ``ROSDISTRO_INDEX_URL`` to point to the configured one so as to use the updated cache build by this build farm.
 
 
 Releasing into a custom rosdistro
