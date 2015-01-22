@@ -5,6 +5,7 @@ from __future__ import print_function
 import argparse
 from copy import deepcopy
 from em import BANGPATH_OPT
+from em import Hook
 import os
 import stat
 import sys
@@ -127,18 +128,26 @@ def main(argv=sys.argv[1:]):
     scms = [(repositories[k], 'catkin_workspace/src/%s' % k)
             for k in sorted(repositories.keys())]
 
-    # collect all template snippets of specific types from the devel job
-    print('Evaluating job templates...')
-    scripts = []
+    # collect all template snippets of specific types
+    class IncludeHook(Hook):
 
-    def template_hook(template_name, data, content):
-        if template_name == 'snippet/builder_shell.xml.em':
-            scripts.append(data['script'])
-    templates.template_hook = template_hook
+        def __init__(self):
+            Hook.__init__(self)
+            self.scripts = []
+
+        def beforeInclude(self, *args, **kwargs):
+            template_path = kwargs['file'].name
+            print(template_path, file=sys.stderr)
+            if template_path.endswith('/snippet/builder_shell.xml.em'):
+                self.scripts.append(kwargs['locals']['script'])
+
+    hook = IncludeHook()
+    templates.template_hooks = [hook]
 
     # use random source repo to pass to devel job template
     source_repository = deepcopy(list(repositories.values())[0])
     source_repository.name = 'prerelease'
+    print('Evaluating job templates...')
     configure_devel_job(
         args.config_url, args.rosdistro_name, args.source_build_name,
         None, args.os_name, args.os_code_name, args.arch,
@@ -147,11 +156,11 @@ def main(argv=sys.argv[1:]):
         jenkins=False, views=False,
         source_repository=source_repository)
 
-    templates.template_hook = None
+    templates.template_hooks = None
 
     # derive scripts for overlay workspace from underlay
     overlay_scripts = []
-    for script in scripts:
+    for script in hook.scripts:
         # skip cloning of ros_buildfarm repository
         if 'git clone' in script and '.git ros_buildfarm' in script:
             continue
@@ -195,7 +204,7 @@ def main(argv=sys.argv[1:]):
     data = deepcopy(args.__dict__)
     data.update({
         'scms': scms,
-        'scripts': scripts,
+        'scripts': hook.scripts,
         'overlay_scripts': overlay_scripts,
         'ros_buildfarm_python_path': os.path.dirname(
             os.path.dirname(os.path.abspath(ros_buildfarm_file))),

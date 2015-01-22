@@ -13,17 +13,19 @@ from xml.sax.saxutils import escape
 template_basepath = os.path.abspath(os.path.dirname(__file__))
 
 interpreter = None
-template_hook = None
+template_hooks = None
 
 
 def expand_template(template_name, data, options=None):
     global template_basepath
     global interpreter
-    global template_hook
+    global template_hooks
 
     output = StringIO()
     try:
         interpreter = Interpreter(output=output, options=options)
+        for template_hook in template_hooks or []:
+            interpreter.addHook(template_hook)
         template_path = os.path.join(template_basepath, template_name)
         # create copy before manipulating
         data = dict(data)
@@ -43,8 +45,6 @@ def expand_template(template_name, data, options=None):
 
         interpreter.file(open(template_path, 'r'), locals=data)
         value = output.getvalue()
-        if template_hook:
-            template_hook(template_name, data, value)
         return value
     except Exception as e:
         print("%s processing template '%s'" %

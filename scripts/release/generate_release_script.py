@@ -2,6 +2,7 @@
 
 import argparse
 from em import BANGPATH_OPT
+from em import Hook
 import sys
 
 from ros_buildfarm import templates
@@ -36,15 +37,21 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
 
     # collect all template snippets of specific types
-    scripts = []
+    class IncludeHook(Hook):
 
-    def template_hook(template_name, data, content):
-        if template_name == 'release/sourcedeb_job.xml.em':
-            # add separator after finishing source part
-            scripts.append('--')
-        if template_name == 'snippet/builder_shell.xml.em':
-            scripts.append(data['script'])
-    templates.template_hook = template_hook
+        def __init__(self):
+            super(IncludeHook, self).__init__()
+            self.scripts = []
+
+        def beforeFile(self, *args, **kwargs):
+            template_path = kwargs['file'].name
+            if template_path.endswith('/release/sourcedeb_job.xml.em'):
+                self.scripts.append('--')
+            if template_path.endswith('/snippet/builder_shell.xml.em'):
+                self.scripts.append(kwargs['locals']['script'])
+
+    hook = IncludeHook()
+    templates.template_hooks = [hook]
 
     configure_release_job(
         args.config_url, args.rosdistro_name, args.release_build_name,
@@ -52,7 +59,7 @@ def main(argv=sys.argv[1:]):
         jenkins=False, views=[], generate_import_package_job=False,
         filter_arches=args.arch)
 
-    templates.template_hook = None
+    templates.template_hooks = None
 
     source_job_name = get_sourcedeb_job_name(
         args.rosdistro_name, args.release_build_name,
@@ -62,9 +69,9 @@ def main(argv=sys.argv[1:]):
         args.rosdistro_name, args.release_build_name,
         args.package_name, args.os_name, args.os_code_name, args.arch)
 
-    separator_index = scripts.index('--')
-    source_scripts = scripts[:separator_index]
-    binary_scripts = scripts[separator_index + 1:]
+    separator_index = hook.scripts.index('--')
+    source_scripts = hook.scripts[:separator_index]
+    binary_scripts = hook.scripts[separator_index + 1:]
 
     # inject additional argument to skip fetching sourcedeb from repo
     script_name = '/run_binarydeb_job.py '

@@ -2,6 +2,7 @@
 
 import argparse
 from em import BANGPATH_OPT
+from em import Hook
 import sys
 
 from ros_buildfarm import templates
@@ -31,22 +32,30 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
 
     # collect all template snippets of specific types
-    scms = []
-    scripts = []
+    class IncludeHook(Hook):
 
-    def template_hook(template_name, data, content):
-        if template_name == 'snippet/scm.xml.em':
-            scms.append((data['repo_spec'], data['path']))
-        if template_name == 'snippet/builder_shell.xml.em':
-            scripts.append(data['script'])
-    templates.template_hook = template_hook
+        def __init__(self):
+            super(IncludeHook, self).__init__()
+            self.scms = []
+            self.scripts = []
+
+        def beforeInclude(self, *args, **kwargs):
+            template_path = kwargs['file'].name
+            if template_path.endswith('/snippet/scm.xml.em'):
+                self.scms.append(
+                    (kwargs['locals']['repo_spec'], kwargs['locals']['path']))
+            if template_path.endswith('/snippet/builder_shell.xml.em'):
+                self.scripts.append(kwargs['locals']['script'])
+
+    hook = IncludeHook()
+    templates.template_hooks = [hook]
 
     configure_devel_job(
         args.config_url, args.rosdistro_name, args.source_build_name,
         args.repository_name, args.os_name, args.os_code_name, args.arch,
         jenkins=False, views=False)
 
-    templates.template_hook = None
+    templates.template_hooks = None
 
     devel_job_name = get_devel_job_name(
         args.rosdistro_name, args.source_build_name,
@@ -55,8 +64,8 @@ def main(argv=sys.argv[1:]):
     value = expand_template(
         'devel/devel_script.sh.em', {
             'devel_job_name': devel_job_name,
-            'scms': scms,
-            'scripts': scripts},
+            'scms': hook.scms,
+            'scripts': hook.scripts},
         options={BANGPATH_OPT: False})
     print(value)
 
