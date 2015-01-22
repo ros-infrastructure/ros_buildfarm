@@ -1,6 +1,9 @@
+from __future__ import print_function
+
 from collections import namedtuple
 import os
 import subprocess
+import sys
 
 from ros_buildfarm import __version__
 
@@ -100,7 +103,7 @@ def _get_git_repository_version(path):
     if any_modifications:
         print("Your git workspace contains local modifications. They won't " +
               'propagate to the actual jobs when not available from the git ' +
-              'repository.')
+              'repository.', file=sys.stderr)
 
     # check if working copy is on a branch
     # (does not apply when a specific tag is checked out)
