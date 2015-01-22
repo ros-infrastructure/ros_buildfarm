@@ -155,7 +155,7 @@ def configure_devel_jobs(
             'job_configs': job_configs,
             'job_prefixes_and_names': {
                 'devel': (devel_job_prefix, devel_job_names),
-                'pull request': (
+                'pull_request': (
                     pull_request_job_prefix, pull_request_job_names),
             }
         }
