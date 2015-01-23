@@ -27,9 +27,12 @@ The following scripts are the entry points for *prerelease* jobs:
 * **generate_prerelease_script.py** generates a *shell* script which will run
   the *prerelease* task on a local machine.
 
+  You need to install the Python package ``ros_buildfarm`` before being able to
+  invoke the script.
+
   This is the only script interpreted with Python 2 to make it easier for users
-  to install ``python-ros-buildfarm`` side-by-side with other ROS Python 2
-  packages.
+  to install the Debian package ``python-ros-buildfarm`` side-by-side with
+  other ROS Python 2 packages.
 
 
 The build process in detail
@@ -48,8 +51,8 @@ The source repositories can be:
 * a custom repository (usually a fork)
 
 For the overlay workspace only the
-`*build-and-test* <devel_jobs.rst#build-and-test>`_
-task from the devel job is being run.
+`*build-and-test* <devel_jobs.rst#build-and-test>`_ task from the devel job is
+being run.
 The packages are fetched using the release repositories and versions registered
 in the rosdistro repository.
 

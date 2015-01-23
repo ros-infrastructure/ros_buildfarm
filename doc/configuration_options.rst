@@ -47,15 +47,15 @@ The following options are valid in version ``1``:
   Currently the configuration only supports Debian repositories:
 
   * ``debian_repositories``: a list of URLs to Debian repositories.
-  * ``debian_repository_keys``: a list of PGP keys each as a multiline string.
+  * ``debian_repository_keys``: a list of PGP keys each as a multi line string.
     The order of the keys must match the repository URLs.
 
 * ``rosdistro_index_url``: the URL to the rosdistro index yaml file.
 * ``status_page_repositories``: a dictionary mapping names to a list of
   repository URLs.
   For each entry in the dictionary a
-  `repos-status-page <jobs/miscellaneous_jobs.rst#status-pages>`_
-  is being generated.
+  `repos-status-page <jobs/miscellaneous_jobs#status-pages.rst>`_ is being
+  generated.
 
 
 Generic options in build files
@@ -65,7 +65,7 @@ A set of options which can be used in any build file.
 
 * ``repositories``: additional repositories to fetch packages from.
 
-  * ``keys``: a list of PGP keys each as a multiline string.
+  * ``keys``: a list of PGP keys each as a multi line string.
     The order of the keys must match the repository URLs.
   * ``urls``: a list of URLs to repositories.
 
@@ -197,7 +197,7 @@ The following options are valid in version ``2`` (beside the generic options):
   * ``force``: a boolean flag enforcing the value for all repositories if set
     to either ``true`` or ``false`` (default: ``None``).
 
-* ``test_pull_requests``: a dictionary to decide if *pull reuqest* jobs should
+* ``test_pull_requests``: a dictionary to decide if *pull request* jobs should
   be generated.
 
   * ``default``: a boolean flag as described for *test_commits*.

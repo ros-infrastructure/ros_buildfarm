@@ -2,7 +2,7 @@ ROS build farm based on Docker
 ==============================
 
 For an overview about the ROS build farm including how to deploy the necessary
-machine see the `ROS wiki page <http://wiki.ros.org/buildfarm>`_.
+machines see the `ROS wiki page <http://wiki.ros.org/buildfarm>`_.
 
 
 Job types
@@ -26,55 +26,57 @@ they work.
 Configuration
 -------------
 
-The ROS build farm needs to be configured to specify custom URLs, credentials,
-and which jobs should be generated for which platforms and architectures.
-
 The configuration is stored in a separate repository (e.g.
 `ros_buildfarm_config <https://github.com/ros-infrastructure/ros_buildfarm_config>`_
-for the official ROS build farm.
+for the official ROS build farm).
 
-Each use case below describes the configuration option most commonly used.
-But for reference there is also a list of
-`all configuration options <configuration.rst>`_ available.
+Every ROS build farm requires a custom configuration to specify URLs,
+credentials, and notification settings.
+Please see the list of the
+`basic configuration options <basic_configuration.rst>`_ which need to be
+modified.
+
+Beside the use case focused descriptions below a reference listing
+`all configuration options <configuration_options.rst>`_ is available.
+
+
+Customize "what" to build
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The configuration options to change:
+
+* which packages / repositories to process
+* which platforms and architectures to target
+
+are described `here <configure_customized_buildfarm.rst>`_.
+
+
+Use a custom rosdistro database
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the case when you want to add packages and repositories to the rosdistro
+database and / or modify the version number of released packages (e.g. lock the
+version number of certain packages) you must maintain your own rosdistro
+database.
+
+Please see the documentation about using a
+`custom rosdistro database <custom_rosdistro.rst>`_ for the necessary
+configuration options and administrative tasks.
 
 
 Generate the Jenkins jobs
 -------------------------
 
-In order to setup a custom build farm you will need to follow the
-`general process <general_process.rst>`_ instructions.
-They describe how to setup your environment to generate the administrative
-Jenkins jobs as well as which jobs need to be triggered to generate all other
-Jenkins jobs.
+After creating a custom configuration repository you can
+`deploy the configuration <deploy_configuration.rst>`_ which includes:
 
-Please continue reading all use cases before starting the process to figure
-out which fits your scenario since they build on-top of each other.
+* generating the administrative Jenkins jobs
+* triggering a few jobs to perform necessary initialization steps
+* generate all release / devel / doc jobs
 
-
-Common use cases
-----------------
-
-Below are some common use cases which describe specifics about how to customize.
-
-* run the `same build farm <how_to_deploy_buildfarm.rst>`_ locally which:
-
-  * uses the same rosdistro database
-  * the unmodified ROS build farm code
-  * the unmodified configuration
-
-* run a `customized build farm <how_to_deploy_customized_buildfarm.rst>`_ which
-  uses:
-
-  * a modified configuration to build:
-
-    * only a subset of packages
-    * a different set of targets
-
-  * a modified codebase to perform the tasks differently
-
-* run a `build farm with a forked rosdistro database <how_to_fork_rosdistro_database.rst>`_
-
-* run a `build farm with custom packages <how_to_build_and_release_custom_packages.rst>`_
+After the initial deployment the administrator should continuously
+`monitor the build farm <ongoing_operations.rst>` and perform some manual task
+in regular intervals.
 
 
 Run jobs locally
@@ -92,5 +94,5 @@ debugging, and shortens the round-trip time for testing.
 
 Another job type can be used locally which is not offered on the build farm.
 
-* `prerelease jobs <jobs/prerelease_jobs.rst>`_ build and test ROS repositories
-  as well as build and test released ROS packages depending on them
+* `prerelease jobs <jobs/prerelease_jobs.rst>`_ build and test ROS
+  repositories as well as build and test released ROS packages depending on them

@@ -126,6 +126,10 @@ The Jenkins job will additionally perform the following steps:
 Run the *release* job locally
 -----------------------------
 
+In order to use ``ros_buildfarm`` locally you need to
+`setup your environment <../environment.rst>`_ with the necessary Python
+packages.
+
 The entry point *generate_release_script.py* can be used to generate a shell
 script which will perform similar tasks as the build farm.
 It does not upload the *source* or *binary* packages but keeps them locally.

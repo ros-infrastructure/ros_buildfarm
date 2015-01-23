@@ -116,6 +116,10 @@ packages if another package in the same repository has that dependency.
 Run the *devel* job locally
 ---------------------------
 
+In order to use ``ros_buildfarm`` locally you need to
+`setup your environment <../environment.rst>`_ with the necessary Python
+packages.
+
 The entry point ``generate_devel_script.py`` can be used to generate a shell
 script which will perform the same tasks as the build farm.
 It requires certain tools to be available on the local machine (e.g. the Python
