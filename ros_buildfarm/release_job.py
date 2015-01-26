@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 
 from rosdistro import get_distribution_cache
@@ -9,7 +11,6 @@ from ros_buildfarm.common import get_release_binary_view_name
 from ros_buildfarm.common import get_release_binary_view_prefix
 from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import get_release_source_view_name
-from ros_buildfarm.common import get_release_source_view_prefix
 from ros_buildfarm.common import get_release_view_name
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files

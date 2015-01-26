@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from configparser import ConfigParser
 import os
 import sys

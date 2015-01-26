@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from ast import literal_eval
 import copy
 import difflib
