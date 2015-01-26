@@ -45,7 +45,7 @@ def main(argv=sys.argv[1:]):
 
         def beforeFile(self, *args, **kwargs):
             template_path = kwargs['file'].name
-            if template_path.endswith('/release/sourcedeb_job.xml.em'):
+            if template_path.endswith('/release/binarydeb_job.xml.em'):
                 self.scripts.append('--')
             if template_path.endswith('/snippet/builder_shell.xml.em'):
                 self.scripts.append(kwargs['locals']['script'])
@@ -57,7 +57,7 @@ def main(argv=sys.argv[1:]):
         args.config_url, args.rosdistro_name, args.release_build_name,
         args.package_name, args.os_name, args.os_code_name,
         jenkins=False, views=[], generate_import_package_job=False,
-        filter_arches=args.arch)
+        generate_sync_packages_jobs=False, filter_arches=args.arch)
 
     templates.template_hooks = None
 
