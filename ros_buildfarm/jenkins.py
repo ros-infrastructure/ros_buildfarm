@@ -1,9 +1,17 @@
+from ast import literal_eval
 import copy
 import difflib
 import sys
+try:
+    from urllib.request import urlopen
+    from urllib.error import HTTPError
+except ImportError:
+    from urllib2 import urlopen
+    from urllib2 import HTTPError
 from xml.etree import ElementTree
 
 from jenkinsapi.jenkins import Jenkins
+from jenkinsapi.utils.requester import Requester
 from jenkinsapi.views import Views
 
 from .jenkins_credentials import get_credentials
@@ -12,11 +20,59 @@ from .templates import expand_template
 JENKINS_MANAGEMENT_VIEW = 'Manage'
 
 
+class CrumbRequester(Requester):
+
+    """Adapter for Requester inserting the crumb in every request."""
+
+    def __init__(self, *args, **kwargs):
+        super(CrumbRequester, self).__init__(*args, **kwargs)
+        self._baseurl = kwargs['baseurl']
+        self._last_crumb_data = None
+
+    def post_url(self, *args, **kwargs):
+        if self._last_crumb_data:
+            # first try request with previous crumb if available
+            response = self._post_url_with_crumb(
+                self._last_crumb_data, *args, **kwargs)
+            # code 403 might indicate that the crumb is not valid anymore
+            if response.status_code != 403:
+                return response
+
+        # fetch new crumb (if server has crumbs enabled)
+        if self._last_crumb_data is not False:
+            self._last_crumb_data = self._get_crumb_data()
+        return self._post_url_with_crumb(
+            self._last_crumb_data, *args, **kwargs)
+
+    def _get_crumb_data(self):
+        response = self.get_url(self._baseurl + '/crumbIssuer/api/python')
+        if response.status_code in [404]:
+            print('The Jenkins master does not require a crumb')
+            return False
+        if response.status_code not in [200]:
+            raise RuntimeError('Failed to fetch crumb: %s' % response.text)
+        crumb_issuer_response = literal_eval(response.text)
+        crumb_request_field = crumb_issuer_response['crumbRequestField']
+        crumb = crumb_issuer_response['crumb']
+        print('Fetched crumb: %s' % crumb)
+        return {crumb_request_field: crumb}
+
+    def _post_url_with_crumb(self, crumb_data, *args, **kwargs):
+        if crumb_data:
+            if 'headers' not in kwargs:
+                kwargs['headers'] = {}
+            kwargs['headers'].update(crumb_data)
+        return super(CrumbRequester, self).post_url(*args, **kwargs)
+
+
 class JenkinsProxy(Jenkins):
 
     """Proxy for Jenkins instance caching data for performance reasons."""
 
     def __init__(self, *args, **kwargs):
+        requester_kwargs = copy.copy(kwargs)
+        requester_kwargs['baseurl'] = args[0]
+        kwargs['requester'] = CrumbRequester(**requester_kwargs)
         super(JenkinsProxy, self).__init__(*args, **kwargs)
         self.__jobs = None
 
@@ -30,7 +86,7 @@ class JenkinsProxy(Jenkins):
 def connect(jenkins_url):
     print("Connecting to Jenkins '%s'" % jenkins_url)
     username, password = get_credentials(jenkins_url)
-    jenkins = JenkinsProxy(jenkins_url, username, password)
+    jenkins = JenkinsProxy(jenkins_url, username=username, password=password)
     print("Connected to Jenkins version '%s'" % jenkins.version)
     return jenkins
 
@@ -71,11 +127,15 @@ def configure_view(
             print('   ', line.rstrip('\n'))
         print('   ', '>>>')
         try:
-            view.update_config(view_config)
+            response_text = view.update_config(view_config)
         except Exception:
             print("Failed to configure view '%s' with config:\n%s" %
                   (view_name, view_config), file=sys.stderr)
             raise
+        if response_text:
+            raise RuntimeError(
+                "Failed to configure view '%s':\n%s" %
+                (view_name, response_text))
     return view
 
 
@@ -100,6 +160,7 @@ def _get_view_type(view_config):
 
 
 def configure_job(jenkins, job_name, job_config, view=None):
+    response_text = None
     try:
         if not jenkins.has_job(job_name):
             print("Creating job '%s'" % job_name)
@@ -116,11 +177,17 @@ def configure_job(jenkins, job_name, job_config, view=None):
                 for line in diff:
                     print('   ', line.rstrip('\n'))
                 print('   ', '>>>')
-                job.update_config(job_config)
+                response_text = job.update_config(job_config)
+                if response_text:
+                    print('Failed to update job config:\n%s' % response_text)
+                    raise RuntimeError()
     except Exception:
         print("Failed to configure job '%s' with config:\n%s" %
               (job_name, job_config), file=sys.stderr)
         raise
+    if response_text:
+        raise RuntimeError(
+            "Failed to configure job '%s':\n%s" % (job_name, response_text))
     if view is not None:
         if job_name not in view:
             print("Adding job '%s' to view '%s'" % (job_name, view.name))
