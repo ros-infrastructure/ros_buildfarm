@@ -12,3 +12,8 @@ It is based on the ROS distro specification
 to configure the jobs being generated (e.g.
 [https://github.com/ros-infrastructure/ros_buildfarm_config](https://github.com/ros-infrastructure/ros_buildfarm_config)
 ).
+
+If you are going to use any of the provided infrastructure please consider
+signing up for the build farm mailing list
+(https://groups.google.com/d/forum/ros-sig-buildfarm) in order to receive
+notifications e.g. about any upcoming changes.
