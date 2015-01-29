@@ -3,6 +3,7 @@ from distutils.version import LooseVersion
 import os
 import re
 import shutil
+import sys
 import time
 
 from .common import get_debian_package_name
@@ -250,7 +251,16 @@ def get_repos_package_descriptors(repos_data, targets):
                 if not other_version:
                     continue
                 # update version if higher
-                if LooseVersion(version) > LooseVersion(other_version):
+                try:
+                    # might raise TypeError: http://bugs.python.org/issue14894
+                    version_greater_other_version = \
+                        LooseVersion(version) > LooseVersion(other_version)
+                except TypeError:
+                    loose_version, other_loose_version = \
+                        _get_comparable_loose_versions(version, other_version)
+                    version_greater_other_version = \
+                        loose_version < other_loose_version
+                if version_greater_other_version:
                     descriptors[debian_pkg_name] = PackageDescriptor(
                         debian_pkg_name, debian_pkg_name, version)
     return descriptors
@@ -379,10 +389,22 @@ def get_version_status(
                     elif version == ref_version or \
                             version.startswith(ref_version):
                         statuses.append('equal')
-                    elif LooseVersion(version) < LooseVersion(ref_version):
-                        statuses.append('lower')
                     else:
-                        statuses.append('higher')
+                        try:
+                            # might raise TypeError
+                            version_smaller_ref_version = \
+                                LooseVersion(version) > \
+                                LooseVersion(ref_version)
+                        except TypeError:
+                            loose_version, ref_loose_version = \
+                                _get_comparable_loose_versions(
+                                    version, ref_version)
+                            version_smaller_ref_version = \
+                                loose_version < ref_loose_version
+                        if version_smaller_ref_version:
+                            statuses.append('lower')
+                        else:
+                            statuses.append('higher')
                 else:
                     if not version:
                         statuses.append('ignore')
@@ -519,3 +541,19 @@ def get_resource_hashes():
                 with open(os.path.join(path, filename)) as f:
                     hashes[filename] = hash(tuple(f.read()))
     return hashes
+
+
+def _get_comparable_loose_versions(version_str1, version_str2):
+    loose_version1 = LooseVersion(version_str1)
+    loose_version2 = LooseVersion(version_str2)
+    if sys.version_info[0] > 2:
+        # might raise TypeError in Python 3: http://bugs.python.org/issue14894
+        version_parts1 = loose_version1.version
+        version_parts2 = loose_version2.version
+        for i in range(min(len(version_parts1), len(version_parts2))):
+            try:
+                version_parts1[i] < version_parts2[i]
+            except TypeError:
+                version_parts1[i] = str(version_parts1[i])
+                version_parts2[i] = str(version_parts2[i])
+    return loose_version1, loose_version2
