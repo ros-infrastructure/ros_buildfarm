@@ -6,6 +6,9 @@ import shutil
 import sys
 import time
 
+from rosdistro import get_cached_distribution
+from rosdistro import get_index
+
 from .common import get_debian_package_name
 from .common import get_release_view_name
 from .common import get_short_arch
@@ -20,11 +23,13 @@ from .templates import template_basepath
 
 
 def build_release_status_page(
-        config_url, rosdistro_name, release_build_name,
-        cache_dir, output_dir, copy_resources=False):
-    from rosdistro import get_cached_distribution
-    from rosdistro import get_index
-
+    config_url,
+    rosdistro_name,
+    release_build_name,
+    cache_dir,
+    output_dir,
+    copy_resources=False,
+):
     start_time = time.localtime()
 
     config = get_config_index(config_url)
@@ -133,16 +138,17 @@ def build_release_status_page(
 
 
 def build_debian_repos_status_page(
-        repo_urls, os_code_name_and_arch_tuples,
-        cache_dir, output_name, output_dir):
+    repo_urls, os_code_name_and_arch_tuples, cache_dir, output_name, output_dir
+):
     start_time = time.localtime()
 
     # get targets
     targets = []
     for os_code_name_and_arch in os_code_name_and_arch_tuples:
-        assert os_code_name_and_arch.count(':') == 1, \
-            'The string (%s) does not contain single colon separating an ' + \
+        assert os_code_name_and_arch.count(':') == 1, (
+            'The string (%s) does not contain single colon separating an '
             'OS code name and an architecture'
+        )
         os_code_name, arch = os_code_name_and_arch.split(':')
         targets.append(Target('ubuntu', os_code_name, arch))
 
@@ -232,18 +238,32 @@ def get_rosdistro_package_descriptors(rosdistro_info, rosdistro_name):
     return descriptors
 
 
+def _version_is_gt_other(version, other_version):
+    try:
+        # might raise TypeError: http://bugs.python.org/issue14894
+        return LooseVersion(version) > LooseVersion(other_version)
+    except TypeError:
+        loose_version, other_loose_version = \
+            _get_comparable_loose_versions(version, other_version)
+        return loose_version < other_loose_version
+
+
 def get_repos_package_descriptors(repos_data, targets):
     descriptors = {}
+
     # the highest version is the reference
     for target in targets:
+        os_code_name = target.os_code_name
         for repo_data in repos_data:
             repo_index = repo_data[target]
             for debian_pkg_name, version in repo_index.items():
-                version = _strip_os_code_name_suffix(
-                    version, target.os_code_name)
+                version = _strip_os_code_name_suffix(version, os_code_name)
                 if debian_pkg_name not in descriptors:
                     descriptors[debian_pkg_name] = PackageDescriptor(
-                        debian_pkg_name, debian_pkg_name, version)
+                        debian_pkg_name,
+                        debian_pkg_name,
+                        version
+                    )
                     continue
                 if not version:
                     continue
@@ -251,18 +271,12 @@ def get_repos_package_descriptors(repos_data, targets):
                 if not other_version:
                     continue
                 # update version if higher
-                try:
-                    # might raise TypeError: http://bugs.python.org/issue14894
-                    version_greater_other_version = \
-                        LooseVersion(version) > LooseVersion(other_version)
-                except TypeError:
-                    loose_version, other_loose_version = \
-                        _get_comparable_loose_versions(version, other_version)
-                    version_greater_other_version = \
-                        loose_version < other_loose_version
-                if version_greater_other_version:
+                if _version_is_gt_other(version, other_version):
                     descriptors[debian_pkg_name] = PackageDescriptor(
-                        debian_pkg_name, debian_pkg_name, version)
+                        debian_pkg_name,
+                        debian_pkg_name,
+                        version
+                    )
     return descriptors
 
 
@@ -277,8 +291,8 @@ def get_url_names(urls):
 
 
 def get_affected_by_sync(
-        package_descriptors, targets,
-        testing_repo_data, main_repo_data):
+    package_descriptors, targets, testing_repo_data, main_repo_data
+):
     """
     For each package and target check if it is affected by a sync.
 
@@ -295,16 +309,12 @@ def get_affected_by_sync(
 
         affected_by_sync[pkg_name] = {}
         for target in targets:
-            testing_version = \
-                (testing_repo_data[target][debian_pkg_name]
-                 if debian_pkg_name in testing_repo_data[target] else None) \
-                if target in testing_repo_data else None
-            testing_version = _strip_version_suffix(testing_version)
-            main_version = \
-                (main_repo_data[target][debian_pkg_name]
-                 if debian_pkg_name in main_repo_data[target] else None) \
-                if target in main_repo_data else None
-            main_version = _strip_version_suffix(main_version)
+            testing_version = _strip_version_suffix(
+                testing_repo_data.get(target, {}).get(debian_pkg_name, None)
+            )
+            main_version = _strip_version_suffix(
+                main_repo_data.get(target, {}).get(debian_pkg_name, None)
+            )
 
             affected_by_sync[pkg_name][target] = \
                 testing_version != main_version
@@ -312,8 +322,12 @@ def get_affected_by_sync(
 
 
 def get_regressions(
-        package_descriptors, targets,
-        building_repo_data, testing_repo_data, main_repo_data):
+    package_descriptors,
+    targets,
+    building_repo_data,
+    testing_repo_data,
+    main_repo_data,
+):
     """
     For each package and target check if it is a regression.
 
@@ -332,25 +346,27 @@ def get_regressions(
         regressions[pkg_name] = {}
         for target in targets:
             regressions[pkg_name][target] = False
-            main_version = \
-                (main_repo_data[target][debian_pkg_name]
-                 if debian_pkg_name in main_repo_data[target] else None) \
-                if target in main_repo_data else None
-            if main_version:
+            main_version = (
+                main_repo_data.get(target, {}).get(debian_pkg_name, None)
+            )
+            if main_version is not None:
+                main_ver_loose = LooseVersion(main_version)
                 for repo_data in [building_repo_data, testing_repo_data]:
-                    version = \
-                        (repo_data[target][debian_pkg_name]
-                         if debian_pkg_name in repo_data[target] else None) \
-                        if target in repo_data else None
-                    if not version or \
-                            LooseVersion(main_version) > LooseVersion(version):
+                    version = (
+                        repo_data.get(target, {}).get(debian_pkg_name, None)
+                    )
+                    if not version or main_ver_loose > LooseVersion(version):
                         regressions[pkg_name][target] = True
     return regressions
 
 
 def get_version_status(
-        package_descriptors, targets, repos_data,
-        strip_version=False, strip_os_code_name=False):
+    package_descriptors,
+    targets,
+    repos_data,
+    strip_version=False,
+    strip_os_code_name=False,
+):
     """
     For each package and target check if it is affected by a sync.
 
@@ -372,39 +388,24 @@ def get_version_status(
         status[pkg_name] = {}
         for target in targets:
             statuses = []
+            os_code_name = target.os_code_name
             for repo_data in repos_data:
-                version = \
-                    (repo_data[target][debian_pkg_name]
-                     if debian_pkg_name in repo_data[target] else None) \
-                    if target in repo_data else None
+                version = repo_data.get(target, {}).get(debian_pkg_name, None)
                 if strip_version:
                     version = _strip_version_suffix(version)
                 if strip_os_code_name:
-                    version = _strip_os_code_name_suffix(
-                        version, target.os_code_name)
+                    version = _strip_os_code_name_suffix(version, os_code_name)
 
                 if ref_version:
                     if not version:
                         statuses.append('missing')
-                    elif version == ref_version or \
-                            version.startswith(ref_version):
+                    elif version.startswith(ref_version):  # Same as equals
                         statuses.append('equal')
                     else:
-                        try:
-                            # might raise TypeError
-                            version_smaller_ref_version = \
-                                LooseVersion(version) > \
-                                LooseVersion(ref_version)
-                        except TypeError:
-                            loose_version, ref_loose_version = \
-                                _get_comparable_loose_versions(
-                                    version, ref_version)
-                            version_smaller_ref_version = \
-                                loose_version < ref_loose_version
-                        if version_smaller_ref_version:
-                            statuses.append('lower')
-                        else:
+                        if _version_is_gt_other(version, ref_version):
                             statuses.append('higher')
+                        else:
+                            statuses.append('lower')
                 else:
                     if not version:
                         statuses.append('ignore')
@@ -462,11 +463,9 @@ def get_homogeneous(package_descriptors, targets, repos_data):
         for repo_data in repos_data:
             versions.append(set([]))
             for target in targets:
-                version = \
-                    (repo_data[target][debian_pkg_name]
-                     if debian_pkg_name in repo_data[target] else None) \
-                    if target in repo_data else None
-                version = _strip_version_suffix(version)
+                version = _strip_version_suffix(
+                    repo_data.get(target, {}).get(debian_pkg_name, None)
+                )
                 versions[-1].add(version)
         homogeneous[pkg_name] = max([len(v) for v in versions]) == 1
     return homogeneous
@@ -487,17 +486,15 @@ def get_package_counts(package_descriptors, targets, repos_data):
 
         for target in targets:
             for i, repo_data in enumerate(repos_data):
-                version = \
-                    (repo_data[target][debian_pkg_name]
-                     if debian_pkg_name in repo_data[target] else None) \
-                    if target in repo_data else None
+                version = repo_data.get(target, {}).get(debian_pkg_name, None)
                 if version:
                     counts[target][i] += 1
     return counts
 
 
 def get_jenkins_job_urls(
-        rosdistro_name, jenkins_url, release_build_name, targets):
+    rosdistro_name, jenkins_url, release_build_name, targets
+):
     """
     Get the Jenkins job urls for each target.
 
