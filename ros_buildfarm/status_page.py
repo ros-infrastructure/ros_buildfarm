@@ -145,9 +145,10 @@ def build_debian_repos_status_page(
     # get targets
     targets = []
     for os_code_name_and_arch in os_code_name_and_arch_tuples:
-        assert os_code_name_and_arch.count(':') == 1, \
-            'The string (%s) does not contain single colon separating an ' + \
+        assert os_code_name_and_arch.count(':') == 1, (
+            'The string (%s) does not contain single colon separating an '
             'OS code name and an architecture'
+        )
         os_code_name, arch = os_code_name_and_arch.split(':')
         targets.append(Target('ubuntu', os_code_name, arch))
 
@@ -239,16 +240,20 @@ def get_rosdistro_package_descriptors(rosdistro_info, rosdistro_name):
 
 def get_repos_package_descriptors(repos_data, targets):
     descriptors = {}
+
     # the highest version is the reference
     for target in targets:
+        os_code_name = target.os_code_name
         for repo_data in repos_data:
             repo_index = repo_data[target]
             for debian_pkg_name, version in repo_index.items():
-                version = _strip_os_code_name_suffix(
-                    version, target.os_code_name)
+                version = _strip_os_code_name_suffix(version, os_code_name)
                 if debian_pkg_name not in descriptors:
                     descriptors[debian_pkg_name] = PackageDescriptor(
-                        debian_pkg_name, debian_pkg_name, version)
+                        debian_pkg_name,
+                        debian_pkg_name,
+                        version
+                    )
                     continue
                 if not version:
                     continue
@@ -267,7 +272,10 @@ def get_repos_package_descriptors(repos_data, targets):
                         loose_version < other_loose_version
                 if version_greater_other_version:
                     descriptors[debian_pkg_name] = PackageDescriptor(
-                        debian_pkg_name, debian_pkg_name, version)
+                        debian_pkg_name,
+                        debian_pkg_name,
+                        version
+                    )
     return descriptors
 
 
@@ -385,6 +393,7 @@ def get_version_status(
         status[pkg_name] = {}
         for target in targets:
             statuses = []
+            os_code_name = target.os_code_name
             for repo_data in repos_data:
                 version = \
                     (repo_data[target][debian_pkg_name]
@@ -393,8 +402,7 @@ def get_version_status(
                 if strip_version:
                     version = _strip_version_suffix(version)
                 if strip_os_code_name:
-                    version = _strip_os_code_name_suffix(
-                        version, target.os_code_name)
+                    version = _strip_os_code_name_suffix(version, os_code_name)
 
                 if ref_version:
                     if not version:
