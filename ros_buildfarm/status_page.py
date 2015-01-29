@@ -23,8 +23,13 @@ from .templates import template_basepath
 
 
 def build_release_status_page(
-        config_url, rosdistro_name, release_build_name,
-        cache_dir, output_dir, copy_resources=False):
+    config_url,
+    rosdistro_name,
+    release_build_name,
+    cache_dir,
+    output_dir,
+    copy_resources=False,
+):
     start_time = time.localtime()
 
     config = get_config_index(config_url)
@@ -133,8 +138,8 @@ def build_release_status_page(
 
 
 def build_debian_repos_status_page(
-        repo_urls, os_code_name_and_arch_tuples,
-        cache_dir, output_name, output_dir):
+    repo_urls, os_code_name_and_arch_tuples, cache_dir, output_name, output_dir
+):
     start_time = time.localtime()
 
     # get targets
@@ -277,8 +282,8 @@ def get_url_names(urls):
 
 
 def get_affected_by_sync(
-        package_descriptors, targets,
-        testing_repo_data, main_repo_data):
+    package_descriptors, targets, testing_repo_data, main_repo_data
+):
     """
     For each package and target check if it is affected by a sync.
 
@@ -312,8 +317,12 @@ def get_affected_by_sync(
 
 
 def get_regressions(
-        package_descriptors, targets,
-        building_repo_data, testing_repo_data, main_repo_data):
+    package_descriptors,
+    targets,
+    building_repo_data,
+    testing_repo_data,
+    main_repo_data,
+):
     """
     For each package and target check if it is a regression.
 
@@ -349,8 +358,12 @@ def get_regressions(
 
 
 def get_version_status(
-        package_descriptors, targets, repos_data,
-        strip_version=False, strip_os_code_name=False):
+    package_descriptors,
+    targets,
+    repos_data,
+    strip_version=False,
+    strip_os_code_name=False,
+):
     """
     For each package and target check if it is affected by a sync.
 
@@ -497,7 +510,8 @@ def get_package_counts(package_descriptors, targets, repos_data):
 
 
 def get_jenkins_job_urls(
-        rosdistro_name, jenkins_url, release_build_name, targets):
+    rosdistro_name, jenkins_url, release_build_name, targets
+):
     """
     Get the Jenkins job urls for each target.
 
