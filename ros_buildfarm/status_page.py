@@ -399,8 +399,7 @@ def get_version_status(
                 if ref_version:
                     if not version:
                         statuses.append('missing')
-                    elif version == ref_version or \
-                            version.startswith(ref_version):
+                    elif version.startswith(ref_version):  # Same as equals
                         statuses.append('equal')
                     else:
                         if _version_is_gt_other(version, ref_version):
