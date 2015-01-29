@@ -286,16 +286,10 @@ def get_affected_by_sync(
 
         affected_by_sync[pkg_name] = {}
         for target in targets:
-            testing_version = \
-                (testing_repo_data[target][debian_pkg_name]
-                 if debian_pkg_name in testing_repo_data[target] else None) \
-                if target in testing_repo_data else None
-            testing_version = _strip_version_suffix(testing_version)
-            main_version = \
-                (main_repo_data[target][debian_pkg_name]
-                 if debian_pkg_name in main_repo_data[target] else None) \
-                if target in main_repo_data else None
-            main_version = _strip_version_suffix(main_version)
+            testing_version = _strip_version_suffix(
+                testing_repo_data.get(target, {}).get(debian_pkg_name, None))
+            main_version = _strip_version_suffix(
+                main_repo_data.get(target, {}).get(debian_pkg_name, None))
 
             affected_by_sync[pkg_name][target] = \
                 testing_version != main_version
@@ -324,17 +318,13 @@ def get_regressions(
         for target in targets:
             regressions[pkg_name][target] = False
             main_version = \
-                (main_repo_data[target][debian_pkg_name]
-                 if debian_pkg_name in main_repo_data[target] else None) \
-                if target in main_repo_data else None
-            if main_version:
+                main_repo_data.get(target, {}).get(debian_pkg_name, None)
+            if main_version is not None:
+                main_ver_loose = LooseVersion(main_version)
                 for repo_data in [building_repo_data, testing_repo_data]:
                     version = \
-                        (repo_data[target][debian_pkg_name]
-                         if debian_pkg_name in repo_data[target] else None) \
-                        if target in repo_data else None
-                    if not version or \
-                            LooseVersion(main_version) > LooseVersion(version):
+                        repo_data.get(target, {}).get(debian_pkg_name, None)
+                    if not version or main_ver_loose > LooseVersion(version):
                         regressions[pkg_name][target] = True
     return regressions
 
@@ -364,10 +354,7 @@ def get_version_status(
         for target in targets:
             statuses = []
             for repo_data in repos_data:
-                version = \
-                    (repo_data[target][debian_pkg_name]
-                     if debian_pkg_name in repo_data[target] else None) \
-                    if target in repo_data else None
+                version = repo_data.get(target, {}).get(debian_pkg_name, None)
                 if strip_version:
                     version = _strip_version_suffix(version)
                 if strip_os_code_name:
@@ -442,11 +429,8 @@ def get_homogeneous(package_descriptors, targets, repos_data):
         for repo_data in repos_data:
             versions.append(set([]))
             for target in targets:
-                version = \
-                    (repo_data[target][debian_pkg_name]
-                     if debian_pkg_name in repo_data[target] else None) \
-                    if target in repo_data else None
-                version = _strip_version_suffix(version)
+                version = _strip_version_suffix(
+                    repo_data.get(target, {}).get(debian_pkg_name, None))
                 versions[-1].add(version)
         homogeneous[pkg_name] = max([len(v) for v in versions]) == 1
     return homogeneous
@@ -467,10 +451,7 @@ def get_package_counts(package_descriptors, targets, repos_data):
 
         for target in targets:
             for i, repo_data in enumerate(repos_data):
-                version = \
-                    (repo_data[target][debian_pkg_name]
-                     if debian_pkg_name in repo_data[target] else None) \
-                    if target in repo_data else None
+                version = repo_data.get(target, {}).get(debian_pkg_name, None)
                 if version:
                     counts[target][i] += 1
     return counts
