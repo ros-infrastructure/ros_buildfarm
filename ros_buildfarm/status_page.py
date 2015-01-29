@@ -6,6 +6,9 @@ import shutil
 import sys
 import time
 
+from rosdistro import get_cached_distribution
+from rosdistro import get_index
+
 from .common import get_debian_package_name
 from .common import get_release_view_name
 from .common import get_short_arch
@@ -22,9 +25,6 @@ from .templates import template_basepath
 def build_release_status_page(
         config_url, rosdistro_name, release_build_name,
         cache_dir, output_dir, copy_resources=False):
-    from rosdistro import get_cached_distribution
-    from rosdistro import get_index
-
     start_time = time.localtime()
 
     config = get_config_index(config_url)
