@@ -13,9 +13,9 @@ from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.common import get_binarydeb_job_name
+from ros_buildfarm.common import get_sourcedeb_job_name
 from ros_buildfarm.release_job import configure_release_job
-from ros_buildfarm.release_job import get_binarydeb_job_name
-from ros_buildfarm.release_job import get_sourcedeb_job_name
 from ros_buildfarm.templates import expand_template
 
 

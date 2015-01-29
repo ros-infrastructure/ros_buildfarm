@@ -1,7 +1,13 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
 @[for parameter in parameters]@
-@[if parameter['type'] == 'string']@
+@[if parameter['type'] == 'boolean']@
+        <hudson.model.BooleanParameterDefinition>
+          <name>@parameter['name']</name>
+          <description>@(parameter['description'] if 'description' in parameter and parameter['description'] is not None else '')</description>
+          <defaultValue>@('true' if parameter.get('default_value', False) else 'false')</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+@[elif parameter['type'] == 'string']@
         <hudson.model.StringParameterDefinition>
           <name>@parameter['name']</name>
           <description>@(parameter['description'] if 'description' in parameter and parameter['description'] is not None else '')</description>

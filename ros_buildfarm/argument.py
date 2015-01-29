@@ -189,3 +189,10 @@ def add_argument_groovy_script(parser):
     parser.add_argument(
         '--groovy-script',
         help='The path of the generated groovy script file')
+
+
+def add_argument_force(parser):
+    parser.add_argument(
+        '--force',
+        action='store_true',
+        help='Force running the documentation generation')

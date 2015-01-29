@@ -6,6 +6,7 @@ from catkin_pkg.package import parse_package_string
 from rosdistro import get_distribution_cache
 from rosdistro import get_index
 
+from ros_buildfarm.common import get_devel_job_name
 from ros_buildfarm.common import get_devel_view_name
 from ros_buildfarm.common import git_github_orgunit
 from ros_buildfarm.common import get_github_project_url
@@ -265,16 +266,6 @@ def configure_devel_job(
         configure_job(jenkins, job_name, job_config)
 
     return job_name, job_config
-
-
-def get_devel_job_name(rosdistro_name, source_build_name,
-                       repo_name, os_name, os_code_name, arch,
-                       pull_request=False):
-    view_name = get_devel_view_name(
-        rosdistro_name, source_build_name, pull_request=pull_request)
-    job_name = '%s__%s__%s_%s_%s' % \
-        (view_name, repo_name, os_name, os_code_name, arch)
-    return job_name
 
 
 def configure_devel_view(jenkins, view_name):

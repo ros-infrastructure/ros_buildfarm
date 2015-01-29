@@ -39,7 +39,7 @@ import yaml
 
 logger = logging.getLogger('ros_buildfarm.config')
 
-#from .doc_build_file import DocBuildFile
+from .doc_build_file import DocBuildFile
 from .index import Index
 from .loader import load_url
 from .release_build_file import ReleaseBuildFile
@@ -80,12 +80,12 @@ def get_source_build_files(index, dist_name):
     return build_files
 
 
-#def get_doc_build_files(index, dist_name):
-#    data = _get_build_file_data(index, dist_name, 'doc_builds')
-#    build_files = {}
-#    for k, v in data.items():
-#        build_files[k] = DocBuildFile(dist_name, v)
-#    return build_files
+def get_doc_build_files(index, dist_name):
+    data = _get_build_file_data(index, dist_name, 'doc_builds')
+    build_files = {}
+    for k, v in data.items():
+        build_files[k] = DocBuildFile(dist_name, v)
+    return build_files
 
 
 def _get_build_file_data(index, dist_name, type_):

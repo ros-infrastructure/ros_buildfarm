@@ -122,6 +122,18 @@ def _get_git_repository_version(path):
         pass
 
     # use current hash
+    return get_hash(path)
+
+
+def get_hash(path):
+    # check that path is a git working copy
+    if not os.path.exists(os.path.join(path, '.git')):
+        return None
+
+    git = _find_executable('git')
+    if not git:
+        return None
+
     url = subprocess.check_output(
         [git, 'rev-parse', 'HEAD'], cwd=path)
     return url.decode().rstrip()

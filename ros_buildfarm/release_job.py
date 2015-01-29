@@ -5,15 +5,16 @@ import sys
 from rosdistro import get_distribution_cache
 from rosdistro import get_index
 
+from ros_buildfarm.common import get_binarydeb_job_name
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_github_project_url
-from ros_buildfarm.common import get_release_binary_view_name
 from ros_buildfarm.common import get_release_binary_view_prefix
 from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import get_release_source_view_name
 from ros_buildfarm.common import get_release_view_name
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
+from ros_buildfarm.common import get_sourcedeb_job_name
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
@@ -441,22 +442,6 @@ def configure_release_views(
             jenkins, view_name, include_regex=include_regex))
 
     return views
-
-
-def get_sourcedeb_job_name(rosdistro_name, release_build_name,
-                           pkg_name, os_name, os_code_name):
-    view_name = get_release_source_view_name(
-        rosdistro_name, os_name, os_code_name)
-    return '%s__%s__%s_%s__source' % \
-        (view_name, pkg_name, os_name, os_code_name)
-
-
-def get_binarydeb_job_name(rosdistro_name, release_build_name,
-                           pkg_name, os_name, os_code_name, arch):
-    view_name = get_release_binary_view_name(
-        rosdistro_name, release_build_name, os_name, os_code_name, arch)
-    return '%s__%s__%s_%s_%s__binary' % \
-        (view_name, pkg_name, os_name, os_code_name, arch)
 
 
 def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):

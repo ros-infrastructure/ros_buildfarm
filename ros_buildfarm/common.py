@@ -128,6 +128,24 @@ def get_devel_view_name(rosdistro_name, source_build_name, pull_request=False):
     return name
 
 
+def get_devel_job_name(rosdistro_name, source_build_name,
+                       repo_name, os_name, os_code_name, arch,
+                       pull_request=False):
+    view_name = get_devel_view_name(
+        rosdistro_name, source_build_name, pull_request=pull_request)
+    job_name = '%s__%s__%s_%s_%s' % \
+        (view_name, repo_name, os_name, os_code_name, arch)
+    return job_name
+
+
+def get_doc_view_name(rosdistro_name, doc_build_name):
+    name = '%sdoc' % rosdistro_name[0].upper()
+    short_doc_build_name = get_short_build_name(doc_build_name)
+    if short_doc_build_name:
+        name += '_%s' % short_doc_build_name
+    return name
+
+
 def get_release_job_prefix(rosdistro_name, release_build_name=None):
     prefix = '%srel' % rosdistro_name[0].upper()
     if release_build_name is not None:
@@ -159,6 +177,14 @@ def get_release_source_view_name(
         get_short_os_code_name(os_code_name))
 
 
+def get_sourcedeb_job_name(rosdistro_name, release_build_name,
+                           pkg_name, os_name, os_code_name):
+    view_name = get_release_source_view_name(
+        rosdistro_name, os_name, os_code_name)
+    return '%s__%s__%s_%s__source' % \
+        (view_name, pkg_name, os_name, os_code_name)
+
+
 def get_release_binary_view_prefix(rosdistro_name, release_build_name):
     prefix = '%s%s' % (rosdistro_name[0].upper(), 'bin')
     short_release_build_name = get_short_build_name(release_build_name)
@@ -177,6 +203,14 @@ def get_release_binary_view_name(
         get_short_os_name(os_name),
         get_short_os_code_name(os_code_name),
         get_short_arch(arch))
+
+
+def get_binarydeb_job_name(rosdistro_name, release_build_name,
+                           pkg_name, os_name, os_code_name, arch):
+    view_name = get_release_binary_view_name(
+        rosdistro_name, release_build_name, os_name, os_code_name, arch)
+    return '%s__%s__%s_%s_%s__binary' % \
+        (view_name, pkg_name, os_name, os_code_name, arch)
 
 
 def get_short_build_name(build_name):
