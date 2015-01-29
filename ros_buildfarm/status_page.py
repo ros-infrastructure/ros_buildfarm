@@ -251,16 +251,7 @@ def get_repos_package_descriptors(repos_data, targets):
                 if not other_version:
                     continue
                 # update version if higher
-                try:
-                    # might raise TypeError: http://bugs.python.org/issue14894
-                    version_greater_other_version = \
-                        LooseVersion(version) > LooseVersion(other_version)
-                except TypeError:
-                    loose_version, other_loose_version = \
-                        _get_comparable_loose_versions(version, other_version)
-                    version_greater_other_version = \
-                        loose_version < other_loose_version
-                if version_greater_other_version:
+                if _version_is_gt_other(version, other_version):
                     descriptors[debian_pkg_name] = PackageDescriptor(
                         debian_pkg_name, debian_pkg_name, version)
     return descriptors
@@ -390,21 +381,10 @@ def get_version_status(
                             version.startswith(ref_version):
                         statuses.append('equal')
                     else:
-                        try:
-                            # might raise TypeError
-                            version_smaller_ref_version = \
-                                LooseVersion(version) > \
-                                LooseVersion(ref_version)
-                        except TypeError:
-                            loose_version, ref_loose_version = \
-                                _get_comparable_loose_versions(
-                                    version, ref_version)
-                            version_smaller_ref_version = \
-                                loose_version < ref_loose_version
-                        if version_smaller_ref_version:
-                            statuses.append('lower')
-                        else:
+                        if _version_is_gt_other(version, ref_version):
                             statuses.append('higher')
+                        else:
+                            statuses.append('lower')
                 else:
                     if not version:
                         statuses.append('ignore')
@@ -541,6 +521,16 @@ def get_resource_hashes():
                 with open(os.path.join(path, filename)) as f:
                     hashes[filename] = hash(tuple(f.read()))
     return hashes
+
+
+def _version_is_gt_other(version, other_version):
+    try:
+        # might raise TypeError: http://bugs.python.org/issue14894
+        return LooseVersion(version) > LooseVersion(other_version)
+    except TypeError:
+        loose_version, other_loose_version = \
+            _get_comparable_loose_versions(version, other_version)
+        return loose_version < other_loose_version
 
 
 def _get_comparable_loose_versions(version_str1, version_str2):
