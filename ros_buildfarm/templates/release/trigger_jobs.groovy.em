@@ -2,8 +2,18 @@ import hudson.model.Cause.UpstreamCause
 import jenkins.model.Jenkins
 
 job_names = []
-@[for job_name in sorted(job_names)]@
-job_names << "@job_name"
+@{
+job_names = sorted(job_names)
+group_size = 1000
+}@
+// group job names in chunks of @group_size to not exceed groovy limits
+@[for i in range(0, len(job_names), group_size)]@
+def add_job_names_@(int(i / group_size) + 1)(job_names) {
+@[for j in range(i, min(i + group_size, len(job_names)))]@
+job_names << '@(job_names[j])'
+@[end for]@
+}
+add_job_names_@(int(i / group_size) + 1)(job_names)
 @[end for]@
 
 println "Triggering " + job_names.size + " jobs..."
