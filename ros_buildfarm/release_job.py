@@ -474,6 +474,7 @@ def _get_sourcedeb_job_config(
 
     sourcedeb_files = [
         'sourcedeb/*.debian.tar.gz',
+        'sourcedeb/*.debian.tar.xz',
         'sourcedeb/*.dsc',
         'sourcedeb/*.orig.tar.gz',
         'sourcedeb/*_source.changes',

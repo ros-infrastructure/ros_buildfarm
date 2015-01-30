@@ -44,7 +44,7 @@ cd $WORKSPACE
 echo ""
 echo "Get artifacts from source job"
 mkdir -p $WORKSPACE/binarydeb
-(set -x; cp $BASEPATH/source/sourcedeb/*.debian.tar.gz $BASEPATH/source/sourcedeb/*.dsc $BASEPATH/source/sourcedeb/*.orig.tar.gz $WORKSPACE/binarydeb/)
+(set -x; cp $BASEPATH/source/sourcedeb/*.debian.tar.gz $BASEPATH/source/sourcedeb/*.debian.tar.xz $BASEPATH/source/sourcedeb/*.dsc $BASEPATH/source/sourcedeb/*.orig.tar.gz $WORKSPACE/binarydeb/)
 
 # run all binary build steps
 @[for i, script in enumerate(binary_scripts)]@
