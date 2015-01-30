@@ -97,10 +97,9 @@ class Index(object):
         self.jenkins_url = data['jenkins_url']
 
         self.notify_emails = []
-        if 'notifications' in data:
-            if 'notification_emails' in data:
-                self.notify_emails = data['notification_emails']
-                assert isinstance(self.notify_emails, list)
+        if 'notification_emails' in data:
+            self.notify_emails = data['notification_emails']
+            assert isinstance(self.notify_emails, list)
 
         self.prerequisites = data['prerequisites']
 
