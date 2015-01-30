@@ -20,8 +20,10 @@ println "Triggering " + job_names.size + " jobs..."
 triggered = 0
 skipped = 0
 for (job_name in job_names) {
+    found_project = false
     for (p in Jenkins.instance.allItems) {
         if (p.name != job_name) continue
+        found_project = true
         if (p.isDisabled()) {
             println "  " + job_name + " (skipped disabled project)"
             skipped += 1
@@ -41,6 +43,10 @@ for (job_name in job_names) {
         p.scheduleBuild(new UpstreamCause(binding.variables["build"]))
         triggered += 1
         break
+    }
+    if (!found_project) {
+        println "  " + job_name + " (skipped nonexisting project)"
+        skipped += 1
     }
 }
 println "Triggered " + triggered + " jobs, skipped " + skipped + " jobs."
