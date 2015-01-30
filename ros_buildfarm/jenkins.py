@@ -61,9 +61,13 @@ class CrumbRequester(Requester):
 
     def _post_url_with_crumb(self, crumb_data, *args, **kwargs):
         if crumb_data:
-            if 'headers' not in kwargs:
-                kwargs['headers'] = {}
-            kwargs['headers'].update(crumb_data)
+            if len(args) >= 5:
+                headers = args[4]
+            else:
+                if 'headers' not in kwargs:
+                    kwargs['headers'] = {}
+                headers = kwargs['headers']
+            headers.update(crumb_data)
         return super(CrumbRequester, self).post_url(*args, **kwargs)
 
 
