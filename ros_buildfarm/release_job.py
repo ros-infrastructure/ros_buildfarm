@@ -118,19 +118,17 @@ def configure_release_jobs(
                 os_code_name, arch,
                 config=config, build_file=build_file, jenkins=jenkins)
 
-    if groovy_script is not None:
-        jenkins = False
-
     targets = []
     for os_name, os_code_name in platforms:
         targets.append((os_name, os_code_name, 'source'))
         for arch in build_file.targets[os_name][os_code_name]:
             targets.append((os_name, os_code_name, arch))
-    if groovy_script is None:
-        views = configure_release_views(
-            jenkins, rosdistro_name, release_build_name, targets)
-    else:
-        views = []
+    views = configure_release_views(
+        jenkins, rosdistro_name, release_build_name, targets)
+
+    if groovy_script is not None:
+        # all further configuration will be handled by the groovy script
+        jenkins = False
 
     all_source_job_names = []
     all_binary_job_names = []

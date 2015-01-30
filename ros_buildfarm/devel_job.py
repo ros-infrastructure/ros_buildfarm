@@ -57,18 +57,18 @@ def configure_devel_jobs(
     pull_request_view_name = get_devel_view_name(
         rosdistro_name, source_build_name, pull_request=True)
 
-    if groovy_script is None:
-        from ros_buildfarm.jenkins import connect
-        jenkins = connect(config.jenkins_url)
-    else:
-        jenkins = False
+    from ros_buildfarm.jenkins import connect
+    jenkins = connect(config.jenkins_url)
 
     views = []
-    if groovy_script is None:
-        if build_file.test_commits_force is not False:
-            views.append(configure_devel_view(jenkins, devel_view_name))
-        if build_file.test_pull_requests_force is not False:
-            views.append(configure_devel_view(jenkins, pull_request_view_name))
+    if build_file.test_commits_force is not False:
+        views.append(configure_devel_view(jenkins, devel_view_name))
+    if build_file.test_pull_requests_force is not False:
+        views.append(configure_devel_view(jenkins, pull_request_view_name))
+
+    if groovy_script is not None:
+        # all further configuration will be handled by the groovy script
+        jenkins = False
 
     repo_names = dist_file.repositories.keys()
     repo_names = build_file.filter_repositories(repo_names)
