@@ -103,18 +103,21 @@ def format_xml(doc) {
 // reconfigure jobs
 println '# BEGIN SECTION: Groovy script - reconfigure jobs'
 println 'Reconfiguring ' + job_configs.size() + ' jobs...'
-reconfigured = 0
+created = 0
+updated = 0
 skipped = 0
 for (item in job_configs) {
+    found_project = false
     job_name = item.key
     job_config = item.value
     for (p in Jenkins.instance.allItems) {
         if (p.name != job_name) continue
+        found_project = true
         job_config_file = p.getConfigFile()
 
         diff = diff_configs(job_config_file, job_config)
         if (!diff) {
-            println "Skipped '" + job_name + "' because the config is the same"
+            println "Skipped job '" + job_name + "' because the config is the same"
             skipped += 1
         } else {
             println "Updating job '" + job_name + "'"
@@ -127,12 +130,18 @@ for (item in job_configs) {
             reader = new StringReader(job_config)
             source = new StreamSource(reader)
             p.updateByXml(source)
-            reconfigured += 1
+            updated += 1
         }
         break
     }
+    if (!found_project) {
+        println "Creating job '" + job_name + "'"
+        stream = new StringBufferInputStream(job_config)
+        Jenkins.instance.createProjectFromXML(job_name, stream)
+        created += 1
+    }
 }
-println 'Reconfigured ' + reconfigured + ' jobs, skipped ' + skipped + ' jobs.'
+println 'Created ' + created + ' jobs, updated ' + updated + ' jobs, skipped ' + skipped + ' jobs.'
 println '# END SECTION'
 
 // delete obsolete jobs
