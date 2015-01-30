@@ -24,7 +24,7 @@ ENV LANG en_US.UTF-8
 ))@
 
 @# Ubuntu before Trusty explicitly needs python3
-@[if os_name == 'ubuntu' and os_code_name[0] < 't']@
+@[if os_name == 'ubuntu' and os_code_name[0] not in ['t', 'u']]@
 RUN apt-get update && apt-get install -q -y python3
 @[end if]@
 

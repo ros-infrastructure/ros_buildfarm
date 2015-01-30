@@ -41,7 +41,7 @@ RUN echo deb http://http.debian.net/debian @os_code_name contrib non-free | tee 
 RUN echo "2014-11-20"
 
 @# Ubuntu before Trusty explicitly needs python3
-@[if os_name == 'ubuntu' and os_code_name[0] < 't']@
+@[if os_name == 'ubuntu' and os_code_name[0] not in ['t', 'u']]@
 RUN apt-get update && apt-get install -q -y python3
 @[end if]@
 
