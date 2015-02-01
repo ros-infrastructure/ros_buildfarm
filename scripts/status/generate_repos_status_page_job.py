@@ -67,8 +67,7 @@ def get_targets_by_repo(config, ros_distro_name):
     release_build_files = get_release_build_files(config, ros_distro_name)
     for release_build_name, release_build_file in release_build_files.items():
         target_repository = release_build_file.target_repository
-        if target_repository not in targets_by_repo:
-            targets_by_repo[target_repository] = []
+        targets_by_repo.setdefault(target_repository, [])
         # TODO support other OS names
         if 'ubuntu' in release_build_file.targets:
             targets = release_build_file.targets['ubuntu']

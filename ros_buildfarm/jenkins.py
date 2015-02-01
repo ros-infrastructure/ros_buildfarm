@@ -64,9 +64,7 @@ class CrumbRequester(Requester):
             if len(args) >= 5:
                 headers = args[4]
             else:
-                if 'headers' not in kwargs:
-                    kwargs['headers'] = {}
-                headers = kwargs['headers']
+                headers = kwargs.setdefault('headers', {})
             headers.update(crumb_data)
         return super(CrumbRequester, self).post_url(*args, **kwargs)
 
