@@ -3,8 +3,8 @@
   <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
 @(SNIPPET(
     'log-rotator',
-    days_to_keep=100,
-    num_to_keep=100,
+    days_to_keep=30,
+    num_to_keep=10000,
 ))@
   <keepDependencies>false</keepDependencies>
   <properties>
