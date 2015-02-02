@@ -57,7 +57,8 @@
 @(SNIPPET(
     'publisher_description-setter',
     regexp='Importing package: (\S+)',
-    regexp_for_failed='',
+    # to prevent overwriting the description of failed builds
+    regexp_for_failed='ThisRegExpShouldNeverMatch',
 ))@
 @(SNIPPET(
     'publisher_mailer',

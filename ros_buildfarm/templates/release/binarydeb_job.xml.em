@@ -208,7 +208,8 @@
 @(SNIPPET(
     'publisher_description-setter',
     regexp="Package '[^']+' version: (\S+)",
-    regexp_for_failed='',
+    # to prevent overwriting the description of failed builds
+    regexp_for_failed='ThisRegExpShouldNeverMatch',
 ))@
 @(SNIPPET(
     'publisher_groovy-postbuild_slave-low-disk-space',
