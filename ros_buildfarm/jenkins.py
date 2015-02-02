@@ -106,7 +106,8 @@ def configure_view(
     view_config = get_view_config(
         template_name, view_name, include_regex=include_regex)
     view_type = _get_view_type(view_config)
-    if view_name not in jenkins.views:
+    create_view = view_name not in jenkins.views
+    if create_view:
         print("Creating view '%s' of type '%s'" % (view_name, view_type))
         view = jenkins.views.create(view_name, view_type=view_type)
         remote_view_config = view.get_config()
@@ -126,10 +127,11 @@ def configure_view(
         print("Skipped '%s' because the config is the same" % view_name)
     else:
         print("Updating view '%s'" % view_name)
-        print('   ', '<<<')
-        for line in diff:
-            print('   ', line.rstrip('\n'))
-        print('   ', '>>>')
+        if not create_view:
+            print('   ', '<<<')
+            for line in diff:
+                print('   ', line.rstrip('\n'))
+            print('   ', '>>>')
         try:
             response_text = view.update_config(view_config)
         except Exception:
