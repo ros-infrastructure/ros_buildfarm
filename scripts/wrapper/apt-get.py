@@ -65,9 +65,10 @@ def call_apt_get_repeatedly(argv, known_error_strings, max_tries, offset=0):
     command = argv[0]
     for i in range(1 + offset, max_tries + 1):
         if i > 1:
+            sleep_time = 5 + 2 * i
             print("Reinvoke 'apt-get %s' (%d/%d) after sleeping %s seconds" %
-                  (command, i, max_tries, i - 1))
-            sleep(i)
+                  (command, i, max_tries, sleep_time))
+            sleep(sleep_time)
         rc, known_error_conditions = call_apt_get(argv, known_error_strings)
         if rc == 0 or not known_error_conditions:
             break
