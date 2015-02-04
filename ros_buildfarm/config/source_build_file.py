@@ -84,6 +84,10 @@ class SourceBuildFile(BuildFile):
         if 'repository_whitelist' in data:
             self.repository_whitelist = data['repository_whitelist']
             assert isinstance(self.repository_whitelist, list)
+        self.skip_ignored_repositories = None
+        if 'skip_ignored_repositories' in data:
+            self.skip_ignored_repositories = \
+                bool(data['skip_ignored_repositories'])
 
         self.test_commits_default = False
         self.test_commits_force = None

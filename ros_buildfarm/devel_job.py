@@ -71,12 +71,18 @@ def configure_devel_jobs(
         jenkins = False
 
     repo_names = dist_file.repositories.keys()
-    repo_names = build_file.filter_repositories(repo_names)
+    filtered_repo_names = build_file.filter_repositories(repo_names)
 
     devel_job_names = []
     pull_request_job_names = []
     job_configs = {}
     for repo_name in sorted(repo_names):
+        is_disabled = repo_name not in filtered_repo_names
+        if is_disabled and build_file.skip_ignored_repositories:
+            print("Skipping ignored repository '%s'" % repo_name,
+                  file=sys.stderr)
+            continue
+
         repo = dist_file.repositories[repo_name]
         if not repo.source_repository:
             print("Skipping repository '%s': no source section" % repo_name)
@@ -99,23 +105,25 @@ def configure_devel_jobs(
                    "false in the build file") % repo_name)
         else:
             job_types.append('commit')
-        # check for testing commits
-        if build_file.test_pull_requests_force is False:
-            # print(("Skipping repository '%s': 'test_pull_requests' is " +
-            #        "forced to false in the build file") % repo_name)
-            pass
-        elif repo.source_repository.test_pull_requests is False:
-            # print(("Skipping repository '%s': 'test_pull_requests' of the " +
-            #        "repository set to false") % repo_name)
-            pass
-        elif repo.source_repository.test_pull_requests is None and \
-                not build_file.test_pull_requests_default:
-            # print(("Skipping repository '%s': 'test_pull_requests' " +
-            #        "defaults to false in the build file") % repo_name)
-            pass
-        else:
-            print("Pull request job for repository '%s'" % repo_name)
-            job_types.append('pull_request')
+
+        if not is_disabled:
+            # check for testing pull requests
+            if build_file.test_pull_requests_force is False:
+                # print(("Skipping repository '%s': 'test_pull_requests' " +
+                #        "is forced to false in the build file") % repo_name)
+                pass
+            elif repo.source_repository.test_pull_requests is False:
+                # print(("Skipping repository '%s': 'test_pull_requests' of " +
+                #        "the repository set to false") % repo_name)
+                pass
+            elif repo.source_repository.test_pull_requests is None and \
+                    not build_file.test_pull_requests_default:
+                # print(("Skipping repository '%s': 'test_pull_requests' " +
+                #        "defaults to false in the build file") % repo_name)
+                pass
+            else:
+                print("Pull request job for repository '%s'" % repo_name)
+                job_types.append('pull_request')
 
         for job_type in job_types:
             pull_request = job_type == 'pull_request'
@@ -127,6 +135,7 @@ def configure_devel_jobs(
                         config=config, build_file=build_file,
                         index=index, dist_file=dist_file,
                         dist_cache=dist_cache, jenkins=jenkins, views=views,
+                        is_disabled=is_disabled,
                         groovy_script=groovy_script)
                     if not pull_request:
                         devel_job_names.append(job_name)
@@ -171,6 +180,7 @@ def configure_devel_job(
         config=None, build_file=None,
         index=None, dist_file=None, dist_cache=None,
         jenkins=None, views=None,
+        is_disabled=False,
         groovy_script=None,
         source_repository=None):
     """
@@ -197,7 +207,6 @@ def configure_devel_job(
                 'No distribution file matches the build file')
 
     repo_names = dist_file.repositories.keys()
-    repo_names = build_file.filter_repositories(repo_names)
 
     if repo_name is not None:
         if repo_name not in repo_names:
@@ -248,7 +257,8 @@ def configure_devel_job(
     job_config = _get_devel_job_config(
         config, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, source_repository,
-        repo_name, pull_request, job_name, dist_cache=dist_cache)
+        repo_name, pull_request, job_name, dist_cache=dist_cache,
+        is_disabled=is_disabled)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
@@ -277,7 +287,8 @@ def configure_devel_view(jenkins, view_name):
 def _get_devel_job_config(
         config, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, source_repo_spec,
-        repo_name, pull_request, job_name, dist_cache=None):
+        repo_name, pull_request, job_name, dist_cache=None,
+        is_disabled=False):
     template_name = 'devel/devel_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -309,6 +320,8 @@ def _get_devel_job_config(
         'pull_request': pull_request,
 
         'source_repo_spec': source_repo_spec,
+
+        'disabled': is_disabled,
 
         # this should not be necessary
         'job_name': job_name,

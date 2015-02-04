@@ -88,6 +88,10 @@ class ReleaseBuildFile(BuildFile):
         if 'package_blacklist' in data:
             self.package_blacklist = data['package_blacklist']
             assert isinstance(self.package_blacklist, list)
+        self.skip_ignored_packages = None
+        if 'skip_ignored_packages' in data:
+            self.skip_ignored_packages = \
+                bool(data['skip_ignored_packages'])
 
         self.sync_package_count = None
         self.sync_packages = []

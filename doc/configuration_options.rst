@@ -119,6 +119,11 @@ Description of common options
   The blacklist is applied after the whitelist which means if an item is in
   both lists it is being *excluded*.
 
+* **Skip ignored packages / repositories**: by default jobs are still being
+  generated for blacklisted (or not whitelisted) items but these jobs are
+  disabled.
+  To avoid generating these jobs to be generated set this flag to ``true``.
+
 
 Specific options in release build files
 ---------------------------------------
@@ -150,6 +155,8 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``package_whitelist``: a list of package names to whitelist
 * ``package_blacklist``: a list of package names to blacklist
+* ``skip_ignored_packages``: a boolean flag if jobs for blacklisted (or not
+  whitelisted) packages should not be generated (default: ``false``).
 
 * ``sync``: the sync criteria which must be fulfilled before syncing from
   ``building`` to ``testing``.
@@ -189,6 +196,8 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``repository_whitelist``: a list of repository names to whitelist
 * ``repository_blacklist``: a list of repository names to blacklist
+* ``skip_ignored_repositories``: a boolean flag if jobs for blacklisted (or not
+  whitelisted) repositories should not be generated (default: ``false``).
 
 * ``test_commits``: a dictionary to decide if *devel* jobs should be generated.
 

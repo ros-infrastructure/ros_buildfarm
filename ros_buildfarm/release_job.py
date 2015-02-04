@@ -64,8 +64,9 @@ def configure_release_jobs(
     filtered_pkg_names = build_file.filter_packages(pkg_names)
     explicitly_ignored_pkg_names = set(pkg_names) - set(filtered_pkg_names)
     if explicitly_ignored_pkg_names:
-        print('The following packages are being ignored because of ' +
-              'white-/blacklisting:')
+        print(('The following packages are being %s because of ' +
+               'white-/blacklisting:') %
+               ('ignored' if build_file.skip_ignored_packages else 'disabled'))
         for pkg_name in sorted(explicitly_ignored_pkg_names):
             print('  -', pkg_name)
 
@@ -95,8 +96,9 @@ def configure_release_jobs(
             ignored_pkg_names - explicitly_ignored_pkg_names
 
         if implicitly_ignored_pkg_names:
-            print('The following packages are being ignored because their ' +
-                  'dependencies are being ignored:')
+            print(('The following packages are being %s because their ' +
+                   'dependencies are being ignored:') % ('ignored'
+                  if build_file.skip_ignored_packages else 'disabled'))
             for pkg_name in sorted(implicitly_ignored_pkg_names):
                 print('  -', pkg_name)
             filtered_pkg_names = \
@@ -133,10 +135,15 @@ def configure_release_jobs(
     all_source_job_names = []
     all_binary_job_names = []
     all_job_configs = {}
-    for pkg_name in sorted(filtered_pkg_names):
+    for pkg_name in sorted(pkg_names):
         pkg = dist_file.release_packages[pkg_name]
         repo_name = pkg.repository_name
         repo = dist_file.repositories[repo_name]
+        is_disabled = pkg_name not in filtered_pkg_names
+        if is_disabled and build_file.skip_ignored_packages:
+            print("Skipping ignored package '%s' in repository '%s'" %
+                  (pkg_name, repo_name), file=sys.stderr)
+            continue
         if not repo.release_repository:
             print(("Skipping package '%s' in repository '%s': no release " +
                    "section") % (pkg_name, repo_name), file=sys.stderr)
@@ -159,6 +166,7 @@ def configure_release_jobs(
                         jenkins=jenkins, views=views,
                         generate_import_package_job=False,
                         generate_sync_packages_jobs=False,
+                        is_disabled=is_disabled,
                         groovy_script=groovy_script)
                 all_source_job_names += source_job_names
                 all_binary_job_names += binary_job_names
@@ -204,7 +212,11 @@ def configure_release_jobs(
                     os_code_name not in other_build_file.targets[os_name]:
                 continue
 
-            filtered_pkg_names = other_build_file.filter_packages(pkg_names)
+            if other_build_file.skip_ignored_packages:
+                filtered_pkg_names = other_build_file.filter_packages(
+                    pkg_names)
+            else:
+                filtered_pkg_names = pkg_names
             for pkg_name in sorted(filtered_pkg_names):
                 pkg = other_dist_file.release_packages[pkg_name]
                 repo_name = pkg.repository_name
@@ -259,6 +271,7 @@ def configure_release_job(
         jenkins=None, views=None,
         generate_import_package_job=True,
         generate_sync_packages_jobs=True,
+        is_disabled=False,
         groovy_script=None,
         filter_arches=None):
     """
@@ -283,7 +296,6 @@ def configure_release_job(
                 'No distribution file matches the build file')
 
     pkg_names = dist_file.release_packages.keys()
-    pkg_names = build_file.filter_packages(pkg_names)
 
     if pkg_name not in pkg_names:
         raise JobValidationError(
@@ -355,7 +367,8 @@ def configure_release_job(
     job_config = _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name,
-        pkg_name, repo_name, repo.release_repository, dist_cache=dist_cache)
+        pkg_name, repo_name, repo.release_repository, dist_cache=dist_cache,
+        is_disabled=is_disabled)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, source_job_name, job_config)
@@ -392,7 +405,8 @@ def configure_release_job(
             config_url, rosdistro_name, release_build_name,
             config, build_file, os_name, os_code_name, arch,
             pkg_name, append_timestamp, repo_name, repo.release_repository,
-            dist_cache=dist_cache, upstream_job_names=upstream_job_names)
+            dist_cache=dist_cache, upstream_job_names=upstream_job_names,
+            is_disabled=is_disabled)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
             configure_job(jenkins, job_name, job_config)
@@ -466,7 +480,8 @@ def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
 def _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name,
-        pkg_name, repo_name, release_repository, dist_cache=None):
+        pkg_name, repo_name, release_repository, dist_cache=None,
+        is_disabled=False):
     template_name = 'release/sourcedeb_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -488,6 +503,8 @@ def _get_sourcedeb_job_config(
         'github_url': get_github_project_url(release_repository.url),
 
         'job_priority': build_file.jenkins_source_job_priority,
+
+        'disabled': is_disabled,
 
         'ros_buildfarm_repository': get_repository(),
 
@@ -521,7 +538,8 @@ def _get_binarydeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name, arch,
         pkg_name, append_timestamp, repo_name, release_repository,
-        dist_cache=None, upstream_job_names=None):
+        dist_cache=None, upstream_job_names=None,
+        is_disabled=False):
     template_name = 'release/binarydeb_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -543,6 +561,8 @@ def _get_binarydeb_job_config(
         'github_url': get_github_project_url(release_repository.url),
 
         'job_priority': build_file.jenkins_binary_job_priority,
+
+        'disabled': is_disabled,
 
         'upstream_projects': upstream_job_names,
 
