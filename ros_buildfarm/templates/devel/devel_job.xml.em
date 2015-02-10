@@ -58,7 +58,7 @@
     relative_target_dir='catkin_workspace/src/%s' % source_repo_spec.name,
 ))@
 @[end if]@
-  <assignedNode>buildslave</assignedNode>
+  <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>
   <canRoam>false</canRoam>
   <disabled>@('true' if disabled else 'false')</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>

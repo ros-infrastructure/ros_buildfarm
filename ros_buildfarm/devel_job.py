@@ -307,6 +307,7 @@ def _get_devel_job_config(
         'github_url': get_github_project_url(source_repo_spec.url),
 
         'job_priority': job_priority,
+        'node_label': build_file.jenkins_job_label,
 
         'pull_request': pull_request,
 

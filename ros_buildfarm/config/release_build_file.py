@@ -62,6 +62,9 @@ class ReleaseBuildFile(BuildFile):
             self.abi_incompatibility_assumed = \
                 bool(data['abi_incompatibility_assumed'])
 
+        self.jenkins_binary_job_label = None
+        if 'jenkins_binary_job_label' in data:
+            self.jenkins_binary_job_label = data['jenkins_binary_job_label']
         self.jenkins_binary_job_priority = None
         if 'jenkins_binary_job_priority' in data:
             self.jenkins_binary_job_priority = \
@@ -71,6 +74,9 @@ class ReleaseBuildFile(BuildFile):
             self.jenkins_binary_job_timeout = \
                 int(data['jenkins_binary_job_timeout'])
 
+        self.jenkins_source_job_label = None
+        if 'jenkins_source_job_label' in data:
+            self.jenkins_source_job_label = data['jenkins_source_job_label']
         self.jenkins_source_job_priority = None
         if 'jenkins_source_job_priority' in data:
             self.jenkins_source_job_priority = \

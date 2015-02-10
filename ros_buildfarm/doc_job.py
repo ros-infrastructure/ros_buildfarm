@@ -248,6 +248,7 @@ def _get_doc_job_config(
         'github_url': get_github_project_url(doc_repo_spec.url),
 
         'job_priority': build_file.jenkins_job_priority,
+        'node_label': build_file.jenkins_job_label,
 
         'doc_repo_spec': doc_repo_spec,
 

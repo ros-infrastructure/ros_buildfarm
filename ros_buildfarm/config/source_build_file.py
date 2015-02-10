@@ -66,6 +66,9 @@ class SourceBuildFile(BuildFile):
             self.jenkins_pull_request_job_priority = \
                 int(data['jenkins_pull_request_job_priority'])
 
+        self.jenkins_job_label = None
+        if 'jenkins_job_label' in data:
+            self.jenkins_job_label = data['jenkins_job_label']
         self.jenkins_job_timeout = None
         if 'jenkins_job_timeout' in data:
             self.jenkins_job_timeout = int(data['jenkins_job_timeout'])

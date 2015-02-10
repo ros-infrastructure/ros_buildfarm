@@ -107,6 +107,9 @@ Description of common options
 * **Jenkins job timeouts**: the number of minutes after which a job should be
   aborted.
 
+* **Jenkins job label**: the label expression to restrict the execution of a
+  job to a specific computer or group of machines.
+
 * **Notification emails**: the notification about job statuses can be send to:
 
   * a list of statically configure email addresses
@@ -145,8 +148,10 @@ The following options are valid in version ``2`` (beside the generic options):
   trigger downstream packages for rebuilding them (default: ``false``).
   For ROS 1 this flag must always be ``true``.
 
+* ``jenkins_binary_job_label``: the label expression for *binary* jobs.
 * ``jenkins_binary_job_priority``: the job priority of *binary* jobs.
 * ``jenkins_binary_job_timeout``: the job timeout for *binary* jobs.
+* ``jenkins_source_job_label``: the label expression for *source* jobs.
 * ``jenkins_source_job_priority``: the job priority of *source* jobs.
 * ``jenkins_source_job_timeout``: the job timeout for *source* jobs.
 
@@ -189,6 +194,8 @@ The file format is specified by the following information:
 The following options are valid in version ``2`` (beside the generic options):
 
 * ``jenkins_commit_job_priority``: the job priority of *devel* jobs.
+* ``jenkins_job_label``: the label expression for both *devel* and
+  *pull request* jobs
 * ``jenkins_job_timeout``: the job timeout for both *devel* and *pull request*
   jobs.
 * ``jenkins_pull_request_job_priority``: the job priority of *pull request*

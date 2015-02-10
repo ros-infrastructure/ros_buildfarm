@@ -42,7 +42,7 @@
     repo_spec=doc_repo_spec,
     path='catkin_workspace/src/%s' % doc_repo_spec.name,
 ))@
-  <assignedNode>buildslave</assignedNode>
+  <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
