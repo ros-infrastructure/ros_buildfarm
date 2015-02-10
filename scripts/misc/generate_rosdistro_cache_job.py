@@ -38,7 +38,7 @@ def get_job_config(args, config):
     template_name = 'misc/rosdistro_cache_job.xml.em'
 
     repository_args, script_generating_key_files = \
-        get_repositories_and_script_generating_key_files(config)
+        get_repositories_and_script_generating_key_files(config=config)
 
     job_data = copy.deepcopy(args.__dict__)
     job_data.update({

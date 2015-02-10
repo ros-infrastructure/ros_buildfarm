@@ -283,7 +283,7 @@ def _get_devel_job_config(
     template_name = 'devel/devel_job.xml.em'
 
     repository_args, script_generating_key_files = \
-        get_repositories_and_script_generating_key_files(config, build_file)
+        get_repositories_and_script_generating_key_files(build_file=build_file)
 
     maintainer_emails = set([])
     if build_file.notify_maintainers and dist_cache and repo_name:

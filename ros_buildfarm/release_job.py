@@ -482,7 +482,7 @@ def _get_sourcedeb_job_config(
     template_name = 'release/sourcedeb_job.xml.em'
 
     repository_args, script_generating_key_files = \
-        get_repositories_and_script_generating_key_files(config, build_file)
+        get_repositories_and_script_generating_key_files(build_file=build_file)
 
     sourcedeb_files = [
         'sourcedeb/*.debian.tar.gz',
@@ -542,7 +542,7 @@ def _get_binarydeb_job_config(
     template_name = 'release/binarydeb_job.xml.em'
 
     repository_args, script_generating_key_files = \
-        get_repositories_and_script_generating_key_files(config, build_file)
+        get_repositories_and_script_generating_key_files(build_file=build_file)
 
     binarydeb_files = [
         'binarydeb/*.changes',
@@ -670,7 +670,7 @@ def _get_sync_packages_to_testing_job_config(
     template_name = 'release/sync_packages_to_testing_job.xml.em'
 
     repository_args, script_generating_key_files = \
-        get_repositories_and_script_generating_key_files(config, build_file)
+        get_repositories_and_script_generating_key_files(build_file=build_file)
 
     job_data = {
         'ros_buildfarm_repository': get_repository(),

@@ -32,17 +32,19 @@ class Scope(object):
 Target = namedtuple('Target', 'os_name os_code_name arch')
 
 
-def get_repositories_and_script_generating_key_files(config, build_file=None):
+def get_repositories_and_script_generating_key_files(
+        config=None, build_file=None):
     # extract the distribution repository urls and keys from the build file
     # and pass them as command line arguments and files
     # so that the job must not parse the build file
     repository_urls = []
     repository_keys = []
-    if 'debian_repositories' in config.prerequisites:
-        repository_urls += config.prerequisites['debian_repositories']
-    if 'debian_repository_keys' in config.prerequisites:
-        repository_keys += config.prerequisites['debian_repository_keys']
-    assert len(repository_urls) == len(repository_keys)
+    if config:
+        if 'debian_repositories' in config.prerequisites:
+            repository_urls += config.prerequisites['debian_repositories']
+        if 'debian_repository_keys' in config.prerequisites:
+            repository_keys += config.prerequisites['debian_repository_keys']
+        assert len(repository_urls) == len(repository_keys)
 
     if build_file:
         assert len(build_file.repository_urls) == \

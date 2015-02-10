@@ -83,7 +83,7 @@ def get_import_upstream_job_config(args, config, build_file):
 
 def _get_job_config(args, config, build_file, template_name):
     repository_args, script_generating_key_files = \
-        get_repositories_and_script_generating_key_files(config, build_file)
+        get_repositories_and_script_generating_key_files(config=config)
 
     job_data = {
         'script_generating_key_files': script_generating_key_files,
