@@ -69,6 +69,10 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The root path of the rosdoc_lite repository')
     parser.add_argument(
+        '--catkin-sphinx-dir',
+        required=True,
+        help='The root path of the catkin-sphinx repository')
+    parser.add_argument(
         '--rosdoc-index-dir',
         required=True,
         help='The root path of the rosdoc_index folder')
@@ -121,6 +125,7 @@ def main(argv=sys.argv[1:]):
         current_hashes = {}
         current_hashes['ros_buildfarm'] = 1  # increase to retrigger doc jobs
         current_hashes['rosdoc_lite'] = get_hash(args.rosdoc_lite_dir)
+        current_hashes['catkin-sphinx'] = get_hash(args.catkin_sphinx_dir)
         repo_dir = os.path.join(
             args.workspace_root, 'src', args.repository_name)
         # TODO handle non-git repositories
@@ -459,11 +464,11 @@ def main(argv=sys.argv[1:]):
         'python-rospkg',
         'python-sphinx',
         'python-yaml',
-        'ros-%s-genmsg' % args.rosdistro_name,
+        # since catkin is not a run dependency but provides the setup files
+        get_debian_package_name(args.rosdistro_name, 'catkin'),
+        # rosdoc_lite does not work without genmsg being importable
+        get_debian_package_name(args.rosdistro_name, 'genmsg'),
     ]
-    if 'catkin' not in pkg_names:
-        debian_pkg_names.append(
-            get_debian_package_name(args.rosdistro_name, 'catkin'))
     if 'actionlib_msgs' in pkg_names:
         # to document actions in other packages in the same repository
         debian_pkg_names.append(

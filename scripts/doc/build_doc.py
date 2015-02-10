@@ -39,6 +39,10 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The root path of the rosdoc_lite repository')
     parser.add_argument(
+        '--catkin-sphinx-dir',
+        required=True,
+        help='The root path of the catkin-sphinx repository')
+    parser.add_argument(
         '--rosdoc-index-dir',
         required=True,
         help='The root path of the rosdoc_index folder')
@@ -99,7 +103,8 @@ def main(argv=sys.argv[1:]):
                     'sh', '-c',
                     ' '.join(source_cmd) +
                     ' && ' +
-                    'PYTHONPATH=%s/src:$PYTHONPATH ' % args.rosdoc_lite_dir +
+                    'PYTHONPATH=%s/src:%s/src:$PYTHONPATH ' % (
+                        args.rosdoc_lite_dir, args.catkin_sphinx_dir) +
                     ' '.join(rosdoc_lite_cmd)
                 ], stderr=subprocess.STDOUT, cwd=pkg_path)
             if pkg_rc:

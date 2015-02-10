@@ -73,6 +73,12 @@
         'git -C rosdoc_lite log -n 1',
         'echo "# END SECTION"',
         '',
+        'echo "# BEGIN SECTION: Clone catkin-sphinx"',
+        'rm -fr catkin-sphinx',
+        'git clone https://github.com/ros-infrastructure/catkin-sphinx catkin-sphinx',
+        'git -C catkin-sphinx log -n 1',
+        'echo "# END SECTION"',
+        '',
         'echo "# BEGIN SECTION: rsync (most of) the rosdoc_index to slave"',
         'rm -fr rosdoc_index',
         '# must pass if the rosdistro specific folder does not exist yet',
@@ -140,6 +146,7 @@
         ' -e=HOME=/home/buildfarm' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/rosdoc_lite:/tmp/rosdoc_lite:ro' +
+        ' -v $WORKSPACE/catkin-sphinx:/tmp/catkin-sphinx:ro' +
         ' -v $WORKSPACE/rosdoc_index:/tmp/rosdoc_index:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' -v $WORKSPACE/generated_documentation:/tmp/generated_documentation' +
@@ -172,6 +179,7 @@
         ' --cidfile=$WORKSPACE/docker_doc/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/rosdoc_lite:/tmp/rosdoc_lite:ro' +
+        ' -v $WORKSPACE/catkin-sphinx:/tmp/catkin-sphinx:ro' +
         ' -v $WORKSPACE/rosdoc_index:/tmp/rosdoc_index:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' -v $WORKSPACE/generated_documentation:/tmp/generated_documentation' +

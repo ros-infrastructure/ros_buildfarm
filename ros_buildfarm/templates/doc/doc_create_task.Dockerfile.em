@@ -52,6 +52,7 @@ cmds = [
     ' ' + doc_build_name + \
     ' --workspace-root /tmp/catkin_workspace' + \
     ' --rosdoc-lite-dir /tmp/rosdoc_lite' + \
+    ' --catkin-sphinx-dir /tmp/catkin-sphinx' + \
     ' --rosdoc-index-dir /tmp/rosdoc_index' + \
     ' ' + repository_name + \
     ' --os-name ' + os_name + \
