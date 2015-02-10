@@ -124,6 +124,9 @@ Description of common options
   disabled.
   To avoid generating these jobs to be generated set this flag to ``true``.
 
+* **Credential ID**: the ID of the credential entry managed on the Jenkins
+  master which is commonly used to upload artifacts to another host.
+
 
 Specific options in release build files
 ---------------------------------------
@@ -168,6 +171,9 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``target_repository``: the target repository to push built *source* and
   *binary* packages to.
   This should always refer to the *building* repository.
+
+* ``upload_credential_id``: the ID of the credential to upload the built
+  packages to the repository host.
 
 
 Specific options in source build files

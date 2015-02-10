@@ -105,6 +105,9 @@ class ReleaseBuildFile(BuildFile):
         assert 'target_repository' in data
         self.target_repository = data['target_repository']
 
+        assert 'upload_credential_id' in data
+        self.upload_credential_id = data['upload_credential_id']
+
     def filter_packages(self, package_names):
         res = set(package_names)
         if self.package_whitelist:

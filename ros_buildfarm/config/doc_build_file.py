@@ -87,6 +87,9 @@ class DocBuildFile(BuildFile):
             self.repository_whitelist = data['repository_whitelist']
             assert isinstance(self.repository_whitelist, list)
 
+        assert 'upload_credential_id' in data
+        self.upload_credential_id = data['upload_credential_id']
+
     def filter_repositories(self, repository_names):
         res = set(repository_names)
         if self.repository_whitelist:

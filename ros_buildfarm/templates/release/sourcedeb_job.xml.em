@@ -153,7 +153,8 @@
     'build-wrapper_disk-check',
 ))@
 @(SNIPPET(
-    'build-wrapper_ssh-agent_credential-id',
+    'build-wrapper_ssh-agent',
+    credential_id=credential_id,
 ))@
   </buildWrappers>
 </project>
