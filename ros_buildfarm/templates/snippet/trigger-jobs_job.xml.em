@@ -16,7 +16,7 @@
       <parameterDefinitions>
         <hudson.model.ChoiceParameterDefinition>
           <name>filter</name>
-          <description/>
+          <description>Select jobs based on their latest build result</description>
           <choices class="java.util.Arrays$ArrayList">
             <a class="string-array">
               <string>not_stable</string>
@@ -30,6 +30,13 @@
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
+@[if has_force_parameter]@
+        <hudson.model.BooleanParameterDefinition>
+          <name>force</name>
+          <description>Run documentation generation even if neither the source repository nor any of the tools have changes</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+@[end if]@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
 @(SNIPPET(
@@ -56,12 +63,21 @@
 """import java.util.regex.Matcher
 import java.util.regex.Pattern
 import hudson.model.AbstractProject
+import hudson.model.BooleanParameterValue
+import hudson.model.Cause.UserIdCause
+import hudson.model.ParametersAction
 import hudson.model.Result
 
 build = Thread.currentThread().executable
 resolver = build.buildVariableResolver
+
 filter = resolver.resolve("filter")
 println "Filter: " + filter
+
+@[if has_force_parameter]@
+boolean force = resolver.resolve("force")
+println "Force: " + force + type(force)
+@[end if]@
 
 pattern = Pattern.compile("%s")
 for (p in hudson.model.Hudson.instance.getAllItems(AbstractProject)) {
@@ -107,7 +123,11 @@ for (p in hudson.model.Hudson.instance.getAllItems(AbstractProject)) {
         }
     }
     println p.name
+@[if has_force_parameter]@
+    p.scheduleBuild(1, new UserIdCause(), new ParametersAction(new BooleanParameterValue("force", force)))
+@[else]@
     p.scheduleBuild()
+@[end if]@
 }
 """ % project_name_pattern,
     script_file=None,

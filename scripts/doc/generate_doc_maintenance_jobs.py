@@ -85,10 +85,10 @@ def configure_trigger_jobs_job(
 
 
 def get_trigger_jobs_job_config(group_name, build_file):
-    template_name = 'devel/devel_trigger-jobs_job.xml.em'
+    template_name = 'snippet/trigger-jobs_job.xml.em'
     job_data = {
+        'has_force_parameter': True,
         'project_name_pattern': '%s__.*' % group_name,
-
         'recipients': build_file.notify_emails,
     }
     job_config = expand_template(template_name, job_data)
