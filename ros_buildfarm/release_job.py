@@ -8,6 +8,7 @@ from rosdistro import get_index
 from ros_buildfarm.common import get_binarydeb_job_name
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_github_project_url
+from ros_buildfarm.common import get_release_binary_view_name
 from ros_buildfarm.common import get_release_binary_view_prefix
 from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import get_release_source_view_name
@@ -178,26 +179,34 @@ def configure_release_jobs(
             except JobValidationError as e:
                 print(e.message, file=sys.stderr)
 
-    binary_view_prefix = get_release_binary_view_prefix(
-        rosdistro_name, release_build_name)
-    binary_job_prefix = '%s__' % binary_view_prefix
+    groovy_data = {
+        'job_configs': all_job_configs,
+        'job_prefixes_and_names': {},
+    }
 
-    if groovy_script is None:
-        # delete obsolete binary jobs
-        print('Removing obsolete binary jobs')
-        remove_jobs(jenkins, binary_job_prefix, all_binary_job_names)
-    else:
-        data = {
-            'job_configs': all_job_configs,
-            'job_prefixes_and_names': {
-                'binary': (binary_job_prefix, all_binary_job_names),
-            }
-        }
+    # delete obsolete binary jobs
+    for os_name, os_code_name in platforms:
+        for arch in build_file.targets[os_name][os_code_name]:
+            binary_view = get_release_binary_view_name(
+                rosdistro_name, release_build_name,
+                os_name, os_code_name, arch)
+            binary_job_prefix = '%s__' % binary_view
+
+            excluded_job_names = set([
+                j for j in all_binary_job_names
+                if j.startswith(binary_job_prefix)])
+            if groovy_script is None:
+                print("Removing obsolete binary jobs with prefix '%s'" %
+                      binary_job_prefix)
+                remove_jobs(
+                    jenkins, binary_job_prefix, excluded_job_names)
+            else:
+                binary_key = 'binary_%s_%s_%s' % (os_name, os_code_name, arch)
+                groovy_data['job_prefixes_and_names'][binary_key] = \
+                    (binary_job_prefix, excluded_job_names)
 
     # delete obsolete source jobs
     # requires knowledge about all other release build files
-    if groovy_script is None:
-        print('Removing obsolete source jobs')
     for os_name, os_code_name in platforms:
         other_source_job_names = []
         # get source job names for all other release build files
@@ -235,20 +244,23 @@ def configure_release_jobs(
         source_view_prefix = get_release_source_view_name(
             rosdistro_name, os_name, os_code_name)
         source_job_prefix = '%s__' % source_view_prefix
+        excluded_job_names = set([
+            j for j in (all_source_job_names + other_source_job_names)
+            if j.startswith(source_job_prefix)])
         if groovy_script is None:
-            remove_jobs(jenkins, source_job_prefix,
-                        all_source_job_names + other_source_job_names)
+            print("Removing obsolete source jobs with prefix '%s'" %
+                  source_job_prefix)
+            remove_jobs(jenkins, source_job_prefix, excluded_job_names)
         else:
             source_key = 'source_%s_%s' % (os_name, os_code_name)
-            data['job_prefixes_and_names'][source_key] = (
-                source_job_prefix,
-                [j for j in (all_source_job_names + other_source_job_names)
-                 if j.startswith(source_job_prefix)])
+            groovy_data['job_prefixes_and_names'][source_key] = (
+                source_job_prefix, excluded_job_names)
 
     if groovy_script is not None:
         print("Writing groovy script '%s' to reconfigure %d jobs" %
               (groovy_script, len(all_job_configs)))
-        content = expand_template('snippet/reconfigure_jobs.groovy.em', data)
+        content = expand_template(
+            'snippet/reconfigure_jobs.groovy.em', groovy_data)
         with open(groovy_script, 'w') as h:
             h.write(content)
 

@@ -172,7 +172,7 @@ def get_release_source_view_prefix(rosdistro_name):
 def get_release_source_view_name(
         rosdistro_name, os_name, os_code_name):
     return '%s_%s%s' % (
-        get_release_source_view_prefix(rosdistro_name[0].upper()),
+        get_release_source_view_prefix(rosdistro_name),
         get_short_os_name(os_name),
         get_short_os_code_name(os_code_name))
 
@@ -198,8 +198,7 @@ def get_release_binary_view_name(
     os_code_name = get_short_os_code_name(os_code_name)
     arch = get_short_arch(arch)
     return '%s_%s%s%s' % (
-        get_release_binary_view_prefix(
-            rosdistro_name[0].upper(), release_build_name),
+        get_release_binary_view_prefix(rosdistro_name, release_build_name),
         get_short_os_name(os_name),
         get_short_os_code_name(os_code_name),
         get_short_arch(arch))
