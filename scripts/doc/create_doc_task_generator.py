@@ -464,6 +464,10 @@ def main(argv=sys.argv[1:]):
     if 'catkin' not in pkg_names:
         debian_pkg_names.append(
             get_debian_package_name(args.rosdistro_name, 'catkin'))
+    if 'actionlib_msgs' in pkg_names:
+        # to document actions in other packages in the same repository
+        debian_pkg_names.append(
+            get_debian_package_name(args.rosdistro_name, 'actionlib_msgs'))
     print('Always install the following generic dependencies:')
     for debian_pkg_name in sorted(debian_pkg_names):
         print('  -', debian_pkg_name)
