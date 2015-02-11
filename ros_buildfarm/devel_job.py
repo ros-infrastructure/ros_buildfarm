@@ -332,7 +332,7 @@ def _get_devel_job_config(
         'arch': arch,
         'repository_args': repository_args,
 
-        'notify_emails': set(config.notify_emails + build_file.notify_emails),
+        'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
         'notify_committers': build_file.notify_committers,

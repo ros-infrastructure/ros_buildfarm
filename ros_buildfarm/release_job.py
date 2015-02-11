@@ -522,7 +522,7 @@ def _get_sourcedeb_job_config(
         'debian_package_name': get_debian_package_name(
             rosdistro_name, pkg_name),
 
-        'notify_emails': set(config.notify_emails + build_file.notify_emails),
+        'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
 
@@ -590,7 +590,7 @@ def _get_binarydeb_job_config(
 
         'child_projects': sync_to_testing_job_name,
 
-        'notify_emails': set(config.notify_emails + build_file.notify_emails),
+        'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
 

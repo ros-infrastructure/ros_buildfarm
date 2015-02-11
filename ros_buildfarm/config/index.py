@@ -73,13 +73,18 @@ class Index(object):
             for distro_name in sorted(data['distributions']):
                 self.distributions[distro_name] = {}
                 distro_data = data['distributions'][distro_name]
+                value_types = {
+                    'doc_builds': dict,
+                    'notification_emails': list,
+                    'release_builds': dict,
+                    'source_builds': dict,
+                }
                 for key in distro_data:
-                    if key not in \
-                            ['release_builds', 'source_builds', 'doc_builds']:
+                    if key not in value_types.keys():
                         assert False, "unknown key '%s'" % key
 
                     value = distro_data[key]
-                    if not isinstance(value, dict):
+                    if not isinstance(value, value_types[key]):
                         assert False, \
                             "wrong type of key '%s': %s" % (key, type(value))
 
@@ -89,10 +94,23 @@ class Index(object):
                             value = base_url + '/' + value
                         return value
 
-                    self.distributions[distro_name][key] = {}
-                    for k, v in value.items():
-                        v = resolve_url(base_url, v)
-                        self.distributions[distro_name][key][k] = v
+                    if isinstance(value, dict):
+                        self.distributions[distro_name][key] = {}
+                        for k, v in value.items():
+                            v = resolve_url(base_url, v)
+                            self.distributions[distro_name][key][k] = v
+                    elif isinstance(value, list):
+                        self.distributions[distro_name][key] = []
+                        for v in value:
+                            self.distributions[distro_name][key].append(v)
+                    else:
+                        assert False
+
+                unset_keys = [
+                    k for k in value_types.keys()
+                    if k not in distro_data]
+                for key in unset_keys:
+                    self.distributions[distro_name][key] = value_types[key]()
 
         self.jenkins_url = data['jenkins_url']
 

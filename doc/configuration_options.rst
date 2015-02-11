@@ -37,10 +37,13 @@ The following options are valid in version ``1``:
 
   All build file references can be either relative path or absolute URLs.
 
+  * ``notification_emails``: a list of email addresses for notification about
+    ROS distribution specific administrative jobs.
+
 * ``jenkins_url``: the URL of the Jenkins master
 
 * ``notification_emails``: a list of email addresses for notification about
-  administrative jobs.
+  ROS distribution agnostic administrative jobs.
 
 * ``prerequisites``: a dictionary containing information about repositories
   which contain the necessary tools to run the ROS build farm.
