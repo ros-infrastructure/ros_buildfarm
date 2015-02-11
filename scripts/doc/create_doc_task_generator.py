@@ -485,8 +485,17 @@ def main(argv=sys.argv[1:]):
     debian_pkg_names_depends = resolve_names(depends, **context)
     debian_pkg_names_depends -= set(debian_pkg_names)
     debian_pkg_names += order_dependencies(debian_pkg_names_depends)
-    debian_pkg_versions.update(
-        get_binary_package_versions(apt_cache, debian_pkg_names))
+    unknown_versions = []
+    for debian_pkg_name in debian_pkg_names:
+        try:
+            debian_pkg_versions.update(
+                get_binary_package_versions(apt_cache, [debian_pkg_name]))
+        except KeyError:
+            print("Could not find apt package '%s', skipping dependency" %
+                  debian_pkg_name)
+            unknown_versions.append(debian_pkg_name)
+    for unknown_version in unknown_versions:
+        debian_pkg_names.remove(unknown_version)
 
     # generate Dockerfile
     data = {
@@ -574,8 +583,9 @@ def resolve_names(rosdep_keys, os_name, os_code_name, view, installer):
             resolved_names = resolve_for_os(
                 rosdep_key, view, installer, os_name, os_code_name)
         except KeyError:
-            raise RuntimeError(
-                "Could not resolve the rosdep key '%s'" % rosdep_key)
+            print(("Could not resolve the rosdep key '%s', ignoring " +
+                   "dependency") % rosdep_key, file=sys.stderr)
+            continue
         debian_pkg_names.update(resolved_names)
     print('Resolved the dependencies to the following binary packages:')
     for debian_pkg_name in sorted(debian_pkg_names):
