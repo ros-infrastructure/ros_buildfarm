@@ -113,7 +113,8 @@ Description of common options
 * **Jenkins job label**: the label expression to restrict the execution of a
   job to a specific computer or group of machines.
 
-* **Notification emails**: the notification about job statuses can be send to:
+* **Notification emails**: the notification about repository / package specific
+  job statuses can be send to:
 
   * a list of statically configure email addresses
   * a list of maintainer email addresses extracted from the package manifests
@@ -151,10 +152,12 @@ The following options are valid in version ``2`` (beside the generic options):
   trigger downstream packages for rebuilding them (default: ``false``).
   For ROS 1 this flag must always be ``true``.
 
-* ``jenkins_binary_job_label``: the label expression for *binary* jobs.
+* ``jenkins_binary_job_label``: the label expression for *binary* jobs
+  (default: ``buildslave``).
 * ``jenkins_binary_job_priority``: the job priority of *binary* jobs.
 * ``jenkins_binary_job_timeout``: the job timeout for *binary* jobs.
-* ``jenkins_source_job_label``: the label expression for *source* jobs.
+* ``jenkins_source_job_label``: the label expression for *source* jobs
+  (default: ``buildslave``).
 * ``jenkins_source_job_priority``: the job priority of *source* jobs.
 * ``jenkins_source_job_timeout``: the job timeout for *source* jobs.
 
@@ -198,7 +201,7 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``jenkins_commit_job_priority``: the job priority of *devel* jobs.
 * ``jenkins_job_label``: the label expression for both *devel* and
-  *pull request* jobs
+  *pull request* jobs (default: ``buildslave``).
 * ``jenkins_job_timeout``: the job timeout for both *devel* and *pull request*
   jobs.
 * ``jenkins_pull_request_job_priority``: the job priority of *pull request*
@@ -232,4 +235,27 @@ The following options are valid in version ``2`` (beside the generic options):
 Specific options in doc build files
 ---------------------------------------
 
-TODO not yet implemented
+This yaml file defines the configuration for *doc* jobs.
+
+The file format is specified by the following information:
+
+* ``type: doc-build`` identifies the yaml file as a *doc build file*.
+* ``version: 2`` specifies the specification version of the file.
+
+The following options are valid in version ``2`` (beside the generic options):
+
+* ``jenkins_job_priority``: the job priority of *doc* jobs.
+* ``jenkins_job_label``: the label expression for both *doc* jobs (default:
+  ``buildslave``)
+* ``jenkins_job_timeout``: the job timeout for *doc* jobs.
+
+* ``notifications``: a dictionary with the following keys:
+
+  * ``committers``: a boolean flag if the committers should be notified
+  * ``emails``: a list of static email addresses
+  * ``maintainers``: a boolean flag if the maintainers should be notified
+
+* ``repository_whitelist``: a list of repository names to whitelist
+* ``repository_blacklist``: a list of repository names to blacklist
+* ``skip_ignored_repositories``: a boolean flag if jobs for blacklisted (or not
+  whitelisted) repositories should not be generated (default: ``false``).

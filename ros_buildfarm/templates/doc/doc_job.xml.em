@@ -1,6 +1,10 @@
 <project>
   <actions/>
-  <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
+  <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'
+@[if disabled]@
+  but disabled since the package is blacklisted (or not whitelisted) in the configuration file@
+@[end if]@
+@ </description>
 @(SNIPPET(
     'log-rotator',
     days_to_keep=100,
@@ -44,7 +48,7 @@
 ))@
   <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>
   <canRoam>false</canRoam>
-  <disabled>false</disabled>
+  <disabled>@('true' if disabled else 'false')</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>

@@ -57,14 +57,6 @@ class DocBuildFile(BuildFile):
 
         super(DocBuildFile, self).__init__(name, data)
 
-        assert 'doc_tag_index_repository' in data
-        assert 'url' in data['doc_tag_index_repository']
-        assert 'version' in data['doc_tag_index_repository']
-        self.doc_tag_index_repository_url = \
-            data['doc_tag_index_repository']['url']
-        self.doc_tag_index_repository_version = \
-            data['doc_tag_index_repository']['version']
-
         self.jenkins_job_label = None
         if 'jenkins_job_label' in data:
             self.jenkins_job_label = data['jenkins_job_label']
@@ -89,6 +81,10 @@ class DocBuildFile(BuildFile):
         if 'repository_whitelist' in data:
             self.repository_whitelist = data['repository_whitelist']
             assert isinstance(self.repository_whitelist, list)
+        self.skip_ignored_repositories = None
+        if 'skip_ignored_repositories' in data:
+            self.skip_ignored_repositories = \
+                bool(data['skip_ignored_repositories'])
 
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']

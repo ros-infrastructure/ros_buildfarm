@@ -65,11 +65,17 @@ def configure_doc_jobs(
         views.append(configure_doc_view(jenkins, doc_view_name))
 
     repo_names = dist_file.repositories.keys()
-    repo_names = build_file.filter_repositories(repo_names)
+    filtered_repo_names = build_file.filter_repositories(repo_names)
 
     job_names = []
     job_configs = {}
     for repo_name in sorted(repo_names):
+        is_disabled = repo_name not in filtered_repo_names
+        if is_disabled and build_file.skip_ignored_repositories:
+            print("Skipping ignored repository '%s'" % repo_name,
+                  file=sys.stderr)
+            continue
+
         repo = dist_file.repositories[repo_name]
         if not repo.doc_repository:
             print("Skipping repository '%s': no doc section" % repo_name)
@@ -86,6 +92,7 @@ def configure_doc_jobs(
                     config=config, build_file=build_file,
                     index=index, dist_file=dist_file,
                     dist_cache=dist_cache, jenkins=jenkins, views=views,
+                    is_disabled=is_disabled,
                     groovy_script=groovy_script)
                 job_names.append(job_name)
                 if groovy_script is not None:
@@ -120,6 +127,7 @@ def configure_doc_job(
         config=None, build_file=None,
         index=None, dist_file=None, dist_cache=None,
         jenkins=None, views=None,
+        is_disabled=False,
         groovy_script=None,
         doc_repository=None):
     """
@@ -146,7 +154,6 @@ def configure_doc_job(
                 'No distribution file matches the build file')
 
     repo_names = dist_file.repositories.keys()
-    repo_names = build_file.filter_repositories(repo_names)
 
     if repo_name is not None:
         if repo_name not in repo_names:
@@ -197,7 +204,7 @@ def configure_doc_job(
     job_config = _get_doc_job_config(
         config, config_url,rosdistro_name, doc_build_name,
         build_file, os_name, os_code_name, arch, doc_repository,
-        repo_name, job_name, dist_cache=dist_cache)
+        repo_name, job_name, dist_cache=dist_cache, is_disabled=is_disabled)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
@@ -225,7 +232,7 @@ def configure_doc_view(jenkins, view_name):
 def _get_doc_job_config(
         config, config_url, rosdistro_name, doc_build_name,
         build_file, os_name, os_code_name, arch, doc_repo_spec,
-        repo_name, job_name, dist_cache=None):
+        repo_name, job_name, dist_cache=None, is_disabled=False):
     template_name = 'doc/doc_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -252,17 +259,14 @@ def _get_doc_job_config(
 
         'doc_repo_spec': doc_repo_spec,
 
+        'disabled': is_disabled,
+
         # this should not be necessary
         'job_name': job_name,
 
         'github_orgunit': git_github_orgunit(doc_repo_spec.url),
 
         'ros_buildfarm_repository': get_repository(),
-        'doc_tag_index_repository_url':
-        build_file.doc_tag_index_repository_url,
-        'doc_tag_index_repository_version':
-        build_file.doc_tag_index_repository_version,
-
 
         'script_generating_key_files': script_generating_key_files,
 
