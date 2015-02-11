@@ -2,6 +2,7 @@
 
 cmake_minimum_required(VERSION 2.8.3)
 
+@[if not build_type_cmake]@
 @# catkin needs some special handling to bootstrap
 @[if package_name == 'catkin']@
 set(catkin_EXTRAS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -16,9 +17,11 @@ _catkin_package_xml(${CMAKE_CURRENT_BINARY_DIR}/catkin_generated)
 if(NOT "${_CATKIN_CURRENT_PACKAGE}" STREQUAL "@package_name")
   message(FATAL_ERROR "The package name does not match")
 endif()
+@[end if]@# not build_type_cmake
 
-project(${_CATKIN_CURRENT_PACKAGE})
+project(@package_name)
 
+@[if not build_type_cmake]@
 @[if package_name != 'catkin']@
 # select the catkin dependencies from deps
 macro(select_catkin_dependencies PREFIX DEPS)
@@ -103,7 +106,7 @@ endif()
 if(DEFINED ${PROJECT_NAME}_RUN_DEPENDS)
   select_catkin_dependencies(RUN "${${PROJECT_NAME}_RUN_DEPENDS}")
 endif()
-@[end if]@
+@[end if]@# package_name != 'catkin'
 
 @# don't install CMake config file for actionlib_msgs
 @# allow to use the installed underlay binary package
@@ -112,3 +115,7 @@ catkin_package(
   DEPENDS ${RUN_DEPENDENCIES}
 )
 @[end if]@
+
+@[else]@
+install(FILES package.xml DESTINATION share/${PROJECT_NAME})
+@[end if]@# not build_type_cmake

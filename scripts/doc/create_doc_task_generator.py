@@ -426,23 +426,18 @@ def main(argv=sys.argv[1:]):
 
             build_types = [
                 e.content for e in pkg.exports if e.tagname == 'build_type']
-            if build_types and build_types[0] == 'cmake':
-                print("Ignore plain CMake package '%s' during build" %
-                      pkg.name)
-                catkin_ignore_file = os.path.join(
-                    abs_pkg_path, 'CATKIN_IGNORE')
-                with open(catkin_ignore_file, 'w'):
-                    pass
-            else:
-                data = {
-                    'package_name': pkg.name,
-                }
-                content = expand_template('doc/CMakeLists.txt.em', data)
-                print("Generating 'CMakeLists.txt' for package '%s'" %
-                      pkg.name)
-                cmakelist_file = os.path.join(abs_pkg_path, 'CMakeLists.txt')
-                with open(cmakelist_file, 'w') as h:
-                    h.write(content)
+            build_type_cmake = build_types and build_types[0] == 'cmake'
+
+            data = {
+                'package_name': pkg.name,
+                'build_type_cmake': build_type_cmake,
+            }
+            content = expand_template('doc/CMakeLists.txt.em', data)
+            print("Generating 'CMakeLists.txt' for package '%s'" %
+                  pkg.name)
+            cmakelist_file = os.path.join(abs_pkg_path, 'CMakeLists.txt')
+            with open(cmakelist_file, 'w') as h:
+                h.write(content)
 
     # initialize rosdep view
     context = initialize_resolver(
