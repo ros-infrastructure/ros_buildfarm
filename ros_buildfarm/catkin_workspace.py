@@ -38,7 +38,8 @@ def call_catkin_make_isolated(
         source_space, 'catkin', 'bin', script_name)
     if os.path.exists(script_from_source):
         script_name = script_from_source
-    cmd = ' '.join(['PYTHONIOENCODING=utf_8', script_name] + args)
+    cmd = ' '.join(
+        ['PYTHONIOENCODING=utf_8', 'PYTHONUNBUFFERED=1', script_name] + args)
 
     # prepend setup file if available
     if not parent_result_space:
