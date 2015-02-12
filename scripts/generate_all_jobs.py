@@ -7,6 +7,7 @@ import sys
 
 
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.config import get_source_build_files
@@ -61,6 +62,11 @@ def main(argv=sys.argv[1:]):
             generate_devel_maintenance_jobs(
                 args.config_url, ros_distro_name, source_build_name)
 
+        doc_build_files = get_doc_build_files(config, ros_distro_name)
+        for doc_build_name in doc_build_files.keys():
+            generate_doc_maintenance_jobs(
+                args.config_url, ros_distro_name, doc_build_name)
+
         generate_repos_status_page_jobs(
             args.config_url, ros_distro_name)
 
@@ -114,12 +120,23 @@ def generate_release_maintenance_jobs(
 
 
 def generate_devel_maintenance_jobs(
-        config_url, ros_distro_name, release_build_name):
+        config_url, ros_distro_name, source_build_name):
     cmd = [
         'devel/generate_devel_maintenance_jobs.py',
         config_url,
         ros_distro_name,
-        release_build_name,
+        source_build_name,
+    ]
+    _check_call(cmd)
+
+
+def generate_doc_maintenance_jobs(
+        config_url, ros_distro_name, doc_build_name):
+    cmd = [
+        'doc/generate_doc_maintenance_jobs.py',
+        config_url,
+        ros_distro_name,
+        doc_build_name,
     ]
     _check_call(cmd)
 
