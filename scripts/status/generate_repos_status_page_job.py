@@ -64,22 +64,37 @@ def get_job_config(args, config):
 def get_targets_by_repo(config, ros_distro_name):
     # collect all target repositories (building) and their targets
     # from all release build files
-    targets_by_repo = {}
+    target_dicts_by_repo = {}
     release_build_files = get_release_build_files(config, ros_distro_name)
-    for release_build_name, release_build_file in release_build_files.items():
+    for release_build_file in release_build_files.values():
         target_repository = release_build_file.target_repository
-        targets_by_repo.setdefault(target_repository, [])
+        merged_os_names = target_dicts_by_repo.setdefault(
+            target_repository, {})
+        for os_name in release_build_file.targets.keys():
+            os_code_names = release_build_file.targets[os_name]
+            merged_os_code_names = merged_os_names.setdefault(os_name, {})
+            for os_code_name in os_code_names.keys():
+                arches = os_code_names[os_code_name]
+                merged_arches = merged_os_code_names.setdefault(
+                    os_code_name, {})
+                for arch in arches.keys():
+                    merged_arches.setdefault(arch, {})
+
+    # flatten each os_code_name and arch into a single colon separated string
+    targets_by_repo = {}
+    for target_repository in target_dicts_by_repo.keys():
+        targets_by_repo[target_repository] = []
+        targets = target_dicts_by_repo[target_repository]
         # TODO support other OS names
-        if 'ubuntu' in release_build_file.targets:
-            targets = release_build_file.targets['ubuntu']
-            for os_code_name in sorted(targets.keys()):
+        if 'ubuntu' in targets:
+            ubuntu_targets = targets['ubuntu']
+            for os_code_name in sorted(ubuntu_targets.keys()):
                 target = '%s:source' % os_code_name
-                if target not in targets_by_repo[target_repository]:
-                    targets_by_repo[target_repository].append(target)
-                for arch in sorted(targets[os_code_name].keys()):
+                targets_by_repo[target_repository].append(target)
+                for arch in sorted(ubuntu_targets[os_code_name].keys()):
                     target = '%s:%s' % (os_code_name, arch)
-                    if target not in targets_by_repo[target_repository]:
-                        targets_by_repo[target_repository].append(target)
+                    targets_by_repo[target_repository].append(target)
+        print(target_repository, targets_by_repo[target_repository])
     return targets_by_repo
 
 
