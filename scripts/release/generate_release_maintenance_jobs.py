@@ -68,20 +68,22 @@ def main(argv=sys.argv[1:]):
 
 def get_reconfigure_jobs_job_config(args, config, build_file):
     template_name = 'release/release_reconfigure-jobs_job.xml.em'
-    return _get_job_config(args, config, build_file, template_name)
+    return _get_job_config(
+        args, config, build_file.notify_emails, template_name)
 
 
 def get_trigger_jobs_job_config(args, config, build_file):
     template_name = 'release/release_trigger-jobs_job.xml.em'
-    return _get_job_config(args, config, build_file, template_name)
+    return _get_job_config(
+        args, config, build_file.notify_emails, template_name)
 
 
 def get_import_upstream_job_config(args, config, build_file):
     template_name = 'release/import_upstream_job.xml.em'
-    return _get_job_config(args, config, build_file, template_name)
+    return _get_job_config(args, config, config.notify_emails, template_name)
 
 
-def _get_job_config(args, config, build_file, template_name):
+def _get_job_config(args, config, recipients, template_name):
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config=config)
 
@@ -101,7 +103,7 @@ def _get_job_config(args, config, build_file, template_name):
             '/home/buildfarm',
             os.path.dirname(get_relative_credential_path())),
 
-        'recipients': build_file.notify_emails,
+        'recipients': recipients,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
