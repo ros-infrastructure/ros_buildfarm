@@ -61,10 +61,8 @@
     regexp_for_failed='ThisRegExpShouldNeverMatch',
 ))@
 @(SNIPPET(
-    'publisher_mailer',
+    'publisher_extended-email',
     recipients=notify_emails,
-    dynamic_recipients=[],
-    send_to_individuals=False,
 ))@
   </publishers>
   <buildWrappers>
