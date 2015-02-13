@@ -31,7 +31,7 @@ RUN echo "@today_str"
     wrapper_scripts=wrapper_scripts,
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y git python3-apt python3-catkin-pkg python3-empy python3-rosdep python3-rosdistro
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y git mercurial python3-apt python3-catkin-pkg python3-empy python3-rosdep python3-rosdistro subversion
 
 # always invalidate to actually have the latest rosdep state
 RUN echo "@now_str"
@@ -58,6 +58,7 @@ cmds = [
     ' --os-name ' + os_name + \
     ' --os-code-name ' + os_code_name + \
     ' --arch ' + arch + \
+    ' --vcs-info "%s"' % vcs_info + \
     ' --distribution-repository-urls ' + ' '.join(distribution_repository_urls) + \
     ' --distribution-repository-key-files ' + ' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))]) + \
     (' --force' if force else '') + \
@@ -65,4 +66,4 @@ cmds = [
     ' --dockerfile-dir /tmp/docker_doc',
 ]
 }@
-CMD ["@(' && '.join(cmds))"]
+CMD ["@(' && '.join([c.replace('"', '\\"') for c in cmds]))"]

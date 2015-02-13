@@ -127,6 +127,13 @@ class DocBuildFile(BuildFile):
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']
 
+    def filter_packages(self, package_names):
+        res = set(package_names)
+        if self.package_whitelist:
+            res &= set(self.package_whitelist)
+        res -= set(self.package_blacklist)
+        return res
+
     def filter_repositories(self, repository_names):
         res = set(repository_names)
         if self.repository_whitelist:

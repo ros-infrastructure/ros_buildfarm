@@ -6,6 +6,7 @@ import subprocess
 import sys
 
 from ros_buildfarm import __version__
+from ros_buildfarm.common import find_executable
 
 FALLBACK_REPOSITORY_URL = \
     'https://github.com/ros-infrastructure/ros_buildfarm.git'
@@ -58,7 +59,7 @@ def _get_git_repository_remote_origin(path):
     if not os.path.exists(os.path.join(path, '.git')):
         return None
 
-    git = _find_executable('git')
+    git = find_executable('git')
     if git:
         url = subprocess.check_output(
             [git, 'config', 'remote.origin.url'], cwd=path)
@@ -90,7 +91,7 @@ def _get_git_repository_version(path):
     if not os.path.exists(os.path.join(path, '.git')):
         return None
 
-    git = _find_executable('git')
+    git = find_executable('git')
     if not git:
         return None
 
@@ -130,13 +131,13 @@ def get_hash(path):
     if not os.path.exists(os.path.join(path, '.git')):
         return None
 
-    git = _find_executable('git')
+    git = find_executable('git')
     if not git:
         return None
 
-    url = subprocess.check_output(
+    hash_ = subprocess.check_output(
         [git, 'rev-parse', 'HEAD'], cwd=path)
-    return url.decode().rstrip()
+    return hash_.decode().rstrip()
 
 
 def _get_version_parts():
@@ -144,11 +145,3 @@ def _get_version_parts():
     if len(version_parts) == 2:
         return version_parts
     return version_parts[0], None
-
-
-def _find_executable(file_name):
-    for path in os.getenv('PATH').split(os.path.pathsep):
-        file_path = os.path.join(path, file_name)
-        if os.path.isfile(file_path) and os.access(file_path, os.X_OK):
-            return file_path
-    return None

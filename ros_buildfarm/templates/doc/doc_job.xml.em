@@ -131,6 +131,7 @@
         ' ' + os_name +
         ' ' + os_code_name +
         ' ' + arch +
+        ' --vcs-info "%s %s %s"' % (doc_repo_spec.type, doc_repo_spec.version if doc_repo_spec.version is not None else '', doc_repo_spec.url) +
         ' ' + ' '.join(repository_args) +
         ' $FORCE_FLAG' +
         ' --dockerfile-dir $WORKSPACE/docker_generating_docker',

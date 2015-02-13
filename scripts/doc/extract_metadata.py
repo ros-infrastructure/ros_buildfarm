@@ -16,6 +16,7 @@ from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.config import get_index as get_config_index
+from ros_buildfarm.config.doc_build_file import filter_packages
 
 
 def main(argv=sys.argv[1:]):
@@ -40,11 +41,11 @@ def main(argv=sys.argv[1:]):
     repo_names = get_repo_names_with_release_but_no_doc(distribution)
     pkg_names = get_package_names(distribution, repo_names)
 
-    # TODO black/white
+    filtered_pkg_names = filter_packages(pkg_names)
 
     print("Generate 'manifest.yaml' files for the following packages:")
     api_path = os.path.join(args.output_dir, 'api')
-    for pkg_name in sorted(pkg_names):
+    for pkg_name in sorted(filtered_pkg_names):
         print('- %s' % pkg_name)
         try:
             data = get_metadata(distribution, pkg_name)

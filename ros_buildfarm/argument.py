@@ -196,3 +196,10 @@ def add_argument_force(parser):
         '--force',
         action='store_true',
         help='Force running the documentation generation')
+
+
+def add_argument_vcs_information(parser):
+    parser.add_argument(
+        '--vcs-info',
+        required=True,
+        help='The vcs type, version and url separated by a space')

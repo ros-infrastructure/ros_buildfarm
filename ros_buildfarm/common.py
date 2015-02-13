@@ -270,3 +270,11 @@ def get_user_id():
     uid = os.getuid()
     assert uid != 0, "You can not run this as user 'root'"
     return uid
+
+
+def find_executable(file_name):
+    for path in os.getenv('PATH').split(os.path.pathsep):
+        file_path = os.path.join(path, file_name)
+        if os.path.isfile(file_path) and os.access(file_path, os.X_OK):
+            return file_path
+    return None
