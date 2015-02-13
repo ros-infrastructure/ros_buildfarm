@@ -226,7 +226,7 @@ def configure_doc_view(jenkins, view_name):
     from ros_buildfarm.jenkins import configure_view
     return configure_view(
         jenkins, view_name, include_regex='%s__.+' % view_name,
-        template_name='dashboard_view_test_result_column.xml.em')
+        template_name='dashboard_view_all_jobs.xml.em')
 
 
 def _get_doc_job_config(
