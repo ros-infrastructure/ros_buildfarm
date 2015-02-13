@@ -24,6 +24,10 @@ def main(argv=sys.argv[1:]):
         metavar='ROS_DISTRO_NAME',
         default=[],
         help='The list of ROS distribution names if not generating all')
+    parser.add_argument(
+        '--skip-rosdistro-cache-job',
+        action='store_true',
+        help='Skip generating the rosdistro-cache jobs')
     args = parser.parse_args(argv)
 
     config = get_index(args.config_url)
@@ -48,7 +52,8 @@ def main(argv=sys.argv[1:]):
     for ros_distro_name in sorted(selected_ros_distro_names):
         print(ros_distro_name)
 
-        generate_rosdistro_cache_job(args.config_url, ros_distro_name)
+        if not args.skip_rosdistro_cache_job:
+            generate_rosdistro_cache_job(args.config_url, ros_distro_name)
 
         release_build_files = get_release_build_files(config, ros_distro_name)
         for release_build_name in release_build_files.keys():

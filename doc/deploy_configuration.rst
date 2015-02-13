@@ -43,7 +43,8 @@ rosdistro cache
 ^^^^^^^^^^^^^^^
 
 You can disable the following jobs if you are not using a forked rosdistro
-database.
+database or skip the generation of the jobs in the first place by invoking
+``generate_all_jobs.py`` with the option ``--skip-rosdistro-cache-job``.
 
 Otherwise trigger the ``*_rosdistro-cache`` job for each ROS distribution and
 verify that it uploaded the generated cache files successfully to your ``repo``
