@@ -74,10 +74,11 @@ resolver = build.buildVariableResolver
 filter = resolver.resolve("filter")
 println "Filter: " + filter
 
-@[if has_force_parameter]@
-boolean force = resolver.resolve("force")
-println "Force: " + force + type(force)
-@[end if]@
+has_force_parameter = %s
+if (has_force_parameter) {
+    boolean force = resolver.resolve("force")
+    println "Force: " + force + type(force)
+}
 
 pattern = Pattern.compile("%s")
 for (p in hudson.model.Hudson.instance.getAllItems(AbstractProject)) {
@@ -123,13 +124,13 @@ for (p in hudson.model.Hudson.instance.getAllItems(AbstractProject)) {
         }
     }
     println p.name
-@[if has_force_parameter]@
-    p.scheduleBuild(1, new UserIdCause(), new ParametersAction(new BooleanParameterValue("force", force)))
-@[else]@
-    p.scheduleBuild()
-@[end if]@
+    if (has_force_parameter) {
+        p.scheduleBuild(1, new UserIdCause(), new ParametersAction(new BooleanParameterValue("force", force)))
+    } else {
+        p.scheduleBuild()
+    }
 }
-""" % project_name_pattern,
+""" % ('true' if has_force_parameter else 'false', project_name_pattern),
     script_file=None,
     classpath='',
 ))@
