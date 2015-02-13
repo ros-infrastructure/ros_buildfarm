@@ -54,15 +54,15 @@ def configure_doc_jobs(
 
     doc_view_name = get_doc_view_name(rosdistro_name, doc_build_name)
 
-    if groovy_script is None:
-        from ros_buildfarm.jenkins import connect
-        jenkins = connect(config.jenkins_url)
-    else:
-        jenkins = False
+    from ros_buildfarm.jenkins import connect
+    jenkins = connect(config.jenkins_url)
 
     views = []
-    if groovy_script is None:
-        views.append(configure_doc_view(jenkins, doc_view_name))
+    views.append(configure_doc_view(jenkins, doc_view_name))
+
+    if groovy_script is not None:
+        # all further configuration will be handled by the groovy script
+        jenkins = False
 
     repo_names = dist_file.repositories.keys()
     filtered_repo_names = build_file.filter_repositories(repo_names)
