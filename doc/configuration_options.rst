@@ -40,7 +40,7 @@ The following options are valid in version ``1``:
   * ``notification_emails``: a list of email addresses for notification about
     ROS distribution specific administrative jobs.
 
-* ``jenkins_url``: the URL of the Jenkins master
+* ``jenkins_url``: the URL of the Jenkins master.
 
 * ``notification_emails``: a list of email addresses for notification about
   ROS distribution agnostic administrative jobs.
@@ -86,6 +86,8 @@ A set of options which can be used in any build file.
   The OS names and OS code names specified must be listed as a
   *release platform* in the corresponding rosdistro distribution file.
 
+  A doc build file must only contain a single target.
+
 
 Description of common options
 -----------------------------
@@ -116,7 +118,7 @@ Description of common options
 * **Notification emails**: the notification about repository / package specific
   job statuses can be send to:
 
-  * a list of statically configure email addresses
+  * a list of statically configure email addresses.
   * a list of maintainer email addresses extracted from the package manifests
     being processed.
   * a list of developer email addresses extracted from version control system.
@@ -163,12 +165,12 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``notifications``: a dictionary with the following keys:
 
-  * ``emails``: a list of static email addresses
+  * ``emails``: a list of static email addresses.
   * ``maintainers``: a boolean flag if the maintainers should be notified
     (default: ``false``).
 
-* ``package_whitelist``: a list of package names to whitelist
-* ``package_blacklist``: a list of package names to blacklist
+* ``package_whitelist``: a list of package names to whitelist.
+* ``package_blacklist``: a list of package names to blacklist.
 * ``skip_ignored_packages``: a boolean flag if jobs for blacklisted (or not
   whitelisted) packages should not be generated (default: ``false``).
 
@@ -209,12 +211,12 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``notifications``: a dictionary with the following keys:
 
-  * ``committers``: a boolean flag if the committers should be notified
-  * ``emails``: a list of static email addresses
-  * ``maintainers``: a boolean flag if the maintainers should be notified
+  * ``committers``: a boolean flag if the committers should be notified.
+  * ``emails``: a list of static email addresses.
+  * ``maintainers``: a boolean flag if the maintainers should be notified.
 
-* ``repository_whitelist``: a list of repository names to whitelist
-* ``repository_blacklist``: a list of repository names to blacklist
+* ``repository_whitelist``: a list of repository names to whitelist.
+* ``repository_blacklist``: a list of repository names to blacklist.
 * ``skip_ignored_repositories``: a boolean flag if jobs for blacklisted (or not
   whitelisted) repositories should not be generated (default: ``false``).
 
@@ -246,16 +248,34 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``jenkins_job_priority``: the job priority of *doc* jobs.
 * ``jenkins_job_label``: the label expression for both *doc* jobs (default:
-  ``buildslave``)
+  ``buildslave``).
 * ``jenkins_job_timeout``: the job timeout for *doc* jobs.
 
 * ``notifications``: a dictionary with the following keys:
 
-  * ``committers``: a boolean flag if the committers should be notified
-  * ``emails``: a list of static email addresses
-  * ``maintainers``: a boolean flag if the maintainers should be notified
+  * ``committers``: a boolean flag if the committers should be notified (only
+    allowed if ``released_packages`` is ``false``).
+  * ``emails``: a list of static email addresses.
+  * ``maintainers``: a boolean flag if the maintainers should be notified (only
+    allowed if ``released_packages`` is ``false``).
 
-* ``repository_whitelist``: a list of repository names to whitelist
-* ``repository_blacklist``: a list of repository names to blacklist
+* ``package_whitelist``: a list of package names to whitelist (only allowed if
+  ``released_packages`` is ``true``).
+* ``package_blacklist``: a list of package names to blacklist (only allowed if
+  ``released_packages`` is ``true``).
+
+* ``released_packages``: a boolean flag if released packages without *doc*
+  entries should be documented (default: ``false``).
+  If set to ``false`` a job is being generated for every repository with a
+  *doc* entry and *rosdoc_lite* is being invoked in every package in that
+  repository.
+  If set to ``true`` a single job is being generated to extract the metadata
+  from the released package manifests.
+
+* ``repository_whitelist``: a list of repository names to whitelist (only
+    allowed if ``released_packages`` is ``false``).
+* ``repository_blacklist``: a list of repository names to blacklist (only
+    allowed if ``released_packages`` is ``false``).
 * ``skip_ignored_repositories``: a boolean flag if jobs for blacklisted (or not
-  whitelisted) repositories should not be generated (default: ``false``).
+  whitelisted) repositories should not be generated (default: ``false``) (only
+    allowed if ``released_packages`` is ``false``).

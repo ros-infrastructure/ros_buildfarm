@@ -57,6 +57,13 @@ class DocBuildFile(BuildFile):
 
         super(DocBuildFile, self).__init__(name, data)
 
+        # ensure that a single target is specified
+        assert len(self.targets) == 1
+        os_name = list(self.targets.keys())[0]
+        assert len(self.targets[os_name]) == 1
+        os_code_name = list(self.targets[os_name].keys())[0]
+        assert len(self.targets[os_name][os_code_name]) == 1
+
         self.jenkins_job_label = None
         if 'jenkins_job_label' in data:
             self.jenkins_job_label = data['jenkins_job_label']
@@ -73,6 +80,31 @@ class DocBuildFile(BuildFile):
                 self.notify_committers = \
                     bool(data['notifications']['committers'])
 
+        self.package_blacklist = []
+        if 'package_blacklist' in data:
+            self.package_blacklist = data['package_blacklist']
+            assert isinstance(self.package_blacklist, list)
+        self.package_whitelist = []
+        if 'package_whitelist' in data:
+            self.package_whitelist = data['package_whitelist']
+            assert isinstance(self.package_whitelist, list)
+
+        # package black-/whitelist can only be used with released packages
+        assert not self.package_blacklist or self.released_packages
+        assert not self.package_whitelist or self.released_packages
+
+        self.released_packages = None
+        if 'released_packages' in data:
+            self.released_packages = bool(data['released_packages'])
+
+        # notify committers/maintainers can not be used with released packages
+        assert not self.notify_committers or not self.released_packages
+        assert not self.notify_maintainers or not self.released_packages
+
+        # repositories can not be used with released packages
+        assert not self.repository_keys or not self.released_packages
+        assert not self.repository_urls or not self.released_packages
+
         self.repository_blacklist = []
         if 'repository_blacklist' in data:
             self.repository_blacklist = data['repository_blacklist']
@@ -85,6 +117,12 @@ class DocBuildFile(BuildFile):
         if 'skip_ignored_repositories' in data:
             self.skip_ignored_repositories = \
                 bool(data['skip_ignored_repositories'])
+
+        # repository black-/whitelist can not be used with released packages
+        assert not self.repository_blacklist or not self.released_packages
+        assert not self.repository_whitelist or not self.released_packages
+        assert self.skip_ignored_repositories is None or \
+            not self.released_packages
 
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']

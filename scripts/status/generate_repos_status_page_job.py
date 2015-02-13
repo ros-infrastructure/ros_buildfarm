@@ -94,7 +94,6 @@ def get_targets_by_repo(config, ros_distro_name):
                 for arch in sorted(ubuntu_targets[os_code_name].keys()):
                     target = '%s:%s' % (os_code_name, arch)
                     targets_by_repo[target_repository].append(target)
-        print(target_repository, targets_by_repo[target_repository])
     return targets_by_repo
 
 

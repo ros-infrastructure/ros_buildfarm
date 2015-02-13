@@ -202,9 +202,9 @@ def configure_doc_job(
         repo_name, os_name, os_code_name, arch)
 
     job_config = _get_doc_job_config(
-        config, config_url,rosdistro_name, doc_build_name,
+        config, config_url, rosdistro_name, doc_build_name,
         build_file, os_name, os_code_name, arch, doc_repository,
-        repo_name, job_name, dist_cache=dist_cache, is_disabled=is_disabled)
+        repo_name, dist_cache=dist_cache, is_disabled=is_disabled)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
@@ -232,7 +232,7 @@ def configure_doc_view(jenkins, view_name):
 def _get_doc_job_config(
         config, config_url, rosdistro_name, doc_build_name,
         build_file, os_name, os_code_name, arch, doc_repo_spec,
-        repo_name, job_name, dist_cache=None, is_disabled=False):
+        repo_name, dist_cache=None, is_disabled=False):
     template_name = 'doc/doc_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -261,9 +261,6 @@ def _get_doc_job_config(
 
         'disabled': is_disabled,
 
-        # this should not be necessary
-        'job_name': job_name,
-
         'github_orgunit': git_github_orgunit(doc_repo_spec.url),
 
         'ros_buildfarm_repository': get_repository(),
@@ -283,6 +280,58 @@ def _get_doc_job_config(
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
         'notify_committers': build_file.notify_committers,
+
+        'timeout_minutes': build_file.jenkins_job_timeout,
+
+        'credential_id': build_file.upload_credential_id,
+    }
+    job_config = expand_template(template_name, job_data)
+    return job_config
+
+
+def configure_doc_metadata_job(
+        config_url, rosdistro_name, doc_build_name,
+        config=None, build_file=None):
+    if config is None:
+        config = get_config_index(config_url)
+    if build_file is None:
+        build_files = get_doc_build_files(config, rosdistro_name)
+        build_file = build_files[doc_build_name]
+
+    from ros_buildfarm.jenkins import connect
+    jenkins = connect(config.jenkins_url)
+
+    job_name = get_doc_view_name(rosdistro_name, doc_build_name)
+
+    job_config = _get_doc_metadata_job_config(
+        config, config_url, rosdistro_name, job_name, build_file)
+    # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
+    if isinstance(jenkins, object) and jenkins is not False:
+        from ros_buildfarm.jenkins import configure_job
+        configure_job(jenkins, job_name, job_config)
+
+
+def _get_doc_metadata_job_config(
+        config, config_url, rosdistro_name, doc_build_name, build_file):
+    template_name = 'doc/doc_metadata_job.xml.em'
+
+    repository_args, script_generating_key_files = \
+        get_repositories_and_script_generating_key_files(config=config)
+
+    job_data = {
+        'job_priority': build_file.jenkins_job_priority,
+        'node_label': build_file.jenkins_job_label,
+
+        'ros_buildfarm_repository': get_repository(),
+
+        'script_generating_key_files': script_generating_key_files,
+
+        'config_url': config_url,
+        'rosdistro_name': rosdistro_name,
+        'doc_build_name': doc_build_name,
+        'repository_args': repository_args,
+
+        'notify_emails': build_file.notify_emails,
 
         'timeout_minutes': build_file.jenkins_job_timeout,
 

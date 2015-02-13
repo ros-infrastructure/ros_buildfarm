@@ -32,6 +32,12 @@ def main(argv=sys.argv[1:]):
     build_files = get_doc_build_files(config, args.rosdistro_name)
     build_file = build_files[args.doc_build_name]
 
+    if build_file.released_packages:
+        print(("The doc build file '%s' must be used with the"
+               "'generate_doc_metadata_job' script") % args.doc_build_name,
+              file=sys.stderr)
+        return 1
+
     jenkins = connect(config.jenkins_url)
     configure_management_view(jenkins)
     group_name = get_doc_view_name(
