@@ -196,25 +196,10 @@
         'echo "# END SECTION"',
     ]),
 ))@
-@(SNIPPET(
-    'builder_shell',
-    script=
-"""if [ ! "$(ls -A catkin_workspace/test_results)" ]; then
-    echo "No test results, generating empty JUnit result file to keep Jenkins happy"
-    echo '<?xml version="1.0" encoding="UTF-8"?>
-<testsuites disabled="0" errors="0" failures="0" name="" tests="0" time="0">
-  <testsuite disabled="0" errors="0" failures="0" name="" tests="0" time="0">
-    <testcase classname="dummy" name="dummy" status="run" time="0" />
-    <system-out>This dummy JUnit result file has only been generated to prevent Jenkins from failing the job.</system-out>
-  </testsuite>
-</testsuites>' > catkin_workspace/test_results/dummy.xml
-fi
-""",
-))@
   </builders>
   <publishers>
 @(SNIPPET(
-    'publisher_junit-result-archiver',
+    'publisher_xunit',
     pattern='catkin_workspace/test_results/**/*.xml',
 ))@
 @(SNIPPET(
