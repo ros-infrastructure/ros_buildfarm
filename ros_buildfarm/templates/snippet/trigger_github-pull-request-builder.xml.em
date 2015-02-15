@@ -1,4 +1,4 @@
-    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@@1.16-5">
+    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@@1.16-8">
       <spec/>
       <adminlist/>
       <allowMembersOfWhitelistedOrgsAsAdmin>true</allowMembersOfWhitelistedOrgsAsAdmin>

@@ -12,7 +12,13 @@ for (v in Jenkins.instance.views) {
   aborted = 0
   not_built = 0
   disabled = 0
+  ignored = 0
   for (p in v.items) {
+    if (!p.hasProperty("lastBuild")) {
+      // non-job item, e.g. a folder
+      ignored++
+      continue
+    }
     if (p.isDisabled()) {
       disabled++
       continue
@@ -52,9 +58,9 @@ for (v in Jenkins.instance.views) {
       assert false
     }
   }
-  view_stat = ["count": v.items.size, "success": success, "unstable": unstable, "failure": failure, "aborted": aborted, "not_built": not_built, "disabled": disabled]
-  if (v.items.size != success + unstable + failure + aborted + not_built + disabled) {
-    assert false, "View '" + v.viewName + "' has inconsistent stats: " + v.items.size + " != " + success + " + " + unstable + " + " + failure + " + " + aborted + " + " + not_built + " + " + disabled
+  view_stat = ["count": v.items.size, "success": success, "unstable": unstable, "failure": failure, "aborted": aborted, "not_built": not_built, "disabled": disabled, "ignored": ignored]
+  if (v.items.size != success + unstable + failure + aborted + not_built + disabled + ignored) {
+    assert false, "View '" + v.viewName + "' has inconsistent stats: " + v.items.size + " != " + success + " + " + unstable + " + " + failure + " + " + aborted + " + " + not_built + " + " + disabled + " + " + ignored
   }
   view_stats[v.viewName] = view_stat
 }
