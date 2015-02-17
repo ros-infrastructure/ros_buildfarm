@@ -118,7 +118,7 @@ rosdep database:
 * Download the custom rosdep list file::
 
     cd /etc/ros/rosdep/sources.list.d
-    sudo wget https://raw.github.com/YOUR_FORK/rosdistro/master/rosdep/sources.list.d/20-default.list
+    sudo wget https://raw.githubusercontent.com/YOUR_FORK/rosdistro/master/rosdep/sources.list.d/20-default.list
 
 * Update the local rosdep database::
 
@@ -151,7 +151,7 @@ Update build farm configuration
 You must change the URL pointing to the rosdistro index in the ROS build farm
 configuration::
 
-  rosdistro_index_url: https://raw.github.com/YOUR_FORK/rosdistro/master/index.yaml
+  rosdistro_index_url: https://raw.githubusercontent.com/YOUR_FORK/rosdistro/master/index.yaml
 
 After changing the configuration of an existing build farm you have to
 redeploy *all* jobs.
@@ -163,7 +163,7 @@ Everybody must set ROSDISTRO_INDEX_URL
 Every user must set an environment variable on the machine to use the custom
 rosdistro database::
 
-    ROSDISTRO_INDEX_URL=https://raw.github.com/YOUR_FORK/rosdistro/master/index.yaml
+    ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/YOUR_FORK/rosdistro/master/index.yaml
 
 After that they must also update the rosdep database to use the ROS packages
 from the custom rosdistro database::
