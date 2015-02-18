@@ -82,7 +82,11 @@
         'git clone https://github.com/ros-infrastructure/catkin-sphinx catkin-sphinx',
         'git -C catkin-sphinx log -n 1',
         'echo "# END SECTION"',
-        '',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
         'echo "# BEGIN SECTION: rsync (most of) the rosdoc_index to slave"',
         'rm -fr rosdoc_index',
         '# must pass if the rosdistro specific folder does not exist yet',
