@@ -31,7 +31,7 @@ def call_apt_get_update_and_install(
         if command == 'update':
             rc, _, update_tries = call_apt_get_repeatedly(
                 [command], known_error_strings,
-                max_tries_per_command, offset=update_tries)
+                max_tries_per_command - update_tries, offset=update_tries)
             if rc != 0:
                 # abort if update was unsuccessful even after retries
                 break
@@ -44,8 +44,8 @@ def call_apt_get_update_and_install(
             rc, known_error_conditions, install_tries = \
                 call_apt_get_repeatedly(
                     [command] + install_argv,
-                    known_error_strings + known_error_strings_redo_update,
-                    install_tries + 1, offset=install_tries)
+                    known_error_strings + known_error_strings_redo_update, 1,
+                    offset=install_tries)
             if rc == 0 or not known_error_conditions:
                 # abort if install was successful
                 # or failed with an unknown errror condition
@@ -63,11 +63,11 @@ def call_apt_get_update_and_install(
 
 def call_apt_get_repeatedly(argv, known_error_strings, max_tries, offset=0):
     command = argv[0]
-    for i in range(1 + offset, max_tries + 1):
+    for i in range(1, max_tries + 1):
         if i > 1:
-            sleep_time = 5 + 2 * i
+            sleep_time = 5 + 2 * (i + offset)
             print("Reinvoke 'apt-get %s' (%d/%d) after sleeping %s seconds" %
-                  (command, i, max_tries, sleep_time))
+                  (command, i + offset, max_tries + offset, sleep_time))
             sleep(sleep_time)
         rc, known_error_conditions = call_apt_get(argv, known_error_strings)
         if rc == 0 or not known_error_conditions:
@@ -77,7 +77,7 @@ def call_apt_get_repeatedly(argv, known_error_strings, max_tries, offset=0):
               ', '.join(known_error_conditions))
         print('')
         # retry in case of failure with known error condition
-    return rc, known_error_conditions, i
+    return rc, known_error_conditions, i + offset
 
 
 def call_apt_get(argv, known_error_strings):
