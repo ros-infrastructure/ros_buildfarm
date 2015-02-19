@@ -30,8 +30,7 @@ from ros_buildfarm.templates import expand_template
 
 
 def configure_release_jobs(
-        config_url, rosdistro_name, release_build_name,
-        append_timestamp=False, groovy_script=None):
+        config_url, rosdistro_name, release_build_name, groovy_script=None):
     """
     Configure all Jenkins release jobs.
 
@@ -161,7 +160,6 @@ def configure_release_jobs(
                     configure_release_job(
                         config_url, rosdistro_name, release_build_name,
                         pkg_name, os_name, os_code_name,
-                        append_timestamp=append_timestamp,
                         config=config, build_file=build_file,
                         index=index, dist_file=dist_file,
                         dist_cache=dist_cache,
@@ -278,7 +276,7 @@ def _get_downstream_package_names(pkg_names, dependencies):
 # - N binary debs, one for each archicture
 def configure_release_job(
         config_url, rosdistro_name, release_build_name,
-        pkg_name, os_name, os_code_name, append_timestamp=False,
+        pkg_name, os_name, os_code_name,
         config=None, build_file=None,
         index=None, dist_file=None, dist_cache=None,
         jenkins=None, views=None,
@@ -417,7 +415,7 @@ def configure_release_job(
         job_config = _get_binarydeb_job_config(
             config_url, rosdistro_name, release_build_name,
             config, build_file, os_name, os_code_name, arch,
-            pkg_name, append_timestamp, repo_name, repo.release_repository,
+            pkg_name, repo_name, repo.release_repository,
             dist_cache=dist_cache, upstream_job_names=upstream_job_names,
             is_disabled=is_disabled)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
@@ -539,7 +537,7 @@ def _get_sourcedeb_job_config(
 def _get_binarydeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name, arch,
-        pkg_name, append_timestamp, repo_name, release_repository,
+        pkg_name, repo_name, release_repository,
         dist_cache=None, upstream_job_names=None,
         is_disabled=False):
     template_name = 'release/binarydeb_job.xml.em'
@@ -582,7 +580,7 @@ def _get_binarydeb_job_config(
         'arch': arch,
         'repository_args': repository_args,
 
-        'append_timestamp': append_timestamp,
+        'append_timestamp': build_file.abi_incompatibility_assumed,
 
         'binarydeb_files': binarydeb_files,
 

@@ -3,7 +3,6 @@
 import argparse
 import sys
 
-from ros_buildfarm.argument import add_argument_append_timestamp
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_groovy_script
@@ -17,13 +16,11 @@ def main(argv=sys.argv[1:]):
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_build_name(parser, 'release')
-    add_argument_append_timestamp(parser)
     add_argument_groovy_script(parser)
     args = parser.parse_args(argv)
 
     return configure_release_jobs(
         args.config_url, args.rosdistro_name, args.release_build_name,
-        append_timestamp=args.append_timestamp,
         groovy_script=args.groovy_script)
 
 
