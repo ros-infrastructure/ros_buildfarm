@@ -51,6 +51,9 @@
     'builder_system-groovy_verify-upstream',
 ))@
 @(SNIPPET(
+    'builder_system-groovy_check-free-disk-space',
+))@
+@(SNIPPET(
     'builder_shell_docker-info',
 ))@
 @(SNIPPET(
@@ -210,9 +213,6 @@
     # to prevent overwriting the description of failed builds
     regexp_for_failed='ThisRegExpShouldNeverMatch',
 ))@
-@(SNIPPET(
-    'publisher_groovy-postbuild_slave-low-disk-space',
-))@
 @[if notify_maintainers]@
 @(SNIPPET(
     'publisher_groovy-postbuild_maintainer-notification',
@@ -234,9 +234,6 @@
 @[end if]@
 @(SNIPPET(
     'build-wrapper_timestamper',
-))@
-@(SNIPPET(
-    'build-wrapper_disk-check',
 ))@
 @(SNIPPET(
     'build-wrapper_ssh-agent',

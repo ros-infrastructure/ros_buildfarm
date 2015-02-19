@@ -109,8 +109,5 @@ for (p in hudson.model.Hudson.instance.projects) {
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
-@(SNIPPET(
-    'build-wrapper_disk-check',
-))@
   </buildWrappers>
 </project>

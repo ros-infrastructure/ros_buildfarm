@@ -60,6 +60,9 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
 @(SNIPPET(
+    'builder_system-groovy_check-free-disk-space',
+))@
+@(SNIPPET(
     'builder_shell_docker-info',
 ))@
 @(SNIPPET(
@@ -227,9 +230,6 @@
 ))@
   </builders>
   <publishers>
-@(SNIPPET(
-    'publisher_groovy-postbuild_slave-low-disk-space',
-))@
 @[if notify_maintainers]@
 @(SNIPPET(
     'publisher_groovy-postbuild_maintainer-notification',
@@ -251,9 +251,6 @@
 @[end if]@
 @(SNIPPET(
     'build-wrapper_timestamper',
-))@
-@(SNIPPET(
-    'build-wrapper_disk-check',
 ))@
 @(SNIPPET(
     'build-wrapper_ssh-agent',

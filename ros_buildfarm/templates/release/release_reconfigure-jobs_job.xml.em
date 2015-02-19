@@ -115,8 +115,5 @@ wget https://java-diff-utils.googlecode.com/files/diffutils-1.2.1.jar""",
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
-@(SNIPPET(
-    'build-wrapper_disk-check',
-))@
   </buildWrappers>
 </project>

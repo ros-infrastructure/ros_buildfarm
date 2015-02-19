@@ -1,0 +1,57 @@
+@(SNIPPET(
+    'builder_system-groovy',
+    command=
+"""// VERFIY THAT FREE DISK SPACE THRESHOLD IS NOT VIOLATED
+import hudson.AbortException
+import hudson.model.Cause
+import hudson.node_monitors.AbstractDiskSpaceMonitor
+import hudson.node_monitors.DiskSpaceMonitor
+import hudson.node_monitors.DiskSpaceMonitorDescriptor.DiskSpace
+import hudson.node_monitors.Messages
+import hudson.node_monitors.NodeMonitor
+import java.util.logging.Logger
+import org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildAction
+
+println "# BEGIN SECTION: Check free disk space"
+
+def node = build.getBuiltOn()
+def root_path = node.getRootPath()
+def usable_disk_space = root_path.getUsableDiskSpace()
+println "Usable disk space = " + usable_disk_space + " bytes"
+
+try {
+  for (node_monitor in NodeMonitor.getAll()) {
+    if (!(node_monitor instanceof DiskSpaceMonitor)) continue
+
+    free_space_threshold = node_monitor.getThresholdBytes()
+    println "Free space threshold = " + free_space_threshold + " bytes"
+
+    if (usable_disk_space < free_space_threshold) {
+      println "Free disk space is lower than the threshold, aborting this build, disabling the slave, rescheduling the job"
+
+      // mark slave as offline and log event
+      def computer = node.toComputer()
+      def disk_space = new DiskSpace(root_path.getRemote(), usable_disk_space)
+      if (node_monitor.getDescriptor().markOffline(computer, disk_space)) {
+        def logger = Logger.getLogger(AbstractDiskSpaceMonitor.class.getName())
+        logger.warning(Messages.DiskSpaceMonitor_MarkedOffline(computer.getName()))
+      }
+
+      // schedule rebuild
+      build.getProject().scheduleBuild(new Cause.UserIdCause())
+
+      // add badge to build
+      build.getActions().add(GroovyPostbuildAction.createInfoBadge("Free disk space is too low, disabled slave '" + computer.name + "', rescheduled job"))
+
+      // abort this build
+      throw new AbortException("Aborting build due to free disk space being lower than the threshold")
+    }
+    break
+  }
+} finally {
+  println "# END SECTION"
+}
+""",
+    script_file=None,
+    classpath='',
+))@
