@@ -88,16 +88,10 @@ class Index(object):
                         assert False, \
                             "wrong type of key '%s': %s" % (key, type(value))
 
-                    def resolve_url(base_url, value):
-                        parts = urlparse(value)
-                        if not parts[0]:  # schema
-                            value = base_url + '/' + value
-                        return value
-
                     if isinstance(value, dict):
                         self.distributions[distro_name][key] = {}
                         for k, v in value.items():
-                            v = resolve_url(base_url, v)
+                            v = _resolve_url(base_url, v)
                             self.distributions[distro_name][key][k] = v
                     elif isinstance(value, list):
                         self.distributions[distro_name][key] = []
@@ -111,6 +105,13 @@ class Index(object):
                     if k not in distro_data]
                 for key in unset_keys:
                     self.distributions[distro_name][key] = value_types[key]()
+
+        self.doc_builds = {}
+        if 'doc_builds' in data and data['doc_builds']:
+            assert isinstance(data['doc_builds'], dict)
+            for k, v in data['doc_builds'].items():
+                v = _resolve_url(base_url, v)
+                self.doc_builds[k] = v
 
         self.jenkins_url = data['jenkins_url']
 
@@ -130,3 +131,10 @@ class Index(object):
                     data['status_page_repositories'].items():
                 assert isinstance(repo_urls, list)
                 self.status_page_repositories[status_page_name] = repo_urls
+
+
+def _resolve_url(base_url, value):
+    parts = urlparse(value)
+    if not parts[0]:  # schema
+        value = base_url + '/' + value
+    return value

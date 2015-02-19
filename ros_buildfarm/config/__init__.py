@@ -68,7 +68,7 @@ def get_release_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'release_builds')
     build_files = {}
     for k, v in data.items():
-        build_files[k] = ReleaseBuildFile(dist_name, v)
+        build_files[k] = ReleaseBuildFile(k, v)
     return build_files
 
 
@@ -76,7 +76,7 @@ def get_source_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'source_builds')
     build_files = {}
     for k, v in data.items():
-        build_files[k] = SourceBuildFile(dist_name, v)
+        build_files[k] = SourceBuildFile(k, v)
     return build_files
 
 
@@ -84,7 +84,15 @@ def get_doc_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'doc_builds')
     build_files = {}
     for k, v in data.items():
-        build_files[k] = DocBuildFile(dist_name, v)
+        build_files[k] = DocBuildFile(k, v)
+    return build_files
+
+
+def get_global_doc_build_files(index):
+    data = _load_build_file_data(index.doc_builds)
+    build_files = {}
+    for k, v in data.items():
+        build_files[k] = DocBuildFile(k, v)
     return build_files
 
 
@@ -97,14 +105,17 @@ def _get_build_file_data(index, dist_name, type_):
     dist = index.distributions[dist_name]
     if type_ not in dist.keys():
         return {}
-    url = dist[type_]
+    entries = dist[type_]
+    return _load_build_file_data(entries)
 
+
+def _load_build_file_data(entries):
     def _load_yaml_data(url):
         logger.debug('Load file from "%s"' % url)
         yaml_str = load_url(url)
         return yaml.load(yaml_str)
 
     data = {}
-    for k, v in url.items():
+    for k, v in entries.items():
         data[k] = _load_yaml_data(v)
     return data

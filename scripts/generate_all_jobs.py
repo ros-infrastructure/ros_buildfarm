@@ -11,6 +11,8 @@ from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.config import get_source_build_files
+from ros_buildfarm.config.doc_build_file import DOC_TYPE_MANIFEST
+from ros_buildfarm.config.doc_build_file import DOC_TYPE_ROSDOC
 from ros_buildfarm.jenkins import connect
 
 
@@ -43,7 +45,11 @@ def main(argv=sys.argv[1:]):
     # try to connect to Jenkins master
     connect(config.jenkins_url)
 
-    generate_dashboard_job(args.config_url)
+    if not args.ros_distro_names:
+        generate_dashboard_job(args.config_url)
+
+        for doc_build_name in sorted(config.doc_builds.keys()):
+            generate_doc_independent_job(args.config_url, doc_build_name)
 
     selected_ros_distro_names = [
         n for n in ros_distro_names
@@ -69,12 +75,16 @@ def main(argv=sys.argv[1:]):
 
         doc_build_files = get_doc_build_files(config, ros_distro_name)
         for doc_build_name, doc_build_file in doc_build_files.items():
-            if not doc_build_file.released_packages:
+            if doc_build_file.documentation_type == DOC_TYPE_ROSDOC:
                 generate_doc_maintenance_jobs(
                     args.config_url, ros_distro_name, doc_build_name)
-            else:
+            elif doc_build_file.documentation_type == DOC_TYPE_MANIFEST:
                 generate_doc_metadata_job(
                     args.config_url, ros_distro_name, doc_build_name)
+            else:
+                assert False, ("Unknown documentation type '%s' in doc " +
+                               "build file '%s'") % \
+                    (doc_build_file.documentation_type, doc_build_name)
 
         generate_repos_status_page_jobs(
             args.config_url, ros_distro_name)
@@ -145,6 +155,16 @@ def generate_doc_maintenance_jobs(
         'doc/generate_doc_maintenance_jobs.py',
         config_url,
         ros_distro_name,
+        doc_build_name,
+    ]
+    _check_call(cmd)
+
+
+def generate_doc_independent_job(
+        config_url, doc_build_name):
+    cmd = [
+        'doc/generate_doc_independent_job.py',
+        config_url,
         doc_build_name,
     ]
     _check_call(cmd)

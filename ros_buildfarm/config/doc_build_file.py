@@ -33,6 +33,11 @@
 
 from .build_file import BuildFile
 
+DOC_TYPE_ROSDOC = 'rosdoc_lite'
+DOC_TYPE_MANIFEST = 'released_manifest'
+DOC_TYPE_MAKE = 'make_target'
+DOC_TYPES = [DOC_TYPE_ROSDOC, DOC_TYPE_MANIFEST, DOC_TYPE_MAKE]
+
 
 class DocBuildFile(BuildFile):
 
@@ -64,6 +69,27 @@ class DocBuildFile(BuildFile):
         os_code_name = list(self.targets[os_name].keys())[0]
         assert len(self.targets[os_name][os_code_name]) == 1
 
+        self.documentation_type = DOC_TYPE_ROSDOC
+        if 'documentation_type' in data:
+            assert data['documentation_type'] in DOC_TYPES, \
+                ("Doc build file for '%s' has unknown documentation type " +
+                 "'%s'") % (self.name, data['documentation_type'])
+            self.documentation_type = data['documentation_type']
+
+        # repository keys and urls can only be used with doc type rosdoc
+        is_rosdoc_type = self.documentation_type == DOC_TYPE_ROSDOC
+        assert not self.repository_keys or is_rosdoc_type
+        assert not self.repository_urls or is_rosdoc_type
+
+        self.doc_repositories = []
+        if 'doc_repositories' in data:
+            self.doc_repositories = data['doc_repositories']
+            assert isinstance(self.doc_repositories, list)
+
+        # doc_repositories can only be used with doc type make_target
+        is_make_target_type = self.documentation_type == DOC_TYPE_MAKE
+        assert not self.doc_repositories or is_make_target_type
+
         self.jenkins_job_label = None
         if 'jenkins_job_label' in data:
             self.jenkins_job_label = data['jenkins_job_label']
@@ -80,6 +106,10 @@ class DocBuildFile(BuildFile):
                 self.notify_committers = \
                     bool(data['notifications']['committers'])
 
+        # notify committers/maintainers can only be used with doc type rosdoc
+        assert not self.notify_committers or is_rosdoc_type
+        assert not self.notify_maintainers or is_rosdoc_type
+
         self.package_blacklist = []
         if 'package_blacklist' in data:
             self.package_blacklist = data['package_blacklist']
@@ -89,21 +119,10 @@ class DocBuildFile(BuildFile):
             self.package_whitelist = data['package_whitelist']
             assert isinstance(self.package_whitelist, list)
 
-        # package black-/whitelist can only be used with released packages
-        assert not self.package_blacklist or self.released_packages
-        assert not self.package_whitelist or self.released_packages
-
-        self.released_packages = None
-        if 'released_packages' in data:
-            self.released_packages = bool(data['released_packages'])
-
-        # notify committers/maintainers can not be used with released packages
-        assert not self.notify_committers or not self.released_packages
-        assert not self.notify_maintainers or not self.released_packages
-
-        # repositories can not be used with released packages
-        assert not self.repository_keys or not self.released_packages
-        assert not self.repository_urls or not self.released_packages
+        # package black-/whitelist can only be used with doc type manifest
+        is_manifest_type = self.documentation_type == DOC_TYPE_MANIFEST
+        assert not self.package_blacklist or is_manifest_type
+        assert not self.package_whitelist or is_manifest_type
 
         self.repository_blacklist = []
         if 'repository_blacklist' in data:
@@ -118,12 +137,10 @@ class DocBuildFile(BuildFile):
             self.skip_ignored_repositories = \
                 bool(data['skip_ignored_repositories'])
 
-        # repository black-/whitelist can not be used with released packages
-        assert not self.repository_blacklist or not self.released_packages
-        assert not self.repository_whitelist or not self.released_packages
-        assert self.skip_ignored_repositories is None or \
-            not self.released_packages
-
+        # repository black-/whitelist can only be used with doc type rosdoc
+        assert not self.repository_blacklist or is_rosdoc_type
+        assert not self.repository_whitelist or is_rosdoc_type
+        assert self.skip_ignored_repositories is None or is_rosdoc_type
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']
 
