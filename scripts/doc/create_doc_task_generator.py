@@ -501,6 +501,20 @@ def main(argv=sys.argv[1:]):
     build_files = get_doc_build_files(config, args.rosdistro_name)
     build_file = build_files[args.doc_build_name]
 
+    rosdoc_config_files = {}
+    for pkg_path, pkg in pkgs.items():
+        abs_pkg_path = os.path.join(source_space, pkg_path)
+
+        rosdoc_exports = [
+            e.attributes['content'] for e in pkg.exports
+            if e.tagname == 'rosdoc' and 'content' in e.attributes]
+        prefix = '${prefix}'
+        rosdoc_config_file = rosdoc_exports[-1] \
+            if rosdoc_exports else '%s/rosdoc.yaml' % prefix
+        rosdoc_config_file = rosdoc_config_file.replace(prefix, abs_pkg_path)
+        if os.path.isfile(rosdoc_config_file):
+            rosdoc_config_files[pkg.name] = rosdoc_config_file
+
     # generate Dockerfile
     data = {
         'os_name': args.os_name,
@@ -522,6 +536,7 @@ def main(argv=sys.argv[1:]):
         'canonical_base_url': build_file.canonical_base_url,
 
         'ordered_pkg_tuples': ordered_pkg_tuples,
+        'rosdoc_config_files': rosdoc_config_files,
     }
     create_dockerfile(
         'doc/doc_task.Dockerfile.em', data, args.dockerfile_dir)

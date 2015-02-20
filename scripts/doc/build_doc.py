@@ -48,13 +48,13 @@ def main(argv=sys.argv[1:]):
         help='The root path of the rosdoc_index folder')
     parser.add_argument(
         '--canonical-base-url',
-        required=True,
         help='The canonical base URL to add to all generated HTML files')
     parser.add_argument(
         'pkg_tuples',
         nargs='*',
-        help='A list of package tuples in topological order, each ' +
-             'containing the name and relative path separated by a colon')
+        help='A list of package tuples in topological order, each containing '
+             'the name, the relative path and optionally the package-relative '
+             'path of the rosdoc config file separated by a colon')
     add_argument_output_dir(parser, required=True)
     args = parser.parse_args(argv)
 
@@ -74,12 +74,9 @@ def main(argv=sys.argv[1:]):
         os.path.join(args.output_dir, args.rosdistro_name),
         os.path.join(args.rosdoc_index_dir, args.rosdistro_name)])
 
-    # sys.path.insert(0, os.path.join(args.rosdoc_lite_dir, 'src'))
-    # from rosdoc_lite import get_generator_output_folders
-
     source_space = os.path.join(args.workspace_root, 'src')
     for pkg_tuple in args.pkg_tuples:
-        pkg_name, pkg_subfolder = pkg_tuple.split(':', 1)
+        pkg_name, pkg_subfolder, pkg_rosdoc_config = pkg_tuple.split(':', 2)
         with Scope('SUBSECTION', 'rosdoc_lite - %s' % pkg_name):
             pkg_path = os.path.join(source_space, pkg_subfolder)
 
@@ -129,9 +126,11 @@ def main(argv=sys.argv[1:]):
                 }
 
                 # fetch generator specific output folders from rosdoc_lite
-                # output_folders = get_generator_output_folders(pkg_path)
-                # for generator, output_folder in output_folders.items():
-                #     data['%s_output_folder' % generator] = output_folder
+                if pkg_rosdoc_config:
+                    output_folders = get_generator_output_folders(
+                        pkg_rosdoc_config, pkg_name)
+                    for generator, output_folder in output_folders.items():
+                        data['%s_output_folder' % generator] = output_folder
 
                 rosdoc_index.locations[pkg_name] = [data]
 
@@ -159,34 +158,24 @@ def main(argv=sys.argv[1:]):
     return rc
 
 
-# def _load_rosdoc_config(path, manifest):
-#     #load in any external config files
-#     rd_config = {}
-#     exported_configs = manifest.get_export('rosdoc', 'config')
-#     if exported_configs:
-#         #This just takes the last listed config export
-#         for exported_config in manifest.get_export('rosdoc', 'config'):
-#             try:
-#                 exported_config = exported_config.replace('${prefix}', path)
-#                 config_path = os.path.join(path, exported_config)
-#                 with open(config_path, 'r') as config_file:
-#                     rd_config = yaml.load(config_file)
-#             except Exception as e:
-#                 sys.stderr.write("ERROR: unable to load rosdoc config file [%s]: %s\n" % (config_path, str(e)))
-#     #we'll check if a 'rosdoc.yaml' file exists in the directory
-#     elif os.path.isfile(os.path.join(path, 'rosdoc.yaml')):
-#         with open(os.path.join(path, 'rosdoc.yaml'), 'r') as config_file:
-#             rd_config = yaml.load(config_file)
-
-#     return rd_config
-
-    # data = {}
-    # for builder, params in build_params.items():
-    #     if 'output_dir' in params:
-    #         output_dir = params['output_dir']
-    #         if output_dir != '.':
-    #             data[builder] = output_dir
-    # return data
+# this is reimplemented here since rosdoc_lite can not be used with Python 3
+def get_generator_output_folders(pkg_rosdoc_config_file, pkg_name):
+    output_folders = {}
+    if pkg_rosdoc_config_file:
+        with open(pkg_rosdoc_config_file, 'r') as h:
+            data = yaml.load(h.read())
+        if not isinstance(data, list):
+            print("WARNING: package '%s' has an invalid rosdoc config" %
+                  pkg_name, file=sys.stderr)
+            continue
+        for item in data:
+            if 'builder' not in item:
+                print("WARNING: package '%s' has an invalid rosdoc config "
+                      "- missing builder key" % pkg_name, file=sys.stderr)
+                continue
+            if item.get('output_dir'):
+                output_folders[item['builder']] = item['output_dir']
+    return output_folders
 
 
 def add_canonical_link(base_path, base_link):

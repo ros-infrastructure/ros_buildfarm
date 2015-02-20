@@ -67,6 +67,10 @@ RUN doxygen --version
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
+# empy fails using rosdoc_config_files in a list comprehension
+pkg_tuples = []
+for pkg_path, pkg in ordered_pkg_tuples:
+    pkg_tuples.append('%s:%s:%s' % (pkg.name, pkg_path, rosdoc_config_files.get(pkg.name, '')))
 cmd = 'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/doc/build_doc.py' + \
     ' --rosdistro-name ' + rosdistro_name + \
@@ -78,7 +82,6 @@ cmd = 'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' --rosdoc-index /tmp/rosdoc_index' + \
     (' --canonical-base-url ' + canonical_base_url if canonical_base_url else '') + \
     ' --output-dir /tmp/generated_documentation' + \
-    ' ' + ' '.join([
-        '%s:%s' % (pkg.name, pkg_path) for pkg_path, pkg in ordered_pkg_tuples])
+    ' ' + ' '.join(pkg_tuples)
 }@
 CMD ["@cmd"]
