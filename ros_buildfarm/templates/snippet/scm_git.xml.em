@@ -21,5 +21,9 @@
         <relativeTargetDir>@ESCAPE(relative_target_dir)</relativeTargetDir>
       </hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
 @[end if]@
+      <hudson.plugins.git.extensions.impl.CloneOption>
+        <shallow>true</shallow>
+        <reference/>
+      </hudson.plugins.git.extensions.impl.CloneOption>
     </extensions>
   </scm>

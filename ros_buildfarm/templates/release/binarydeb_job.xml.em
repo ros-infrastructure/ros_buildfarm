@@ -23,6 +23,16 @@
 ))@
 @[end if]@
 @(SNIPPET(
+    'property_parameters-definition',
+    parameters=[
+        {
+            'type': 'boolean',
+            'name': 'skip_cleanup',
+            'description': 'Skip cleanup of build artifacts',
+        },
+    ],
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
 @(SNIPPET(
@@ -61,8 +71,10 @@
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone ros_buildfarm"',
         'rm -fr ros_buildfarm',
-        'git clone %s%s ros_buildfarm' % ('-b %s ' % ros_buildfarm_repository.version if ros_buildfarm_repository.version else '', ros_buildfarm_repository.url),
+        'git clone --depth 1 %s%s ros_buildfarm' % ('-b %s ' % ros_buildfarm_repository.version if ros_buildfarm_repository.version else '', ros_buildfarm_repository.url),
         'git -C ros_buildfarm log -n 1',
+        'rm -fr ros_buildfarm/.git',
+        'rm -fr ros_buildfarm/doc',
         'echo "# END SECTION"',
     ]),
 ))@
@@ -145,6 +157,16 @@
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' binarydeb_build__%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'if [ "$skip_cleanup" = "false" ]; then',
+        'echo "# BEGIN SECTION: Clean up to save disk space on slaves"',
+        'rm -fr binarydeb/*/*',
+        'echo "# END SECTION"',
+        'fi',
     ]),
 ))@
 @# disable installation check due to huge performance hit

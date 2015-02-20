@@ -32,6 +32,11 @@
             'name': 'force',
             'description': 'Run documentation generation even if neither the source repository nor any of the tools have changes',
         },
+        {
+            'type': 'boolean',
+            'name': 'skip_cleanup',
+            'description': 'Skip cleanup of catkin build artifacts as well as rosdoc index',
+        },
     ],
 ))@
 @(SNIPPET(
@@ -70,20 +75,25 @@
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone ros_buildfarm"',
         'rm -fr ros_buildfarm',
-        'git clone %s%s ros_buildfarm' % ('-b %s ' % ros_buildfarm_repository.version if ros_buildfarm_repository.version else '', ros_buildfarm_repository.url),
+        'git clone --depth 1 %s%s ros_buildfarm' % ('-b %s ' % ros_buildfarm_repository.version if ros_buildfarm_repository.version else '', ros_buildfarm_repository.url),
         'git -C ros_buildfarm log -n 1',
+        'rm -fr ros_buildfarm/.git',
+        'rm -fr ros_buildfarm/doc',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Clone rosdoc_lite"',
         'rm -fr rosdoc_lite',
-        'git clone https://github.com/ros-infrastructure/rosdoc_lite.git rosdoc_lite',
+        'git clone --depth 1 https://github.com/ros-infrastructure/rosdoc_lite.git rosdoc_lite',
         'git -C rosdoc_lite log -n 1',
+        'rm -fr rosdoc_lite/.git',
+        'rm -fr rosdoc_lite/doc',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Clone catkin-sphinx"',
         'rm -fr catkin-sphinx',
-        'git clone https://github.com/ros-infrastructure/catkin-sphinx catkin-sphinx',
+        'git clone --depth 1 https://github.com/ros-infrastructure/catkin-sphinx catkin-sphinx',
         'git -C catkin-sphinx log -n 1',
+        'rm -fr catkin-sphinx/.git',
         'echo "# END SECTION"',
     ]),
 ))@
@@ -197,6 +207,19 @@
         ' -v $WORKSPACE/generated_documentation:/tmp/generated_documentation' +
         ' doc__%s_%s' % (rosdistro_name, doc_repo_spec.name),
         'echo "# END SECTION"',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'if [ "$skip_cleanup" = "false" ]; then',
+        'echo "# BEGIN SECTION: Clean up to save disk space on slaves"',
+        'rm -fr catkin_workspace/build_isolated',
+        'rm -fr catkin_workspace/devel_isolated',
+        'rm -fr catkin_workspace/install_isolated',
+        'rm -fr rosdoc_index',
+        'echo "# END SECTION"',
+        'fi',
     ]),
 ))@
 @(SNIPPET(

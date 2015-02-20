@@ -24,17 +24,26 @@
     priority=job_priority,
 ))@
 @[end if]@
-@[if pull_request]@
-@(SNIPPET(
-    'property_parameters-definition',
-    parameters=[
+@{
+parameters = [
+    {
+        'type': 'boolean',
+        'name': 'skip_cleanup',
+        'description': 'Skip cleanup of catkin build artifacts as well as rosdoc index',
+    },
+]
+if pull_request:
+    parameters += [
         {
             'type': 'string',
             'name': 'sha1',
         },
-    ],
+    ]
+}@
+@(SNIPPET(
+    'property_parameters-definition',
+    parameters=parameters,
 ))@
-@[end if]@
 @(SNIPPET(
     'property_requeue-job',
 ))@
@@ -92,8 +101,10 @@
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone ros_buildfarm"',
         'rm -fr ros_buildfarm',
-        'git clone %s%s ros_buildfarm' % ('-b %s ' % ros_buildfarm_repository.version if ros_buildfarm_repository.version else '', ros_buildfarm_repository.url),
+        'git clone --depth 1 %s%s ros_buildfarm' % ('-b %s ' % ros_buildfarm_repository.version if ros_buildfarm_repository.version else '', ros_buildfarm_repository.url),
         'git -C ros_buildfarm log -n 1',
+        'rm -fr ros_buildfarm/.git',
+        'rm -fr ros_buildfarm/doc',
         'echo "# END SECTION"',
     ]),
 ))@
@@ -197,6 +208,18 @@
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' devel_build_and_test__%s_%s' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'if [ "$skip_cleanup" = "false" ]; then',
+        'echo "# BEGIN SECTION: Clean up to save disk space on slaves"',
+        'rm -fr catkin_workspace/build_isolated',
+        'rm -fr catkin_workspace/devel_isolated',
+        'rm -fr catkin_workspace/install_isolated',
+        'echo "# END SECTION"',
+        'fi',
     ]),
 ))@
   </builders>
