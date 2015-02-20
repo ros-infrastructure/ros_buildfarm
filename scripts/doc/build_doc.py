@@ -47,6 +47,10 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The root path of the rosdoc_index folder')
     parser.add_argument(
+        '--canonical-base-url',
+        required=True,
+        help='The canonical base URL to add to all generated HTML files')
+    parser.add_argument(
         'pkg_tuples',
         nargs='*',
         help='A list of package tuples in topological order, each ' +
@@ -131,13 +135,10 @@ def main(argv=sys.argv[1:]):
 
                 rosdoc_index.locations[pkg_name] = [data]
 
-            #
-
-            # add_canonical_link(
-            #     pkg_doc_path,
-            #     "%s/%s/api/%s" % (homepage, ros_distro, package))
-
-            #
+            if args.canonical_base_url:
+                add_canonical_link(
+                    pkg_doc_path, '%s/%s/api/%s' %
+                    (args.canonical_base_url, args.rosdistro_name, pkg_name))
 
             # merge manifest.yaml files
             rosdoc_manifest_yaml_file = os.path.join(
@@ -186,6 +187,25 @@ def main(argv=sys.argv[1:]):
     #         if output_dir != '.':
     #             data[builder] = output_dir
     # return data
+
+
+def add_canonical_link(base_path, base_link):
+    print("add canonical link '%s' to all html files under '%s'" %
+          (base_link, base_path))
+    for path, dirs, files in os.walk(base_path):
+        for filename in [f for f in files if f.endswith('.html')]:
+            filepath = os.path.join(path, filename)
+            with open(filepath, 'r') as h:
+                data = h.read()
+            if data.find('rel="canonical"') != -1:
+                continue
+            rel_path = os.path.relpath(filepath, base_path)
+            link = os.path.join(base_link, rel_path)
+            data = data.replace(
+                '</head>', '<link rel="canonical" href="%s" />\n</head>' %
+                link, 1)
+            with open(filepath, 'w') as h:
+                h.write(data)
 
 
 if __name__ == '__main__':

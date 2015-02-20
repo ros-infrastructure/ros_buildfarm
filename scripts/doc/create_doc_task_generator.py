@@ -42,6 +42,7 @@ from ros_buildfarm.common import get_user_id
 from ros_buildfarm.common import Scope
 from ros_buildfarm.config import get_distribution_file as \
     get_distribution_file_matching_build_file
+from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.config import get_source_build_files
@@ -497,6 +498,9 @@ def main(argv=sys.argv[1:]):
     for unknown_version in unknown_versions:
         debian_pkg_names.remove(unknown_version)
 
+    build_files = get_doc_build_files(config, args.rosdistro_name)
+    build_file = build_files[args.doc_build_name]
+
     # generate Dockerfile
     data = {
         'os_name': args.os_name,
@@ -514,6 +518,8 @@ def main(argv=sys.argv[1:]):
 
         'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,
+
+        'canonical_base_url': build_file.canonical_base_url,
 
         'ordered_pkg_tuples': ordered_pkg_tuples,
     }

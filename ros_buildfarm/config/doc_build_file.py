@@ -81,6 +81,11 @@ class DocBuildFile(BuildFile):
         assert not self.repository_keys or is_rosdoc_type
         assert not self.repository_urls or is_rosdoc_type
 
+        self.canonical_base_url = None
+        if 'canonical_base_url' in data:
+            self.canonical_base_url = data['canonical_base_url']
+            assert not self.canonical_base_url or is_rosdoc_type
+
         self.doc_repositories = []
         if 'doc_repositories' in data:
             self.doc_repositories = data['doc_repositories']
