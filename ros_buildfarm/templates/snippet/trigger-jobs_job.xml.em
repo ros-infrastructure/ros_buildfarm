@@ -74,10 +74,11 @@ resolver = build.buildVariableResolver
 filter = resolver.resolve("filter")
 println "Filter: " + filter
 
-has_force_parameter = %s
+has_force_parameter = true
+boolean force = false
 if (has_force_parameter) {
-    boolean force = resolver.resolve("force")
-    println "Force: " + force + type(force)
+    force = resolver.resolve("force")
+    println "Force: " + force
 }
 
 pattern = Pattern.compile("%s")
