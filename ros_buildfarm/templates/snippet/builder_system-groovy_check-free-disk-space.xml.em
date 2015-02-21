@@ -42,7 +42,7 @@ try {
       // schedule rebuild
       def project = build.getProject()
       if (!project.isInQueue()) {
-        project.scheduleBuild(1, new UserIdCause(), build.getActions(ParametersAction))
+        project.scheduleBuild(1, new UserIdCause(), *build.getActions(ParametersAction))
       }
 
       // add badge to build
