@@ -74,7 +74,7 @@ resolver = build.buildVariableResolver
 filter = resolver.resolve("filter")
 println "Filter: " + filter
 
-has_force_parameter = true
+has_force_parameter = %s
 boolean force = false
 if (has_force_parameter) {
     force = resolver.resolve("force")
