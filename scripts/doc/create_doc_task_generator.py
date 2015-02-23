@@ -46,8 +46,11 @@ from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.config import get_source_build_files
+from ros_buildfarm.doc_job import get_devel_job_urls
 from ros_buildfarm.doc_job import get_doc_job_name
+from ros_buildfarm.doc_job import get_doc_job_url
 from ros_buildfarm.doc_job import get_doc_view_name
+from ros_buildfarm.doc_job import get_release_job_urls
 from ros_buildfarm.git import get_hash as get_git_hash
 from ros_buildfarm.rosdoc_index import RosdocIndex
 from ros_buildfarm.templates import create_dockerfile
@@ -350,70 +353,32 @@ def main(argv=sys.argv[1:]):
             if pkg_status_description is not None:
                 data['maintainer_status_description'] = pkg_status_description
 
-            # jenkins url to doc job
-            data['doc_job'] = get_job_url(
-                config,
-                get_doc_view_name(args.rosdistro_name, args.doc_build_name),
-                get_doc_job_name(
-                    args.rosdistro_name, args.doc_build_name,
-                    args.repository_name, args.os_name, args.os_code_name,
-                    args.arch
-                )
-            )
+            # add doc job url
+            data['doc_job'] = get_doc_job_url(
+                config.jenkins_url, args.rosdistro_name, args.doc_build_name,
+                args.repository_name, args.os_name, args.os_code_name,
+                args.arch)
 
-            # jenkins url to devel jobs
-            devel_jobs = []
-            for source_build_name in sorted(used_source_build_names):
-                build_file = source_build_files[source_build_name]
-                for os_name in sorted(build_file.targets.keys()):
-                    for os_code_name in sorted(
-                            build_file.targets[os_name].keys()):
-                        for arch in sorted(
-                                build_file.targets[os_name][os_code_name]):
-                            job_url = get_job_url(
-                                config,
-                                get_devel_view_name(
-                                    args.rosdistro_name, source_build_name),
-                                get_devel_job_name(
-                                    args.rosdistro_name, source_build_name,
-                                    args.repository_name,
-                                    os_name, os_code_name, arch)
-                            )
-                            devel_jobs.append(job_url)
-            if devel_jobs:
-                data['devel_jobs'] = devel_jobs
+            # add devel job urls
+            build_files = {}
+            for build_name in used_source_build_names:
+                build_files[build_name] = source_build_files[build_name]
+            devel_job_urls = get_devel_job_urls(
+                config.jenkins_url, build_files, args.rosdistro_name,
+                args.repository_name)
+            if devel_job_urls:
+                data['devel_jobs'] = list(devel_job_urls)
 
-            release_jobs = []
-            for release_build_name in sorted(used_release_build_names):
-                build_file = release_build_files[release_build_name]
-                for os_name in sorted(build_file.targets.keys()):
-                    for os_code_name in sorted(
-                            build_file.targets[os_name].keys()):
-                        job_url = get_job_url(
-                            config,
-                            get_release_source_view_name(
-                                args.rosdistro_name, os_name, os_code_name),
-                            get_sourcedeb_job_name(
-                                args.rosdistro_name, release_build_name,
-                                pkg.name, os_name, os_code_name)
-                        )
-                        release_jobs.append(job_url)
+            # add release job urls
+            build_files = {}
+            for build_name in used_release_build_names:
+                build_files[build_name] = release_build_files[build_name]
+            release_job_urls = get_release_job_urls(
+                config.jenkins_url, build_files, args.rosdistro_name, pkg.name)
+            if release_job_urls:
+                data['release_jobs'] = list(release_job_urls)
 
-                        for arch in sorted(
-                                build_file.targets[os_name][os_code_name]):
-                            job_url = get_job_url(
-                                config,
-                                get_release_binary_view_name(
-                                    args.rosdistro_name, release_build_name,
-                                    os_name, os_code_name, arch),
-                                get_binarydeb_job_name(
-                                    args.rosdistro_name, release_build_name,
-                                    pkg.name, os_name, os_code_name, arch)
-                            )
-                            release_jobs.append(job_url)
-            if release_jobs:
-                data['release_jobs'] = release_jobs
-
+            # write manifest.yaml
             dst = os.path.join(
                 args.output_dir, 'manifests', pkg.name, 'manifest.yaml')
             dst_dir = os.path.dirname(dst)
@@ -596,10 +561,6 @@ def _get_build_run_doc_dependencies(pkg):
 def _get_run_dependencies(pkg):
     return pkg.build_export_depends + pkg.buildtool_export_depends + \
         pkg.exec_depends
-
-
-def get_job_url(config, view_name, job_name):
-    return '%s/view/%s/job/%s' % (config.jenkins_url, view_name, job_name)
 
 
 def initialize_resolver(rosdistro_name, os_name, os_code_name):

@@ -167,14 +167,14 @@ def get_generator_output_folders(pkg_rosdoc_config_file, pkg_name):
         if not isinstance(data, list):
             print("WARNING: package '%s' has an invalid rosdoc config" %
                   pkg_name, file=sys.stderr)
-            continue
-        for item in data:
-            if 'builder' not in item:
-                print("WARNING: package '%s' has an invalid rosdoc config "
-                      "- missing builder key" % pkg_name, file=sys.stderr)
-                continue
-            if item.get('output_dir'):
-                output_folders[item['builder']] = item['output_dir']
+        else:
+            for item in data:
+                if 'builder' not in item:
+                    print("WARNING: package '%s' has an invalid rosdoc config "
+                          "- missing builder key" % pkg_name, file=sys.stderr)
+                    continue
+                if item.get('output_dir'):
+                    output_folders[item['builder']] = item['output_dir']
     return output_folders
 
 
