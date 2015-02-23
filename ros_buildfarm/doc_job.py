@@ -311,7 +311,7 @@ def configure_doc_metadata_job(
     job_name = get_doc_view_name(rosdistro_name, doc_build_name)
 
     job_config = _get_doc_metadata_job_config(
-        config, config_url, rosdistro_name, job_name, build_file)
+        config, config_url, rosdistro_name, doc_build_name, build_file)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job

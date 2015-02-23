@@ -15,8 +15,8 @@ from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index as get_config_index
-from ros_buildfarm.config.doc_build_file import filter_packages
 
 
 def main(argv=sys.argv[1:]):
@@ -29,6 +29,8 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
 
     config = get_config_index(args.config_url)
+    build_files = get_doc_build_files(config, args.rosdistro_name)
+    build_file = build_files[args.doc_build_name]
 
     index = get_index(config.rosdistro_index_url)
     distribution = get_cached_distribution(index, args.rosdistro_name)
@@ -41,7 +43,7 @@ def main(argv=sys.argv[1:]):
     repo_names = get_repo_names_with_release_but_no_doc(distribution)
     pkg_names = get_package_names(distribution, repo_names)
 
-    filtered_pkg_names = filter_packages(pkg_names)
+    filtered_pkg_names = build_file.filter_packages(pkg_names)
 
     print("Generate 'manifest.yaml' files for the following packages:")
     api_path = os.path.join(args.output_dir, 'api')
