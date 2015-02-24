@@ -14,8 +14,8 @@ from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.common import get_doc_job_name
 from ros_buildfarm.doc_job import configure_doc_job
-from ros_buildfarm.doc_job import get_doc_job_name
 from ros_buildfarm.templates import expand_template
 
 

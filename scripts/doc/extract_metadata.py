@@ -15,8 +15,13 @@ from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.common import get_devel_job_urls
+from ros_buildfarm.common import get_doc_job_url
+from ros_buildfarm.common import get_release_job_urls
 from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index as get_config_index
+from ros_buildfarm.config import get_release_build_files
+from ros_buildfarm.config import get_source_build_files
 
 
 def main(argv=sys.argv[1:]):
@@ -31,6 +36,9 @@ def main(argv=sys.argv[1:]):
     config = get_config_index(args.config_url)
     build_files = get_doc_build_files(config, args.rosdistro_name)
     build_file = build_files[args.doc_build_name]
+
+    source_build_files = get_source_build_files(config, args.rosdistro_name)
+    release_build_files = get_release_build_files(config, args.rosdistro_name)
 
     index = get_index(config.rosdistro_index_url)
     distribution = get_cached_distribution(index, args.rosdistro_name)
@@ -55,6 +63,27 @@ def main(argv=sys.argv[1:]):
             print('Could not extract meta data:', file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
             continue
+
+        # add devel job urls
+        build_files = {}
+        for build_name in source_build_files.keys():
+            build_files[build_name] = source_build_files[build_name]
+        rel_pkg = distribution.release_packages[pkg_name]
+        repo_name = rel_pkg.repository_name
+        devel_job_urls = get_devel_job_urls(
+            config.jenkins_url, build_files, args.rosdistro_name, repo_name)
+        if devel_job_urls:
+            data['devel_jobs'] = list(devel_job_urls)
+
+        # add release job urls
+        build_files = {}
+        for build_name in release_build_files.keys():
+            build_files[build_name] = release_build_files[build_name]
+        release_job_urls = get_release_job_urls(
+            config.jenkins_url, build_files, args.rosdistro_name, pkg_name)
+        if release_job_urls:
+            data['release_jobs'] = list(release_job_urls)
+
         manifest_yaml = os.path.join(api_path, pkg_name, 'manifest.yaml')
         write_manifest_yaml(manifest_yaml, data)
 
@@ -125,8 +154,6 @@ def get_metadata(distribution, pkg_name):
     data['package_type'] = 'metapackage' if is_metapackage else 'package'
     if is_metapackage:
         data['packages'] = sorted([dep.name for dep in pkg.run_depends])
-
-    # TODO list jobs
 
     return data
 

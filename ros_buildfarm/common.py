@@ -278,3 +278,78 @@ def find_executable(file_name):
         if os.path.isfile(file_path) and os.access(file_path, os.X_OK):
             return file_path
     return None
+
+
+def get_doc_job_name(rosdistro_name, doc_build_name,
+                     repo_name, os_name, os_code_name, arch):
+    view_name = get_doc_view_name(
+        rosdistro_name, doc_build_name)
+    job_name = '%s__%s__%s_%s_%s' % \
+        (view_name, repo_name, os_name, os_code_name, arch)
+    return job_name
+
+
+def get_doc_job_url(
+        jenkins_url, rosdistro_name, doc_build_name, repository_name, os_name,
+        os_code_name, arch):
+    return _get_job_url(
+        jenkins_url,
+        get_doc_view_name(rosdistro_name, doc_build_name),
+        get_doc_job_name(
+            rosdistro_name, doc_build_name, repository_name, os_name,
+            os_code_name, arch)
+    )
+
+
+def get_devel_job_urls(
+        jenkins_url, source_build_files, rosdistro_name, repository_name):
+    urls = set([])
+    for source_build_name in source_build_files.keys():
+        build_file = source_build_files[source_build_name]
+        for os_name in build_file.targets.keys():
+            for os_code_name in build_file.targets[os_name].keys():
+                for arch in build_file.targets[os_name][os_code_name]:
+                    job_url = _get_job_url(
+                        jenkins_url,
+                        get_devel_view_name(rosdistro_name, source_build_name),
+                        get_devel_job_name(
+                            rosdistro_name, source_build_name, repository_name,
+                            os_name, os_code_name, arch)
+                    )
+                    urls.add(job_url)
+    return urls
+
+
+def get_release_job_urls(
+        jenkins_url, release_build_files, rosdistro_name, package_name):
+    urls = set([])
+    for release_build_name in release_build_files.keys():
+        build_file = release_build_files[release_build_name]
+        for os_name in build_file.targets.keys():
+            for os_code_name in build_file.targets[os_name].keys():
+                job_url = _get_job_url(
+                    jenkins_url,
+                    get_release_source_view_name(
+                        rosdistro_name, os_name, os_code_name),
+                    get_sourcedeb_job_name(
+                        rosdistro_name, release_build_name,
+                        package_name, os_name, os_code_name)
+                )
+                urls.add(job_url)
+
+                for arch in build_file.targets[os_name][os_code_name]:
+                    job_url = _get_job_url(
+                        jenkins_url,
+                        get_release_binary_view_name(
+                            rosdistro_name, release_build_name,
+                            os_name, os_code_name, arch),
+                        get_binarydeb_job_name(
+                            rosdistro_name, release_build_name,
+                            package_name, os_name, os_code_name, arch)
+                    )
+                    urls.add(job_url)
+    return urls
+
+
+def _get_job_url(jenkins_url, view_name, job_name):
+    return '%s/view/%s/job/%s' % (jenkins_url, view_name, job_name)

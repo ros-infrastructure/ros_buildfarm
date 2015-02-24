@@ -30,14 +30,11 @@ from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_vcs_information
 from ros_buildfarm.common import find_executable
 from ros_buildfarm.common import get_binary_package_versions
-from ros_buildfarm.common import get_binarydeb_job_name
 from ros_buildfarm.common import get_debian_package_name
-from ros_buildfarm.common import get_devel_job_name
-from ros_buildfarm.common import get_devel_view_name
+from ros_buildfarm.common import get_devel_job_urls
 from ros_buildfarm.common import get_distribution_repository_keys
-from ros_buildfarm.common import get_release_binary_view_name
-from ros_buildfarm.common import get_release_source_view_name
-from ros_buildfarm.common import get_sourcedeb_job_name
+from ros_buildfarm.common import get_doc_job_url
+from ros_buildfarm.common import get_release_job_urls
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.common import Scope
 from ros_buildfarm.config import get_distribution_file as \
@@ -46,11 +43,6 @@ from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.config import get_source_build_files
-from ros_buildfarm.doc_job import get_devel_job_urls
-from ros_buildfarm.doc_job import get_doc_job_name
-from ros_buildfarm.doc_job import get_doc_job_url
-from ros_buildfarm.doc_job import get_doc_view_name
-from ros_buildfarm.doc_job import get_release_job_urls
 from ros_buildfarm.git import get_hash as get_git_hash
 from ros_buildfarm.rosdoc_index import RosdocIndex
 from ros_buildfarm.templates import create_dockerfile
