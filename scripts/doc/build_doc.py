@@ -184,8 +184,12 @@ def add_canonical_link(base_path, base_link):
     for path, dirs, files in os.walk(base_path):
         for filename in [f for f in files if f.endswith('.html')]:
             filepath = os.path.join(path, filename)
-            with open(filepath, 'r') as h:
-                data = h.read()
+            try:
+                with open(filepath, 'r') as h:
+                    data = h.read()
+            except Exception:
+                print("error reading file '%s'" % filepath)
+                raise
             if data.find('rel="canonical"') != -1:
                 continue
             rel_path = os.path.relpath(filepath, base_path)
