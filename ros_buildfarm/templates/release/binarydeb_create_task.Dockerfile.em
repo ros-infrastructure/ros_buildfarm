@@ -25,21 +25,18 @@ RUN useradd -u @uid -m buildfarm
     add_source=True,
 ))@
 
-# optionally manual cache invalidation for core Python packages
-RUN echo "2014-11-20"
+@(TEMPLATE(
+    'snippet/add_wrapper_scripts.Dockerfile.em',
+    wrapper_scripts=wrapper_scripts,
+))@
+
+# automatic invalidation once every day
+RUN echo "@today_str"
 
 @# Ubuntu before Trusty explicitly needs python3
 @[if os_name == 'ubuntu' and os_code_name[0] not in ['t', 'u']]@
 RUN apt-get update && apt-get install -q -y python3
 @[end if]@
-
-# automatic invalidation once every day
-RUN echo "@today_str"
-
-@(TEMPLATE(
-    'snippet/add_wrapper_scripts.Dockerfile.em',
-    wrapper_scripts=wrapper_scripts,
-))@
 
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y devscripts dpkg-dev python3-apt python3-catkin-pkg python3-empy python3-rosdistro python3-yaml
 

@@ -20,16 +20,13 @@ RUN useradd -u @uid -m buildfarm
     add_source=False,
 ))@
 
-# optionally manual cache invalidation for core Python packages
-RUN echo "2014-11-20"
-
-# automatic invalidation once every day
-RUN echo "@today_str"
-
 @(TEMPLATE(
     'snippet/add_wrapper_scripts.Dockerfile.em',
     wrapper_scripts=wrapper_scripts,
 ))@
+
+# automatic invalidation once every day
+RUN echo "@today_str"
 
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y python3-catkin-pkg python3-empy python3-pip python3-rosdistro python3-yaml
 RUN pip3 install jenkinsapi

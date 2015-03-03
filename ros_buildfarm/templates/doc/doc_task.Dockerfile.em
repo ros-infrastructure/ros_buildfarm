@@ -37,16 +37,13 @@ RUN echo deb http://http.debian.net/debian @os_code_name contrib non-free | tee 
     wrapper_scripts=wrapper_scripts,
 ))@
 
-# optionally manual cache invalidation for core dependencies
-RUN echo "2014-11-20"
+# automatic invalidation once every day
+RUN echo "@today_str"
 
 @# Ubuntu before Trusty explicitly needs python3
 @[if os_name == 'ubuntu' and os_code_name[0] < 't']@
 RUN apt-get update && apt-get install -q -y python3
 @[end if]@
-
-# automatic invalidation once every day
-RUN echo "@today_str"
 
 @(TEMPLATE(
     'snippet/install_dependencies.Dockerfile.em',
