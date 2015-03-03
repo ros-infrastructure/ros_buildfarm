@@ -25,8 +25,9 @@ For each *source build file* two separate Jenkins views are created.
 Entry points
 ------------
 
-The following scripts are the entry points for *devel* jobs. The scripts
-operate on a specific *source build file* in the ROS build farm configuration:
+The following scripts are the entry points for *devel* jobs.
+The scripts operate on a specific *source build file* in the ROS build farm
+configuration:
 
 * **generate_devel_maintenance_jobs.py** generates a set of jobs on the farm
   which will perform maintenance tasks.
@@ -77,9 +78,9 @@ The task performs the following steps:
 
   Since the CMake option ``CATKIN_ENABLE_TESTING`` is not enabled explicitly
   the packages must neither configure any tests nor use any test-only
-  dependencies. The option ``CATKIN_SKIP_TESTING`` prevents CMake from failing
-  if packages violate this restriction and only outputs a CMake warning
-  instead.
+  dependencies.
+  The option ``CATKIN_SKIP_TESTING`` prevents CMake from failing if packages
+  violate this restriction and only outputs a CMake warning instead.
 
   The build is performed single threaded to achieve deterministic build results
   (a different target order could break the build if it lacks correct target

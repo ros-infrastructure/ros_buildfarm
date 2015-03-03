@@ -273,9 +273,9 @@ The following options are valid in version ``2`` (beside the generic options):
   from the released package manifests.
 
 * ``repository_whitelist``: a list of repository names to whitelist (only
-    allowed if ``released_packages`` is ``false``).
+  allowed if ``released_packages`` is ``false``).
 * ``repository_blacklist``: a list of repository names to blacklist (only
-    allowed if ``released_packages`` is ``false``).
+  allowed if ``released_packages`` is ``false``).
 * ``skip_ignored_repositories``: a boolean flag if jobs for blacklisted (or not
   whitelisted) repositories should not be generated (default: ``false``) (only
-    allowed if ``released_packages`` is ``false``).
+  allowed if ``released_packages`` is ``false``).

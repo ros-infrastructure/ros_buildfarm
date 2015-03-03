@@ -28,8 +28,9 @@ all packages are synced from the *building* to the *testing* repository.
 Entry points
 ------------
 
-The following scripts are the entry points for *release* jobs. The scripts
-operate on a specific *release build file* in the ROS build farm configuration:
+The following scripts are the entry points for *release* jobs.
+The scripts operate on a specific *release build file* in the ROS build farm
+configuration:
 
 * **generate_release_maintenance_jobs.py** generates a set of jobs on the farm
   which will perform maintenance tasks.

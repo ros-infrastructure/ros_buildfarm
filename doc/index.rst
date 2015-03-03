@@ -16,7 +16,8 @@ they work.
 
 * `devel jobs <jobs/devel_jobs.rst>`_ build and test ROS repositories
 
-* doc jobs (to be done) generate the API documentation of packages
+* `doc jobs <jobs/doc_jobs.rst>`_ generate the API documentation of packages
+  and extract information from the manifests
 
 * `miscellaneous jobs <jobs/miscellaneous_jobs.rst>`_ perform maintenance tasks
   and generate informational data to visualize the status of the build farm and
@@ -91,6 +92,9 @@ debugging, and shortens the round-trip time for testing.
 
 * `devel jobs#run-the-devel-job-locally <jobs/devel_jobs.rst#run-the-devel-job-locally>`_
   build and test ROS repositories
+
+* `doc jobs#run-the-doc-job-locally <jobs/doc_jobs.rst#run-the-doc-job-locally>`_
+  generate the documentation for ROS repositories
 
 Another job type can be used locally which is not offered on the build farm.
 
