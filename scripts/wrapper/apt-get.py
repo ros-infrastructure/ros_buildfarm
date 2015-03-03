@@ -82,20 +82,20 @@ def call_apt_get(argv, known_error_strings):
 
     cmd = ['apt-get'] + argv
     print("Invoking '%s'" % ' '.join(cmd))
-    with subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
-        while True:
-            line = proc.stdout.readline()
-            if not line:
-                break
-            line = line.decode()
-            sys.stdout.write(line)
-            for known_error_string in known_error_strings:
-                if known_error_string in line:
-                    if known_error_string not in known_error_conditions:
-                        known_error_conditions.append(known_error_string)
-        proc.wait()
-        rc = proc.returncode
+    proc = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        line = line.decode()
+        sys.stdout.write(line)
+        for known_error_string in known_error_strings:
+            if known_error_string in line:
+                if known_error_string not in known_error_conditions:
+                    known_error_conditions.append(known_error_string)
+    proc.wait()
+    rc = proc.returncode
     return rc, known_error_conditions
 
 
