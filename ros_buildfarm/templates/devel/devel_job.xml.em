@@ -47,9 +47,6 @@ if pull_request:
 @(SNIPPET(
     'property_requeue-job',
 ))@
-@(SNIPPET(
-    'property_disk-usage',
-))@
   </properties>
 @[if not pull_request]@
 @(SNIPPET(
