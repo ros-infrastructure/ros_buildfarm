@@ -40,9 +40,12 @@ RUN echo deb http://http.debian.net/debian @os_code_name contrib non-free | tee 
 # automatic invalidation once every day
 RUN echo "@today_str"
 
-@# Ubuntu before Trusty explicitly needs python3
-@[if os_name == 'ubuntu' and os_code_name[0] not in ['t', 'u']]@
+@[if os_name == 'ubuntu' and os_code_name[0] < 't']@
+@# Ubuntu before Trusty explicitly needs Python 3
 RUN python -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y python3
+@[elif os_name == 'ubuntu' and os_code_name[0] == 'v']@
+@# Ubuntu Vivid has neither Python 2 nor 3 installed by default
+RUN apt-get update && apt-get install -q -y python3
 @[end if]@
 
 @(TEMPLATE(
