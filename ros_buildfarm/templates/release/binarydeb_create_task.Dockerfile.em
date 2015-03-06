@@ -33,13 +33,11 @@ RUN useradd -u @uid -m buildfarm
 # automatic invalidation once every day
 RUN echo "@today_str"
 
-@[if os_name == 'ubuntu' and os_code_name[0] < 't']@
-@# Ubuntu before Trusty explicitly needs Python 3
-RUN python -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y python3
-@[elif os_name == 'ubuntu' and os_code_name[0] == 'v']@
-@# Ubuntu Vivid has neither Python 2 nor 3 installed by default
-RUN apt-get update && apt-get install -q -y python3
-@[end if]@
+@(TEMPLATE(
+    'snippet/install_python3.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+))@
 
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y devscripts dpkg-dev python3-apt python3-catkin-pkg python3-empy python3-rosdistro python3-yaml
 
