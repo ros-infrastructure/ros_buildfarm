@@ -45,8 +45,24 @@ println "Triggering builds for the following jobs:"
 
 def source_prefix = "%s"
 def binary_prefix = "%s"
-pattern_src = Pattern.compile(source_prefix + "__.+__.+__source")
-pattern_bin = Pattern.compile(binary_prefix + "__.+__.+__binary")
+
+// 1. prefix: e.g. Jsrc
+// 2. os_name, os_code_name, arch: e.g. _uT64
+// 3. package name: e.g. __roscpp
+// 4. os_name, os_code_name: e.g. __ubuntu_trusty
+// 5. suffix: __source
+pattern_src = Pattern.compile(source_prefix + "_.+__.+__.+__source")
+//                            1............    2..3...4...5.......
+
+// 1. prefix: e.g. Jbin
+// 2. optional build file name: e.g. _arm
+// 3. os_name, os_code_name, arch: e.g. _uT64
+// 4. package name: e.g. __roscpp
+// 5. os_name, os_code_name, arch: e.g. __ubuntu_trusty_amd64
+// 6. suffix: __binary
+pattern_bin = Pattern.compile(binary_prefix + "(_.+)?_.+__.+__.+__binary")
+//                            1............    2.....3..4...5...6.......
+
 for (p in hudson.model.Hudson.instance.projects) {
     if (!pattern_src.matcher(p.name).matches() && !pattern_bin.matcher(p.name).matches()) continue
     if (p.isDisabled()) continue
