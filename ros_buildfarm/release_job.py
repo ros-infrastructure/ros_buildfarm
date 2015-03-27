@@ -630,6 +630,7 @@ def get_import_package_job_name(rosdistro_name):
 def _get_import_package_job_config(build_file):
     template_name = 'release/import_package_job.xml.em'
     job_data = {
+        'abi_incompatibility_assumed': build_file.abi_incompatibility_assumed,
         'notify_emails': build_file.notify_emails,
     }
     job_config = expand_template(template_name, job_data)
