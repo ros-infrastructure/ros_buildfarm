@@ -395,7 +395,7 @@ def configure_release_job(
         if dependency_names is None:
             print(("Skipping binary jobs for package '%s' because it is not " +
                    "yet in the rosdistro cache") % pkg_name, file=sys.stderr)
-            return source_job_names, binary_job_names
+            return source_job_names, binary_job_names, job_configs
 
     # binarydeb jobs
     for arch in build_file.targets[os_name][os_code_name]:
