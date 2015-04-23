@@ -28,7 +28,7 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
 @(SNIPPET(
-    'trigger_poll',
+    'trigger_timer',
     spec='H 3 * * *',
 ))@
   </triggers>
