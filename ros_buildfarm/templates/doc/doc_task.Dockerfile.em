@@ -25,8 +25,8 @@ RUN useradd -u @uid -m buildfarm
 ))@
 
 @[if os_name == 'ubuntu']@
-# Add multiverse
-RUN echo deb http://archive.ubuntu.com/ubuntu @os_code_name multiverse | tee -a /etc/apt/sources.list
+# Enable multiverse
+RUN sed -i "/^# deb.*multiverse/ s/^# //" /etc/apt/sources.list
 @[else if os_name == 'debian']@
 # Add contrib and non-free to debian images
 RUN echo deb http://http.debian.net/debian @os_code_name contrib non-free | tee -a /etc/apt/sources.list
