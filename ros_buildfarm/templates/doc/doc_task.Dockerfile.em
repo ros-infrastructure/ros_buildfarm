@@ -63,7 +63,7 @@ RUN echo "@today_str"
 # overriding with older package (1.7.6) from Precise
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y wget
 RUN rm /usr/bin/doxygen
-RUN wget http://us.archive.ubuntu.com/ubuntu/pool/main/d/doxygen/doxygen_1.7.6.1-2ubuntu1_amd64.deb --output-document=/tmp/doxygen_1.7.6.1-2ubuntu1_amd64.deb
+RUN wget http://download.ros.org/downloads/doxygen/doxygen_1.7.6.1-2ubuntu1_amd64.deb --output-document=/tmp/doxygen_1.7.6.1-2ubuntu1_amd64.deb
 RUN dpkg -i /tmp/doxygen_1.7.6.1-2ubuntu1_amd64.deb
 RUN doxygen --version
 @[end if]@
