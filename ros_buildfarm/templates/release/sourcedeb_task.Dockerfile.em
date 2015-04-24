@@ -12,6 +12,12 @@ ENV LANG en_US.UTF-8
 RUN useradd -u @uid -m buildfarm
 
 @(TEMPLATE(
+    'snippet/old_release_set.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+))@
+
+@(TEMPLATE(
     'snippet/add_distribution_repositories.Dockerfile.em',
     distribution_repository_keys=distribution_repository_keys,
     distribution_repository_urls=distribution_repository_urls,
