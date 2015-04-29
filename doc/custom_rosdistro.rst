@@ -165,6 +165,8 @@ rosdistro database::
 
     ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/YOUR_FORK/rosdistro/master/index.yaml
 
+Note if you're overlaying you need to add a rodep file for the underlayed rosdistro if using one: https://github.com/mikepurvis/rosdep-generator
+
 After that they must also update the rosdep database to use the ROS packages
 from the custom rosdistro database::
 
