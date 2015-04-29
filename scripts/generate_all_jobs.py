@@ -92,7 +92,7 @@ def main(argv=sys.argv[1:]):
 
 def generate_dashboard_job(config_url):
     cmd = [
-        'misc/generate_dashboard_job.py',
+        _resolve_script('misc', 'generate_dashboard_job.py'),
         config_url,
     ]
     _check_call(cmd)
@@ -100,7 +100,7 @@ def generate_dashboard_job(config_url):
 
 def generate_rosdistro_cache_job(config_url, ros_distro_name):
     cmd = [
-        'misc/generate_rosdistro_cache_job.py',
+        _resolve_script('misc', 'generate_rosdistro_cache_job.py'),
         config_url,
         ros_distro_name,
     ]
@@ -110,7 +110,7 @@ def generate_rosdistro_cache_job(config_url, ros_distro_name):
 def generate_release_status_page_job(
         config_url, ros_distro_name, release_build_name):
     cmd = [
-        'status/generate_release_status_page_job.py',
+        _resolve_script('status', 'generate_release_status_page_job.py'),
         config_url,
         ros_distro_name,
         release_build_name,
@@ -120,7 +120,7 @@ def generate_release_status_page_job(
 
 def generate_repos_status_page_jobs(config_url, ros_distro_name):
     cmd = [
-        'status/generate_repos_status_page_job.py',
+        _resolve_script('status', 'generate_repos_status_page_job.py'),
         config_url,
         ros_distro_name,
     ]
@@ -130,7 +130,7 @@ def generate_repos_status_page_jobs(config_url, ros_distro_name):
 def generate_release_maintenance_jobs(
         config_url, ros_distro_name, release_build_name):
     cmd = [
-        'release/generate_release_maintenance_jobs.py',
+        _resolve_script('release', 'generate_release_maintenance_jobs.py'),
         config_url,
         ros_distro_name,
         release_build_name,
@@ -141,7 +141,7 @@ def generate_release_maintenance_jobs(
 def generate_devel_maintenance_jobs(
         config_url, ros_distro_name, source_build_name):
     cmd = [
-        'devel/generate_devel_maintenance_jobs.py',
+        _resolve_script('devel', 'generate_devel_maintenance_jobs.py'),
         config_url,
         ros_distro_name,
         source_build_name,
@@ -152,7 +152,7 @@ def generate_devel_maintenance_jobs(
 def generate_doc_maintenance_jobs(
         config_url, ros_distro_name, doc_build_name):
     cmd = [
-        'doc/generate_doc_maintenance_jobs.py',
+        _resolve_script('doc', 'generate_doc_maintenance_jobs.py'),
         config_url,
         ros_distro_name,
         doc_build_name,
@@ -163,7 +163,7 @@ def generate_doc_maintenance_jobs(
 def generate_doc_independent_job(
         config_url, doc_build_name):
     cmd = [
-        'doc/generate_doc_independent_job.py',
+        _resolve_script('doc', 'generate_doc_independent_job.py'),
         config_url,
         doc_build_name,
     ]
@@ -173,12 +173,22 @@ def generate_doc_independent_job(
 def generate_doc_metadata_job(
         config_url, ros_distro_name, doc_build_name):
     cmd = [
-        'doc/generate_doc_metadata_job.py',
+        _resolve_script('doc', 'generate_doc_metadata_job.py'),
         config_url,
         ros_distro_name,
         doc_build_name,
     ]
     _check_call(cmd)
+
+
+def _resolve_script(subfolder, filename):
+    subfolder_path = os.path.join(subfolder, filename)
+    if os.path.exists(subfolder_path):
+        return subfolder_path
+    sibling_path = os.path.join(os.path.dirname(__file__), filename)
+    if os.path.exists(sibling_path):
+        return sibling_path
+    assert False, "Could not find script '%s' from subfolder '%s'" % (filename, subfolder)
 
 
 def _check_call(cmd):
