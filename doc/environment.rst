@@ -50,7 +50,7 @@ requires credentials.
 Create the file ``~/.buildfarm/jenkins.ini`` containing your credentials to log
 in to the Jenkins master, e.g.::
 
-  [jenkins_hostname.example.com]
+  [http://jenkins-instance-url.example.com:8080]
   username=admin
   password=changeme
 
