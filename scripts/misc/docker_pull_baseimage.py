@@ -2,6 +2,7 @@
 
 import subprocess
 import sys
+from time import sleep
 
 
 def main(argv=sys.argv[1:]):
@@ -10,7 +11,11 @@ def main(argv=sys.argv[1:]):
     sys.stdout.write("Get base image name from Dockerfile '%s': " % dockerfile)
     base_image = get_base_image_from_dockerfile(dockerfile)
     print(base_image)
-    return call_docker_pull(base_image)
+
+    known_error_strings = ['Server error: Status 502 while fetching image layer']
+    max_tries = 10
+    rc, _ = call_docker_pull_repeatedly(base_image, known_error_strings, max_tries)
+    return rc
 
 
 def get_base_image_from_dockerfile(dockerfile):
@@ -26,10 +31,44 @@ def get_base_image_from_dockerfile(dockerfile):
         (from_prefix, dockerfile)
 
 
-def call_docker_pull(base_image):
+def call_docker_pull_repeatedly(base_image, known_error_strings, max_tries):
+    for i in range(1, max_tries + 1):
+        if i > 1:
+            sleep_time = 5 + 2 * i
+            print("Reinvoke 'docker pull' (%d/%d) after sleeping %s seconds" %
+                  (i, max_tries, sleep_time))
+            sleep(sleep_time)
+        rc, known_error_conditions = call_docker_pull(base_image, known_error_strings)
+        if rc == 0 or not known_error_conditions:
+            break
+        print('')
+        print('Invocation failed due to the following known error conditions: '
+              ', '.join(known_error_conditions))
+        print('')
+        # retry in case of failure with known error condition
+    return rc, known_error_conditions
+
+
+def call_docker_pull(base_image, known_error_strings):
+    known_error_conditions = []
+
     cmd = ['docker', 'pull', base_image]
     print('Check docker base image for updates: %s' % ' '.join(cmd))
-    return subprocess.call(cmd, stderr=subprocess.STDOUT)
+    proc = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        line = line.decode()
+        sys.stdout.write(line)
+        for known_error_string in known_error_strings:
+            if known_error_string in line:
+                if known_error_string not in known_error_conditions:
+                    known_error_conditions.append(known_error_string)
+    proc.wait()
+    rc = proc.returncode
+    return rc, known_error_conditions
 
 
 if __name__ == '__main__':
