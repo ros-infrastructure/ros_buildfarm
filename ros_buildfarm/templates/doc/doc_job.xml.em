@@ -48,7 +48,13 @@
     repo_spec=doc_repo_spec,
     path='catkin_workspace/src/%s' % doc_repo_spec.name,
 ))@
-  <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>
+@(SNIPPET(
+    'assigned_node',
+    jobtype='doc',
+    node_label=node_label,
+    rosdistro_name=rosdistro_name,
+    arch=arch,
+))@
   <canRoam>false</canRoam>
   <disabled>@('true' if disabled else 'false')</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>

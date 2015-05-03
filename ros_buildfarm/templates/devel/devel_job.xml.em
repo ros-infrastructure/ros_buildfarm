@@ -64,7 +64,13 @@ if pull_request:
     relative_target_dir='catkin_workspace/src/%s' % source_repo_spec.name,
 ))@
 @[end if]@
-  <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>
+@(SNIPPET(
+    'assigned_node',
+    jobtype='devel',
+    node_label=node_label,
+    rosdistro_name=rosdistro_name,
+    arch=arch,
+))@
   <canRoam>false</canRoam>
   <disabled>@('true' if disabled else 'false')</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>

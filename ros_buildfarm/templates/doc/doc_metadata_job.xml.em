@@ -21,7 +21,13 @@
 @(SNIPPET(
     'scm_null',
 ))@
-  <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>
+@(SNIPPET(
+    'assigned_node',
+    jobtype='doc_metadata',
+    node_label=node_label,
+    rosdistro_name=rosdistro_name,
+    arch=arch,
+))@
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
