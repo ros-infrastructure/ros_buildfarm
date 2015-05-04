@@ -45,6 +45,8 @@ def main(argv=sys.argv[1:]):
     # try to connect to Jenkins master
     connect(config.jenkins_url)
 
+    generate_check_slaves_job(args.config_url)
+
     if not args.ros_distro_names:
         generate_dashboard_job(args.config_url)
 
@@ -88,6 +90,14 @@ def main(argv=sys.argv[1:]):
 
         generate_repos_status_page_jobs(
             args.config_url, ros_distro_name)
+
+
+def generate_check_slaves_job(config_url):
+    cmd = [
+        _resolve_script('misc', 'generate_check_slaves_job.py'),
+        config_url,
+    ]
+    _check_call(cmd)
 
 
 def generate_dashboard_job(config_url):

@@ -10,6 +10,20 @@ ROS distro cache
   automatically and pretty frequently (e.g. every five minutes).
 
 
+Check slaves
+------------
+
+* The ``check_slaves`` job makes sure that slaves are automatically reenabled
+  after they recovered from having not enough free disk space.
+
+
+Dashboard
+---------
+
+* The ``dashboard`` job provides an overview about the status of all jobs.
+  It shows the number of jobs grouped by their view and status.
+
+
 Status pages
 ------------
 

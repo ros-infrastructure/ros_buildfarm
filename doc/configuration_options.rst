@@ -101,6 +101,7 @@ Description of common options
   The job priorities of the administrative jobs are hard coded:
 
   * ``rosdistro-cache`` jobs: 10
+  * ``check_slaves`` job: 20
   * ``dashboard`` job: 20
   * ``*-status-page`` jobs: 20
   * ``reconfigure-jobs`` jobs: 30
