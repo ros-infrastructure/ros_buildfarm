@@ -16,6 +16,7 @@ template_hooks = None
 
 
 def expand_template(template_name, data, options=None):
+    """Expand template call API"""
 
     global interpreter
     global template_hooks
@@ -26,11 +27,11 @@ def expand_template(template_name, data, options=None):
         for template_hook in template_hooks or []:
             interpreter.addHook(template_hook)
         template_path = data['template_path']
+
         # create copy before manipulating
         data = dict(data)
+
         # add some generic information to context
-        # data['template_name'] = template_name
-        # data['template_basepath'] = template_basepath
         now = time.localtime()
         data['now_str'] = time.strftime(
             '%Y-%m-%d %H:%M:%S %z', now)
@@ -56,6 +57,7 @@ def expand_template(template_name, data, options=None):
 
 
 def _add_helper_functions(data):
+    """Add helper functions to data dictionary"""
     data['ESCAPE'] = _escape_value
     data['SNIPPET'] = _expand_snippet
     data['TEMPLATE'] = _expand_template
@@ -63,6 +65,7 @@ def _add_helper_functions(data):
 
 
 def _escape_value(value):
+    """Recusivly escape values of diffrent types"""
     if isinstance(value, list):
         value = [_escape_value(v) for v in value]
     elif isinstance(value, set):
@@ -73,11 +76,13 @@ def _escape_value(value):
 
 
 def _expand_snippet(snippet_name, **kwargs):
+    """Expand snippet using given snippet_name"""
     template_name = 'snippet/%s.xml.em' % snippet_name
     _expand_template(template_name, **kwargs)
 
 
 def _expand_template(template_name, **kwargs):
+    """Expand template call for interpreter"""
     template_name = os.path.join('templates', template_name)
     template_package = _find_first_template(template_name, **kwargs)
 
@@ -94,16 +99,23 @@ def _expand_template(template_name, **kwargs):
             sys.exit(1)
 
 def _find_first_template(template_name, **kwargs):
+    """Find first matching template resource given order of template_packages"""
     if not 'template_packages' in kwargs:
+        # Default to ros_buildfarm if none given
         return 'ros_buildfarm'
 
     for template_package in kwargs['template_packages']:
         if pkg_resources.resource_exists(template_package,template_name):
             return template_package
+
+    # Default to ros_buildfarm if none found
     return 'ros_buildfarm'
 
 
 def create_dockerfile(template_name, data, dockerfile_dir):
+    """Create an auto generated docker file using given data config"""
+
+    # template_names are relative to templates folder in template_packages
     template_name = os.path.join('templates', template_name)
 
     # Find first instance of tempate_name given order of template_packages
@@ -130,8 +142,10 @@ def create_dockerfile(template_name, data, dockerfile_dir):
                     wrapper_scripts[filename] = content
     data['wrapper_scripts'] = wrapper_scripts
 
+    # Use wrapper scripts to expand template
     content = expand_template(template_name, data)
 
+    # Print and save content to Dockerfile
     dockerfile = os.path.join(dockerfile_dir, 'Dockerfile')
     print("Generating Dockerfile '%s':" % dockerfile)
     for line in content.splitlines():
