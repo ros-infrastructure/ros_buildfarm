@@ -94,6 +94,9 @@ if pull_request:
     'builder_shell_docker-info',
 ))@
 @(SNIPPET(
+    'builder_check-docker',
+))@
+@(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone ros_buildfarm"',
