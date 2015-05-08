@@ -49,7 +49,8 @@ class TestDockerfileGeneration(unittest.TestCase):
         template_name = os.path.join('templates', self.template_name)
         template_package = _find_first_template(template_name, **self.data)
 
-        msg = "\nThe first package found to have the template_name: '%s' as a template resource should be: '%s'" % (
+        msg = "\nThe first package found to have the template_name: \
+        '%s' as a template resource should be: '%s'" % (
             self.template_name, expected_template_package)
         self.assertEqual(template_package, expected_template_package, msg=msg)
 

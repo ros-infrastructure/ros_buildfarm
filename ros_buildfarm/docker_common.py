@@ -21,7 +21,8 @@ class DockerfileArgParser(object):
     def __init__(self):
         # Create parser
         self.parser = argparse.ArgumentParser(
-            description="Generate the 'Dockerfile's for the base docker images")  # Add arguments to parser
+            description="Generate the 'Dockerfile's for the base docker images")
+        # Add arguments to parser
         self.parser.add_argument(
             '--rosdistro-name',
             required=True,
@@ -71,6 +72,7 @@ class DockerfileArgParser(object):
             'rosdistro': args.rosdistro_name,
 
             'template_packages': args.template_packages,
+            'dockerfile_dir': args.dockerfile_dir,
         }
 
         return data
