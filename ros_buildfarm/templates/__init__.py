@@ -97,33 +97,35 @@ def _expand_template(template_name, **kwargs):
                 (e.__class__.__name__, template_name, str(e)), file=sys.stderr)
             sys.exit(1)
 
+
 def _find_first_template(template_name, **kwargs):
     """Find first matching template resource given order of template_packages"""
-    if not 'template_packages' in kwargs:
+    if 'template_packages' not in kwargs:
         # Default to ros_buildfarm if none given
         return 'ros_buildfarm'
 
     for template_package in kwargs['template_packages']:
-        if pkg_resources.resource_exists(template_package,template_name):
+        if pkg_resources.resource_exists(template_package, template_name):
             return template_package
 
     # Default to ros_buildfarm if none found
     return 'ros_buildfarm'
+
 
 def _find_first_wrappers(data):
     """Find first wrappers resource given order of template_packages"""
     wrapper_scripts = {}
     wrapper_subpath = 'templates/wrapper'
     for template_package in data['template_packages']:
-        if pkg_resources.resource_exists(template_package,wrapper_subpath):
-            wrapper_path  = pkg_resources.resource_filename(template_package, wrapper_subpath)
-            wrapper_files = pkg_resources.resource_listdir (template_package, wrapper_subpath)
+        if pkg_resources.resource_exists(template_package, wrapper_subpath):
+            wrapper_path = pkg_resources.resource_filename(template_package, wrapper_subpath)
+            wrapper_files = pkg_resources.resource_listdir(template_package, wrapper_subpath)
             for filename in wrapper_files:
                 if not filename.endswith('.py'):
                     continue
                 if filename in wrapper_scripts:
                     continue
-                abs_file_path = os.path.join(wrapper_path,filename)
+                abs_file_path = os.path.join(wrapper_path, filename)
                 with open(abs_file_path, 'r') as h:
                     content = h.read()
                     wrapper_scripts[filename] = content
@@ -133,12 +135,14 @@ def _find_first_wrappers(data):
 def create_dockerfile(template_name, data, dockerfile_dir):
     """Create an auto generated docker file using given data config"""
 
+    # print("data['base_image']", data['base_image'])
+
     # template_names are relative to templates folder in template_packages
     template_name = os.path.join('templates', template_name)
 
     # Find first instance of tempate_name given order of template_packages
-    template_package  = _find_first_template(template_name, **data)
-    template_path     = pkg_resources.resource_filename(template_package, template_name)
+    template_package = _find_first_template(template_name, **data)
+    template_path = pkg_resources.resource_filename(template_package, template_name)
     data['template_name'] = template_name
     data['template_path'] = template_path
 
