@@ -57,8 +57,9 @@ USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
 cmd = \
-    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
+    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH' + \
     ' PATH=/usr/lib/ccache:$PATH' + \
+    ' python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/release/build_binarydeb.py' + \
     ' ' + rosdistro_name + \
     ' ' + package_name + \
