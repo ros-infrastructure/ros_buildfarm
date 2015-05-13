@@ -45,6 +45,8 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y ccache
+
 @(TEMPLATE(
     'snippet/install_dependencies.Dockerfile.em',
     dependencies=dependencies,
@@ -56,6 +58,7 @@ ENTRYPOINT ["sh", "-c"]
 @{
 cmd = \
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
+    ' PATH=/usr/lib/ccache:$PATH' + \
     ' /tmp/ros_buildfarm/scripts/release/build_binarydeb.py' + \
     ' ' + rosdistro_name + \
     ' ' + package_name + \

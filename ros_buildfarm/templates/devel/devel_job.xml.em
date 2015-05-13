@@ -158,6 +158,7 @@ if pull_request:
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace:ro' +
         ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
         ' -v $WORKSPACE/docker_build_and_test:/tmp/docker_build_and_test' +
+        ' -v ~/.ccache:/home/buildfarm/.ccache' +
         ' devel_task_generation__%s_%s' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
     ]),
