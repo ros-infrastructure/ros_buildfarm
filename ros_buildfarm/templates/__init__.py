@@ -104,6 +104,7 @@ def _find_first_template(template_name, **kwargs):
         # Default to ros_buildfarm if none given
         return 'ros_buildfarm'
 
+    # Look through each given template package
     for template_package in kwargs['template_packages']:
         if pkg_resources.resource_exists(template_package, template_name):
             return template_package
@@ -112,7 +113,7 @@ def _find_first_template(template_name, **kwargs):
     return 'ros_buildfarm'
 
 
-def _find_first_wrappers(data):
+def _find_first_wrappers(**data):
     """Find first wrappers resource given order of template_packages"""
     wrapper_scripts = {}
     wrapper_subpath = 'templates/wrapper'
@@ -132,22 +133,25 @@ def _find_first_wrappers(data):
     return wrapper_scripts
 
 
-def create_dockerfile(template_name, data, dockerfile_dir):
+def create_dockerfile(data):
     """Create an auto generated docker file using given data config"""
 
-    # print("data['base_image']", data['base_image'])
+    # Create copy of data
+    data = dict(data)
 
-    # template_names are relative to templates folder in template_packages
-    template_name = os.path.join('templates', template_name)
+    # Prepend templates folder to name
+    data['template_name'] = os.path.join('templates',  data['template_name'])
+
+    template_name = data['template_name']
+    dockerfile_dir = data['dockerfile_dir']
 
     # Find first instance of tempate_name given order of template_packages
-    template_package = _find_first_template(template_name, **data)
+    template_package = _find_first_template(**data)
     template_path = pkg_resources.resource_filename(template_package, template_name)
-    data['template_name'] = template_name
     data['template_path'] = template_path
 
     # Find first instance of wrapper_scripts given order of template_packages
-    data['wrapper_scripts'] = _find_first_wrappers(data)
+    data['wrapper_scripts'] = _find_first_wrappers(**data)
 
     # Use wrapper scripts to expand template
     content = expand_template(template_name, data)
@@ -155,7 +159,7 @@ def create_dockerfile(template_name, data, dockerfile_dir):
     # Print and save content to Dockerfile
     dockerfile = os.path.join(dockerfile_dir, 'Dockerfile')
     print("Generating Dockerfile '%s':" % dockerfile)
-    for line in content.splitlines():
-        print(' ', line)
+    # for line in content.splitlines():
+    #     print(' ', line)
     with open(dockerfile, 'w') as h:
         h.write(content)

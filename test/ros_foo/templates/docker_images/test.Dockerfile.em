@@ -1,4 +1,4 @@
-# generated from @template_name
+# test generated from @template_name
 
 @(TEMPLATE(
     'snippet/from_base_image.Dockerfile.em',
@@ -6,20 +6,25 @@
     os_name=os_name,
     os_code_name=os_code_name,
     arch=arch,
+    base_image=base_image,
 ))@
 MAINTAINER Dirk Thomas dthomas+buildfarm@@osrfoundation.org
 
+# setup environment
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
-ENV TZ @timezone
+ENV TZ PDT+07
 
-@(TEMPLATE(
-    'snippet/add_distribution_repositories.Dockerfile.em',
-    distribution_repository_keys=distribution_repository_keys,
-    distribution_repository_urls=distribution_repository_urls,
-    os_code_name=os_code_name,
-    add_source=True,
-))@
+# install packages
+RUN apt-get update && apt-get install -q -y \
+    @(' \\\n    '.join(packages))@
+
+
+# setup keys
+RUN wget http://packages.ros.org/ros.key -O - | apt-key add -
+
+# setup sources.list
+RUN echo "deb http://packages.ros.org/ros/@os_name @os_code_name main" > /etc/apt/sources.list.d/ros-latest.list
 
 # install bootstrap tools
 RUN apt-get update && apt-get install -q -y \
@@ -28,13 +33,18 @@ RUN apt-get update && apt-get install -q -y \
     python-vcstools
 
 # bootstrap rosdep
-RUN rosdep init
+RUN rosdep init \
+    && rosdep update
 
-# install requested metapackage
-RUN apt-get update && apt-get install -q -y @(' '.join(packages))@
+# install ros packages
+RUN apt-get update && apt-get install -q -y \
+    @(' \\\n    '.join(ros_packages))@
 
-ENV ROS_DISTRO @(rosdistro)@
-# TODO source rosdistro setup file automatically on entry
+
+# setup .bashrc for ROS
+ENV ROS_DISTRO @rosdistro_name
+RUN echo "source /opt/ros/@rosdistro_name/setup.bash" >> ~/.bashrc
+
 ENTRYPOINT ["bash", "-c"]
 @{
 cmds = [

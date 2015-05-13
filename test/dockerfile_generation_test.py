@@ -1,79 +1,165 @@
 #!/usr/bin/env python3
 
-import argparse
 import filecmp
 import os
 import pkg_resources
 import sys
+import textwrap
 import unittest
+import yaml
+
+from collections import OrderedDict
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
+from em import Interpreter
 
 from ros_buildfarm.templates import _find_first_template
 from ros_buildfarm.templates import _find_first_wrappers
 from ros_buildfarm.templates import create_dockerfile
+from ros_buildfarm.common import get_debian_package_name
 
-from ros_buildfarm.docker_common import DockerfileArgParser
+
+def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
+    """Load yaml data into an OrderedDict"""
+    class OrderedLoader(Loader):
+        pass
+
+    def construct_mapping(loader, node):
+        loader.flatten_mapping(node)
+        return object_pairs_hook(loader.construct_pairs(node))
+    OrderedLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+        construct_mapping)
+    return yaml.load(stream, OrderedLoader)
 
 
 class TestDockerfileGeneration(unittest.TestCase):
 
     def setUp(self):
         """Setup for each unittest in testcase"""
-        args = ['--template_packages', 'ros_foo', 'ros_bar',
-                '--rosdistro-name', 'indigo',
-                '--os-name', 'ubuntu',
-                '--os-code-name', 'trusty',
-                '--arch', 'amd64',
-                '--dockerfile-dir', '/tmp/foo',
-                '--packages', 'roscpp']
-
-        self.parser = DockerfileArgParser()
-        # generate data for config
-        self.data = self.parser.parse(args)
-
-        # template_name is specified relative to the templates folder in the template_packages
-        template_name = 'docker_images/test.Dockerfile.em'
-        self.template_name = template_name
-
-        dockerfile_dir = '/tmp/test/ros_build/dockerfile_dir'
-        if not os.path.exists(dockerfile_dir):
-            os.makedirs(dockerfile_dir)
-        self.dockerfile_dir = dockerfile_dir
 
         test_path = os.path.dirname(__file__)
         sys.path.append(os.path.join(test_path, 'ros_foo'))
         sys.path.append(os.path.join(test_path, 'ros_bar'))
 
+        base_path = '/tmp/test/ros_build/dockerfile_dir'
+        if not os.path.exists(base_path):
+            os.makedirs(base_path)
+        self.base_path = base_path
+
+        platform_path = os.path.join(test_path, 'platform.yaml')
+        images_path = os.path.join(test_path, 'images.yaml.em')
+
+        # Ream platform perams
+        with open(platform_path, 'r') as f:
+            # use safe_load instead load
+            self.platform = yaml.safe_load(f)['platform']
+
+        # Ream image perams using platform perams
+        images_yaml = StringIO()
+        try:
+            interpreter = Interpreter(output=images_yaml)
+            interpreter.file(open(images_path, 'r'), locals=self.platform)
+            images_yaml = images_yaml.getvalue()
+        except Exception as e:
+            print("Error processing %s" % images_path)
+            raise
+        finally:
+            interpreter.shutdown()
+            interpreter = None
+        # Use ordered list
+        self.images = ordered_load(images_yaml, yaml.SafeLoader)['images']
+
     def test_find_first_template(self):
         """Test _find_first_template function"""
-        expected_template_package = 'ros_foo'
-        template_name = os.path.join('templates', self.template_name)
-        template_package = _find_first_template(template_name, **self.data)
+        # For each image tag
+        for image in self.images:
 
-        msg = "\nThe first package found to have the template_name: \
-        '%s' as a template resource should be: '%s'" % (
-            self.template_name, expected_template_package)
-        self.assertEqual(template_package, expected_template_package, msg=msg)
+            # Get data for image
+            data = dict(self.images[image])
+
+            expected_template_package = 'ros_foo'
+            data['template_name'] = os.path.join('templates', data['template_name'])
+            template_package = _find_first_template(**data)
+
+            # Test
+            msg = textwrap.dedent(
+                """
+                The first package found to have the template_name:
+                    '%s'
+                as a template resource should be:
+                    '%s'
+                """
+                % (data['template_name'], expected_template_package))
+            self.assertEqual(template_package, expected_template_package, msg=msg)
 
     def test_find_first_wrappers(self):
         """Test _find_first_wrappers function"""
-        expected_wrapper_scripts = {'test_wrapper.py': 'wrapper_foo\n'}
-        template_name = os.path.join('templates', self.template_name)
-        wrapper_scripts = _find_first_wrappers(self.data)
+        for image in self.images:
 
-        msg = "\nThe first %s file found should be the sting: '%s'" % (
-            'test_wrapper.py', 'wrapper_foo\\n')
-        self.assertEqual(wrapper_scripts, expected_wrapper_scripts, msg=msg)
+            # Get data for image
+            data = dict(self.images[image])
+
+            expected_wrapper_scripts = {'test_wrapper.py': 'wrapper_foo\n'}
+            wrapper_scripts = _find_first_wrappers(**data)
+
+            # Test
+            msg = textwrap.dedent(
+                """
+                The first file found:
+                    '%s'
+                should be the sting:
+                    '%s'
+                """
+                % ('test_wrapper.py', 'wrapper_foo\\n'))
+            self.assertEqual(wrapper_scripts, expected_wrapper_scripts, msg=msg)
 
     def test_create_dockerfile(self):
         """Test create_dockerfile function"""
-        expected_dockerfile_path = pkg_resources.resource_filename(
-            'ros_foo', 'templates/docker_images/test.Dockerfile')
-        create_dockerfile(self.template_name, self.data, self.dockerfile_dir)
-        generated_dockerfile_path = os.path.join(self.dockerfile_dir, 'Dockerfile')
+        # For each image tag
+        for image in self.images:
 
-        msg = "\nThe Dockerfile generated: %s does not mach the expected example: %s" % (
-            generated_dockerfile_path, expected_dockerfile_path)
-        self.assertTrue(filecmp.cmp(generated_dockerfile_path, expected_dockerfile_path))
+            # Get data for image
+            data = dict(self.images[image])
+            data['tag_name'] = image
+
+            # Add platform perams
+            data.update(self.platform)
+
+            # Get debian package names for ros
+            ros_packages = []
+            for ros_package_name in data['ros_packages']:
+                ros_packages.append(
+                    get_debian_package_name(
+                        data['rosdistro_name'], ros_package_name))
+            data['ros_packages'] = ros_packages
+
+            # Get path to save Docker file
+            dockerfile_dir = os.path.join(self.base_path, image)
+            if not os.path.exists(dockerfile_dir):
+                os.makedirs(dockerfile_dir)
+            data['dockerfile_dir'] = dockerfile_dir
+
+            # generate Dockerfile
+            create_dockerfile(data)
+
+            # Get paths to Dockerfiles
+            generated_dockerfile_path = os.path.join(dockerfile_dir, 'Dockerfile')
+            expected_dockerfile_path = pkg_resources.resource_filename(
+                'ros_foo', os.path.join('templates', 'docker_images', image, 'Dockerfile'))
+
+            # Test
+            msg = textwrap.dedent(
+                """
+                The Dockerfile generated:
+                    '%s'
+                does not mach the expected example:
+                    '%s'
+                """
+                % (generated_dockerfile_path, expected_dockerfile_path))
+            self.assertTrue(filecmp.cmp(generated_dockerfile_path, expected_dockerfile_path), msg)
 
     def tearDown(self):
         """Teardown for each unittest in testcase"""
