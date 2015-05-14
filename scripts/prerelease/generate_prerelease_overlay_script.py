@@ -34,6 +34,12 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
     add_overlay_arguments(parser)
+    parser.add_argument(
+        '--underlay-packages', nargs='+',
+        help="Names of packages on which the overlay builds. "
+             "(by default package names come from packages found in"
+             " 'catkin_workspace/src')"
+    )
 
     args = parser.parse_args(argv)
 
@@ -44,8 +50,10 @@ def main(argv=sys.argv[1:]):
     dist_file = dist_cache.distribution_file
 
     # determine source repositories for overlay workspace
-    packages = find_packages('catkin_workspace/src')
-    underlay_package_names = [pkg.name for pkg in packages.values()]
+    underlay_package_names = args.underlay_packages
+    if underlay_package_names is None:
+        packages = find_packages('catkin_workspace/src')
+        underlay_package_names = [pkg.name for pkg in packages.values()]
     print("Underlay workspace contains %d packages:%s" %
           (len(underlay_package_names),
            ''.join(['\n- %s' % pkg_name
