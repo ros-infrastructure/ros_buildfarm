@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import difflib
 import filecmp
 import os
 import pkg_resources
@@ -151,6 +152,10 @@ class TestDockerfileGeneration(unittest.TestCase):
                 'ros_foo', os.path.join('templates', 'docker_images', image, 'Dockerfile'))
 
             # Test
+            diff = difflib.unified_diff(open(expected_dockerfile_path).readlines(),
+                                        open(generated_dockerfile_path).readlines(),
+                                        fromfile='expected', tofile='generated', lineterm='\n')
+            diff = '\n' + ''.join(diff)
             msg = textwrap.dedent(
                 """
                 The Dockerfile generated:
@@ -159,6 +164,7 @@ class TestDockerfileGeneration(unittest.TestCase):
                     '%s'
                 """
                 % (generated_dockerfile_path, expected_dockerfile_path))
+            msg += diff
             self.assertTrue(filecmp.cmp(generated_dockerfile_path, expected_dockerfile_path), msg)
 
     def tearDown(self):
