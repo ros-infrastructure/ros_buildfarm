@@ -1,4 +1,6 @@
-@[if base_image]@
+@[if 'base_image' in locals()]@
+FROM @base_image
+@[else]@
 @[if os_name == 'ubuntu' and arch in ['i386', 'armhf']]@
 @[if arch == 'i386']@
 FROM osrf/ubuntu_32bit:@os_code_name
@@ -8,6 +10,4 @@ FROM osrf/ubuntu_armhf:@os_code_name
 @[else]@
 FROM @os_name:@os_code_name
 @[end if]@
-@[else]@
-FROM @base_name:@base_tag_name
 @[end if]@
