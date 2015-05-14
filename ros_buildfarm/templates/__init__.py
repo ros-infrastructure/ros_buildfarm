@@ -16,7 +16,7 @@ template_hooks = None
 
 
 def expand_template(template_name, data, options=None):
-    """Expand template call API"""
+    """Return expanded template as a string."""
 
     global interpreter
     global template_hooks
@@ -57,14 +57,14 @@ def expand_template(template_name, data, options=None):
 
 
 def _add_helper_functions(data):
-    """Add helper functions to data dictionary"""
+    """Add interpreter helper functions."""
     data['ESCAPE'] = _escape_value
     data['SNIPPET'] = _expand_snippet
     data['TEMPLATE'] = _expand_template
 
 
 def _escape_value(value):
-    """Recusivly escape values of diffrent types"""
+    """Return escape value respective of input isinstance type."""
     if isinstance(value, list):
         value = [_escape_value(v) for v in value]
     elif isinstance(value, set):
@@ -75,13 +75,13 @@ def _escape_value(value):
 
 
 def _expand_snippet(snippet_name, **kwargs):
-    """Expand snippet using given snippet_name"""
+    """Extract template name from snippet name and expand template."""
     template_name = 'snippet/%s.xml.em' % snippet_name
     _expand_template(template_name, **kwargs)
 
 
 def _expand_template(template_name, **kwargs):
-    """Expand template call for interpreter"""
+    """Open template and apply interpreter."""
     template_name = os.path.join('templates', template_name)
     template_package = _find_first_template(template_name, **kwargs)
 
@@ -99,7 +99,7 @@ def _expand_template(template_name, **kwargs):
 
 
 def _find_first_template(template_name, **kwargs):
-    """Find first matching template resource given order of template_packages"""
+    """Return first found template resource respective to template_packages order."""
     if 'template_packages' not in kwargs:
         # Default to ros_buildfarm if none given
         return 'ros_buildfarm'
@@ -114,7 +114,7 @@ def _find_first_template(template_name, **kwargs):
 
 
 def _find_first_wrappers(**data):
-    """Find first wrappers resource given order of template_packages"""
+    """Return first found wrappers resource respective to template_packages order."""
     wrapper_scripts = {}
     wrapper_subpath = 'templates/wrapper'
     for template_package in data['template_packages']:
@@ -134,7 +134,7 @@ def _find_first_wrappers(**data):
 
 
 def create_dockerfile(data):
-    """Create an auto generated docker file using given data config"""
+    """Write Dockerfile to disk using data and template."""
 
     # Create copy of data
     data = dict(data)
