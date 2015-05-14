@@ -32,7 +32,7 @@ def add_argument_rosdistro_name(parser):
 def add_argument_build_name(parser, build_file_type):
     parser.add_argument(
         '%s_build_name' % build_file_type,
-        help="The name of the '%s-build' file from the index" %
+        help="The name / key of the '%s-build' file from the index" %
              build_file_type)
 
 
