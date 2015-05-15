@@ -77,7 +77,8 @@ def get_overlay_package_names(
     for _ in range(level):
         next_level_pkg_names = get_next_level_of_dependencies(
             next_level_pkg_names, reverse_dependencies,
-            overlay_package_names_from_level | set(underlay_package_names))
+            overlay_package_names_from_level | set(underlay_package_names) |
+            set(excluded_package_names))
         if not next_level_pkg_names:
             break
         overlay_package_names_from_level |= next_level_pkg_names
