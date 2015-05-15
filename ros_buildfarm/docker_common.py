@@ -1,78 +1,56 @@
 #!/usr/bin/env python3
 
-import argparse
-import os
-import sys
+import yaml
 
-from catkin_pkg.packages import find_packages
-from ros_buildfarm.argument import \
-    add_argument_distribution_repository_key_files
-from ros_buildfarm.argument import add_argument_distribution_repository_urls
-from ros_buildfarm.argument import add_argument_dockerfile_dir
-from ros_buildfarm.common import get_binary_package_versions
-from ros_buildfarm.common import get_debian_package_name
-from ros_buildfarm.common import get_distribution_repository_keys
-from ros_buildfarm.common import get_user_id
+from argparse import ArgumentParser
+from collections import OrderedDict
 
 
-class DockerfileArgParser(object):
+class DockerfileArgParser(ArgumentParser):
     """Argument parser class Dockerfile auto generation"""
 
-    def __init__(self):
-        # Create parser
-        self.parser = argparse.ArgumentParser(
-            description="Generate the 'Dockerfile's for the base docker images")
-        # Add arguments to parser
-        self.parser.add_argument(
-            '--rosdistro-name',
+    def set(self):
+        """Setup parser for Dockerfile auto generation"""
+
+        # create the top-level parser
+        subparsers = self.add_subparsers(help='help for subcommand', dest='subparser_name')
+
+        # create the parser for the "explicit" command
+        parser_explicit = subparsers.add_parser(
+            'explicit',
+            help='explicit --help')
+        parser_explicit.add_argument(
+            '-p', '--platform',
             required=True,
-            help='The name of the ROS distro to identify the setup file to be '
-                 'sourced')
-        self.parser.add_argument(
-            '--packages',
-            nargs='+',
-            help='What (meta)packages to include in the image.')
-        self.parser.add_argument(
-            '--template_packages',
-            nargs='+',
-            help='What packages to use for template.')
-        self.parser.add_argument(
-            '--os-name',
+            help="Path to platform config")
+        parser_explicit.add_argument(
+            '-i', '--images',
             required=True,
-            help="The OS name (e.g. 'ubuntu')")
-        self.parser.add_argument(
-            '--os-code-name',
+            help="Path to images config")
+        parser_explicit.add_argument(
+            '-o', '--output',
             required=True,
-            help="The OS code name (e.g. 'trusty')")
-        self.parser.add_argument(
-            '--arch',
+            help="Path to write generate Dockerfiles")
+
+        # create the parser for the "dir" command
+        parser_dir = subparsers.add_parser(
+            'dir',
+            help='dir --help')
+        parser_dir.add_argument(
+            '-d', '--directory',
             required=True,
-            help="The architecture (e.g. 'amd64')")
-        # Add argument parsers to parser
-        add_argument_distribution_repository_urls(self.parser)
-        add_argument_distribution_repository_key_files(self.parser)
-        add_argument_dockerfile_dir(self.parser)
+            help="Path to read config and write output")
 
-    def parse(self, argv=sys.argv[1:]):
-        """Parse a list of strings of arguments and return dict of data"""
-        args = self.parser.parse_args(argv)
 
-        # generate data for config
-        data = {
-            'os_name': args.os_name,
-            'os_code_name': args.os_code_name,
-            'arch': args.arch,
+def OrderedLoad(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
+    """Load yaml data into an OrderedDict"""
+    class OrderedLoader(Loader):
+        pass
 
-            'distribution_repository_urls': args.distribution_repository_urls,
-            'distribution_repository_keys': get_distribution_repository_keys(
-                args.distribution_repository_urls,
-                args.distribution_repository_key_files),
-
-            'packages': sorted(args.packages),
-            'rosdistro': args.rosdistro_name,
-
-            'template_packages': args.template_packages,
-            'dockerfile_dir': args.dockerfile_dir,
-        }
-
-        return data
+    def construct_mapping(loader, node):
+        loader.flatten_mapping(node)
+        return object_pairs_hook(loader.construct_pairs(node))
+    OrderedLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+        construct_mapping)
+    return yaml.load(stream, OrderedLoader)
