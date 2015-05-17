@@ -44,7 +44,8 @@ def expand_template(template_name, data, options=None):
 
         _add_helper_functions(data)
 
-        interpreter.file(open(template_path, 'r'), locals=data)
+        with open(template_path, 'r') as fh:
+            interpreter.file(fh, locals=data)
         value = output.getvalue()
         return value
     except Exception as e:

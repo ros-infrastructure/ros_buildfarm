@@ -62,12 +62,14 @@ class TestDockerfileGeneration(unittest.TestCase):
         images_yaml = StringIO()
         try:
             interpreter = Interpreter(output=images_yaml)
-            interpreter.file(open(images_path, 'r'), locals=self.platform)
+            with open(images_path, 'r') as fh:
+                interpreter.file(fh, locals=self.platform)
             images_yaml = images_yaml.getvalue()
         except Exception as e:
             print("Error processing %s" % images_path)
             raise
         finally:
+            pass
             interpreter.shutdown()
             interpreter = None
         # Use ordered list
@@ -152,8 +154,12 @@ class TestDockerfileGeneration(unittest.TestCase):
                 'ros_foo', os.path.join('templates', 'docker_images', image, 'Dockerfile'))
 
             # Test
-            diff = difflib.unified_diff(open(expected_dockerfile_path).readlines(),
-                                        open(generated_dockerfile_path).readlines(),
+            with open(expected_dockerfile_path) as fh:
+                expected_dockerfile = fh.readlines()
+            with open(generated_dockerfile_path) as fh:
+                generated_dockerfile = fh.readlines()
+            diff = difflib.unified_diff(expected_dockerfile,
+                                        generated_dockerfile,
                                         fromfile='expected', tofile='generated', lineterm='\n')
             diff = '\n' + ''.join(diff)
             msg = textwrap.dedent(
