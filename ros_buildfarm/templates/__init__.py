@@ -61,7 +61,6 @@ def _add_helper_functions(data):
     data['ESCAPE'] = _escape_value
     data['SNIPPET'] = _expand_snippet
     data['TEMPLATE'] = _expand_template
-    data['FIND'] = _find_first_template
 
 
 def _escape_value(value):
@@ -111,20 +110,8 @@ def _find_first_template(template_name, **kwargs):
     # Default to ros_buildfarm if none found
     return 'ros_buildfarm'
 
-
-def create_dockerfile(template_name, data, dockerfile_dir):
-    """Create an auto generated docker file using given data config"""
-
-    # template_names are relative to templates folder in template_packages
-    template_name = os.path.join('templates', template_name)
-
-    # Find first instance of tempate_name given order of template_packages
-    template_package  = _find_first_template(template_name, **data)
-    template_path     = pkg_resources.resource_filename(template_package, template_name)
-    data['template_name'] = template_name
-    data['template_path'] = template_path
-
-    # Find first instance of wrapper_scripts given order of template_packages
+def _find_first_wrappers(data):
+    """Find first wrappers resource given order of template_packages"""
     wrapper_scripts = {}
     wrapper_subpath = 'templates/wrapper'
     for template_package in data['template_packages']:
@@ -140,7 +127,23 @@ def create_dockerfile(template_name, data, dockerfile_dir):
                 with open(abs_file_path, 'r') as h:
                     content = h.read()
                     wrapper_scripts[filename] = content
-    data['wrapper_scripts'] = wrapper_scripts
+    return wrapper_scripts
+
+
+def create_dockerfile(template_name, data, dockerfile_dir):
+    """Create an auto generated docker file using given data config"""
+
+    # template_names are relative to templates folder in template_packages
+    template_name = os.path.join('templates', template_name)
+
+    # Find first instance of tempate_name given order of template_packages
+    template_package  = _find_first_template(template_name, **data)
+    template_path     = pkg_resources.resource_filename(template_package, template_name)
+    data['template_name'] = template_name
+    data['template_path'] = template_path
+
+    # Find first instance of wrapper_scripts given order of template_packages
+    data['wrapper_scripts'] = _find_first_wrappers(data)
 
     # Use wrapper scripts to expand template
     content = expand_template(template_name, data)
