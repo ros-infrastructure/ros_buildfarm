@@ -44,8 +44,8 @@ class Index(object):
     def __init__(self, data, base_url):
         assert 'type' in data, "Expected file type is '%s'" % Index._type
         assert data['type'] == Index._type, \
-            "Expected file type is '%s', not '%s'" % \
-            (Index._type, data['type'])
+            "Expected file type is '%s', not '%s' loaded from '%s'" % \
+            (Index._type, data['type'], base_url)
 
         assert 'version' in data, \
             'Index file lacks required version information'
