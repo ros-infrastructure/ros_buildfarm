@@ -8,6 +8,7 @@ except ImportError:
 import os
 import pkg_resources
 import shutil
+import stat
 import sys
 import time
 from xml.sax.saxutils import escape
@@ -175,4 +176,10 @@ def create_dockerfile(data):
         entrypoint_package = _find_first_template(**entrypoint_data)
         entrypoint_path = pkg_resources.resource_filename(entrypoint_package,
                                                           entrypoint_data['entrypoint_name'])
-        shutil.copy(entrypoint_path, dockerfile_dir)
+        # copy script into dockerfile_dir
+        entrypoint_dest = os.path.join(dockerfile_dir, os.path.basename(entrypoint_path))
+        shutil.copyfile(entrypoint_path, entrypoint_dest)
+
+        # make script executable
+        st = os.stat(entrypoint_dest)
+        os.chmod(entrypoint_dest, st.st_mode | stat.S_IEXEC)
