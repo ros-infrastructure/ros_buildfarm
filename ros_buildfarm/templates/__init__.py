@@ -7,6 +7,7 @@ except ImportError:
     from io import StringIO
 import os
 import pkg_resources
+import shutil
 import sys
 import time
 from xml.sax.saxutils import escape
@@ -164,3 +165,14 @@ def create_dockerfile(data):
     #     print(' ', line)
     with open(dockerfile, 'w') as h:
         h.write(content)
+
+    # Add entrypoint script
+    if 'entrypoint_name' in data:
+        entrypoint_data = dict(data)
+        entrypoint_data['entrypoint_name'] = os.path.join('templates',
+                                                          entrypoint_data['entrypoint_name'])
+        entrypoint_data['template_name'] = entrypoint_data['entrypoint_name']
+        entrypoint_package = _find_first_template(**entrypoint_data)
+        entrypoint_path = pkg_resources.resource_filename(entrypoint_package,
+                                                          entrypoint_data['entrypoint_name'])
+        shutil.copy(entrypoint_path, dockerfile_dir)
