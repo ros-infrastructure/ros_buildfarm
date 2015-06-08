@@ -136,6 +136,7 @@ Description of common options
 
 * **Credential ID**: the ID of the credential entry managed on the Jenkins
   master which is commonly used to upload artifacts to another host.
+  This credential id is set in the buildfarm_deployment.
 
 
 Specific options in release build files
