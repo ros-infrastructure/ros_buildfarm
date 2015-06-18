@@ -109,6 +109,7 @@
         'rm -fr $WORKSPACE/sourcedeb',
         'mkdir -p $WORKSPACE/sourcedeb/source',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_sourcedeb/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +

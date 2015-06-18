@@ -109,6 +109,7 @@ repo_name = os.path.splitext(os.path.basename(repo_url))[0]
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - doc independent"',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_doc_independent/docker.cid' +
         ' -e=HOME=/home/buildfarm' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +

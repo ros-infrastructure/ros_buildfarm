@@ -123,6 +123,7 @@
         'mkdir -p $WORKSPACE/binarydeb',
         'mkdir -p $WORKSPACE/docker_build_binarydeb',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
@@ -151,6 +152,7 @@
         '# -e=HOME= is required to set a reasonable HOME for the user (not /)',
         '# otherwise apt-src will fail',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_binarydeb/docker.cid' +
         ' -e=HOME=' +
         ' --net=host' +
@@ -205,6 +207,7 @@
 @#         '',
 @#         'echo "# BEGIN SECTION: Run Dockerfile - install"',
 @#         'docker run' +
+@#         ' --rm ' +
 @#         ' --cidfile=$WORKSPACE/docker_install_binarydeb/docker.cid' +
 @#         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb:ro' +
 @#         ' binarydeb_install__%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),

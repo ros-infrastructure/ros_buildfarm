@@ -93,6 +93,7 @@
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - doc metadata"',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_doc_metadata/docker.cid' +
         ' -e=HOME=/home/buildfarm' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +

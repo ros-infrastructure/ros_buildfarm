@@ -79,6 +79,7 @@
         'mkdir -p $WORKSPACE/debian_repo_cache',
         'mkdir -p $WORKSPACE/status_page',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_status_page/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +

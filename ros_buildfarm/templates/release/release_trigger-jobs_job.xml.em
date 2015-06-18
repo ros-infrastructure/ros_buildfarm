@@ -97,6 +97,7 @@
         'rm -fr $WORKSPACE/debian_repo_cache',
         'mkdir -p $WORKSPACE/debian_repo_cache',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_trigger_jobs/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +

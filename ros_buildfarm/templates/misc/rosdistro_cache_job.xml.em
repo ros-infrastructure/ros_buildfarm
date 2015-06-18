@@ -75,6 +75,7 @@
         'rm -fr $WORKSPACE/rosdistro_cache',
         'mkdir -p $WORKSPACE/rosdistro_cache',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_rosdistro_cache/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/rosdistro_cache:/tmp/rosdistro_cache' +
