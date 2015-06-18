@@ -30,6 +30,7 @@ setup(
     version=__version__,
     packages=find_packages(exclude=['test']),
     scripts=scripts,
+    package_data={'ros_buildfarm': ['templates/wrapper/*']},
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
