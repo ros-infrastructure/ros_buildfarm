@@ -71,6 +71,7 @@
         'rm -fr $WORKSPACE/debian_repo_cache',
         'mkdir -p $WORKSPACE/debian_repo_cache',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_check_sync_criteria/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/debian_repo_cache:/tmp/debian_repo_cache' +

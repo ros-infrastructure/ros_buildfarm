@@ -3,7 +3,7 @@
     script='\n'.join([
         'echo "# BEGIN SECTION: Check docker status"',
         'echo "Testing trivial docker invocation..."',
-        'docker run ubuntu:trusty true ; echo "\'docker run\' returned $?"',
+        'docker run --rm ubuntu:trusty true ; echo "\'docker run\' returned $?"',
     ]),
 ))@
 @(SNIPPET(

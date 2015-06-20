@@ -164,6 +164,7 @@
         'rm -fr $WORKSPACE/docker_doc',
         'mkdir -p $WORKSPACE/docker_doc',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
         ' -e=HOME=/home/buildfarm' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
@@ -198,6 +199,7 @@
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - doc"',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_doc/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/rosdoc_lite:/tmp/rosdoc_lite:ro' +

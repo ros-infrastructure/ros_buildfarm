@@ -84,6 +84,7 @@ wget https://java-diff-utils.googlecode.com/files/diffutils-1.2.1.jar""",
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs"',
         'docker run' +
+        ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_doc_jobs/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
