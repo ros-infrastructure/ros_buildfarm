@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import argparse
 from em import BANGPATH_OPT
+import json
 import sys
 
 from catkin_pkg.packages import find_packages
@@ -34,6 +35,16 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
     add_overlay_arguments(parser)
+    parser.add_argument(
+        '--underlay-packages', nargs='+',
+        help="Names of packages on which the overlay builds. "
+             "(by default package names come from packages found in"
+             " 'catkin_workspace/src')"
+    )
+    parser.add_argument(
+        '--json', default=False, action='store_true',
+        help="output overlay information as JSON instead of a shell script"
+    )
 
     args = parser.parse_args(argv)
 
@@ -44,8 +55,10 @@ def main(argv=sys.argv[1:]):
     dist_file = dist_cache.distribution_file
 
     # determine source repositories for overlay workspace
-    packages = find_packages('catkin_workspace/src')
-    underlay_package_names = [pkg.name for pkg in packages.values()]
+    underlay_package_names = args.underlay_packages
+    if underlay_package_names is None:
+        packages = find_packages('catkin_workspace/src')
+        underlay_package_names = [pkg.name for pkg in packages.values()]
     print("Underlay workspace contains %d packages:%s" %
           (len(underlay_package_names),
            ''.join(['\n- %s' % pkg_name
@@ -70,11 +83,14 @@ def main(argv=sys.argv[1:]):
         (repositories[k], 'catkin_workspace_overlay/src/%s' % k)
         for k in sorted(repositories.keys())]
 
-    value = expand_template(
-        'prerelease/prerelease_overlay_script.sh.em', {
-            'scms': scms},
-        options={BANGPATH_OPT: False})
-    print(value)
+    if args.json:
+        print(json.dumps([vars(r) for r, p in scms], sort_keys=True, indent=2))
+    else:
+        value = expand_template(
+            'prerelease/prerelease_overlay_script.sh.em', {
+                'scms': scms},
+            options={BANGPATH_OPT: False})
+        print(value)
 
 
 def get_repository_specification_for_released_package(dist_file, pkg_name):
