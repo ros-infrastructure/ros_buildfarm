@@ -102,15 +102,17 @@ def configure_management_view(jenkins):
 
 def configure_view(
         jenkins, view_name, include_regex=None,
-        template_name='generic_view.xml.em'):
+        template_name='generic_view.xml.em', dry_run=False):
     view_config = get_view_config(
         template_name, view_name, include_regex=include_regex)
     view_type = _get_view_type(view_config)
     create_view = view_name not in jenkins.views
     if create_view:
         print("Creating view '%s' of type '%s'" % (view_name, view_type))
-        view = jenkins.views.create(view_name, view_type=view_type)
-        remote_view_config = view.get_config()
+        view = jenkins.views.create(view_name, view_type=view_type) \
+            if not dry_run else None
+        remote_view_config = view.get_config() \
+            if view else None
     else:
         print("Ensure that view '%s' exists" % view_name)
         view = jenkins.views[view_name]
@@ -119,8 +121,15 @@ def configure_view(
         if remote_view_type != view_type:
             del jenkins.views[view_name]
             print("Recreating view '%s' of type '%s'" % (view_name, view_type))
-            view = jenkins.views.create(view_name, view_type=view_type)
-            remote_view_config = view.get_config()
+            view = jenkins.views.create(view_name, view_type=view_type) \
+                if not dry_run else None
+            remote_view_config = view.get_config() \
+                if view else None
+
+    if not remote_view_config:
+        print('Can not produce diff during dry run if the view is new or of different type',
+              file=sys.stderr)
+        return None
 
     diff = _diff_configs(remote_view_config, view_config)
     if not diff:
@@ -133,7 +142,8 @@ def configure_view(
                 print('   ', line.rstrip('\n'))
             print('   ', '>>>')
         try:
-            response_text = view.update_config(view_config)
+            response_text = view.update_config(view_config) \
+                if not dry_run else None
         except Exception:
             print("Failed to configure view '%s' with config:\n%s" %
                   (view_name, view_config), file=sys.stderr)
@@ -165,12 +175,13 @@ def _get_view_type(view_config):
     assert False, 'Unknown list type: ' + root.tag
 
 
-def configure_job(jenkins, job_name, job_config, view=None):
+def configure_job(jenkins, job_name, job_config, view=None, dry_run=False):
     response_text = None
     try:
         if not jenkins.has_job(job_name):
             print("Creating job '%s'" % job_name)
-            job = jenkins.create_job(job_name, job_config)
+            job = jenkins.create_job(job_name, job_config) \
+                if not dry_run else None
         else:
             job = jenkins.get_job(job_name)
             remote_job_config = job.get_config()
@@ -183,7 +194,8 @@ def configure_job(jenkins, job_name, job_config, view=None):
                 for line in diff:
                     print('   ', line.rstrip('\n'))
                 print('   ', '>>>')
-                response_text = job.update_config(job_config)
+                response_text = job.update_config(job_config) \
+                    if not dry_run else None
                 if response_text:
                     print('Failed to update job config:\n%s' % response_text)
                     raise RuntimeError()
@@ -197,7 +209,8 @@ def configure_job(jenkins, job_name, job_config, view=None):
     if view is not None:
         if job_name not in view:
             print("Adding job '%s' to view '%s'" % (job_name, view.name))
-            job = view.add_job(job_name, job)
+            job = view.add_job(job_name, job) \
+                if not dry_run else job
         else:
             print("Job '%s' is already in view '%s'" % (job_name, view.name))
     return job
