@@ -113,6 +113,11 @@ class Index(object):
                 v = _resolve_url(base_url, v)
                 self.doc_builds[k] = v
 
+        self.git_ssh_credential_id = ''
+        if 'git_ssh_credential_id' in data:
+            self.git_ssh_credential_id = data['git_ssh_credential_id']
+            assert isinstance(self.git_ssh_credential_id, str)
+
         self.jenkins_url = data['jenkins_url']
 
         self.notify_emails = []

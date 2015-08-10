@@ -277,6 +277,8 @@ def _get_doc_job_config(
         'timeout_minutes': build_file.jenkins_job_timeout,
 
         'credential_id': build_file.upload_credential_id,
+
+        'git_ssh_credential_id': config.git_ssh_credential_id,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

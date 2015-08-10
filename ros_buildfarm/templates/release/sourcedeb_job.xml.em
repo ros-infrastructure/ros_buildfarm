@@ -114,6 +114,9 @@
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/sourcedeb:/tmp/sourcedeb' +
+        ' -v $HOME/.ssh/known_hosts:/etc/ssh/ssh_known_hosts:ro' +
+        ' -v $SSH_AUTH_SOCK:/tmp/ssh_auth_sock' +
+        ' -e SSH_AUTH_SOCK=/tmp/ssh_auth_sock' +
         ' sourcedeb__%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, pkg_name),
         'echo "# END SECTION"',
     ]),
@@ -174,7 +177,7 @@
 ))@
 @(SNIPPET(
     'build-wrapper_ssh-agent',
-    credential_id=credential_id,
+    credential_id=git_ssh_credential_id,
 ))@
   </buildWrappers>
 </project>

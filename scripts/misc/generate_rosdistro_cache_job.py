@@ -52,6 +52,8 @@ def get_job_config(args, config):
 
         'notification_emails':
         config.distributions[args.rosdistro_name]['notification_emails'],
+
+        'git_ssh_credential_id': config.git_ssh_credential_id,
     })
     job_config = expand_template(template_name, job_data)
     return job_config

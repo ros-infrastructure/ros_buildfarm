@@ -6,6 +6,9 @@
         <refspec>@ESCAPE(refspec)</refspec>
 @[end if]@
         <url>@ESCAPE(url)</url>
+@[if vars().get('git_ssh_credential_id')]@
+        <credentialsId>@git_ssh_credential_id</credentialsId>
+@[end if]@
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
