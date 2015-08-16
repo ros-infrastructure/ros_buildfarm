@@ -183,7 +183,8 @@ def configure_devel_job(
         jenkins=None, views=None,
         is_disabled=False,
         groovy_script=None,
-        source_repository=None):
+        source_repository=None,
+        build_targets=None):
     """
     Configure a single Jenkins devel job.
 
@@ -198,6 +199,9 @@ def configure_devel_job(
     if build_file is None:
         build_files = get_source_build_files(config, rosdistro_name)
         build_file = build_files[source_build_name]
+    # Overwrite build_file.targets if build_targets is specified
+    if build_targets is not None:
+        build_file.targets = build_targets
 
     if index is None:
         index = get_index(config.rosdistro_index_url)

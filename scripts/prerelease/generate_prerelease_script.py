@@ -23,6 +23,7 @@ from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.config import get_index as get_config_index
+from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.devel_job import configure_devel_job
 from ros_buildfarm.prerelease import add_overlay_arguments
@@ -78,6 +79,22 @@ def main(argv=sys.argv[1:]):
     build_file = build_files[args.source_build_name]
 
     print('Fetching rosdistro cache...')
+    # Targets defined by source build file are subset of targets
+    # defined by release build files. To increase the number of supported
+    # pre-release targets, we combine all targets defined by all release
+    # build files and use that when configuring the devel job.
+    release_build_files = get_release_build_files(config, args.rosdistro_name)
+    release_targets_combined = {}
+    if release_build_files:
+        release_targets_combined[args.os_name] = {}
+        for build_name, rel_obj in release_build_files.items():
+            if args.os_name not in rel_obj.targets:
+                continue
+            for dist_name, targets in rel_obj.targets[args.os_name].items():
+                if dist_name not in release_targets_combined[args.os_name]:
+                    release_targets_combined[args.os_name][dist_name] = {}
+                release_targets_combined[args.os_name][dist_name].update(targets)
+
     index = get_index(config.rosdistro_index_url)
     dist_cache = get_distribution_cache(index, args.rosdistro_name)
     dist_file = dist_cache.distribution_file
@@ -154,7 +171,8 @@ def main(argv=sys.argv[1:]):
         config=config, build_file=build_file,
         index=index, dist_file=dist_file, dist_cache=dist_cache,
         jenkins=False, views=False,
-        source_repository=source_repository)
+        source_repository=source_repository,
+        build_targets=release_targets_combined)
 
     templates.template_hooks = None
 
