@@ -102,7 +102,7 @@
         'echo "# BEGIN SECTION: Build Dockerfile - generate sourcedeb"',
         'cd $WORKSPACE/docker_sourcedeb',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t sourcedeb__%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, pkg_name),
+        'docker build -t sourcedeb.%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generate sourcedeb"',
@@ -114,7 +114,7 @@
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/sourcedeb:/tmp/sourcedeb' +
-        ' sourcedeb__%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, pkg_name),
+        ' sourcedeb.%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, pkg_name),
         'echo "# END SECTION"',
     ]),
 ))@
