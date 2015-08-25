@@ -26,7 +26,6 @@ def get_template_path(template_name):
 
 
 def expand_template(template_name, data, options=None):
-    global template_basepath
     global interpreter
     global template_hooks
 
@@ -86,7 +85,6 @@ def _expand_snippet(snippet_name, **kwargs):
 
 
 def _expand_template(template_name, **kwargs):
-    global template_basepath
     global interpreter
     template_path = get_template_path(template_name)
     _add_helper_functions(kwargs)
