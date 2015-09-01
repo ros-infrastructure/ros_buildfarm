@@ -44,3 +44,13 @@ sync to main is run as well as the ability to search.
 Note: A version downgrade is also marked as a regression since if users have
 already installed the previous package with the higher version number apt will
 not install the newer package with a lower version automatically.
+
+Importing new upstream packages
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When you first setup the farm you imported upstream packages into the repository.
+Sometimes upstream packages change which you want to reimport.
+To do this run the `_import_upstream` job again without arguments.
+No arguments means import from the default location(s).
+We do this for things like new releases of the core ROS python tools.
+
