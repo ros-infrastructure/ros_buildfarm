@@ -140,6 +140,13 @@ def add_argument_distribution_repository_key_files(parser):
         help='The list of distribution repository key files to verify the '
              'corresponding URLs')
 
+def add_argument_custom_rosdep_urls(parser):
+    parser.add_argument(
+        '--custom-rosdep-urls',
+        nargs='*',
+        default=[],
+        help='The list of custom rosdep URLs to use for installing '
+             'dependencies')
 
 def add_argument_cache_dir(parser, default=None):
     parser.add_argument(

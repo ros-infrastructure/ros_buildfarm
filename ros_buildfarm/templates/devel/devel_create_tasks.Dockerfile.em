@@ -20,6 +20,7 @@ RUN useradd -u @uid -m buildfarm
     add_source=False,
 ))@
 
+
 @(TEMPLATE(
     'snippet/add_wrapper_scripts.Dockerfile.em',
     wrapper_scripts=wrapper_scripts,
@@ -28,12 +29,16 @@ RUN useradd -u @uid -m buildfarm
 # automatic invalidation once every day
 RUN echo "@today_str"
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y git python3-apt python3-catkin-pkg python3-empy python3-rosdep python3-rosdistro
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y git python3-apt python3-catkin-pkg python3-empy python3-rosdep python3-rosdistro wget
 
 # always invalidate to actually have the latest rosdep state
 RUN echo "@now_str"
 ENV ROSDISTRO_INDEX_URL @rosdistro_index_url
-RUN rosdep init
+
+@(TEMPLATE(
+    'snippet/add_custom_rosdeps.Dockerfile.em',
+    custom_rosdep_urls=custom_rosdep_urls,
+))@
 
 USER buildfarm
 

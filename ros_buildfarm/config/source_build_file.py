@@ -92,6 +92,10 @@ class SourceBuildFile(BuildFile):
             self.skip_ignored_repositories = \
                 bool(data['skip_ignored_repositories'])
 
+        if '_config' in data['targets']:
+            if "custom_rosdep_urls" in data['targets']['_config']:
+                self.custom_rosdep_urls = data['targets']['_config']['custom_rosdep_urls']
+
         self.test_commits_default = False
         self.test_commits_force = None
         if 'test_commits' in data:
