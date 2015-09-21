@@ -37,8 +37,6 @@ class BuildFile(object):
     def __init__(self, name, data):
         self.name = name
 
-        self.custom_rosdep_urls = []
-
         self.notify_emails = []
         self.notify_maintainers = None
         if 'notifications' in data:

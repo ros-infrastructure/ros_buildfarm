@@ -241,7 +241,7 @@ The following options are valid as keys in the ``_config`` dict under
 ``targets``:
 
 * ``custom_rosdep_urls``: a list of URLs containing rosdep sources.list.d entry
- files that are downloaded into /etc/ros/rosdep/sources.list.d at the beginning
+  files that are downloaded into /etc/ros/rosdep/sources.list.d at the beginning
   of the devel job.
   If unset, the job simply runs _rosdep init_ instead.
 

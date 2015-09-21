@@ -53,7 +53,8 @@ def get_repositories_and_script_generating_key_files(
             len(build_file.repository_keys)
         repository_urls += build_file.repository_urls
         repository_keys += build_file.repository_keys
-        custom_rosdep_urls += build_file.custom_rosdep_urls
+        if hasattr(build_file, 'custom_rosdep_urls'):
+            custom_rosdep_urls += build_file.custom_rosdep_urls
 
     # remove duplicate urls
     unique_repository_urls = []
