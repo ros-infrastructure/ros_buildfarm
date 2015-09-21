@@ -81,8 +81,9 @@ A set of options which can be used in any build file.
   The first level key contains the OS name.
   The second level key contains the OS code name.
   The third level key contains the CPU architecture.
-  The third level value is always empty. The first level key "_config" is
-  reserved for specifying target specific information.
+  The third level value is always empty.
+  The first level key "_config" is reserved for specifying target specific
+  information.
 
   The OS names and OS code names specified must be listed as a
   *release platform* in the corresponding rosdistro distribution file.
@@ -241,7 +242,8 @@ The following options are valid as keys in the ``_config`` dict under
 
 * ``custom_rosdep_urls``: a list of URLs containing rosdep sources.list.d entry
  files that are downloaded into /etc/ros/rosdep/sources.list.d at the beginning
-  of the devel job. If unset, the job simply runs _rosdep init_ instead.
+  of the devel job.
+  If unset, the job simply runs _rosdep init_ instead.
 
 Specific options in doc build files
 ---------------------------------------

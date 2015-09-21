@@ -128,7 +128,7 @@ To make devel jobs use your custom rosdep database, update the ``targets`` dict
 in the  \<distribution\>/source_build.yaml file in your forked
 ros_buildfarm_config repository with the ``custom_rosdep_urls`` option:
 
-```
+```yaml
 targets:
   _config:
     custom_rosdep_urls:
