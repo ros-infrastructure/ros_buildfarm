@@ -20,7 +20,6 @@ RUN useradd -u @uid -m buildfarm
     add_source=False,
 ))@
 
-
 @(TEMPLATE(
     'snippet/add_wrapper_scripts.Dockerfile.em',
     wrapper_scripts=wrapper_scripts,
@@ -36,7 +35,7 @@ RUN echo "@now_str"
 ENV ROSDISTRO_INDEX_URL @rosdistro_index_url
 
 @(TEMPLATE(
-    'snippet/add_custom_rosdeps.Dockerfile.em',
+    'snippet/rosdep_init.Dockerfile.em',
     custom_rosdep_urls=custom_rosdep_urls,
 ))@
 
