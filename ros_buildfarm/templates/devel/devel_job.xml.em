@@ -145,7 +145,7 @@ if pull_request:
         'echo "# BEGIN SECTION: Build Dockerfile - generating devel tasks"',
         'cd $WORKSPACE/docker_generating_dockers',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t devel_task_generation__%s_%s .' % (rosdistro_name, source_repo_spec.name),
+        'docker build -t devel_task_generation.%s_%s .' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generating devel tasks"',
@@ -162,7 +162,7 @@ if pull_request:
         ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
         ' -v $WORKSPACE/docker_build_and_test:/tmp/docker_build_and_test' +
         ' -v ~/.ccache:/home/buildfarm/.ccache' +
-        ' devel_task_generation__%s_%s' % (rosdistro_name, source_repo_spec.name),
+        ' devel_task_generation.%s_%s' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
     ]),
 ))@
@@ -178,7 +178,7 @@ if pull_request:
         '# build and run build_and_install Dockerfile',
         'cd $WORKSPACE/docker_build_and_install',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t devel_build_and_install__%s_%s .' % (rosdistro_name, source_repo_spec.name),
+        'docker build -t devel_build_and_install.%s_%s .' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
@@ -187,7 +187,7 @@ if pull_request:
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
-        ' devel_build_and_install__%s_%s' % (rosdistro_name, source_repo_spec.name),
+        ' devel_build_and_install.%s_%s' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
     ]),
 ))@
@@ -203,7 +203,7 @@ if pull_request:
         '# build and run build_and_test Dockerfile',
         'cd $WORKSPACE/docker_build_and_test',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t devel_build_and_test__%s_%s .' % (rosdistro_name, source_repo_spec.name),
+        'docker build -t devel_build_and_test.%s_%s .' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
@@ -212,7 +212,7 @@ if pull_request:
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
-        ' devel_build_and_test__%s_%s' % (rosdistro_name, source_repo_spec.name),
+        ' devel_build_and_test.%s_%s' % (rosdistro_name, source_repo_spec.name),
         'echo "# END SECTION"',
     ]),
 ))@

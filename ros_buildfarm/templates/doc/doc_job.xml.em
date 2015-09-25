@@ -158,7 +158,7 @@
         'echo "# BEGIN SECTION: Build Dockerfile - generating doc task"',
         'cd $WORKSPACE/docker_generating_docker',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t doc_task_generation__%s_%s .' % (rosdistro_name, doc_repo_spec.name),
+        'docker build -t doc_task_generation.%s_%s .' % (rosdistro_name, doc_repo_spec.name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generating doc task"',
@@ -175,7 +175,7 @@
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' -v $WORKSPACE/generated_documentation:/tmp/generated_documentation' +
         ' -v $WORKSPACE/docker_doc:/tmp/docker_doc' +
-        ' doc_task_generation__%s_%s' % (rosdistro_name, doc_repo_spec.name),
+        ' doc_task_generation.%s_%s' % (rosdistro_name, doc_repo_spec.name),
         'echo "# END SECTION"',
     ]),
 ))@
@@ -195,7 +195,7 @@
         '# build and run build_and_install Dockerfile',
         'cd $WORKSPACE/docker_doc',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t doc__%s_%s .' % (rosdistro_name, doc_repo_spec.name),
+        'docker build -t doc.%s_%s .' % (rosdistro_name, doc_repo_spec.name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - doc"',
@@ -208,7 +208,7 @@
         ' -v $WORKSPACE/rosdoc_index:/tmp/rosdoc_index:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' -v $WORKSPACE/generated_documentation:/tmp/generated_documentation' +
-        ' doc__%s_%s' % (rosdistro_name, doc_repo_spec.name),
+        ' doc.%s_%s' % (rosdistro_name, doc_repo_spec.name),
         'echo "# END SECTION"',
     ]),
 ))@

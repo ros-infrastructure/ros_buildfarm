@@ -10,14 +10,22 @@ import sys
 import time
 from xml.sax.saxutils import escape
 
-template_basepath = os.path.abspath(os.path.dirname(__file__))
+template_prefix_path = [os.path.abspath(os.path.dirname(__file__))]
 
 interpreter = None
 template_hooks = None
 
 
+def get_template_path(template_name):
+    global template_prefix_path
+    for basepath in template_prefix_path:
+        template_path = os.path.join(basepath, template_name)
+        if os.path.exists(template_path):
+            return template_path
+    raise RuntimeError("Failed to find template '%s'" % template_name)
+
+
 def expand_template(template_name, data, options=None):
-    global template_basepath
     global interpreter
     global template_hooks
 
@@ -26,7 +34,7 @@ def expand_template(template_name, data, options=None):
         interpreter = Interpreter(output=output, options=options)
         for template_hook in template_hooks or []:
             interpreter.addHook(template_hook)
-        template_path = os.path.join(template_basepath, template_name)
+        template_path = get_template_path(template_name)
         # create copy before manipulating
         data = dict(data)
         # add some generic information to context
@@ -77,9 +85,8 @@ def _expand_snippet(snippet_name, **kwargs):
 
 
 def _expand_template(template_name, **kwargs):
-    global template_basepath
     global interpreter
-    template_path = os.path.join(template_basepath, template_name)
+    template_path = get_template_path(template_name)
     _add_helper_functions(kwargs)
     with open(template_path, 'r') as h:
         try:

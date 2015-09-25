@@ -114,7 +114,7 @@
         'echo "# BEGIN SECTION: Build Dockerfile - binarydeb task"',
         'cd $WORKSPACE/docker_generating_docker',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t binarydeb_task_generation__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        'docker build -t binarydeb_task_generation.%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - binarydeb task"',
@@ -129,7 +129,7 @@
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' -v $WORKSPACE/docker_build_binarydeb:/tmp/docker_build_binarydeb' +
         ' -v ~/.ccache:/home/buildfarm/.ccache' + \
-        ' binarydeb_task_generation__%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        ' binarydeb_task_generation.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),
 ))@
@@ -145,7 +145,7 @@
         '# build and run build_binarydeb Dockerfile',
         'cd $WORKSPACE/docker_build_binarydeb',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t binarydeb_build__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        'docker build -t binarydeb_build.%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build binarydeb"',
@@ -159,7 +159,7 @@
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' -v ~/.ccache:/home/buildfarm/.ccache' +
-        ' binarydeb_build__%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        ' binarydeb_build.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),
 ))@
@@ -202,7 +202,7 @@
 @#         'echo "# BEGIN SECTION: Build Dockerfile - install"',
 @#         'cd $WORKSPACE/docker_install_binarydeb',
 @#         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-@#         'docker build -t binarydeb_install__%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+@#         'docker build -t binarydeb_install.%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
 @#         'echo "# END SECTION"',
 @#         '',
 @#         'echo "# BEGIN SECTION: Run Dockerfile - install"',
@@ -210,7 +210,7 @@
 @#         ' --rm ' +
 @#         ' --cidfile=$WORKSPACE/docker_install_binarydeb/docker.cid' +
 @#         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb:ro' +
-@#         ' binarydeb_install__%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+@#         ' binarydeb_install.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
 @#         'echo "# END SECTION"',
 @#     ]),
 @# ))@

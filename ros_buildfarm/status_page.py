@@ -16,7 +16,7 @@ from .debian_repo import get_debian_repo_data
 from .status_page_input import get_rosdistro_info
 from .status_page_input import RosPackage
 from .templates import expand_template
-from .templates import template_basepath
+from .templates import get_template_path
 
 
 def build_release_status_page(
@@ -485,7 +485,7 @@ def additional_resources(output_dir, copy_resources=False):
     for subfolder in ['css', 'js']:
         dst = os.path.join(output_dir, subfolder)
         if not os.path.exists(dst):
-            src = os.path.join(template_basepath, 'status', subfolder)
+            src = get_template_path(os.path.join('status', subfolder))
             if copy_resources:
                 shutil.copytree(src, dst)
             else:
@@ -495,7 +495,7 @@ def additional_resources(output_dir, copy_resources=False):
 def get_resource_hashes():
     hashes = {}
     for subfolder in ['css', 'js']:
-        path = os.path.join(template_basepath, 'status', subfolder)
+        path = get_template_path(os.path.join('status', subfolder))
         for filename in os.listdir(path):
             if filename.endswith('.%s' % subfolder):
                 with open(os.path.join(path, filename)) as f:

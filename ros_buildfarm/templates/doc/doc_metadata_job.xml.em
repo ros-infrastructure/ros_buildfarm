@@ -88,7 +88,7 @@
         'echo "# BEGIN SECTION: Build Dockerfile - doc metadata"',
         'cd $WORKSPACE/docker_doc_metadata',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t doc_metadata__%s .' % rosdistro_name,
+        'docker build -t doc_metadata.%s .' % rosdistro_name,
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - doc metadata"',
@@ -98,7 +98,7 @@
         ' -e=HOME=/home/buildfarm' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/generated_documentation:/tmp/generated_documentation' +
-        ' doc_metadata__%s' % rosdistro_name,
+        ' doc_metadata.%s' % rosdistro_name,
         'echo "# END SECTION"',
     ]),
 ))@

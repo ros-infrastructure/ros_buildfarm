@@ -132,6 +132,8 @@ def configure_view(
         return None
 
     diff = _diff_configs(remote_view_config, view_config)
+    # evaluate generator since it might yield no values
+    diff = list(diff)
     if not diff:
         print("Skipped '%s' because the config is the same" % view_name)
     else:
@@ -186,6 +188,8 @@ def configure_job(jenkins, job_name, job_config, view=None, dry_run=False):
             job = jenkins.get_job(job_name)
             remote_job_config = job.get_config()
             diff = _diff_configs(remote_job_config, job_config)
+            # evaluate generator since it might yield no values
+            diff = list(diff)
             if not diff:
                 print("Skipped '%s' because the config is the same" % job_name)
             else:
