@@ -242,8 +242,11 @@ The following options are valid as keys in the ``_config`` dict under
 
 * ``custom_rosdep_urls``: a list of URLs containing rosdep sources.list.d entry
   files that are downloaded into /etc/ros/rosdep/sources.list.d at the beginning
-  of the devel job.
-  If unset, the job simply runs *rosdep init* instead.
+  of the devel job after running *rosdep init*.
+  Note that *rosdep init* will add the 20-default.list file from the public
+  rosdistro by default.
+  To override this, add an entry to this list corresponding to the
+  20-default.list file from your forked rosdistro repository.
 
 Specific options in doc build files
 ---------------------------------------
