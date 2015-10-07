@@ -80,7 +80,11 @@
         'rm -fr ros_buildfarm/.git',
         'rm -fr ros_buildfarm/doc',
         'echo "# END SECTION"',
-        '',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
         'echo "# BEGIN SECTION: Clone rosdoc_lite"',
         'rm -fr rosdoc_lite',
         'git clone --depth 1 https://github.com/ros-infrastructure/rosdoc_lite.git rosdoc_lite',

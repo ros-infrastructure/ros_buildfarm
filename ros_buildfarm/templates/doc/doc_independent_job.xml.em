@@ -53,8 +53,11 @@
         'rm -fr ros_buildfarm/.git',
         'rm -fr ros_buildfarm/doc',
         'echo "# END SECTION"',
-        'rm -fr repositories',
     ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='rm -fr repositories',
 ))@
 @[for repo_url in doc_repositories]@
 @{
