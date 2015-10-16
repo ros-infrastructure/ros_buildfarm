@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import os
 import sys
 
 from rosdistro import get_distribution_cache
@@ -178,7 +179,7 @@ def configure_release_jobs(
                 print(e.message, file=sys.stderr)
 
     groovy_data = {
-        'job_configs': all_job_configs,
+        'expected_num_jobs': len(all_job_configs),
         'job_prefixes_and_names': {},
     }
 
@@ -261,6 +262,12 @@ def configure_release_jobs(
             'snippet/reconfigure_jobs.groovy.em', groovy_data)
         with open(groovy_script, 'w') as h:
             h.write(content)
+        config_dir = os.path.join(os.path.dirname(groovy_script), 'configs')
+        os.makedirs(config_dir)
+        for config_name, config_body in all_job_configs.items():
+            config_filename = os.path.join(config_dir, config_name)
+            with open(config_filename, 'w') as config_fh:
+                config_fh.write(config_body)
 
 
 def _get_downstream_package_names(pkg_names, dependencies):
