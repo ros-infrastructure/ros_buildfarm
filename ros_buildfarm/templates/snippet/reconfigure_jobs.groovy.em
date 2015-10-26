@@ -1,4 +1,6 @@
 import difflib.DiffUtils
+import groovy.io.FileType
+import hudson.AbortException
 import java.io.StringBufferInputStream
 import java.io.StringWriter
 import javax.xml.parsers.DocumentBuilderFactory
@@ -29,25 +31,6 @@ job_names << '@(job_names[j])'
 add_job_prefixes_and_names_@(job_type)_@(int(i / group_size) + 1)(job_prefixes_and_names['@job_type'].job_names)
 @[end for]@
 @[end for]@
-
-// job configurations
-job_configs = [:]
-@{
-job_config_keys = sorted(job_configs.keys())
-group_size = 1000
-}@
-// group job configs in chunks of @group_size to not exceed groovy limits
-@[for i in range(0, len(job_config_keys), group_size)]@
-def add_job_config_@(int(i / group_size) + 1)(job_configs) {
-@[for j in range(i, min(i + group_size, len(job_config_keys)))]@
-job_configs['@job_config_keys[j]'] = '''@(job_configs[job_config_keys[j]].replace('\\', '\\\\'))'''
-
-@[end for]@
-}
-add_job_config_@(int(i / group_size) + 1)(job_configs)
-
-@[end for]@
-
 
 
 def diff_configs(current_config_file, new_config) {
@@ -102,14 +85,28 @@ def format_xml(doc) {
 
 // reconfigure jobs
 println '# BEGIN SECTION: Groovy script - reconfigure jobs'
-println 'Reconfiguring ' + job_configs.size() + ' jobs...'
+println 'Reconfiguring @(expected_num_jobs) jobs...'
 created = 0
 updated = 0
 skipped = 0
-for (item in job_configs) {
+
+config_dir = build.getWorkspace().toString() + '/reconfigure_jobs/configs'
+
+def jobs = []
+def dir = new File(config_dir)
+dir.eachFileRecurse (FileType.FILES) { file ->
+    jobs << file
+}
+
+if (jobs.size() != @(expected_num_jobs)) {
+    println "ERROR: Found different number of job configs than expected!! " + jobs.size() + " is not @(expected_num_jobs) as expected."
+    throw new AbortException("Wrong number of job configs")
+}
+
+jobs.each{
     found_project = false
-    job_name = item.key
-    job_config = item.value
+    job_name = it.getName()
+    job_config = new File(it.path).getText('UTF-8')
     for (p in Jenkins.instance.allItems) {
         if (p.name != job_name) continue
         found_project = true
