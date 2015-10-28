@@ -13,6 +13,7 @@ from ros_buildfarm.common import get_github_project_url
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
 from ros_buildfarm.common import JobValidationError
+from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_source_build_files
@@ -162,7 +163,7 @@ def configure_devel_jobs(
         print("Writing groovy script '%s' to reconfigure %d jobs" %
               (groovy_script, len(job_configs)))
         data = {
-            'job_configs': job_configs,
+            'expected_num_jobs': len(job_configs),
             'job_prefixes_and_names': {
                 'devel': (devel_job_prefix, devel_job_names),
                 'pull_request': (
@@ -170,8 +171,9 @@ def configure_devel_jobs(
             }
         }
         content = expand_template('snippet/reconfigure_jobs.groovy.em', data)
-        with open(groovy_script, 'w') as h:
-            h.write(content)
+        write_groovy_script_and_configs(groovy_script,
+                                        content,
+                                        job_configs)
 
 
 def configure_devel_job(
