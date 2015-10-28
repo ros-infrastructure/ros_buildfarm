@@ -261,10 +261,8 @@ def configure_release_jobs(
               (groovy_script, len(all_job_configs)))
         content = expand_template(
             'snippet/reconfigure_jobs.groovy.em', groovy_data)
-
-        write_groovy_script_and_configs(groovy_script,
-                                        content,
-                                        all_job_configs)
+        write_groovy_script_and_configs(
+            groovy_script, content, all_job_configs)
 
 
 def _get_downstream_package_names(pkg_names, dependencies):

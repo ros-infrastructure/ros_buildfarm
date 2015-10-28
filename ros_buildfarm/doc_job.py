@@ -120,9 +120,8 @@ def configure_doc_jobs(
             }
         }
         content = expand_template('snippet/reconfigure_jobs.groovy.em', data)
-        write_groovy_script_and_configs(groovy_script,
-                                        content,
-                                        job_configs)
+        write_groovy_script_and_configs(
+            groovy_script, content, job_configs)
 
 
 def configure_doc_job(
