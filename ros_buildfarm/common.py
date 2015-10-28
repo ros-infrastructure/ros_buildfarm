@@ -353,3 +353,20 @@ def get_release_job_urls(
 
 def _get_job_url(jenkins_url, view_name, job_name):
     return '%s/view/%s/job/%s' % (jenkins_url, view_name, job_name)
+
+
+def write_groovy_script_and_configs(filename,
+                                    content,
+                                    job_configs):
+    """Write out the groovy script for reconfiguring as well as the
+     config files in a subdirectory 'configs'
+    """
+    with open(filename, 'w') as h:
+        h.write(content)
+    config_dir = os.path.join(os.path.dirname(filename), 'configs')
+    if not os.path.isdir(config_dir):
+        os.makedirs(config_dir)
+    for config_name, config_body in job_configs.items():
+        config_filename = os.path.join(config_dir, config_name)
+        with open(config_filename, 'w') as config_fh:
+            config_fh.write(config_body)

@@ -18,6 +18,7 @@ from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
 from ros_buildfarm.common import get_sourcedeb_job_name
 from ros_buildfarm.common import JobValidationError
+from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
@@ -260,14 +261,10 @@ def configure_release_jobs(
               (groovy_script, len(all_job_configs)))
         content = expand_template(
             'snippet/reconfigure_jobs.groovy.em', groovy_data)
-        with open(groovy_script, 'w') as h:
-            h.write(content)
-        config_dir = os.path.join(os.path.dirname(groovy_script), 'configs')
-        os.makedirs(config_dir)
-        for config_name, config_body in all_job_configs.items():
-            config_filename = os.path.join(config_dir, config_name)
-            with open(config_filename, 'w') as config_fh:
-                config_fh.write(config_body)
+
+        write_groovy_script_and_configs(groovy_script,
+                                        content,
+                                        all_job_configs)
 
 
 def _get_downstream_package_names(pkg_names, dependencies):
