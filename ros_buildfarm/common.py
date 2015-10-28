@@ -355,11 +355,13 @@ def _get_job_url(jenkins_url, view_name, job_name):
     return '%s/view/%s/job/%s' % (jenkins_url, view_name, job_name)
 
 
-def write_groovy_script_and_configs(filename,
-                                    content,
-                                    job_configs):
-    """Write out the groovy script for reconfiguring as well as the
-     config files in a subdirectory 'configs'
+def write_groovy_script_and_configs(
+        filename, content, job_configs):
+    """Write out the groovy script and configs to file.
+
+    This writes the reconfigure script to the file location
+    and places the expanded configs in a subdirectory 'configs'
+    that the script can then access when run.
     """
     with open(filename, 'w') as h:
         h.write(content)
