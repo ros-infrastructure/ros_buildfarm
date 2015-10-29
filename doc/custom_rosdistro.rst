@@ -124,6 +124,15 @@ rosdep database:
 
     rosdep update
 
+To make devel jobs use your custom rosdep database, update the ``targets`` dict
+in the  \<distribution\>/source_build.yaml file in your forked
+ros_buildfarm_config repository with the ``custom_rosdep_urls`` option::
+
+    targets:
+      _config:
+        custom_rosdep_urls:
+          - https://raw.githubusercontent.com/YOUR_FORK/rosdistro/master/rosdep/sources.list.d/20-default.list
+
 rosdep always uses the ROS packages defined by the ROSDISTRO_INDEX_URL variable
 when updating the rosdep database.
 

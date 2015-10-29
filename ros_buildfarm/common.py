@@ -39,6 +39,8 @@ def get_repositories_and_script_generating_key_files(
     # so that the job must not parse the build file
     repository_urls = []
     repository_keys = []
+    custom_rosdep_urls = []
+
     if config:
         if 'debian_repositories' in config.prerequisites:
             repository_urls += config.prerequisites['debian_repositories']
@@ -51,6 +53,8 @@ def get_repositories_and_script_generating_key_files(
             len(build_file.repository_keys)
         repository_urls += build_file.repository_urls
         repository_keys += build_file.repository_keys
+        if hasattr(build_file, 'custom_rosdep_urls'):
+            custom_rosdep_urls += build_file.custom_rosdep_urls
 
     # remove duplicate urls
     unique_repository_urls = []
@@ -74,6 +78,10 @@ def get_repositories_and_script_generating_key_files(
             repository_args.append('$WORKSPACE/keys/%d.key' % i)
             script_generating_key_files.append(
                 'echo "%s" > $WORKSPACE/keys/%d.key' % (repository_key, i))
+
+    if custom_rosdep_urls:
+        repository_args.append('--custom-rosdep-urls')
+        repository_args += custom_rosdep_urls
 
     return repository_args, script_generating_key_files
 
