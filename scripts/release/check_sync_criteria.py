@@ -63,10 +63,10 @@ def check_sync_criteria(
 
     # check that all elements from whitelist are present
     if build_file.sync_packages:
-        missing_binary_packages = len([
+        missing_binary_packages = [
             pkg_name
-            for pkg_name, has_binary_package in binary_packages.items()
-            if has_binary_package])
+            for pkg_name in build_file.sync_packages
+            if pkg_name not in binary_packages or not binary_packages[pkg_name]]
         if missing_binary_packages:
             print('The following binary packages are missing to sync:',
                   file=sys.stderr)
