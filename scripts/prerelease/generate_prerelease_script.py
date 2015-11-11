@@ -130,10 +130,11 @@ def main(argv=sys.argv[1:]):
         repositories[repo_name] = source_repo
 
     for repo_name, repo_type, repo_url, version in args.custom_repo:
-        if repo_name in repositories:
-            print("The repository '%s' appears multiple times" % repo_name,
+        if repo_name in repositories and repositories[repo_name]:
+            print("custom_repos option overriding '%s' to pull via '%s' "
+                  "from '%s' with version '%s'. " %
+                  (repo_name, repo_type, repo_url, version),
                   file=sys.stderr)
-            return 1
         source_repo = RepositorySpecification(
             repo_name, {
                 'type': repo_type,
