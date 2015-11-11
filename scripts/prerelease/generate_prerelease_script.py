@@ -163,6 +163,11 @@ def main(argv=sys.argv[1:]):
 
     # use random source repo to pass to devel job template
     source_repository = deepcopy(list(repositories.values())[0])
+    if not source_repository:
+        print(("The repository '%s' does not have a source entry in the distribution " +
+               'file. We cannot generate a prerelease without a source entry.') % repo_name,
+              file=sys.stderr)
+        return 1
     source_repository.name = 'prerelease'
     print('Evaluating job templates...')
     configure_devel_job(
