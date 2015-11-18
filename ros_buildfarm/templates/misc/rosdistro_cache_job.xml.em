@@ -79,9 +79,9 @@
         ' --cidfile=$WORKSPACE/docker_generate_rosdistro_cache/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/rosdistro_cache:/tmp/rosdistro_cache' +
-        ' -v $HOME/.ssh/known_hosts:/etc/ssh/ssh_known_hosts:ro' +
-        ' -v $SSH_AUTH_SOCK:/tmp/ssh_auth_sock' +
-        ' -e SSH_AUTH_SOCK=/tmp/ssh_auth_sock' +
+        (' -v $HOME/.ssh/known_hosts:/etc/ssh/ssh_known_hosts:ro'
+         ' -v $SSH_AUTH_SOCK:/tmp/ssh_auth_sock'
+         ' -e SSH_AUTH_SOCK=/tmp/ssh_auth_sock' if git_ssh_credential_id else '') +
         ' rosdistro_cache_generation',
         'echo "# END SECTION"',
     ]),
