@@ -123,7 +123,7 @@ repo_name = os.path.splitext(os.path.basename(repo_url))[0]
           (upload_user, upload_host, os.path.join(upload_root, 'independent', 'api')),
         '  cd $WORKSPACE/generated_documentation/independent/api',
         '  for pkg_name in $(find . -maxdepth 1 -mindepth 1 -type d); do',
-        '    rsync -e "ssh -o StrictHostKeyChecking=no" -r --delete $pkg_name/html %s@%s:%s % \
+        '    rsync -e "ssh -o StrictHostKeyChecking=no" -r --delete $pkg_name/html %s@%s:%s' % \
           (upload_user, upload_host, os.path.join(upload_root, 'independent/api/$pkg_name')),
         '  done',
         '  echo "# END SECTION"',
