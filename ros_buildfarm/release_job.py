@@ -135,6 +135,8 @@ def configure_release_jobs(
         # all further configuration will be handled by the groovy script
         jenkins = False
 
+    other_build_files = [v for k, v in build_files.items() if k != release_build_name]
+
     all_source_job_names = []
     all_binary_job_names = []
     all_job_configs = {}
@@ -169,6 +171,7 @@ def configure_release_jobs(
                         generate_import_package_job=False,
                         generate_sync_packages_jobs=False,
                         is_disabled=is_disabled,
+                        other_build_files=other_build_files,
                         groovy_script=groovy_script)
                 all_source_job_names += source_job_names
                 all_binary_job_names += binary_job_names
@@ -284,7 +287,7 @@ def configure_release_job(
         jenkins=None, views=None,
         generate_import_package_job=True,
         generate_sync_packages_jobs=True,
-        is_disabled=False,
+        is_disabled=False, other_build_files=None,
         groovy_script=None,
         filter_arches=None):
     """
@@ -377,11 +380,25 @@ def configure_release_job(
         rosdistro_name, release_build_name,
         pkg_name, os_name, os_code_name)
 
+    # while the package is disabled in the current build file
+    # it might be used by sibling build files
+    is_source_disabled = is_disabled
+    if is_source_disabled and other_build_files:
+        # check if sourcedeb job is used by any other build file with the same platform
+        for other_build_file in other_build_files:
+            if os_name not in other_build_file.targets:
+                continue
+            if os_code_name not in other_build_file.targets[os_name]:
+                continue
+            if other_build_file.filter_packages([pkg_name]):
+                is_source_disabled = False
+                break
+
     job_config = _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name,
         pkg_name, repo_name, repo.release_repository, dist_cache=dist_cache,
-        is_disabled=is_disabled)
+        is_disabled=is_source_disabled)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, source_job_name, job_config)
