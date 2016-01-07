@@ -48,7 +48,7 @@
     script="""rm -fr $WORKSPACE/classpath
 mkdir -p $WORKSPACE/classpath
 cd $WORKSPACE/classpath
-wget https://java-diff-utils.googlecode.com/files/diffutils-1.2.1.jar""",
+wget --no-verbose https://java-diff-utils.googlecode.com/files/diffutils-1.2.1.jar""",
 ))@
 @(SNIPPET(
     'builder_shell',
