@@ -1,4 +1,4 @@
-<hudson.plugins.view.dashboard.Dashboard plugin="dashboard-view@@2.9.4">
+<hudson.plugins.view.dashboard.Dashboard plugin="dashboard-view@@2.9.7">
   <name>@view_name</name>
   <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
   <filterExecutors>false</filterExecutors>
@@ -15,12 +15,12 @@
     <hudson.views.LastSuccessColumn/>
     <hudson.views.LastFailureColumn/>
     <hudson.views.LastDurationColumn/>
-    <jenkins.plugins.extracolumns.BuildDescriptionColumn plugin="extra-columns@@1.15">
+    <jenkins.plugins.extracolumns.BuildDescriptionColumn plugin="extra-columns@@1.16">
       <columnWidth>80</columnWidth>
       <forceWidth>true</forceWidth>
     </jenkins.plugins.extracolumns.BuildDescriptionColumn>
     <hudson.views.BuildButtonColumn/>
-    <jenkins.plugins.extracolumns.TestResultColumn plugin="extra-columns@@1.15">
+    <jenkins.plugins.extracolumns.TestResultColumn plugin="extra-columns@@1.16">
       <testResultFormat>1</testResultFormat>
     </jenkins.plugins.extracolumns.TestResultColumn>
   </columns>
