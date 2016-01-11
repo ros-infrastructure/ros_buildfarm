@@ -1,4 +1,4 @@
-    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@1.24">
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@1.29">
 @[if command]@
       <scriptSource class="hudson.plugins.groovy.StringScriptSource">
         <command>@ESCAPE(command)</command>

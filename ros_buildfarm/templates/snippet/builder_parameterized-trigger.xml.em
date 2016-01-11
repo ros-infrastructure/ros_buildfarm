@@ -1,4 +1,4 @@
-    <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@@2.25">
+    <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@@2.30">
       <configs>
         <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
 @[if parameters]@

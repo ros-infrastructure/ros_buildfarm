@@ -1,4 +1,4 @@
-<scm class="hudson.scm.SubversionSCM" plugin="subversion@@1.54">
+<scm class="hudson.scm.SubversionSCM" plugin="subversion@@2.5.7">
   <locations>
     <hudson.scm.SubversionSCM_-ModuleLocation>
       <remote>@ESCAPE(remote)</remote>
