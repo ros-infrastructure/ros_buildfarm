@@ -64,7 +64,7 @@
         'echo "# BEGIN SECTION: Build Dockerfile - check sync condition"',
         'cd $WORKSPACE/docker_check_sync_criteria',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t check_sync_condition .',
+        'docker build --force-rm -t check_sync_condition .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - check sync condition"',
