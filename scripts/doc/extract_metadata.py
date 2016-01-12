@@ -16,7 +16,6 @@ from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_devel_job_urls
-from ros_buildfarm.common import get_doc_job_url
 from ros_buildfarm.common import get_release_job_urls
 from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index as get_config_index

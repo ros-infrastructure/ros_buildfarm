@@ -37,13 +37,13 @@ import logging
 import os
 import yaml
 
-logger = logging.getLogger('ros_buildfarm.config')
-
 from .doc_build_file import DocBuildFile
 from .index import Index
 from .loader import load_url
 from .release_build_file import ReleaseBuildFile
 from .source_build_file import SourceBuildFile
+
+logger = logging.getLogger('ros_buildfarm.config')
 
 
 def get_index(url):

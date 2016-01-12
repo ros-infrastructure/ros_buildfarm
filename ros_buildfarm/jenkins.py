@@ -4,12 +4,6 @@ from ast import literal_eval
 import copy
 import difflib
 import sys
-try:
-    from urllib.request import urlopen
-    from urllib.error import HTTPError
-except ImportError:
-    from urllib2 import urlopen
-    from urllib2 import HTTPError
 from xml.etree import ElementTree
 
 from jenkinsapi.jenkins import Jenkins
