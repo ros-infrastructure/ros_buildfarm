@@ -118,7 +118,11 @@ def get_dsc_file(basepath, debian_package_name, debian_package_version):
             for any_dsc_file in any_dsc_files:
                 print(' - %s' % any_dsc_file, file=sys.stderr)
 
-    assert len(dsc_files) == 1
+    assert len(dsc_files) == 1, \
+        'The binarydeb job could not find the .dsc file. ' \
+        'If a new version of the package has been released recently (within 15 minutes) ' \
+        'the new sourcedeb might not have been generated yet and ' \
+        'the next automatically scheduled build should succeed.'
     return dsc_files[0]
 
 
