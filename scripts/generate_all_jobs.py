@@ -5,7 +5,6 @@ import os
 import subprocess
 import sys
 
-
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index
@@ -192,7 +191,8 @@ def generate_doc_metadata_job(
 
 
 def _resolve_script(subfolder, filename):
-    subfolder_path = os.path.join(subfolder, filename)
+    basepath = os.path.abspath(os.path.dirname(__file__))
+    subfolder_path = os.path.join(basepath, subfolder, filename)
     if os.path.exists(subfolder_path):
         return subfolder_path
     sibling_path = os.path.join(os.path.dirname(__file__), filename)
