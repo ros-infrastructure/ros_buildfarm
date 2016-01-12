@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.4"
+install:
+  - pip install catkin-pkg PyYAML rosdistro
+  - pip install coverage nose pep8 pyflakes
+  # install empy for Python 3
+  - git clone https://github.com/dirk-thomas/empy.git /tmp/empy
+  - cd /tmp/empy
+  - python setup.py install
+  - cd -
+script:
+  - python setup.py nosetests -s --tests test
+notifications:
+  email: false
