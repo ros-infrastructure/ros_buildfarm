@@ -5,7 +5,6 @@ from em import BANGPATH_OPT
 from em import Hook
 import sys
 
-from ros_buildfarm import templates
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
@@ -20,7 +19,6 @@ from ros_buildfarm.templates import expand_template
 
 
 def main(argv=sys.argv[1:]):
-    global templates
     parser = argparse.ArgumentParser(
         description="Generate a 'release' script")
     add_argument_config_url(parser)
@@ -51,6 +49,7 @@ def main(argv=sys.argv[1:]):
                 self.scripts.append(kwargs['locals']['script'])
 
     hook = IncludeHook()
+    from ros_buildfarm import templates
     templates.template_hooks = [hook]
 
     configure_release_job(

@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-import os
 import sys
 
 from rosdistro import get_distribution_cache
@@ -69,7 +68,7 @@ def configure_release_jobs(
     if explicitly_ignored_pkg_names:
         print(('The following packages are being %s because of ' +
                'white-/blacklisting:') %
-               ('ignored' if build_file.skip_ignored_packages else 'disabled'))
+              ('ignored' if build_file.skip_ignored_packages else 'disabled'))
         for pkg_name in sorted(explicitly_ignored_pkg_names):
             print('  -', pkg_name)
 
