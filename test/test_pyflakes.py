@@ -15,3 +15,7 @@ def test_pyflakes_conformance():
     warning_count = checkRecursive(paths, reporter)
     assert warning_count == 0, \
         'Found %d code style warnings' % warning_count
+
+
+if __name__ == '__main__':
+    test_pyflakes_conformance()

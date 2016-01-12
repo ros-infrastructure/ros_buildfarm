@@ -13,3 +13,7 @@ def test_pep8_conformance():
     report.stop()
     assert report.total_errors == 0, \
         'Found %d code style errors (and warnings)' % report.total_errors
+
+
+if __name__ == '__main__':
+    test_pep8_conformance()
