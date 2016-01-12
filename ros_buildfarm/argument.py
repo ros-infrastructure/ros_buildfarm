@@ -29,6 +29,12 @@ def add_argument_rosdistro_name(parser):
         help="The name of the ROS distro from the index")
 
 
+def add_argument_other_rosdistro_name(parser):
+    parser.add_argument(
+        'other_rosdistro_name',
+        help="The name of the other ROS distro from the index")
+
+
 def add_argument_build_name(parser, build_file_type):
     parser.add_argument(
         '%s_build_name' % build_file_type,
