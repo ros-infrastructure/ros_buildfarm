@@ -36,7 +36,7 @@ Import packages
 ^^^^^^^^^^^^^^^
 
 Trigger the job ``import_upstream`` to get all the required bootstrap packages
-into the repository.
+into the repository, with the ``EXECUTE_IMPORT`` option enabled.
 
 
 rosdistro cache
