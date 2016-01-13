@@ -80,7 +80,7 @@
         'echo "# BEGIN SECTION: Build Dockerfile - doc metadata"',
         'cd $WORKSPACE/docker_doc_metadata',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t doc_metadata.%s .' % rosdistro_name,
+        'docker build --force-rm -t doc_metadata.%s .' % rosdistro_name,
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - doc metadata"',
