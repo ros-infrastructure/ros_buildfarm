@@ -12,12 +12,12 @@ h2 { font-size: 1.2em; margin-bottom: 12px; }
 
 /* Top-of-page legend. */
 div.top {
-  width: 250px;
+  width: 150px;
   float: left;
   font-size: 0.8em;
   margin: 15px 30px 0 15px;
 }
-div.search { width: 320px; }
+div.search { width: 330px; }
 div.search input { width: 300px; font-size: 1.0em }
 div.search #search-count { color: #444; font-style: italic; }
 div.top.legend ul { list-style: none; }

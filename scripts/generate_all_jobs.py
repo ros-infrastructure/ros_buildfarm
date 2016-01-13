@@ -32,7 +32,7 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
 
     config = get_index(args.config_url)
-    ros_distro_names = config.distributions.keys()
+    ros_distro_names = sorted(config.distributions.keys())
 
     invalid_ros_distro_name = [
         n for n in args.ros_distro_names if n not in ros_distro_names]
@@ -56,7 +56,7 @@ def main(argv=sys.argv[1:]):
         n for n in ros_distro_names
         if not args.ros_distro_names or n in args.ros_distro_names]
 
-    for ros_distro_name in sorted(selected_ros_distro_names):
+    for ros_distro_name in selected_ros_distro_names:
         print(ros_distro_name)
 
         if not args.skip_rosdistro_cache_job:
@@ -89,6 +89,10 @@ def main(argv=sys.argv[1:]):
 
         generate_repos_status_page_jobs(
             args.config_url, ros_distro_name)
+        index = ros_distro_names.index(ros_distro_name)
+        if index > 0:
+            generate_release_compare_page_job(
+                args.config_url, ros_distro_name, ros_distro_names[index - 1])
 
 
 def generate_check_slaves_job(config_url):
@@ -132,6 +136,16 @@ def generate_repos_status_page_jobs(config_url, ros_distro_name):
         _resolve_script('status', 'generate_repos_status_page_job.py'),
         config_url,
         ros_distro_name,
+    ]
+    _check_call(cmd)
+
+
+def generate_release_compare_page_job(config_url, ros_distro_name, other_ros_distro_name):
+    cmd = [
+        _resolve_script('status', 'generate_release_compare_page_job.py'),
+        config_url,
+        ros_distro_name,
+        other_ros_distro_name,
     ]
     _check_call(cmd)
 
