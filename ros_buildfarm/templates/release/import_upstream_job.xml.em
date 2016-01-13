@@ -14,7 +14,19 @@
         {
             'type': 'string',
             'name': 'config_file',
-            'description': 'A specific yaml file or files. If unset it defaults to aggregating all yaml files in the directory defined by upstream_config in reprepro-updater.ini',
+            'description': 'A specific yaml file or files to use as reprepro_config arguments. The default is the ros_bootstrap config. If unset it defaults to aggregating all yaml files in the directory defined by upstream_config in reprepro-updater.ini(not recommended)',
+            'default_value': '/home/jenkins-slave/reprepro_config/ros_bootstrap.yaml',
+        },
+    ],
+))@
+@(SNIPPET(
+    'property_parameters-definition',
+    parameters=[
+        {
+            'type': 'boolean',
+            'name': 'EXECUTE_IMPORT',
+            'description': 'If this is not true, it will only do a dry run and print the expect import, but not execute.',
+            'default_value': 'false',
         },
     ],
 ))@
@@ -41,15 +53,18 @@
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: import debian packages"',
+        'if [ "$EXECUTE_IMPORT" = "true" ]; then',
+        '  export COMMIT_ARG="--commit"',
+        'fi',
         'export PYTHONPATH=$WORKSPACE/reprepro-updater/src:$PYTHONPATH',
         'echo "# BEGIN SUBSECTION: import debian packages for ubuntu_building"',
-        'python -u $WORKSPACE/reprepro-updater/scripts/import_upstream.py ubuntu_building $config_file --commit',
+        'python -u $WORKSPACE/reprepro-updater/scripts/import_upstream.py ubuntu_building $config_file $COMMIT_ARG',
         'echo "# END SUBSECTION"',
         'echo "# BEGIN SUBSECTION: import debian packages for ubuntu_testing"',
-        'python -u $WORKSPACE/reprepro-updater/scripts/import_upstream.py ubuntu_testing $config_file --commit',
+        'python -u $WORKSPACE/reprepro-updater/scripts/import_upstream.py ubuntu_testing $config_file $COMMIT_ARG',
         'echo "# END SUBSECTION"',
         'echo "# BEGIN SUBSECTION: import debian packages for ubuntu_main"',
-        'python -u $WORKSPACE/reprepro-updater/scripts/import_upstream.py ubuntu_main $config_file --commit',
+        'python -u $WORKSPACE/reprepro-updater/scripts/import_upstream.py ubuntu_main $config_file $COMMIT_ARG',
         'echo "# END SUBSECTION"',
         'echo "# END SECTION"',
     ]),
