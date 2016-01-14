@@ -7,10 +7,10 @@ from ros_buildfarm.release_common import dpkg_parsechangelog
 def get_sources(
         rosdistro_index_url, rosdistro_name, pkg_name, os_name, os_code_name,
         sources_dir):
-    from rosdistro import get_distribution_file
+    from rosdistro import get_cached_distribution
     from rosdistro import get_index
     index = get_index(rosdistro_index_url)
-    dist_file = get_distribution_file(index, rosdistro_name)
+    dist_file = get_cached_distribution(index, rosdistro_name)
     if pkg_name not in dist_file.release_packages:
         return 'Not a released package name: %s' % pkg_name
 
