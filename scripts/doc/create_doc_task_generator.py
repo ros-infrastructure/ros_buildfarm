@@ -443,17 +443,22 @@ def main(argv=sys.argv[1:]):
     debian_pkg_names_depends = resolve_names(depends, **context)
     debian_pkg_names_depends -= set(debian_pkg_names)
     debian_pkg_names += order_dependencies(debian_pkg_names_depends)
-    unknown_versions = []
+    missing_debian_pkg_names = []
     for debian_pkg_name in debian_pkg_names:
         try:
             debian_pkg_versions.update(
                 get_binary_package_versions(apt_cache, [debian_pkg_name]))
         except KeyError:
+            missing_debian_pkg_names.append(debian_pkg_name)
+    if missing_debian_pkg_names:
+        # we allow missing dependencies to support basic documentation
+        # of packages which use not released dependencies
+        print('# BEGIN SUBSECTION: MISSING DEPENDENCIES might result in failing build')
+        for debian_pkg_name in missing_debian_pkg_names:
             print("Could not find apt package '%s', skipping dependency" %
                   debian_pkg_name)
-            unknown_versions.append(debian_pkg_name)
-    for unknown_version in unknown_versions:
-        debian_pkg_names.remove(unknown_version)
+            debian_pkg_names.remove(debian_pkg_name)
+        print('# END SUBSECTION')
 
     build_files = get_doc_build_files(config, args.rosdistro_name)
     build_file = build_files[args.doc_build_name]

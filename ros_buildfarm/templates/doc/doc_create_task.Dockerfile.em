@@ -30,8 +30,10 @@ RUN echo "@today_str"
 
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y git mercurial python3-apt python3-catkin-pkg python3-empy python3-rosdep python3-rosdistro subversion
 
-# always invalidate to actually have the latest rosdep state
+# always invalidate to actually have the latest apt and rosdep state
 RUN echo "@now_str"
+RUN python3 -u /tmp/wrapper_scripts/apt-get.py update
+
 ENV ROSDISTRO_INDEX_URL @rosdistro_index_url
 RUN rosdep init
 
