@@ -144,8 +144,12 @@ def main(argv=sys.argv[1:]):
                 pkg_doc_path, 'manifest.yaml')
             job_manifest_yaml_file = os.path.join(
                 args.output_dir, 'manifests', pkg_name, 'manifest.yaml')
-            with open(rosdoc_manifest_yaml_file, 'r') as h:
-                rosdoc_data = yaml.load(h)
+            if os.path.exists(rosdoc_manifest_yaml_file):
+                with open(rosdoc_manifest_yaml_file, 'r') as h:
+                    rosdoc_data = yaml.load(h)
+            else:
+                # if rosdoc_lite failed to generate the file
+                rosdoc_data = {}
             with open(job_manifest_yaml_file, 'r') as h:
                 job_data = yaml.load(h)
             rosdoc_data.update(job_data)
