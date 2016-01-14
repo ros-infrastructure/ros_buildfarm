@@ -23,6 +23,17 @@ accordingly)::
 Instead of generating all jobs at once there are similar scripts to only deploy
 the jobs of a specific type.
 
+Manual configuration
+^^^^^^^^^^^^^^^^^^^^
+
+Since the API currently doesn't allow to change global configuration options
+programmatically some need to be changed manually.
+
+Since the "All" view will contain a lot of jobs it is better to select a
+different default view to prevent the huge page to be loaded by default.
+Go to the Jenkins URL, "Manage Jenkins", "Configure System" and select a
+different "Default view", e.g. "Manage".
+
 
 Trigger jobs to perform initialization
 --------------------------------------
