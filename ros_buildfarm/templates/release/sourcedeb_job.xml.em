@@ -133,6 +133,10 @@
     parameters='\n'.join([
         'subfolder=%s/${JOB_NAME}__${BUILD_NUMBER}' % os_code_name,
         'debian_package_name=%s' % debian_package_name]),
+    continue_on_failure=True,
+))@
+@(SNIPPET(
+    'builder_system-groovy_check-triggered-build',
 ))@
   </builders>
   <publishers>
