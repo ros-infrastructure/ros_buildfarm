@@ -6,7 +6,8 @@ from setuptools import setup
 # get version number from module
 version_file = os.path.join(
     os.path.dirname(__file__), 'ros_buildfarm', '_version.py')
-exec(open(version_file).read())
+with open(version_file) as h:
+    exec(h.read())
 
 # Get a list of scripts to install
 scripts = []
