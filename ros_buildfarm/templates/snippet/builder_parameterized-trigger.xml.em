@@ -14,24 +14,28 @@
           <condition>ALWAYS</condition>
           <triggerWithNoParameters>false</triggerWithNoParameters>
           <block>
+@[if not continue_on_failure]@
             <buildStepFailureThreshold>
               <name>FAILURE</name>
               <ordinal>2</ordinal>
               <color>RED</color>
               <completeBuild>true</completeBuild>
             </buildStepFailureThreshold>
+@[end if]@
             <unstableThreshold>
               <name>UNSTABLE</name>
               <ordinal>1</ordinal>
               <color>YELLOW</color>
               <completeBuild>true</completeBuild>
             </unstableThreshold>
+@[if not continue_on_failure]@
             <failureThreshold>
               <name>FAILURE</name>
               <ordinal>2</ordinal>
               <color>RED</color>
               <completeBuild>true</completeBuild>
             </failureThreshold>
+@[end if]@
           </block>
           <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
         </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
