@@ -53,6 +53,7 @@ if pull_request:
     'scm',
     repo_spec=source_repo_spec,
     path='catkin_workspace/src/%s' % source_repo_spec.name,
+    git_ssh_credential_id=git_ssh_credential_id,
 ))@
 @[end if]@
 @[if pull_request]@
@@ -62,6 +63,7 @@ if pull_request:
     refspec='+refs/pull/*:refs/remotes/origin/pr/*',
     branch_name='${sha1}',
     relative_target_dir='catkin_workspace/src/%s' % source_repo_spec.name,
+    git_ssh_credential_id=git_ssh_credential_id,
 ))@
 @[end if]@
   <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>

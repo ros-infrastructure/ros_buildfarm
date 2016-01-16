@@ -343,6 +343,8 @@ def _get_devel_job_config(
         'notify_committers': build_file.notify_committers,
 
         'timeout_minutes': build_file.jenkins_job_timeout,
+
+        'git_ssh_credential_id': config.git_ssh_credential_id,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
