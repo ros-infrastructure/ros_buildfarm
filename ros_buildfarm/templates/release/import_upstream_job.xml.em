@@ -17,11 +17,6 @@
             'description': 'A specific yaml file or files to use as reprepro_config arguments. The default is the ros_bootstrap config. If unset it defaults to aggregating all yaml files in the directory defined by upstream_config in reprepro-updater.ini(not recommended)',
             'default_value': '/home/jenkins-slave/reprepro_config/ros_bootstrap.yaml',
         },
-    ],
-))@
-@(SNIPPET(
-    'property_parameters-definition',
-    parameters=[
         {
             'type': 'boolean',
             'name': 'EXECUTE_IMPORT',
