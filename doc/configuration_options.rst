@@ -297,3 +297,15 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``skip_ignored_repositories``: a boolean flag if jobs for blacklisted (or not
   whitelisted) repositories should not be generated (default: ``false``) (only
   allowed if ``released_packages`` is ``false``).
+
+* ``upload_credential_id``: the ID of the credential to upload the built
+  packages to the repository host.
+* ``upload_host``: The hostname to use to rsync the resultant files.
+  This should match the config ``upload::docs::host`` in the buildfarm_deployment_config.
+  The default is ``repo``.
+* ``upload_root``: The root directory on the server to use to rsync the resultant files.
+  This should match the config ``upload::docs::root`` in the buildfarm_deployment_config.
+  The default is ``/var/repos/docs``.
+* ``upload_user``: The username to use to rsync the resultant files.
+  This should match the config ``upload::docs::user`` in the buildfarm_deployment_config.
+  The default is ``jenkins-slave``

@@ -277,6 +277,9 @@ def _get_doc_job_config(
 
         'timeout_minutes': build_file.jenkins_job_timeout,
 
+        'upload_user': build_file.upload_user,
+        'upload_host': build_file.upload_host,
+        'upload_root': build_file.upload_root,
         'credential_id': build_file.upload_credential_id,
 
         'git_ssh_credential_id': config.git_ssh_credential_id,

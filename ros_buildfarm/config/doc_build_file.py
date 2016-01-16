@@ -146,6 +146,11 @@ class DocBuildFile(BuildFile):
         assert not self.repository_blacklist or is_rosdoc_type
         assert not self.repository_whitelist or is_rosdoc_type
         assert self.skip_ignored_repositories is None or is_rosdoc_type
+
+        # user host and docroot have default of uploading to the repo machine next to the debs
+        self.upload_user = data.get('upload_user', 'jenkins-slave')
+        self.upload_host = data.get('upload_host', 'repo')
+        self.upload_root = data.get('upload_root', '/var/repos/docs')
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']
 

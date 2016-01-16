@@ -1,3 +1,4 @@
+@{import os}@
 <project>
   <actions/>
   <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'
@@ -109,7 +110,8 @@
         ' --include="%s/metapackage_deps/*"' % rosdistro_name +
         ' --include="%s/symbols/*"' % rosdistro_name +
         ' --exclude="- *"' +
-        ' jenkins-slave@repo:/var/repos/docs/ $WORKSPACE/rosdoc_index',
+        ' %s@%s:%s/ $WORKSPACE/rosdoc_index' % \
+          (upload_user, upload_host, upload_root.rstrip('/')),
         'echo "# END SECTION"',
     ]),
 ))@
@@ -244,7 +246,8 @@
         '  echo "# BEGIN SECTION: rsync API documentation to server"',
         '  cd $WORKSPACE/generated_documentation/api_rosdoc',
         '  for pkg_name in $(find . -maxdepth 1 -mindepth 1 -type d); do',
-        '    rsync -e "ssh -o StrictHostKeyChecking=no" -r --delete $pkg_name jenkins-slave@repo:/var/repos/docs/%s/api' % rosdistro_name,
+        '    rsync -e "ssh -o StrictHostKeyChecking=no" -r --delete $pkg_name %s@%s:%s' % \
+          (upload_user, upload_host, os.path.join(upload_root, rosdistro_name, 'api')),
         '  done',
         '  echo "# END SECTION"',
         'fi',
