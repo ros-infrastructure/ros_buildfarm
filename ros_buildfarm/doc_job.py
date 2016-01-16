@@ -270,6 +270,10 @@ def _get_doc_job_config(
         'arch': arch,
         'repository_args': repository_args,
 
+        'upload_user': build_file.upload_user,
+        'upload_host': build_file.upload_host,
+        'upload_root': build_file.upload_root,
+
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
@@ -277,9 +281,6 @@ def _get_doc_job_config(
 
         'timeout_minutes': build_file.jenkins_job_timeout,
 
-        'upload_user': build_file.upload_user,
-        'upload_host': build_file.upload_host,
-        'upload_root': build_file.upload_root,
         'credential_id': build_file.upload_credential_id,
 
         'git_ssh_credential_id': config.git_ssh_credential_id,
@@ -381,6 +382,10 @@ def _get_doc_independent_job_config(
         'config_url': config_url,
         'doc_build_name': doc_build_name,
         'repository_args': repository_args,
+
+        'upload_user': build_file.upload_user,
+        'upload_host': build_file.upload_host,
+        'upload_root': build_file.upload_root,
 
         'notify_emails': build_file.notify_emails,
 
