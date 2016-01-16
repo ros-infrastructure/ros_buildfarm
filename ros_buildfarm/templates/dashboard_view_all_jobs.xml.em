@@ -25,6 +25,7 @@
   <recurse>false</recurse>
   <useCssStyle>false</useCssStyle>
   <includeStdJobList>false</includeStdJobList>
+  <hideJenkinsPanels>false</hideJenkinsPanels>
   <leftPortletWidth>50%</leftPortletWidth>
   <rightPortletWidth>50%</rightPortletWidth>
   <leftPortlets/>

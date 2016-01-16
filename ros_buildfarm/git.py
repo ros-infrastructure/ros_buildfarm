@@ -112,12 +112,18 @@ def _get_git_repository_version(path):
         [git, 'rev-parse', '--abbrev-ref', 'HEAD'], cwd=path)
     url = url.decode().rstrip()
     if url != 'HEAD':
+        # get plain branch name on Jenkins
+        prefix = 'heads/origin/'
+        if url.startswith(prefix):
+            url = url[len(prefix):]
         return url
 
     # check if working copy is on a tag
     try:
-        tags = subprocess.check_output(
-            [git, 'describe', '--exact-match', '--tags'], cwd=path)
+        with open(os.devnull, 'w') as h:
+            tags = subprocess.check_output(
+                [git, 'describe', '--exact-match', '--tags'],
+                cwd=path, stderr=h)
         return tags.decode().splitlines()[0]
     except subprocess.CalledProcessError:
         pass

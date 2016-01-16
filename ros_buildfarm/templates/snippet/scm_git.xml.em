@@ -28,5 +28,8 @@
         <shallow>true</shallow>
         <reference/>
       </hudson.plugins.git.extensions.impl.CloneOption>
+      <hudson.plugins.git.extensions.impl.LocalBranch>
+        <localBranch>$GIT_BRANCH</localBranch>
+      </hudson.plugins.git.extensions.impl.LocalBranch>
     </extensions>
   </scm>
