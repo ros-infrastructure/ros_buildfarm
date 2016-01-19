@@ -101,7 +101,7 @@
         'echo "# BEGIN SECTION: rsync (most of) the rosdoc_index to slave"',
         'rm -fr rosdoc_index',
         '# must pass if the rosdistro specific folder does not exist yet',
-        'rsync -e "ssh -o StrictHostKeyChecking=no"' +
+        'rsync -e ssh' +
         ' --prune-empty-dirs --quiet --recursive' +
         ' --include="+ */"' +
         ' --include="%s/deps/*"' % rosdistro_name +
@@ -246,7 +246,7 @@
         '  echo "# BEGIN SECTION: rsync API documentation to server"',
         '  cd $WORKSPACE/generated_documentation/api_rosdoc',
         '  for pkg_name in $(find . -maxdepth 1 -mindepth 1 -type d); do',
-        '    rsync -e "ssh -o StrictHostKeyChecking=no" -r --delete $pkg_name %s@%s:%s' % \
+        '    rsync -e ssh -r --delete $pkg_name %s@%s:%s' % \
           (upload_user, upload_host, os.path.join(upload_root, rosdistro_name, 'api')),
         '  done',
         '  echo "# END SECTION"',
