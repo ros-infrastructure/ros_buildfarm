@@ -83,9 +83,11 @@ wget --no-verbose https://java-diff-utils.googlecode.com/files/diffutils-1.2.1.j
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs"',
+        '# -e=GIT_BRANCH= is required since Jenkins leaves the wc in detached state',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_release_jobs/docker.cid' +
+        ' -e=GIT_BRANCH=$GIT_BRANCH' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v %s:%s:ro' % (credentials_src, credentials_dst) +
