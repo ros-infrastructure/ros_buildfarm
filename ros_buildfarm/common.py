@@ -312,10 +312,10 @@ def get_doc_job_url(
 def get_devel_job_urls(
         jenkins_url, source_build_files, rosdistro_name, repository_name):
     urls = set([])
-    for source_build_name in source_build_files.keys():
+    for source_build_name in sorted(source_build_files.keys()):
         build_file = source_build_files[source_build_name]
-        for os_name in build_file.targets.keys():
-            for os_code_name in build_file.targets[os_name].keys():
+        for os_name in sorted(build_file.targets.keys()):
+            for os_code_name in sorted(build_file.targets[os_name].keys()):
                 for arch in build_file.targets[os_name][os_code_name]:
                     job_url = _get_job_url(
                         jenkins_url,
@@ -331,10 +331,11 @@ def get_devel_job_urls(
 def get_release_job_urls(
         jenkins_url, release_build_files, rosdistro_name, package_name):
     urls = set([])
-    for release_build_name in release_build_files.keys():
+    for release_build_name in sorted(release_build_files.keys()):
         build_file = release_build_files[release_build_name]
-        for os_name in build_file.targets.keys():
-            for os_code_name in build_file.targets[os_name].keys():
+        for os_name in sorted(build_file.targets.keys()):
+            # first add all source jobs
+            for os_code_name in sorted(build_file.targets[os_name].keys()):
                 job_url = _get_job_url(
                     jenkins_url,
                     get_release_source_view_name(
@@ -345,6 +346,8 @@ def get_release_job_urls(
                 )
                 urls.add(job_url)
 
+            # then add all binary jobs
+            for os_code_name in sorted(build_file.targets[os_name].keys()):
                 for arch in build_file.targets[os_name][os_code_name]:
                     job_url = _get_job_url(
                         jenkins_url,
