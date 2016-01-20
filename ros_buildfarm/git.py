@@ -128,6 +128,15 @@ def _get_git_repository_version(path):
     except subprocess.CalledProcessError:
         pass
 
+    # if the HEAD is detached the only way to retrieve the branch is
+    # looking for the environment variable set by Jenkins
+    env_var = 'GIT_BRANCH'
+    if env_var in os.environ:
+        git_branch = os.environ[env_var]
+        prefix = 'origin/'
+        if git_branch.startswith(prefix):
+            return git_branch[len(prefix):]
+
     # use current hash
     return get_hash(path)
 
