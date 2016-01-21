@@ -189,19 +189,19 @@ def add_canonical_link(base_path, base_link):
         for filename in [f for f in files if f.endswith('.html')]:
             filepath = os.path.join(path, filename)
             try:
-                with open(filepath, 'r') as h:
+                with open(filepath, 'rb') as h:
                     data = h.read()
             except Exception:
                 print("error reading file '%s'" % filepath)
                 raise
-            if data.find('rel="canonical"') != -1:
+            if data.find(b'rel="canonical"') != -1:
                 continue
             rel_path = os.path.relpath(filepath, base_path)
             link = os.path.join(base_link, rel_path)
             data = data.replace(
-                '</head>', '<link rel="canonical" href="%s" />\n</head>' %
-                link, 1)
-            with open(filepath, 'w') as h:
+                b'</head>', b'<link rel="canonical" href="' + link.encode() +
+                b'" />\n</head>', 1)
+            with open(filepath, 'wb') as h:
                 h.write(data)
 
 
