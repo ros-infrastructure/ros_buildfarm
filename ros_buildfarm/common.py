@@ -311,7 +311,7 @@ def get_doc_job_url(
 
 def get_devel_job_urls(
         jenkins_url, source_build_files, rosdistro_name, repository_name):
-    urls = set([])
+    urls = []
     for source_build_name in sorted(source_build_files.keys()):
         build_file = source_build_files[source_build_name]
         for os_name in sorted(build_file.targets.keys()):
@@ -324,17 +324,18 @@ def get_devel_job_urls(
                             rosdistro_name, source_build_name, repository_name,
                             os_name, os_code_name, arch)
                     )
-                    urls.add(job_url)
+                    if job_url not in urls:
+                        urls.append(job_url)
     return urls
 
 
 def get_release_job_urls(
         jenkins_url, release_build_files, rosdistro_name, package_name):
-    urls = set([])
+    urls = []
+    # first add all source jobs
     for release_build_name in sorted(release_build_files.keys()):
         build_file = release_build_files[release_build_name]
         for os_name in sorted(build_file.targets.keys()):
-            # first add all source jobs
             for os_code_name in sorted(build_file.targets[os_name].keys()):
                 job_url = _get_job_url(
                     jenkins_url,
@@ -344,9 +345,13 @@ def get_release_job_urls(
                         rosdistro_name, release_build_name,
                         package_name, os_name, os_code_name)
                 )
-                urls.add(job_url)
+                if job_url not in urls:
+                    urls.append(job_url)
 
-            # then add all binary jobs
+    # then add all binary jobs
+    for release_build_name in sorted(release_build_files.keys()):
+        build_file = release_build_files[release_build_name]
+        for os_name in sorted(build_file.targets.keys()):
             for os_code_name in sorted(build_file.targets[os_name].keys()):
                 for arch in build_file.targets[os_name][os_code_name]:
                     job_url = _get_job_url(
@@ -358,7 +363,8 @@ def get_release_job_urls(
                             rosdistro_name, release_build_name,
                             package_name, os_name, os_code_name, arch)
                     )
-                    urls.add(job_url)
+                    if job_url not in urls:
+                        urls.append(job_url)
     return urls
 
 

@@ -72,7 +72,7 @@ def main(argv=sys.argv[1:]):
         devel_job_urls = get_devel_job_urls(
             config.jenkins_url, build_files, args.rosdistro_name, repo_name)
         if devel_job_urls:
-            data['devel_jobs'] = list(devel_job_urls)
+            data['devel_jobs'] = devel_job_urls
 
         # add release job urls
         build_files = {}
@@ -81,7 +81,7 @@ def main(argv=sys.argv[1:]):
         release_job_urls = get_release_job_urls(
             config.jenkins_url, build_files, args.rosdistro_name, pkg_name)
         if release_job_urls:
-            data['release_jobs'] = list(release_job_urls)
+            data['release_jobs'] = release_job_urls
 
         manifest_yaml = os.path.join(api_path, pkg_name, 'manifest.yaml')
         write_manifest_yaml(manifest_yaml, data)
