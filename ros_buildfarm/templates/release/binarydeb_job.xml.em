@@ -110,6 +110,8 @@
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - binarydeb task"',
+        '# ensure to have write permission before trying to delete the folder',
+        'if [ -f $WORKSPACE/binarydeb ] ; then chmod -R u+w $WORKSPACE/binarydeb ; fi',
         'rm -fr $WORKSPACE/binarydeb',
         'rm -fr $WORKSPACE/docker_build_binarydeb',
         'mkdir -p $WORKSPACE/binarydeb',
@@ -160,6 +162,8 @@
     script='\n'.join([
         'if [ "$skip_cleanup" = "false" ]; then',
         'echo "# BEGIN SECTION: Clean up to save disk space on slaves"',
+        '# ensure to have write permission before trying to delete the folder',
+        'chmod -R u+w $WORKSPACE/binarydeb',
         'rm -fr binarydeb/*/*',
         'echo "# END SECTION"',
         'fi',
