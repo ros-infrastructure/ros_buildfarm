@@ -7,7 +7,7 @@ from .common import get_binarydeb_job_name
 from .common import get_debian_package_name
 from .common import get_sourcedeb_job_name
 from .common import Target
-from ros_buildfarm.config import get_distribution_file
+from ros_buildfarm.config import get_cached_distribution
 from .config import get_index as get_config_index
 from .config import get_release_build_files
 from .debian_repo import get_debian_repo_data
@@ -38,7 +38,7 @@ def trigger_release_jobs(
     for os_name, os_code_name, arch in targets:
         print('  - %s %s %s' % (os_name, os_code_name, arch))
 
-    dist_file = get_distribution_file(index, rosdistro_name, build_file)
+    dist_file = get_cached_distribution(index, rosdistro_name, build_file)
     if not dist_file:
         print('No distribution file matches the build file')
         return
