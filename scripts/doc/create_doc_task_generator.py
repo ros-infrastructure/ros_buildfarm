@@ -324,7 +324,7 @@ def main(argv=sys.argv[1:]):
             if pkg.name in package_names_with_changelogs:
                 data['has_changelog_rst'] = True
 
-            data['api_documentation'] = 'http://docs.ros.org/%s/api/%s' % \
+            data['api_documentation'] = 'http://docs.ros.org/%s/api/%s/html' % \
                 (args.rosdistro_name, pkg.name)
 
             pkg_status = None
