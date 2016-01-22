@@ -7,7 +7,11 @@ from time import sleep
 
 def main(argv=sys.argv[1:]):
     max_tries = 10
-    known_error_strings = ['Failed to fetch', 'Hash Sum mismatch']
+    known_error_strings = [
+        'Failed to fetch',
+        'Hash Sum mismatch',
+        'is not what the server reported',
+    ]
 
     command = argv[0]
     if command == 'update':
