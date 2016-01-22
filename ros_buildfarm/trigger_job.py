@@ -38,7 +38,7 @@ def trigger_release_jobs(
     for os_name, os_code_name, arch in targets:
         print('  - %s %s %s' % (os_name, os_code_name, arch))
 
-    dist_file = get_cached_distribution(index, rosdistro_name, build_file)
+    dist_file = get_cached_distribution(index, rosdistro_name)
     if not dist_file:
         print('No distribution file matches the build file')
         return
