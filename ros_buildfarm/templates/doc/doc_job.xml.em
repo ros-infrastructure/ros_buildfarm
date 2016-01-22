@@ -48,7 +48,7 @@
     'scm',
     repo_spec=doc_repo_spec,
     path='catkin_workspace/src/%s' % doc_repo_spec.name,
-    git_ssh_credential_id = git_ssh_credential_id,
+    git_ssh_credential_id=git_ssh_credential_id,
 ))@
   <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>
   <canRoam>false</canRoam>
@@ -279,7 +279,7 @@
 ))@
 @(SNIPPET(
     'build-wrapper_ssh-agent',
-    credential_id=credential_id,
+    credential_ids=[credential_id],
 ))@
   </buildWrappers>
 </project>
