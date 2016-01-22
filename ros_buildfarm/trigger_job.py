@@ -7,7 +7,7 @@ from .common import get_binarydeb_job_name
 from .common import get_debian_package_name
 from .common import get_sourcedeb_job_name
 from .common import Target
-from ros_buildfarm.config import get_cached_distribution
+from rosdistro import get_cached_distribution
 from .config import get_index as get_config_index
 from .config import get_release_build_files
 from .debian_repo import get_debian_repo_data
