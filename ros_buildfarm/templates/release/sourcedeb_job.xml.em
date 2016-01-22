@@ -171,9 +171,14 @@
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
+@{
+credential_ids = [credential_id]
+if git_ssh_credential_id:
+    credential_ids.append(git_ssh_credential_id)
+}@
 @(SNIPPET(
     'build-wrapper_ssh-agent',
-    credential_id=git_ssh_credential_id,
+    credential_ids=credential_ids,
 ))@
   </buildWrappers>
 </project>

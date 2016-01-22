@@ -279,7 +279,7 @@
 ))@
 @(SNIPPET(
     'build-wrapper_ssh-agent',
-    credential_id=credential_id,
+    credential_ids=[credential_id],
 ))@
   </buildWrappers>
 </project>
