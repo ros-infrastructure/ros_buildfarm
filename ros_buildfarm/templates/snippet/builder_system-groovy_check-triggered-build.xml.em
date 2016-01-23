@@ -2,7 +2,7 @@
     'builder_system-groovy',
     command=
 """// CHECK IF TRIGGERED BUILD HAS FAILED
-// only triggered when previous build step was successful
+// only abort if the last two builds haven't been aborted too
 import java.io.BufferedReader
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -20,23 +20,30 @@ try {
   def line
   while ((line = br.readLine()) != null) {
     if (pattern.matcher(line).matches()) {
-      println "Aborting build since triggered build has failed"
-      // check if previous build was already rescheduling to avoid infinite loop
-      pr = build.getPreviousBuild().getLogReader()
-      if (pr) {
-        pbr = new BufferedReader(pr)
-        while ((line = pbr.readLine()) != null) {
-          if (pattern.matcher(line).matches()) {
-            println "Skip rescheduling new build since this was already a rescheduled build"
-            println ""
-            build.setResult(Result.FAILURE)
-            return
+      println "Checking status of previous build..."
+      pb = build.getPreviousBuild()
+      if (pb) {
+        if (pb.getResult() == Result.ABORTED) {
+          println "- previous build was aborted"
+          println ""
+          println "Checking status of second previous build..."
+          // check if second previous build was already aborted to avoid infinite loop
+          ppb = pb.getPreviousBuild()
+          if (ppb) {
+            if (ppb.getResult() == Result.ABORTED) {
+              println "- second previous build was aborted too"
+              println ""
+              println "Instead of aborting fail this build to send out notification emails"
+              println ""
+              build.setResult(Result.FAILURE)
+              return
+            }
           }
         }
       }
-      println "Immediately rescheduling new build..."
       println ""
-      build.project.scheduleBuild(new Cause.UserIdCause())
+      println "Aborting build, will be rescheduled automatically..."
+      println ""
       throw new InterruptedException()
     }
   }
