@@ -1,6 +1,8 @@
 import os
 import subprocess
+import sys
 from time import strftime
+import traceback
 
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.release_common import dpkg_parsechangelog
@@ -86,7 +88,18 @@ def build_binarydeb(rosdistro_name, package_name, sourcedeb_dir):
 
     cmd = ['apt-src', 'build', source]
     print("Invoking '%s' in '%s'" % (' '.join(cmd), source_dir))
-    subprocess.check_call(cmd, cwd=source_dir)
+    try:
+        subprocess.check_call(cmd, cwd=source_dir)
+    except subprocess.CalledProcessError:
+        traceback.print_exc()
+        sys.exit("""
+--------------------------------------------------------------------------------------------------
+`{0}` failed.
+This is usually because of an error building the package.
+The traceback from this failure (just above) is printed for completeness, but you can ignore it.
+You should look above `E: Building failed` in the build log for the actual cause of the failure.
+--------------------------------------------------------------------------------------------------
+""".format(' '.join(cmd)))
 
 
 def _get_package_subfolders(basepath, debian_package_name):
