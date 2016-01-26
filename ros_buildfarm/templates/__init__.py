@@ -25,13 +25,40 @@ def get_template_path(template_name):
     raise RuntimeError("Failed to find template '%s'" % template_name)
 
 
+cached_tokens = {}
+
+
+class CachingInterpreter(Interpreter):
+
+    def parse(self, scanner, locals=None):
+        global cached_tokens
+        data = scanner.buffer
+        # try to use cached tokens
+        tokens = cached_tokens.get(data)
+        if tokens is None:
+            # collect tokens and cache them
+            tokens = []
+            while True:
+                token = scanner.one()
+                if token is None:
+                    break
+                tokens.append(token)
+            cached_tokens[data] = tokens
+
+        # reimplement the parse method using the (cached) tokens
+        self.invoke('atParse', scanner=scanner, locals=locals)
+        for token in tokens:
+            self.invoke('atToken', token=token)
+            token.run(self, locals)
+
+
 def expand_template(template_name, data, options=None):
     global interpreter
     global template_hooks
 
     output = StringIO()
     try:
-        interpreter = Interpreter(output=output, options=options)
+        interpreter = CachingInterpreter(output=output, options=options)
         for template_hook in template_hooks or []:
             interpreter.addHook(template_hook)
         template_path = get_template_path(template_name)
