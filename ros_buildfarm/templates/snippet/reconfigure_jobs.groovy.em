@@ -100,6 +100,7 @@ dir.eachFileRecurse (FileType.FILES) { file ->
 
 if (jobs.size() != @(expected_num_jobs)) {
     println "ERROR: Found different number of job configs than expected!! " + jobs.size() + " is not @(expected_num_jobs) as expected."
+    // fail this build
     throw new AbortException("Wrong number of job configs")
 }
 

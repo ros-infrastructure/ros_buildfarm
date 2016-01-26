@@ -51,6 +51,7 @@ def check_recursive_upstream_projects(project, checked_projects, depth=0) {
     }
     success = check_project(upstream, depth)
     if (!success) {
+      // abort this build
       throw new InterruptedException()
     }
     check_recursive_upstream_projects(upstream, checked_projects, depth + 1)
