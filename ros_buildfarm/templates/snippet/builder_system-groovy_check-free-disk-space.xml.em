@@ -2,7 +2,6 @@
     'builder_system-groovy',
     command=
 """// VERFIY THAT FREE DISK SPACE THRESHOLD IS NOT VIOLATED
-import hudson.AbortException
 import hudson.model.Cause.UserIdCause
 import hudson.node_monitors.AbstractDiskSpaceMonitor
 import hudson.node_monitors.DiskSpaceMonitor
@@ -44,7 +43,7 @@ try {
       build.getActions().add(GroovyPostbuildAction.createInfoBadge("Free disk space is too low, disabled slave '" + computer.name + "', rescheduled job"))
 
       // abort this build
-      throw new AbortException("Aborting build due to free disk space being lower than the threshold")
+      throw new InterruptedException()
     }
     break
   }

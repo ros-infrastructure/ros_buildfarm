@@ -44,6 +44,7 @@ try {
       println ""
       println "Aborting build, will be rescheduled automatically..."
       println ""
+      // abort this build
       throw new InterruptedException()
     }
   }
