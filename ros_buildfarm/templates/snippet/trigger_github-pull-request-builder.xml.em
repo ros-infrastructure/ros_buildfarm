@@ -1,14 +1,14 @@
     <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@@1.29.8">
       <spec/>
+      <triggerPhrase/>
       <adminlist/>
       <allowMembersOfWhitelistedOrgsAsAdmin>true</allowMembersOfWhitelistedOrgsAsAdmin>
       <orgslist>@ESCAPE(github_orgunit)</orgslist>
       <cron/>
-      <triggerPhrase/>
+      <buildDescTemplate/>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>true</permitAll>
-      <commentFilePath/>
       <whitelist/>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
@@ -17,7 +17,13 @@
           <branch>@ESCAPE(branch_name)</branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
       </whiteListTargetBranches>
-      <msgSuccess/>
-      <msgFailure/>
       <project>@ESCAPE(job_name)</project>
+      <extensions>
+        <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+          <commitStatusContext>@ESCAPE(job_name)</commitStatusContext>
+          <triggeredStatus/>
+          <startedStatus/>
+          <statusUrl/>
+        </org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+      </extensions>
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
