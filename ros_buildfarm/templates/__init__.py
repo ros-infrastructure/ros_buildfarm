@@ -52,7 +52,9 @@ def expand_template(template_name, data, options=None):
         _add_helper_functions(data)
 
         with open(template_path, 'r') as h:
-            interpreter.file(h, locals=data)
+            content = h.read()
+        interpreter.string(content, template_path, locals=data)
+
         value = output.getvalue()
         return value
     except Exception as e:
@@ -90,13 +92,16 @@ def _expand_template(template_name, **kwargs):
     template_path = get_template_path(template_name)
     _add_helper_functions(kwargs)
     with open(template_path, 'r') as h:
-        try:
-            interpreter.include(h, kwargs)
-        except Exception as e:
-            print(
-                "%s in template '%s': %s" %
-                (e.__class__.__name__, template_name, str(e)), file=sys.stderr)
-            sys.exit(1)
+        interpreter.invoke('beforeInclude', name=template_path, file=h, locals=kwargs)
+        content = h.read()
+    try:
+        interpreter.string(content, template_path, kwargs)
+    except Exception as e:
+        print(
+            "%s in template '%s': %s" %
+            (e.__class__.__name__, template_name, str(e)), file=sys.stderr)
+        sys.exit(1)
+    interpreter.invoke('afterInclude')
 
 
 def create_dockerfile(template_name, data, dockerfile_dir):
