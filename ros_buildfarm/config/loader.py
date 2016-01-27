@@ -61,6 +61,8 @@ def load_url(url, retry=2, retry_period=1, timeout=10, skip_decode=False):
                 url, retry=retry - 1, retry_period=retry_period,
                 timeout=timeout)
         raise URLError(str(e) + ' (%s)' % url)
+    except socket.timeout as e:
+        raise socket.timeout(str(e) + ' (%s)' % url)
     # Python 2/3 Compatibility
     contents = fh.read()
     if isinstance(contents, str) or skip_decode:
