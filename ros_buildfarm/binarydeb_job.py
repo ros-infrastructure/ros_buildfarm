@@ -9,7 +9,7 @@ from ros_buildfarm.release_common import dpkg_parsechangelog
 
 
 def get_sourcedeb(
-        rosdistro_name, package_name, sourcedeb_dir,
+        rosdistro_index_url, rosdistro_name, package_name, sourcedeb_dir,
         skip_download_sourcedeb=False):
     # ensure that no source subfolder exists
     debian_package_name = get_debian_package_name(rosdistro_name, package_name)
@@ -20,8 +20,32 @@ def get_sourcedeb(
 
     debian_package_name = get_debian_package_name(rosdistro_name, package_name)
     if not skip_download_sourcedeb:
+        # get expected package version from rosdistro
+        from rosdistro import get_distribution_cache
+        from rosdistro import get_index
+        index = get_index(rosdistro_index_url)
+        dist_cache = get_distribution_cache(index, rosdistro_name)
+        dist_file = dist_cache.distribution_file
+        assert package_name in dist_file.release_packages
+        pkg = dist_file.release_packages[package_name]
+        repo = dist_file.repositories[pkg.repository_name]
+        package_version = repo.release_repository.version
+
+        # get the exact sourcedeb version
+        showsrc_output = subprocess.check_output([
+            'apt-cache', 'showsrc', debian_package_name]).decode()
+        line_prefix = 'Version: '
+        debian_package_versions = [
+            l[len(line_prefix):] for l in showsrc_output.splitlines()
+            if l.startswith(line_prefix + package_version)]
+        assert len(debian_package_versions) == 1, \
+            "Failed to find sourcedeb with version '%s', only found: %s" % \
+            (package_version, ', '.join(debian_package_versions))
+
         # download sourcedeb
-        cmd = ['apt-get', 'source', debian_package_name, '--download-only']
+        cmd = [
+            'apt-get', 'source', '--download-only', '--only-source',
+            debian_package_name + '=' + debian_package_versions[0]]
         print("Invoking '%s'" % ' '.join(cmd))
         subprocess.check_call(cmd, cwd=sourcedeb_dir)
 
