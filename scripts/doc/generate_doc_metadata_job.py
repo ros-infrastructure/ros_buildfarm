@@ -5,6 +5,7 @@ import sys
 
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.argument import add_argument_dry_run
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index
@@ -18,6 +19,7 @@ def main(argv=sys.argv[1:]):
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_build_name(parser, 'doc')
+    add_argument_dry_run(parser)
     args = parser.parse_args(argv)
 
     config = get_index(args.config_url)
@@ -32,7 +34,7 @@ def main(argv=sys.argv[1:]):
 
     return configure_doc_metadata_job(
         args.config_url, args.rosdistro_name, args.doc_build_name,
-        config=config, build_file=build_file)
+        config=config, build_file=build_file, dry_run=args.dry_run)
 
 
 if __name__ == '__main__':

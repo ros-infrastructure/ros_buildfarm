@@ -20,6 +20,12 @@ accordingly)::
 
   generate_all_jobs.py https://raw.githubusercontent.com/YOUR_FORK/ros_buildfarm_config/master/index.yaml
 
+By default the script will only show the desired Jenkins configuration (or
+changes compared to the existing configuration) but not actually change
+any view or job on Jenkins.
+To actually perform the configuration you must pass the option `--commit` to
+the script.
+
 Instead of generating all jobs at once there are similar scripts to only deploy
 the jobs of a specific type.
 

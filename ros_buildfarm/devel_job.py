@@ -273,11 +273,11 @@ def configure_devel_job(
     return job_name, job_config
 
 
-def configure_devel_view(jenkins, view_name):
+def configure_devel_view(jenkins, view_name, dry_run=False):
     from ros_buildfarm.jenkins import configure_view
     return configure_view(
         jenkins, view_name, include_regex='%s__.+' % view_name,
-        template_name='dashboard_view_devel_jobs.xml.em')
+        template_name='dashboard_view_devel_jobs.xml.em', dry_run=dry_run)
 
 
 def _get_devel_job_config(

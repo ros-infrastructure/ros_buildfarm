@@ -216,11 +216,11 @@ def configure_doc_job(
     return job_name, job_config
 
 
-def configure_doc_view(jenkins, view_name):
+def configure_doc_view(jenkins, view_name, dry_run=False):
     from ros_buildfarm.jenkins import configure_view
     return configure_view(
         jenkins, view_name, include_regex='%s__.+' % view_name,
-        template_name='dashboard_view_all_jobs.xml.em')
+        template_name='dashboard_view_all_jobs.xml.em', dry_run=dry_run)
 
 
 def _get_doc_job_config(
@@ -291,7 +291,7 @@ def _get_doc_job_config(
 
 def configure_doc_metadata_job(
         config_url, rosdistro_name, doc_build_name,
-        config=None, build_file=None):
+        config=None, build_file=None, dry_run=False):
     if config is None:
         config = get_config_index(config_url)
     if build_file is None:
@@ -308,7 +308,7 @@ def configure_doc_metadata_job(
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
-        configure_job(jenkins, job_name, job_config)
+        configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
 
 def _get_doc_metadata_job_config(
@@ -342,7 +342,8 @@ def _get_doc_metadata_job_config(
 
 
 def configure_doc_independent_job(
-        config_url, doc_build_name, config=None, build_file=None):
+        config_url, doc_build_name, config=None, build_file=None,
+        dry_run=False):
     if config is None:
         config = get_config_index(config_url)
     if build_file is None:
@@ -359,7 +360,7 @@ def configure_doc_independent_job(
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
-        configure_job(jenkins, job_name, job_config)
+        configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
 
 def _get_doc_independent_job_config(

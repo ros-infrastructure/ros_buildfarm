@@ -218,3 +218,10 @@ def add_argument_vcs_information(parser):
         '--vcs-info',
         required=True,
         help='The vcs type, version and url separated by a space')
+
+
+def add_argument_dry_run(parser):
+    parser.add_argument(
+        '--dry-run',
+        action='store_true',
+        help="Only show the changes without apply them to Jenkins")

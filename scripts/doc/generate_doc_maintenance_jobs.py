@@ -6,6 +6,7 @@ import sys
 
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.argument import add_argument_dry_run
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_doc_view_name
 from ros_buildfarm.common import \
@@ -27,6 +28,7 @@ def main(argv=sys.argv[1:]):
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_build_name(parser, 'doc')
+    add_argument_dry_run(parser)
     args = parser.parse_args(argv)
 
     config = get_index(args.config_url)
@@ -40,20 +42,21 @@ def main(argv=sys.argv[1:]):
         return 1
 
     jenkins = connect(config.jenkins_url)
-    configure_management_view(jenkins)
+    configure_management_view(jenkins, dry_run=args.dry_run)
     group_name = get_doc_view_name(
         args.rosdistro_name, args.doc_build_name)
 
     configure_reconfigure_jobs_job(
-        jenkins, group_name, args, config, build_file)
-    configure_trigger_jobs_job(jenkins, group_name, build_file)
+        jenkins, group_name, args, config, build_file, dry_run=args.dry_run)
+    configure_trigger_jobs_job(
+        jenkins, group_name, build_file, dry_run=args.dry_run)
 
 
 def configure_reconfigure_jobs_job(
-        jenkins, group_name, args, config, build_file):
+        jenkins, group_name, args, config, build_file, dry_run=False):
     job_config = get_reconfigure_jobs_job_config(args, config, build_file)
     job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
-    configure_job(jenkins, job_name, job_config)
+    configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
 
 def get_reconfigure_jobs_job_config(args, config, build_file):
@@ -85,10 +88,10 @@ def get_reconfigure_jobs_job_config(args, config, build_file):
 
 
 def configure_trigger_jobs_job(
-        jenkins, group_name, build_file):
+        jenkins, group_name, build_file, dry_run=False):
     job_config = get_trigger_jobs_job_config(group_name, build_file)
     job_name = '%s_%s' % (group_name, 'trigger-jobs')
-    configure_job(jenkins, job_name, job_config)
+    configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
 
 def get_trigger_jobs_job_config(group_name, build_file):

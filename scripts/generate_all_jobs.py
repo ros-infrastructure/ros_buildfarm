@@ -29,7 +29,17 @@ def main(argv=sys.argv[1:]):
         '--skip-rosdistro-cache-job',
         action='store_true',
         help='Skip generating the rosdistro-cache jobs')
+    parser.add_argument(
+        '--commit',
+        action='store_true',
+        help='Apply the changes to Jenkins instead of only showing them')
     args = parser.parse_args(argv)
+
+    if args.commit:
+        print('The following changes will be applied to the Jenkins server.')
+    else:
+        print('This is a dry run. The Jenkins configuration is not changed.')
+    print('')
 
     config = get_index(args.config_url)
     ros_distro_names = sorted(config.distributions.keys())
@@ -44,13 +54,14 @@ def main(argv=sys.argv[1:]):
     # try to connect to Jenkins master
     connect(config.jenkins_url)
 
-    generate_check_slaves_job(args.config_url)
+    generate_check_slaves_job(args.config_url, dry_run=not args.commit)
 
     if not args.ros_distro_names:
-        generate_dashboard_job(args.config_url)
+        generate_dashboard_job(args.config_url, dry_run=not args.commit)
 
         for doc_build_name in sorted(config.doc_builds.keys()):
-            generate_doc_independent_job(args.config_url, doc_build_name)
+            generate_doc_independent_job(
+                args.config_url, doc_build_name, dry_run=not args.commit)
 
     selected_ros_distro_names = [
         n for n in ros_distro_names
@@ -60,147 +71,178 @@ def main(argv=sys.argv[1:]):
         print(ros_distro_name)
 
         if not args.skip_rosdistro_cache_job:
-            generate_rosdistro_cache_job(args.config_url, ros_distro_name)
+            generate_rosdistro_cache_job(
+                args.config_url, ros_distro_name, dry_run=not args.commit)
 
         release_build_files = get_release_build_files(config, ros_distro_name)
         for release_build_name in release_build_files.keys():
             generate_release_status_page_job(
-                args.config_url, ros_distro_name, release_build_name)
+                args.config_url, ros_distro_name, release_build_name,
+                dry_run=not args.commit)
             generate_release_maintenance_jobs(
-                args.config_url, ros_distro_name, release_build_name)
+                args.config_url, ros_distro_name, release_build_name,
+                dry_run=not args.commit)
 
         source_build_files = get_source_build_files(config, ros_distro_name)
         for source_build_name in source_build_files.keys():
             generate_devel_maintenance_jobs(
-                args.config_url, ros_distro_name, source_build_name)
+                args.config_url, ros_distro_name, source_build_name,
+                dry_run=not args.commit)
 
         doc_build_files = get_doc_build_files(config, ros_distro_name)
         for doc_build_name, doc_build_file in doc_build_files.items():
             if doc_build_file.documentation_type == DOC_TYPE_ROSDOC:
                 generate_doc_maintenance_jobs(
-                    args.config_url, ros_distro_name, doc_build_name)
+                    args.config_url, ros_distro_name, doc_build_name,
+                    dry_run=not args.commit)
             elif doc_build_file.documentation_type == DOC_TYPE_MANIFEST:
                 generate_doc_metadata_job(
-                    args.config_url, ros_distro_name, doc_build_name)
+                    args.config_url, ros_distro_name, doc_build_name,
+                    dry_run=not args.commit)
             else:
                 assert False, ("Unknown documentation type '%s' in doc " +
                                "build file '%s'") % \
                     (doc_build_file.documentation_type, doc_build_name)
 
         generate_repos_status_page_jobs(
-            args.config_url, ros_distro_name)
+            args.config_url, ros_distro_name, dry_run=not args.commit)
         index = ros_distro_names.index(ros_distro_name)
         if index > 0:
             generate_release_compare_page_job(
-                args.config_url, ros_distro_name, ros_distro_names[index - 1])
+                args.config_url, ros_distro_name, ros_distro_names[index - 1],
+                dry_run=not args.commit)
 
 
-def generate_check_slaves_job(config_url):
+def generate_check_slaves_job(config_url, dry_run=False):
     cmd = [
         _resolve_script('misc', 'generate_check_slaves_job.py'),
         config_url,
     ]
+    if dry_run:
+        cmd.append('--dry-run')
     _check_call(cmd)
 
 
-def generate_dashboard_job(config_url):
+def generate_dashboard_job(config_url, dry_run=False):
     cmd = [
         _resolve_script('misc', 'generate_dashboard_job.py'),
         config_url,
     ]
+    if dry_run:
+        cmd.append('--dry-run')
     _check_call(cmd)
 
 
-def generate_rosdistro_cache_job(config_url, ros_distro_name):
+def generate_rosdistro_cache_job(config_url, ros_distro_name, dry_run=False):
     cmd = [
         _resolve_script('misc', 'generate_rosdistro_cache_job.py'),
         config_url,
         ros_distro_name,
     ]
+    if dry_run:
+        cmd.append('--dry-run')
     _check_call(cmd)
 
 
 def generate_release_status_page_job(
-        config_url, ros_distro_name, release_build_name):
+        config_url, ros_distro_name, release_build_name, dry_run=False):
     cmd = [
         _resolve_script('status', 'generate_release_status_page_job.py'),
         config_url,
         ros_distro_name,
         release_build_name,
     ]
+    if dry_run:
+        cmd.append('--dry-run')
     _check_call(cmd)
 
 
-def generate_repos_status_page_jobs(config_url, ros_distro_name):
+def generate_repos_status_page_jobs(
+        config_url, ros_distro_name, dry_run=False):
     cmd = [
         _resolve_script('status', 'generate_repos_status_page_job.py'),
         config_url,
         ros_distro_name,
     ]
+    if dry_run:
+        cmd.append('--dry-run')
     _check_call(cmd)
 
 
-def generate_release_compare_page_job(config_url, ros_distro_name, other_ros_distro_name):
+def generate_release_compare_page_job(
+        config_url, ros_distro_name, other_ros_distro_name, dry_run=False):
     cmd = [
         _resolve_script('status', 'generate_release_compare_page_job.py'),
         config_url,
         ros_distro_name,
         other_ros_distro_name,
     ]
+    if dry_run:
+        cmd.append('--dry-run')
     _check_call(cmd)
 
 
 def generate_release_maintenance_jobs(
-        config_url, ros_distro_name, release_build_name):
+        config_url, ros_distro_name, release_build_name, dry_run=False):
     cmd = [
         _resolve_script('release', 'generate_release_maintenance_jobs.py'),
         config_url,
         ros_distro_name,
         release_build_name,
     ]
+    if dry_run:
+        cmd.append('--dry-run')
     _check_call(cmd)
 
 
 def generate_devel_maintenance_jobs(
-        config_url, ros_distro_name, source_build_name):
+        config_url, ros_distro_name, source_build_name, dry_run=False):
     cmd = [
         _resolve_script('devel', 'generate_devel_maintenance_jobs.py'),
         config_url,
         ros_distro_name,
         source_build_name,
     ]
+    if dry_run:
+        cmd.append('--dry-run')
     _check_call(cmd)
 
 
 def generate_doc_maintenance_jobs(
-        config_url, ros_distro_name, doc_build_name):
+        config_url, ros_distro_name, doc_build_name, dry_run=False):
     cmd = [
         _resolve_script('doc', 'generate_doc_maintenance_jobs.py'),
         config_url,
         ros_distro_name,
         doc_build_name,
     ]
+    if dry_run:
+        cmd.append('--dry-run')
     _check_call(cmd)
 
 
 def generate_doc_independent_job(
-        config_url, doc_build_name):
+        config_url, doc_build_name, dry_run=False):
     cmd = [
         _resolve_script('doc', 'generate_doc_independent_job.py'),
         config_url,
         doc_build_name,
     ]
+    if dry_run:
+        cmd.append('--dry-run')
     _check_call(cmd)
 
 
 def generate_doc_metadata_job(
-        config_url, ros_distro_name, doc_build_name):
+        config_url, ros_distro_name, doc_build_name, dry_run=False):
     cmd = [
         _resolve_script('doc', 'generate_doc_metadata_job.py'),
         config_url,
         ros_distro_name,
         doc_build_name,
     ]
+    if dry_run:
+        cmd.append('--dry-run')
     _check_call(cmd)
 
 

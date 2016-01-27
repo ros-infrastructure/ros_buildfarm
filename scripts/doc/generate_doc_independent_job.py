@@ -5,6 +5,7 @@ import sys
 
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.argument import add_argument_dry_run
 from ros_buildfarm.config import get_global_doc_build_files
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config.doc_build_file import DOC_TYPE_MAKE
@@ -16,6 +17,7 @@ def main(argv=sys.argv[1:]):
         description="Generate a 'doc_independent' job on Jenkins")
     add_argument_config_url(parser)
     add_argument_build_name(parser, 'doc')
+    add_argument_dry_run(parser)
     args = parser.parse_args(argv)
 
     config = get_index(args.config_url)
@@ -30,7 +32,7 @@ def main(argv=sys.argv[1:]):
 
     return configure_doc_independent_job(
         args.config_url, args.doc_build_name,
-        config=config, build_file=build_file)
+        config=config, build_file=build_file, dry_run=args.dry_run)
 
 
 if __name__ == '__main__':
