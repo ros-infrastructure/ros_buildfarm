@@ -92,11 +92,9 @@ skipped = 0
 
 config_dir = build.getWorkspace().toString() + '/reconfigure_jobs/configs'
 
-def jobs = []
 def dir = new File(config_dir)
-dir.eachFileRecurse (FileType.FILES) { file ->
-    jobs << file
-}
+def jobs = dir.listFiles()
+jobs.sort()
 
 if (jobs.size() != @(expected_num_jobs)) {
     println "ERROR: Found different number of job configs than expected!! " + jobs.size() + " is not @(expected_num_jobs) as expected."
