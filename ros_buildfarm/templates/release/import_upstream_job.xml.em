@@ -9,6 +9,10 @@
   <keepDependencies>false</keepDependencies>
   <properties>
 @(SNIPPET(
+    'property_job-priority',
+    priority=-1,
+))@
+@(SNIPPET(
     'property_parameters-definition',
     parameters=[
         {

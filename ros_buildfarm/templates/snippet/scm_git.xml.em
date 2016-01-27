@@ -26,6 +26,7 @@
 @[end if]@
       <hudson.plugins.git.extensions.impl.CloneOption>
         <shallow>true</shallow>
+        <noTags>false</noTags>
         <reference/>
       </hudson.plugins.git.extensions.impl.CloneOption>
     </extensions>
