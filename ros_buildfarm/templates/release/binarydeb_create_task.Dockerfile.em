@@ -57,6 +57,7 @@ ENTRYPOINT ["sh", "-c"]
 cmds = [
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' +
     ' /tmp/ros_buildfarm/scripts/release/get_sourcedeb.py' +
+    ' --rosdistro-index-url ' + rosdistro_index_url +
     ' ' + rosdistro_name +
     ' ' + package_name +
     ' --sourcedeb-dir ' + binarydeb_dir +
