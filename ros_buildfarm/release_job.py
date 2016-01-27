@@ -31,7 +31,8 @@ from ros_buildfarm.templates import expand_template
 
 
 def configure_release_jobs(
-        config_url, rosdistro_name, release_build_name, groovy_script=None):
+        config_url, rosdistro_name, release_build_name, groovy_script=None,
+        dry_run=False):
     """
     Configure all Jenkins release jobs.
 
@@ -110,17 +111,18 @@ def configure_release_jobs(
 
     configure_import_package_job(
         config_url, rosdistro_name, release_build_name,
-        config=config, build_file=build_file, jenkins=jenkins)
+        config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
 
     configure_sync_packages_to_main_job(
         config_url, rosdistro_name, release_build_name,
-        config=config, build_file=build_file, jenkins=jenkins)
+        config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
     for os_name, os_code_name in platforms:
         for arch in sorted(build_file.targets[os_name][os_code_name]):
             configure_sync_packages_to_testing_job(
                 config_url, rosdistro_name, release_build_name,
                 os_code_name, arch,
-                config=config, build_file=build_file, jenkins=jenkins)
+                config=config, build_file=build_file, jenkins=jenkins,
+                dry_run=dry_run)
 
     targets = []
     for os_name, os_code_name in platforms:
@@ -128,7 +130,7 @@ def configure_release_jobs(
         for arch in build_file.targets[os_name][os_code_name]:
             targets.append((os_name, os_code_name, arch))
     views = configure_release_views(
-        jenkins, rosdistro_name, release_build_name, targets)
+        jenkins, rosdistro_name, release_build_name, targets, dry_run=dry_run)
 
     if groovy_script is not None:
         # all further configuration will be handled by the groovy script
@@ -171,7 +173,8 @@ def configure_release_jobs(
                         generate_sync_packages_jobs=False,
                         is_disabled=is_disabled,
                         other_build_files=other_build_files,
-                        groovy_script=groovy_script)
+                        groovy_script=groovy_script,
+                        dry_run=dry_run)
                 all_source_job_names += source_job_names
                 all_binary_job_names += binary_job_names
                 if groovy_script is not None:
@@ -288,7 +291,8 @@ def configure_release_job(
         generate_sync_packages_jobs=True,
         is_disabled=False, other_build_files=None,
         groovy_script=None,
-        filter_arches=None):
+        filter_arches=None,
+        dry_run=False):
     """
     Configure a Jenkins release job.
 
@@ -353,22 +357,26 @@ def configure_release_job(
         for arch in build_file.targets[os_name][os_code_name]:
             targets.append((os_name, os_code_name, arch))
         configure_release_views(
-            jenkins, rosdistro_name, release_build_name, targets)
+            jenkins, rosdistro_name, release_build_name, targets,
+            dry_run=dry_run)
 
     if generate_import_package_job:
         configure_import_package_job(
             config_url, rosdistro_name, release_build_name,
-            config=config, build_file=build_file, jenkins=jenkins)
+            config=config, build_file=build_file, jenkins=jenkins,
+            dry_run=dry_run)
 
     if generate_sync_packages_jobs:
         configure_sync_packages_to_main_job(
             config_url, rosdistro_name, release_build_name,
-            config=config, build_file=build_file, jenkins=jenkins)
+            config=config, build_file=build_file, jenkins=jenkins,
+            dry_run=dry_run)
         for arch in build_file.targets[os_name][os_code_name]:
             configure_sync_packages_to_testing_job(
                 config_url, rosdistro_name, release_build_name,
                 os_code_name, arch,
-                config=config, build_file=build_file, jenkins=jenkins)
+                config=config, build_file=build_file, jenkins=jenkins,
+                dry_run=dry_run)
 
     source_job_names = []
     binary_job_names = []
@@ -400,7 +408,7 @@ def configure_release_job(
         is_disabled=is_source_disabled)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_job(jenkins, source_job_name, job_config)
+        configure_job(jenkins, source_job_name, job_config, dry_run=dry_run)
     source_job_names.append(source_job_name)
     job_configs[source_job_name] = job_config
 
@@ -438,7 +446,7 @@ def configure_release_job(
             is_disabled=is_disabled)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
-            configure_job(jenkins, job_name, job_config)
+            configure_job(jenkins, job_name, job_config, dry_run=dry_run)
         binary_job_names.append(job_name)
         job_configs[job_name] = job_config
 
@@ -446,7 +454,7 @@ def configure_release_job(
 
 
 def configure_release_views(
-        jenkins, rosdistro_name, release_build_name, targets):
+        jenkins, rosdistro_name, release_build_name, targets, dry_run=False):
     views = []
 
     # generate view aggregating all binary views
@@ -455,7 +463,7 @@ def configure_release_views(
             rosdistro_name, release_build_name)
         views.append(configure_view(
             jenkins, view_prefix, include_regex='%s_.+__.+' % view_prefix,
-            template_name='dashboard_view_all_jobs.xml.em'))
+            template_name='dashboard_view_all_jobs.xml.em', dry_run=dry_run))
 
     for os_name, os_code_name, arch in targets:
         view_name = get_release_view_name(
@@ -469,7 +477,7 @@ def configure_release_views(
                 (view_name, os_name, os_code_name, arch)
         views.append(configure_view(
             jenkins, view_name, include_regex=include_regex,
-            template_name='dashboard_view_all_jobs.xml.em'))
+            template_name='dashboard_view_all_jobs.xml.em', dry_run=dry_run))
 
     return views
 
@@ -624,7 +632,7 @@ def _get_binarydeb_job_config(
 
 def configure_import_package_job(
         config_url, rosdistro_name, release_build_name,
-        config=None, build_file=None, jenkins=None):
+        config=None, build_file=None, jenkins=None, dry_run=False):
     if config is None:
         config = get_config_index(config_url)
     if build_file is None:
@@ -638,8 +646,8 @@ def configure_import_package_job(
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_management_view(jenkins)
-        configure_job(jenkins, job_name, job_config)
+        configure_management_view(jenkins, dry_run=dry_run)
+        configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
 
 def get_import_package_job_name(rosdistro_name):
@@ -659,7 +667,7 @@ def _get_import_package_job_config(build_file):
 
 def configure_sync_packages_to_testing_job(
         config_url, rosdistro_name, release_build_name, os_code_name, arch,
-        config=None, build_file=None, jenkins=None):
+        config=None, build_file=None, jenkins=None, dry_run=False):
     if config is None:
         config = get_config_index(config_url)
     if build_file is None:
@@ -676,8 +684,8 @@ def configure_sync_packages_to_testing_job(
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_management_view(jenkins)
-        configure_job(jenkins, job_name, job_config)
+        configure_management_view(jenkins, dry_run=dry_run)
+        configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
 
 def get_sync_packages_to_testing_job_name(
@@ -715,7 +723,7 @@ def _get_sync_packages_to_testing_job_config(
 
 def configure_sync_packages_to_main_job(
         config_url, rosdistro_name, release_build_name,
-        config=None, build_file=None, jenkins=None):
+        config=None, build_file=None, jenkins=None, dry_run=False):
     if config is None:
         config = get_config_index(config_url)
     if build_file is None:
@@ -731,8 +739,8 @@ def configure_sync_packages_to_main_job(
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_management_view(jenkins)
-        configure_job(jenkins, job_name, job_config)
+        configure_management_view(jenkins, dry_run=dry_run)
+        configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
 
 def get_sync_packages_to_main_job_name(rosdistro_name):

@@ -89,9 +89,10 @@ def connect(jenkins_url):
     return jenkins
 
 
-def configure_management_view(jenkins):
+def configure_management_view(jenkins, dry_run=False):
     return configure_view(
-        jenkins, JENKINS_MANAGEMENT_VIEW, include_regex='^((?!__).)*$')
+        jenkins, JENKINS_MANAGEMENT_VIEW, include_regex='^((?!__).)*$',
+        dry_run=dry_run)
 
 
 def configure_view(
@@ -101,8 +102,11 @@ def configure_view(
         template_name, view_name, include_regex=include_regex)
     view_type = _get_view_type(view_config)
     create_view = view_name not in jenkins.views
+    dry_run_suffix = ' (dry run)' if dry_run else ''
     if create_view:
-        print("Creating view '%s' of type '%s'" % (view_name, view_type))
+        print(
+            "Creating view '%s' of type '%s'%s" %
+            (view_name, view_type, dry_run_suffix))
         view = jenkins.views.create(view_name, view_type=view_type) \
             if not dry_run else None
         remote_view_config = view.get_config() \
@@ -114,7 +118,9 @@ def configure_view(
         remote_view_type = _get_view_type(remote_view_config)
         if remote_view_type != view_type:
             del jenkins.views[view_name]
-            print("Recreating view '%s' of type '%s'" % (view_name, view_type))
+            print(
+                "Recreating view '%s' of type '%s'%s" %
+                (view_name, view_type, dry_run_suffix))
             view = jenkins.views.create(view_name, view_type=view_type) \
                 if not dry_run else None
             remote_view_config = view.get_config() \
@@ -131,7 +137,7 @@ def configure_view(
     if not diff:
         print("Skipped '%s' because the config is the same" % view_name)
     else:
-        print("Updating view '%s'" % view_name)
+        print("Updating view '%s'%s" % (view_name, dry_run_suffix))
         if not create_view:
             print('   ', '<<<')
             for line in diff:
@@ -172,10 +178,11 @@ def _get_view_type(view_config):
 
 
 def configure_job(jenkins, job_name, job_config, view=None, dry_run=False):
+    dry_run_suffix = ' (dry run)' if dry_run else ''
     response_text = None
     try:
         if not jenkins.has_job(job_name):
-            print("Creating job '%s'" % job_name)
+            print("Creating job '%s'%s" % (job_name, dry_run_suffix))
             job = jenkins.create_job(job_name, job_config) \
                 if not dry_run else None
         else:
@@ -187,7 +194,7 @@ def configure_job(jenkins, job_name, job_config, view=None, dry_run=False):
             if not diff:
                 print("Skipped '%s' because the config is the same" % job_name)
             else:
-                print("Updating job '%s'" % job_name)
+                print("Updating job '%s'%s" % (job_name, dry_run_suffix))
                 print('   ', '<<<')
                 for line in diff:
                     print('   ', line.rstrip('\n'))
@@ -206,7 +213,9 @@ def configure_job(jenkins, job_name, job_config, view=None, dry_run=False):
             "Failed to configure job '%s':\n%s" % (job_name, response_text))
     if view is not None:
         if job_name not in view:
-            print("Adding job '%s' to view '%s'" % (job_name, view.name))
+            print(
+                "Adding job '%s' to view '%s'%s" %
+                (job_name, view.name, dry_run_suffix))
             job = view.add_job(job_name, job) \
                 if not dry_run else job
         else:

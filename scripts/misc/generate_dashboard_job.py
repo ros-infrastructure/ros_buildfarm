@@ -4,6 +4,7 @@ import argparse
 import sys
 
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.argument import add_argument_dry_run
 from ros_buildfarm.config import get_index
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_management_view
@@ -15,6 +16,7 @@ def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
         description="Generate the 'dashboard' job on Jenkins")
     add_argument_config_url(parser)
+    add_argument_dry_run(parser)
     args = parser.parse_args(argv)
 
     config = get_index(args.config_url)
@@ -22,10 +24,10 @@ def main(argv=sys.argv[1:]):
 
     jenkins = connect(config.jenkins_url)
 
-    configure_management_view(jenkins)
+    configure_management_view(jenkins, dry_run=args.dry_run)
 
     job_name = 'dashboard'
-    configure_job(jenkins, job_name, job_config)
+    configure_job(jenkins, job_name, job_config, dry_run=args.dry_run)
 
 
 def get_job_config(notification_emails):
