@@ -20,6 +20,11 @@
             'name': 'dry_run',
             'description': 'Skip the actual reconfiguration but show the diffs',
         },
+        {
+            'type': 'string',
+            'name': 'package_names',
+            'description': 'Only reconfigure the jobs of specific packages',
+        },
     ],
 ))@
 @(SNIPPET(
@@ -78,6 +83,7 @@ wget --no-verbose https://java-diff-utils.googlecode.com/files/diffutils-1.2.1.j
         'echo "# BEGIN SECTION: Generate Dockerfile - reconfigure jobs"',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'if [ "$dry_run" = "true" ]; then DRY_RUN_FLAG="--dry-run"; fi',
+        'if [ "$package_names" != "" ]; then PACKAGE_NAMES_FLAG="--package-names $package_names"; fi',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/run_release_reconfigure_job.py' +
         ' ' + config_url +
         ' ' + rosdistro_name +
@@ -86,6 +92,7 @@ wget --no-verbose https://java-diff-utils.googlecode.com/files/diffutils-1.2.1.j
         ' --groovy-script /tmp/reconfigure_jobs/reconfigure_jobs.groovy' +
         ' --dockerfile-dir $WORKSPACE/docker_generate_release_jobs' +
         ' $DRY_RUN_FLAG',
+        ' $PACKAGE_NAMES_FLAG',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',

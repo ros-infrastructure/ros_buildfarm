@@ -44,5 +44,7 @@ if groovy_script:
     cmd += ' --groovy-script ' + groovy_script
 if dry_run:
     cmd += ' --dry-run'
+if package_names:
+    cmd += ' --package-names ' + ' '.join(package_names)
 }@
 CMD ["@cmd"]

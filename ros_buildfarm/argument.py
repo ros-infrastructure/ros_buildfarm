@@ -224,4 +224,11 @@ def add_argument_dry_run(parser):
     parser.add_argument(
         '--dry-run',
         action='store_true',
-        help="Only show the changes without apply them to Jenkins")
+        help='Only show the changes without apply them to Jenkins')
+
+
+def add_argument_package_names(parser):
+    parser.add_argument(
+        '--package-names',
+        nargs='+',
+        help='A space separated list of package names')
