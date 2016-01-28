@@ -32,7 +32,7 @@ from ros_buildfarm.templates import expand_template
 
 def configure_release_jobs(
         config_url, rosdistro_name, release_build_name, groovy_script=None,
-        dry_run=False):
+        dry_run=False, whitelist_package_names=None):
     """
     Configure all Jenkins release jobs.
 
@@ -142,6 +142,12 @@ def configure_release_jobs(
     all_binary_job_names = []
     all_job_configs = {}
     for pkg_name in sorted(pkg_names):
+        if whitelist_package_names:
+            if pkg_name not in whitelist_package_names:
+                print("Skipping package '%s' not in the explicitly passed list" %
+                      pkg_name, file=sys.stderr)
+                continue
+
         pkg = dist_file.release_packages[pkg_name]
         repo_name = pkg.repository_name
         repo = dist_file.repositories[repo_name]
@@ -198,80 +204,83 @@ def configure_release_jobs(
         'job_prefixes_and_names': {},
     }
 
-    # delete obsolete binary jobs
-    for os_name, os_code_name in platforms:
-        for arch in build_file.targets[os_name][os_code_name]:
-            binary_view = get_release_binary_view_name(
-                rosdistro_name, release_build_name,
-                os_name, os_code_name, arch)
-            binary_job_prefix = '%s__' % binary_view
+    # with an explicit list of packages we don't delete obsolete jobs
+    if not whitelist_package_names:
+        # delete obsolete binary jobs
+        for os_name, os_code_name in platforms:
+            for arch in build_file.targets[os_name][os_code_name]:
+                binary_view = get_release_binary_view_name(
+                    rosdistro_name, release_build_name,
+                    os_name, os_code_name, arch)
+                binary_job_prefix = '%s__' % binary_view
 
+                excluded_job_names = set([
+                    j for j in all_binary_job_names
+                    if j.startswith(binary_job_prefix)])
+                if groovy_script is None:
+                    print("Removing obsolete binary jobs with prefix '%s'" %
+                          binary_job_prefix)
+                    remove_jobs(
+                        jenkins, binary_job_prefix, excluded_job_names,
+                        dry_run=dry_run)
+                else:
+                    binary_key = 'binary_%s_%s_%s' % \
+                        (os_name, os_code_name, arch)
+                    groovy_data['job_prefixes_and_names'][binary_key] = \
+                        (binary_job_prefix, excluded_job_names)
+
+        # delete obsolete source jobs
+        # requires knowledge about all other release build files
+        for os_name, os_code_name in platforms:
+            other_source_job_names = []
+            # get source job names for all other release build files
+            for other_release_build_name in [
+                    k for k in build_files.keys() if k != release_build_name]:
+                other_build_file = build_files[other_release_build_name]
+                other_dist_file = get_distribution_file(
+                    index, rosdistro_name, other_build_file)
+                if not other_dist_file:
+                    continue
+
+                if os_name not in other_build_file.targets or \
+                        os_code_name not in other_build_file.targets[os_name]:
+                    continue
+
+                if other_build_file.skip_ignored_packages:
+                    filtered_pkg_names = other_build_file.filter_packages(
+                        pkg_names)
+                else:
+                    filtered_pkg_names = pkg_names
+                for pkg_name in sorted(filtered_pkg_names):
+                    pkg = other_dist_file.release_packages[pkg_name]
+                    repo_name = pkg.repository_name
+                    repo = other_dist_file.repositories[repo_name]
+                    if not repo.release_repository:
+                        continue
+                    if not repo.release_repository.version:
+                        continue
+
+                    other_job_name = get_sourcedeb_job_name(
+                        rosdistro_name, other_release_build_name,
+                        pkg_name, os_name, os_code_name)
+                    other_source_job_names.append(other_job_name)
+
+            source_view_prefix = get_release_source_view_name(
+                rosdistro_name, os_name, os_code_name)
+            source_job_prefix = '%s__' % source_view_prefix
             excluded_job_names = set([
-                j for j in all_binary_job_names
-                if j.startswith(binary_job_prefix)])
+                j for j in (all_source_job_names + other_source_job_names)
+                if j.startswith(source_job_prefix)])
             if groovy_script is None:
-                print("Removing obsolete binary jobs with prefix '%s'" %
-                      binary_job_prefix)
+                print("Removing obsolete source jobs with prefix '%s'" %
+                      source_job_prefix)
                 remove_jobs(
-                    jenkins, binary_job_prefix, excluded_job_names,
+                    jenkins, source_job_prefix, excluded_job_names,
                     dry_run=dry_run)
             else:
-                binary_key = 'binary_%s_%s_%s' % (os_name, os_code_name, arch)
-                groovy_data['job_prefixes_and_names'][binary_key] = \
-                    (binary_job_prefix, excluded_job_names)
-
-    # delete obsolete source jobs
-    # requires knowledge about all other release build files
-    for os_name, os_code_name in platforms:
-        other_source_job_names = []
-        # get source job names for all other release build files
-        for other_release_build_name in [
-                k for k in build_files.keys() if k != release_build_name]:
-            other_build_file = build_files[other_release_build_name]
-            other_dist_file = get_distribution_file(
-                index, rosdistro_name, other_build_file)
-            if not other_dist_file:
-                continue
-
-            if os_name not in other_build_file.targets or \
-                    os_code_name not in other_build_file.targets[os_name]:
-                continue
-
-            if other_build_file.skip_ignored_packages:
-                filtered_pkg_names = other_build_file.filter_packages(
-                    pkg_names)
-            else:
-                filtered_pkg_names = pkg_names
-            for pkg_name in sorted(filtered_pkg_names):
-                pkg = other_dist_file.release_packages[pkg_name]
-                repo_name = pkg.repository_name
-                repo = other_dist_file.repositories[repo_name]
-                if not repo.release_repository:
-                    continue
-                if not repo.release_repository.version:
-                    continue
-
-                other_job_name = get_sourcedeb_job_name(
-                    rosdistro_name, other_release_build_name,
-                    pkg_name, os_name, os_code_name)
-                other_source_job_names.append(other_job_name)
-
-        source_view_prefix = get_release_source_view_name(
-            rosdistro_name, os_name, os_code_name)
-        source_job_prefix = '%s__' % source_view_prefix
-        excluded_job_names = set([
-            j for j in (all_source_job_names + other_source_job_names)
-            if j.startswith(source_job_prefix)])
-        if groovy_script is None:
-            print("Removing obsolete source jobs with prefix '%s'" %
-                  source_job_prefix)
-            remove_jobs(
-                jenkins, source_job_prefix, excluded_job_names,
-                dry_run=dry_run)
-        else:
-            source_key = 'source_%s_%s' % (os_name, os_code_name)
-            groovy_data['job_prefixes_and_names'][source_key] = (
-                source_job_prefix, excluded_job_names)
+                source_key = 'source_%s_%s' % (os_name, os_code_name)
+                groovy_data['job_prefixes_and_names'][source_key] = (
+                    source_job_prefix, excluded_job_names)
 
     if groovy_script is not None:
         print("Writing groovy script '%s' to reconfigure %d jobs" %
