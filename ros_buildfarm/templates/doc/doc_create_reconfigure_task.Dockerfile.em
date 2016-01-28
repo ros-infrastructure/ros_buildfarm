@@ -42,5 +42,7 @@ cmd = \
     ' ' + doc_build_name
 if groovy_script:
     cmd += ' --groovy-script ' + groovy_script
+if dry_run:
+    cmd += ' --dry-run'
 }@
 CMD ["@cmd"]

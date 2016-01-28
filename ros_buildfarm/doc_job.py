@@ -23,7 +23,8 @@ from ros_buildfarm.templates import expand_template
 
 
 def configure_doc_jobs(
-        config_url, rosdistro_name, doc_build_name, groovy_script=None):
+        config_url, rosdistro_name, doc_build_name, groovy_script=None,
+        dry_run=False):
     """
     Configure all Jenkins doc jobs.
 
@@ -61,7 +62,7 @@ def configure_doc_jobs(
     jenkins = connect(config.jenkins_url)
 
     views = []
-    views.append(configure_doc_view(jenkins, doc_view_name))
+    views.append(configure_doc_view(jenkins, doc_view_name, dry_run=dry_run))
 
     if groovy_script is not None:
         # all further configuration will be handled by the groovy script
@@ -96,7 +97,8 @@ def configure_doc_jobs(
                     index=index, dist_file=dist_file,
                     dist_cache=dist_cache, jenkins=jenkins, views=views,
                     is_disabled=is_disabled,
-                    groovy_script=groovy_script)
+                    groovy_script=groovy_script,
+                    dry_run=dry_run)
                 job_names.append(job_name)
                 if groovy_script is not None:
                     print("Configuration for job '%s'" % job_name)
@@ -109,11 +111,12 @@ def configure_doc_jobs(
         # delete obsolete jobs in this view
         from ros_buildfarm.jenkins import remove_jobs
         print('Removing obsolete doc jobs')
-        remove_jobs(jenkins, job_prefix, job_names)
+        remove_jobs(jenkins, job_prefix, job_names, dry_run=dry_run)
     else:
         print("Writing groovy script '%s' to reconfigure %d jobs" %
               (groovy_script, len(job_configs)))
         data = {
+            'dry_run': dry_run,
             'expected_num_jobs': len(job_configs),
             'job_prefixes_and_names': {
                 'doc': (job_prefix, job_names),
@@ -132,7 +135,8 @@ def configure_doc_job(
         jenkins=None, views=None,
         is_disabled=False,
         groovy_script=None,
-        doc_repository=None):
+        doc_repository=None,
+        dry_run=False):
     """
     Configure a single Jenkins doc job.
 
@@ -198,7 +202,7 @@ def configure_doc_job(
     if views is None:
         view_name = get_doc_view_name(
             rosdistro_name, doc_build_name)
-        configure_doc_view(jenkins, view_name)
+        configure_doc_view(jenkins, view_name, dry_run=dry_run)
 
     job_name = get_doc_job_name(
         rosdistro_name, doc_build_name,
@@ -211,7 +215,7 @@ def configure_doc_job(
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
-        configure_job(jenkins, job_name, job_config)
+        configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
     return job_name, job_config
 
