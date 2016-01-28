@@ -160,6 +160,14 @@ def configure_release_jobs(
             continue
 
         for os_name, os_code_name in platforms:
+            other_build_files_same_platform = []
+            for other_build_file in other_build_files:
+                if os_name not in other_build_file.targets:
+                    continue
+                if os_code_name not in other_build_file.targets[os_name]:
+                    continue
+                other_build_files_same_platform.append(other_build_file)
+
             try:
                 source_job_names, binary_job_names, job_configs = \
                     configure_release_job(
@@ -172,7 +180,7 @@ def configure_release_jobs(
                         generate_import_package_job=False,
                         generate_sync_packages_jobs=False,
                         is_disabled=is_disabled,
-                        other_build_files=other_build_files,
+                        other_build_files_same_platform=other_build_files_same_platform,
                         groovy_script=groovy_script,
                         dry_run=dry_run)
                 all_source_job_names += source_job_names
@@ -293,7 +301,7 @@ def configure_release_job(
         jenkins=None, views=None,
         generate_import_package_job=True,
         generate_sync_packages_jobs=True,
-        is_disabled=False, other_build_files=None,
+        is_disabled=False, other_build_files_same_platform=None,
         groovy_script=None,
         filter_arches=None,
         dry_run=False):
@@ -387,6 +395,9 @@ def configure_release_job(
     job_configs = {}
 
     # sourcedeb job
+    # since sourcedeb jobs are potentially being shared across multiple build
+    # files the configuration has to take all of them into account in order to
+    # generate a job which all build files agree on
     source_job_name = get_sourcedeb_job_name(
         rosdistro_name, release_build_name,
         pkg_name, os_name, os_code_name)
@@ -394,13 +405,9 @@ def configure_release_job(
     # while the package is disabled in the current build file
     # it might be used by sibling build files
     is_source_disabled = is_disabled
-    if is_source_disabled and other_build_files:
+    if is_source_disabled and other_build_files_same_platform:
         # check if sourcedeb job is used by any other build file with the same platform
-        for other_build_file in other_build_files:
-            if os_name not in other_build_file.targets:
-                continue
-            if os_code_name not in other_build_file.targets[os_name]:
-                continue
+        for other_build_file in other_build_files_same_platform:
             if other_build_file.filter_packages([pkg_name]):
                 is_source_disabled = False
                 break
@@ -409,7 +416,8 @@ def configure_release_job(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name,
         pkg_name, repo_name, repo.release_repository, dist_cache=dist_cache,
-        is_disabled=is_source_disabled)
+        is_disabled=is_source_disabled,
+        other_build_files_same_platform=other_build_files_same_platform)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         configure_job(jenkins, source_job_name, job_config, dry_run=dry_run)
@@ -508,7 +516,7 @@ def _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name,
         pkg_name, repo_name, release_repository, dist_cache=None,
-        is_disabled=False):
+        is_disabled=False, other_build_files_same_platform=None):
     template_name = 'release/sourcedeb_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -522,8 +530,23 @@ def _get_sourcedeb_job_config(
         'sourcedeb/*_source.changes',
     ]
 
+    # collect notify emails from all build files with the job enabled
+    notify_emails = set(build_file.notify_emails)
+    if other_build_files_same_platform:
+        for other_build_file in other_build_files_same_platform:
+            if other_build_file.filter_packages([pkg_name]):
+                notify_emails.update(other_build_file.notify_emails)
+
+    # notify maintainers if any build file (with the job enabled) requests it
+    notify_maintainers = build_file.notify_maintainers
+    if other_build_files_same_platform:
+        for other_build_file in other_build_files_same_platform:
+            if other_build_file.filter_packages([pkg_name]):
+                if other_build_file.notify_maintainers:
+                    notify_maintainers = True
+
     maintainer_emails = get_maintainer_emails(dist_cache, repo_name) \
-        if build_file.notify_maintainers \
+        if notify_maintainers \
         else set([])
 
     job_data = {
@@ -552,9 +575,9 @@ def _get_sourcedeb_job_config(
         'debian_package_name': get_debian_package_name(
             rosdistro_name, pkg_name),
 
-        'notify_emails': build_file.notify_emails,
+        'notify_emails': notify_emails,
         'maintainer_emails': maintainer_emails,
-        'notify_maintainers': build_file.notify_maintainers,
+        'notify_maintainers': notify_maintainers,
 
         'timeout_minutes': build_file.jenkins_source_job_timeout,
 
