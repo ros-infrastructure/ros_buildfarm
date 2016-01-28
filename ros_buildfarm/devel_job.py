@@ -22,7 +22,8 @@ from ros_buildfarm.templates import expand_template
 
 
 def configure_devel_jobs(
-        config_url, rosdistro_name, source_build_name, groovy_script=None):
+        config_url, rosdistro_name, source_build_name, groovy_script=None,
+        dry_run=False):
     """
     Configure all Jenkins devel jobs.
 
@@ -64,9 +65,11 @@ def configure_devel_jobs(
 
     views = []
     if build_file.test_commits_force is not False:
-        views.append(configure_devel_view(jenkins, devel_view_name))
+        views.append(configure_devel_view(
+            jenkins, devel_view_name, dry_run=dry_run))
     if build_file.test_pull_requests_force is not False:
-        views.append(configure_devel_view(jenkins, pull_request_view_name))
+        views.append(configure_devel_view(
+            jenkins, pull_request_view_name, dry_run=dry_run))
 
     if groovy_script is not None:
         # all further configuration will be handled by the groovy script
@@ -138,7 +141,8 @@ def configure_devel_jobs(
                         index=index, dist_file=dist_file,
                         dist_cache=dist_cache, jenkins=jenkins, views=views,
                         is_disabled=is_disabled,
-                        groovy_script=groovy_script)
+                        groovy_script=groovy_script,
+                        dry_run=dry_run)
                     if not pull_request:
                         devel_job_names.append(job_name)
                     else:
@@ -155,14 +159,17 @@ def configure_devel_jobs(
         # delete obsolete jobs in these views
         from ros_buildfarm.jenkins import remove_jobs
         print('Removing obsolete devel jobs')
-        remove_jobs(jenkins, devel_job_prefix, devel_job_names)
+        remove_jobs(
+            jenkins, devel_job_prefix, devel_job_names, dry_run=dry_run)
         print('Removing obsolete pull request jobs')
         remove_jobs(
-            jenkins, pull_request_job_prefix, pull_request_job_names)
+            jenkins, pull_request_job_prefix, pull_request_job_names,
+            dry_run=dry_run)
     else:
         print("Writing groovy script '%s' to reconfigure %d jobs" %
               (groovy_script, len(job_configs)))
         data = {
+            'dry_run': dry_run,
             'expected_num_jobs': len(job_configs),
             'job_prefixes_and_names': {
                 'devel': (devel_job_prefix, devel_job_names),
@@ -185,7 +192,8 @@ def configure_devel_job(
         is_disabled=False,
         groovy_script=None,
         source_repository=None,
-        build_targets=None):
+        build_targets=None,
+        dry_run=False):
     """
     Configure a single Jenkins devel job.
 
@@ -254,7 +262,7 @@ def configure_devel_job(
     if views is None:
         view_name = get_devel_view_name(
             rosdistro_name, source_build_name, pull_request=pull_request)
-        configure_devel_view(jenkins, view_name)
+        configure_devel_view(jenkins, view_name, dry_run=dry_run)
 
     job_name = get_devel_job_name(
         rosdistro_name, source_build_name,
@@ -268,7 +276,7 @@ def configure_devel_job(
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
-        configure_job(jenkins, job_name, job_config)
+        configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
     return job_name, job_config
 

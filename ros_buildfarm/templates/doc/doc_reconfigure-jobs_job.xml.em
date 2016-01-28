@@ -13,6 +13,16 @@
     priority=30,
 ))@
 @(SNIPPET(
+    'property_parameters-definition',
+    parameters=[
+        {
+            'type': 'boolean',
+            'name': 'dry_run',
+            'description': 'Skip the actual reconfiguration but show the diffs',
+        },
+    ],
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
   </properties>
@@ -67,13 +77,15 @@ wget --no-verbose https://java-diff-utils.googlecode.com/files/diffutils-1.2.1.j
         '# generating the Dockerfiles for the actual doc tasks',
         'echo "# BEGIN SECTION: Generate Dockerfile - reconfigure jobs"',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
+        'if [ "$dry_run" = "true" ]; then DRY_RUN_FLAG="--dry-run"; fi',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/doc/run_doc_reconfigure_job.py' +
         ' ' + config_url +
         ' ' + rosdistro_name +
         ' ' + doc_build_name +
         ' ' + ' '.join(repository_args) +
         ' --groovy-script /tmp/reconfigure_jobs/reconfigure_jobs.groovy' +
-        ' --dockerfile-dir $WORKSPACE/docker_generate_doc_jobs',
+        ' --dockerfile-dir $WORKSPACE/docker_generate_doc_jobs' +
+        ' $DRY_RUN_FLAG',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',
