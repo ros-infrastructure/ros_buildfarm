@@ -273,11 +273,14 @@ def _diff_configs(remote_config, new_config):
         lines1, lines2, 'remote config', 'new config', n=0)
 
 
-def remove_jobs(jenkins, job_prefix, excluded_job_names):
+def remove_jobs(jenkins, job_prefix, excluded_job_names, dry_run=False):
+    dry_run_suffix = ' (dry run)' if dry_run else ''
     for job_name in jenkins.jobs.keys():
         if not job_name.startswith(job_prefix):
             continue
         if job_name in excluded_job_names:
             continue
-        print("Deleting job '%s'" % job_name)
+        print("Deleting job '%s'%s" % (job_name, dry_run_suffix))
+        if dry_run:
+            continue
         jenkins.delete_job(job_name)

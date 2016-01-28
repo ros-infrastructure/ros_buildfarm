@@ -185,6 +185,7 @@ def configure_release_jobs(
                 print(e.message, file=sys.stderr)
 
     groovy_data = {
+        'dry_run': dry_run,
         'expected_num_jobs': len(all_job_configs),
         'job_prefixes_and_names': {},
     }
@@ -204,7 +205,8 @@ def configure_release_jobs(
                 print("Removing obsolete binary jobs with prefix '%s'" %
                       binary_job_prefix)
                 remove_jobs(
-                    jenkins, binary_job_prefix, excluded_job_names)
+                    jenkins, binary_job_prefix, excluded_job_names,
+                    dry_run=dry_run)
             else:
                 binary_key = 'binary_%s_%s_%s' % (os_name, os_code_name, arch)
                 groovy_data['job_prefixes_and_names'][binary_key] = \
@@ -255,7 +257,9 @@ def configure_release_jobs(
         if groovy_script is None:
             print("Removing obsolete source jobs with prefix '%s'" %
                   source_job_prefix)
-            remove_jobs(jenkins, source_job_prefix, excluded_job_names)
+            remove_jobs(
+                jenkins, source_job_prefix, excluded_job_names,
+                dry_run=dry_run)
         else:
             source_key = 'source_%s_%s' % (os_name, os_code_name)
             groovy_data['job_prefixes_and_names'][source_key] = (

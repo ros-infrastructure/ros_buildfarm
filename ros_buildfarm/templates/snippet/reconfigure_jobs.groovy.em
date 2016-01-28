@@ -85,6 +85,9 @@ def format_xml(doc) {
 
 // reconfigure jobs
 println '# BEGIN SECTION: Groovy script - reconfigure jobs'
+dry_run = @('true' if dry_run else 'false')
+dry_run_suffix = dry_run ? ' (dry run)' : ''
+
 println 'Reconfiguring @(expected_num_jobs) jobs...'
 created = 0
 updated = 0
@@ -116,28 +119,32 @@ jobs.each{
             println "Skipped job '" + job_name + "' because the config is the same"
             skipped += 1
         } else {
-            println "Updating job '" + job_name + "'"
+            println "Updating job '" + job_name + "'" + dry_run_suffix
             println '    <<<'
             for (line in diff) {
                 println '    ' + line
             }
             println '    <<<'
 
-            reader = new StringReader(job_config)
-            source = new StreamSource(reader)
-            p.updateByXml(source)
+            if (!dry_run) {
+                reader = new StringReader(job_config)
+                source = new StreamSource(reader)
+                p.updateByXml(source)
+            }
             updated += 1
         }
         break
     }
     if (!found_project) {
-        println "Creating job '" + job_name + "'"
-        stream = new StringBufferInputStream(job_config)
-        Jenkins.instance.createProjectFromXML(job_name, stream)
+        println "Creating job '" + job_name + "'" + dry_run_suffix
+        if (!dry_run) {
+            stream = new StringBufferInputStream(job_config)
+            Jenkins.instance.createProjectFromXML(job_name, stream)
+        }
         created += 1
     }
 }
-println 'Created ' + created + ' jobs, updated ' + updated + ' jobs, skipped ' + skipped + ' jobs.'
+println 'Created ' + created + ' jobs, updated ' + updated + ' jobs, skipped ' + skipped + ' jobs' + dry_run_suffix + '.'
 println '# END SECTION'
 
 // delete obsolete jobs
@@ -151,10 +158,12 @@ for (item in job_prefixes_and_names) {
     for (p in Jenkins.instance.allItems) {
         if (!p.name.startsWith(job_prefix)) continue
         if (p.name in job_names) continue
-        println "Deleting job '" + p.name + "'"
-        p.delete()
+        println "Deleting job '" + p.name + "'" + dry_run_suffix
+        if (!dry_run) {
+            p.delete()
+        }
         deleted += 1
     }
-    println 'Deleted ' + deleted + ' jobs.'
+    println 'Deleted ' + deleted + ' jobs' + dry_run_suffix + '.'
     println '# END SECTION'
 }
