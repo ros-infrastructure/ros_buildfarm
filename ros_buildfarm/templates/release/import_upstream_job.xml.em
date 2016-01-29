@@ -13,6 +13,9 @@
     priority=-1,
 ))@
 @(SNIPPET(
+    'property_requeue-job',
+))@
+@(SNIPPET(
     'property_parameters-definition',
     parameters=[
         {
@@ -28,9 +31,6 @@
             'default_value': 'false',
         },
     ],
-))@
-@(SNIPPET(
-    'property_requeue-job',
 ))@
   </properties>
 @(SNIPPET(

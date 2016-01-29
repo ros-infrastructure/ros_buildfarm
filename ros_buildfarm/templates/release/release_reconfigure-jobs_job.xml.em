@@ -13,6 +13,9 @@
     priority=30,
 ))@
 @(SNIPPET(
+    'property_requeue-job',
+))@
+@(SNIPPET(
     'property_parameters-definition',
     parameters=[
         {
@@ -26,9 +29,6 @@
             'description': 'Only reconfigure the jobs of specific packages',
         },
     ],
-))@
-@(SNIPPET(
-    'property_requeue-job',
 ))@
   </properties>
 @(SNIPPET(

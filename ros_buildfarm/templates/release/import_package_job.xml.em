@@ -9,6 +9,9 @@
     num_to_keep=10000,
 ))@
 @(SNIPPET(
+    'property_requeue-job',
+))@
+@(SNIPPET(
     'property_parameters-definition',
     parameters=[
         {
@@ -20,9 +23,6 @@
             'name': 'debian_package_name',
         },
     ],
-))@
-@(SNIPPET(
-    'property_requeue-job',
 ))@
   </properties>
 @(SNIPPET(

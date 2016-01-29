@@ -13,6 +13,9 @@
     priority=30,
 ))@
 @(SNIPPET(
+    'property_requeue-job',
+))@
+@(SNIPPET(
     'property_parameters-definition',
     parameters=[
         {
@@ -21,9 +24,6 @@
             'description': 'Skip the actual reconfiguration but show the diffs',
         },
     ],
-))@
-@(SNIPPET(
-    'property_requeue-job',
 ))@
   </properties>
 @(SNIPPET(

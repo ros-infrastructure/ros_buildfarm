@@ -26,6 +26,9 @@
 ))@
 @[end if]@
 @(SNIPPET(
+    'property_requeue-job',
+))@
+@(SNIPPET(
     'property_parameters-definition',
     parameters=[
         {
@@ -39,9 +42,6 @@
             'description': 'Skip cleanup of catkin build artifacts as well as rosdoc index',
         },
     ],
-))@
-@(SNIPPET(
-    'property_requeue-job',
 ))@
   </properties>
 @(SNIPPET(

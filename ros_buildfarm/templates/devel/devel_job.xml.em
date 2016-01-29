@@ -24,6 +24,9 @@
     priority=job_priority,
 ))@
 @[end if]@
+@(SNIPPET(
+    'property_requeue-job',
+))@
 @{
 parameters = [
     {
@@ -43,9 +46,6 @@ if pull_request:
 @(SNIPPET(
     'property_parameters-definition',
     parameters=parameters,
-))@
-@(SNIPPET(
-    'property_requeue-job',
 ))@
   </properties>
 @[if not pull_request]@
