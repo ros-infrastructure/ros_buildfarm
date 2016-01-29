@@ -9,7 +9,6 @@ from ros_buildfarm.common import get_binarydeb_job_name
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_github_project_url
 from ros_buildfarm.common import get_release_binary_view_name
-from ros_buildfarm.common import get_release_binary_view_prefix
 from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import get_release_source_view_name
 from ros_buildfarm.common import get_release_view_name
@@ -477,14 +476,6 @@ def configure_release_job(
 def configure_release_views(
         jenkins, rosdistro_name, release_build_name, targets, dry_run=False):
     views = []
-
-    # generate view aggregating all binary views
-    if len([t for t in targets if t[2] != 'source']) > 1:
-        view_prefix = get_release_binary_view_prefix(
-            rosdistro_name, release_build_name)
-        views.append(configure_view(
-            jenkins, view_prefix, include_regex='%s_.+__.+' % view_prefix,
-            template_name='dashboard_view_all_jobs.xml.em', dry_run=dry_run))
 
     for os_name, os_code_name, arch in targets:
         view_name = get_release_view_name(
