@@ -1,9 +1,9 @@
 @{import os}@
 <project>
   <actions/>
-  <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'
-@[if disabled]@
-  but disabled since the package is blacklisted (or not whitelisted) in the configuration file@
+  <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'@
+@[if disabled]
+but disabled since the package is blacklisted (or not whitelisted) in the configuration file@
 @[end if]@
 @ </description>
   <keepDependencies>false</keepDependencies>
