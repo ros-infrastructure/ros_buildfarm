@@ -1,13 +1,13 @@
 <project>
   <actions/>
   <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
 @(SNIPPET(
-    'log-rotator',
+    'property_log-rotator',
     days_to_keep=100,
     num_to_keep=100,
 ))@
-  <keepDependencies>false</keepDependencies>
-  <properties>
 @(SNIPPET(
     'property_job-priority',
     priority=30,
