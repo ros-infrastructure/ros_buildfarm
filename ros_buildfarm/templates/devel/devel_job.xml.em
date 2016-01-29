@@ -5,13 +5,13 @@
   but disabled since the package is blacklisted (or not whitelisted) in the configuration file@
 @[end if]@
 @ </description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
 @(SNIPPET(
-    'log-rotator',
+    'property_log-rotator',
     days_to_keep=100,
     num_to_keep=100,
 ))@
-  <keepDependencies>false</keepDependencies>
-  <properties>
 @[if github_url]@
 @(SNIPPET(
     'property_github-project',
