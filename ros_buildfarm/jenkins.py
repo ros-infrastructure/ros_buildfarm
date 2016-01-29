@@ -100,6 +100,8 @@ def configure_view(
         template_name='generic_view.xml.em', dry_run=False):
     view_config = get_view_config(
         template_name, view_name, include_regex=include_regex)
+    if not jenkins:
+        return view_config
     view_type = _get_view_type(view_config)
     create_view = view_name not in jenkins.views
     dry_run_suffix = ' (dry run)' if dry_run else ''

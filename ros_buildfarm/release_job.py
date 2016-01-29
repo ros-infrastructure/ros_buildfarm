@@ -22,7 +22,6 @@ from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.git import get_repository
 from ros_buildfarm.jenkins import configure_job
-from ros_buildfarm.jenkins import configure_management_view
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.jenkins import remove_jobs
@@ -106,22 +105,34 @@ def configure_release_jobs(
             filtered_pkg_names = \
                 set(filtered_pkg_names) - implicitly_ignored_pkg_names
 
-    jenkins = connect(config.jenkins_url)
+    # all further configuration will be handled by either the Jenkins API
+    # or by a generated groovy script
+    jenkins = connect(config.jenkins_url) if groovy_script is None else False
 
-    configure_import_package_job(
+    all_view_configs = {}
+    all_job_configs = {}
+
+    job_name, job_config = configure_import_package_job(
         config_url, rosdistro_name, release_build_name,
         config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
+    if not jenkins:
+        all_job_configs[job_name] = job_config
 
-    configure_sync_packages_to_main_job(
+    job_name, job_config = configure_sync_packages_to_main_job(
         config_url, rosdistro_name, release_build_name,
         config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
+    if not jenkins:
+        all_job_configs[job_name] = job_config
+
     for os_name, os_code_name in platforms:
         for arch in sorted(build_file.targets[os_name][os_code_name]):
-            configure_sync_packages_to_testing_job(
+            job_name, job_config = configure_sync_packages_to_testing_job(
                 config_url, rosdistro_name, release_build_name,
                 os_code_name, arch,
                 config=config, build_file=build_file, jenkins=jenkins,
                 dry_run=dry_run)
+            if not jenkins:
+                all_job_configs[job_name] = job_config
 
     targets = []
     for os_name, os_code_name in platforms:
@@ -129,17 +140,19 @@ def configure_release_jobs(
         for arch in build_file.targets[os_name][os_code_name]:
             targets.append((os_name, os_code_name, arch))
     views = configure_release_views(
-        jenkins, rosdistro_name, release_build_name, targets, dry_run=dry_run)
-
-    if groovy_script is not None:
-        # all further configuration will be handled by the groovy script
-        jenkins = False
+        jenkins, rosdistro_name, release_build_name, targets,
+        dry_run=dry_run)
+    if not jenkins:
+        all_view_configs.update(views)
+    groovy_data = {
+        'dry_run': dry_run,
+        'expected_num_views': len(views),
+    }
 
     other_build_files = [v for k, v in build_files.items() if k != release_build_name]
 
     all_source_job_names = []
     all_binary_job_names = []
-    all_job_configs = {}
     for pkg_name in sorted(pkg_names):
         if whitelist_package_names:
             if pkg_name not in whitelist_package_names:
@@ -197,11 +210,8 @@ def configure_release_jobs(
             except JobValidationError as e:
                 print(e.message, file=sys.stderr)
 
-    groovy_data = {
-        'dry_run': dry_run,
-        'expected_num_jobs': len(all_job_configs),
-        'job_prefixes_and_names': {},
-    }
+    groovy_data['expected_num_jobs'] = len(all_job_configs)
+    groovy_data['job_prefixes_and_names'] = {}
 
     # with an explicit list of packages we don't delete obsolete jobs
     if not whitelist_package_names:
@@ -282,12 +292,14 @@ def configure_release_jobs(
                     source_job_prefix, excluded_job_names)
 
     if groovy_script is not None:
-        print("Writing groovy script '%s' to reconfigure %d jobs" %
-              (groovy_script, len(all_job_configs)))
+        print(
+            "Writing groovy script '%s' to reconfigure %d views and %d jobs" %
+            (groovy_script, len(all_view_configs), len(all_job_configs)))
         content = expand_template(
             'snippet/reconfigure_jobs.groovy.em', groovy_data)
         write_groovy_script_and_configs(
-            groovy_script, content, all_job_configs)
+            groovy_script, content, all_job_configs,
+            view_configs=all_view_configs)
 
 
 def _get_downstream_package_names(pkg_names, dependencies):
@@ -475,7 +487,7 @@ def configure_release_job(
 
 def configure_release_views(
         jenkins, rosdistro_name, release_build_name, targets, dry_run=False):
-    views = []
+    views = {}
 
     for os_name, os_code_name, arch in targets:
         view_name = get_release_view_name(
@@ -487,9 +499,9 @@ def configure_release_views(
         else:
             include_regex = '%s__.+__%s_%s_%s__binary' % \
                 (view_name, os_name, os_code_name, arch)
-        views.append(configure_view(
+        views[view_name] = configure_view(
             jenkins, view_name, include_regex=include_regex,
-            template_name='dashboard_view_all_jobs.xml.em', dry_run=dry_run))
+            template_name='dashboard_view_all_jobs.xml.em', dry_run=dry_run)
 
     return views
 
@@ -673,8 +685,8 @@ def configure_import_package_job(
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_management_view(jenkins, dry_run=dry_run)
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
+    return (job_name, job_config)
 
 
 def get_import_package_job_name(rosdistro_name):
@@ -711,8 +723,8 @@ def configure_sync_packages_to_testing_job(
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_management_view(jenkins, dry_run=dry_run)
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
+    return (job_name, job_config)
 
 
 def get_sync_packages_to_testing_job_name(
@@ -766,8 +778,8 @@ def configure_sync_packages_to_main_job(
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
-        configure_management_view(jenkins, dry_run=dry_run)
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
+    return (job_name, job_config)
 
 
 def get_sync_packages_to_main_job_name(rosdistro_name):
