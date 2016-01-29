@@ -91,7 +91,7 @@ wget --no-verbose https://java-diff-utils.googlecode.com/files/diffutils-1.2.1.j
         ' ' + ' '.join(repository_args) +
         ' --groovy-script /tmp/reconfigure_jobs/reconfigure_jobs.groovy' +
         ' --dockerfile-dir $WORKSPACE/docker_generate_release_jobs' +
-        ' $DRY_RUN_FLAG',
+        ' $DRY_RUN_FLAG' +
         ' $PACKAGE_NAMES_FLAG',
         'echo "# END SECTION"',
         '',
