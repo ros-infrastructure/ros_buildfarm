@@ -23,6 +23,7 @@
     relative_target_dir='ros_buildfarm',
     refspec=None,
 ))@
+  <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
   <assignedNode>master</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>

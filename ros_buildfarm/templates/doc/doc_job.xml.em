@@ -50,6 +50,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     path='catkin_workspace/src/%s' % doc_repo_spec.name,
     git_ssh_credential_id=git_ssh_credential_id,
 ))@
+  <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
   <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>
   <canRoam>false</canRoam>
   <disabled>@('true' if disabled else 'false')</disabled>
