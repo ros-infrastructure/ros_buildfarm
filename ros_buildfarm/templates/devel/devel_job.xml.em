@@ -66,6 +66,7 @@ if pull_request:
     git_ssh_credential_id=git_ssh_credential_id,
 ))@
 @[end if]@
+  <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
   <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>
   <canRoam>false</canRoam>
   <disabled>@('true' if disabled else 'false')</disabled>
