@@ -23,6 +23,9 @@
 ))@
 @[end if]@
 @(SNIPPET(
+    'property_requeue-job',
+))@
+@(SNIPPET(
     'property_parameters-definition',
     parameters=[
         {
@@ -31,9 +34,6 @@
             'description': 'Skip cleanup of build artifacts',
         },
     ],
-))@
-@(SNIPPET(
-    'property_requeue-job',
 ))@
   </properties>
 @(SNIPPET(

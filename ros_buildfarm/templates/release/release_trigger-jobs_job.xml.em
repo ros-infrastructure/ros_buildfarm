@@ -12,6 +12,9 @@
     'property_job-priority',
     priority=40,
 ))@
+@(SNIPPET(
+    'property_requeue-job',
+))@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.ChoiceParameterDefinition>
@@ -28,9 +31,6 @@
         </hudson.model.ChoiceParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
-@(SNIPPET(
-    'property_requeue-job',
-))@
   </properties>
 @(SNIPPET(
     'scm_git',
