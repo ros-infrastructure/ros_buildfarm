@@ -1,4 +1,4 @@
-    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@@1.29.8">
+    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@@1.30">
       <spec/>
       <triggerPhrase/>
       <adminlist/>
