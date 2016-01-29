@@ -254,6 +254,9 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'fi',
     ]),
 ))@
+@(SNIPPET(
+    'builder_system-groovy_extract-warnings',
+))@
   </builders>
   <publishers>
 @[if notify_maintainers]@
