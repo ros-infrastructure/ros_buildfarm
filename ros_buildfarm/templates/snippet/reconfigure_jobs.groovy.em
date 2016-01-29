@@ -8,6 +8,7 @@ import javax.xml.transform.stream.StreamSource
 import jenkins.model.Jenkins
 import org.apache.xml.serialize.OutputFormat
 import org.apache.xml.serialize.XMLSerializer
+import org.xml.sax.InputSource
 
 // job types with their prefix and a list of job names
 // used to remove obsolete jobs with the same prefix which are not part of the list
@@ -33,12 +34,168 @@ add_job_prefixes_and_names_@(job_type)_@(int(i / group_size) + 1)(job_prefixes_a
 @[end for]@
 
 
-def diff_configs(current_config_file, new_config) {
+println '# BEGIN SECTION: Groovy script - reconfigure'
+dry_run = @('true' if dry_run else 'false')
+dry_run_suffix = dry_run ? ' (dry run)' : ''
+
+
+// reconfigure views
+println '# BEGIN SUBSECTION: reconfigure @(expected_num_views) views'
+created_views = 0
+updated_views = 0
+skipped_views = 0
+
+view_config_dir = build.getWorkspace().toString() + '/reconfigure_jobs/view_configs'
+
+def view_dir = new File(view_config_dir)
+def views = view_dir.listFiles()
+views.sort()
+
+if (views.size() != @(expected_num_views)) {
+    println "ERROR: Found different number of view configs than expected!! " + views.size() + " is not @(expected_num_views) as expected."
+    // fail this build
+    throw new AbortException("Wrong number of view configs")
+}
+
+views.each{
+    found_view = false
+    view_name = it.getName()
+    view_config = new File(it.path).getText('UTF-8')
+    for (v in Jenkins.instance.views) {
+        if (v.name != view_name) continue
+        found_view = true
+        output_stream= new ByteArrayOutputStream()
+        v.writeXml(output_stream)
+        reader = new StringReader(output_stream.toString())
+        source = new InputSource(reader)
+
+        diff = diff_configs(source, view_config)
+        if (!diff) {
+            println "Skipped view '" + view_name + "' because the config is the same"
+            skipped_views += 1
+        } else {
+            println "Updating view '" + view_name + "'" + dry_run_suffix
+            println '    <<<'
+            for (line in diff) {
+                println '    ' + line
+            }
+            println '    <<<'
+
+            if (!dry_run) {
+                reader = new StringReader(view_config)
+                source = new StreamSource(reader)
+                v.updateByXml(source)
+            }
+            updated_views += 1
+        }
+        break
+    }
+    if (!found_view) {
+        println "Creating view '" + view_name + "'" + dry_run_suffix
+        if (!dry_run) {
+            stream = new StringBufferInputStream(view_config)
+            View.createViewFromXML(view_name, stream)
+        }
+        created_views += 1
+    }
+}
+
+println 'Created ' + created_views + ' views, updated ' + updated_views + ' views, skipped ' + skipped_views + ' views' + dry_run_suffix + '.'
+println '# END SUBSECTION'
+
+
+// reconfigure jobs
+println '# BEGIN SUBSECTION: reconfigure @(expected_num_jobs) jobs'
+created_jobs = 0
+updated_jobs = 0
+skipped_jobs = 0
+
+job_config_dir = build.getWorkspace().toString() + '/reconfigure_jobs/job_configs'
+
+def job_dir = new File(job_config_dir)
+def jobs = job_dir.listFiles()
+jobs.sort()
+
+if (jobs.size() != @(expected_num_jobs)) {
+    println "ERROR: Found different number of job configs than expected!! " + jobs.size() + " is not @(expected_num_jobs) as expected."
+    // fail this build
+    throw new AbortException("Wrong number of job configs")
+}
+
+jobs.each{
+    found_project = false
+    job_name = it.getName()
+    job_config = new File(it.path).getText('UTF-8')
+    for (p in Jenkins.instance.allItems) {
+        if (p.name != job_name) continue
+        found_project = true
+        job_config_file = p.getConfigFile()
+
+        diff = diff_configs(job_config_file.getFile(), job_config)
+        if (!diff) {
+            println "Skipped job '" + job_name + "' because the config is the same"
+            skipped_jobs += 1
+        } else {
+            println "Updating job '" + job_name + "'" + dry_run_suffix
+            println '    <<<'
+            for (line in diff) {
+                println '    ' + line
+            }
+            println '    <<<'
+
+            if (!dry_run) {
+                reader = new StringReader(job_config)
+                source = new StreamSource(reader)
+                p.updateByXml(source)
+            }
+            updated_jobs += 1
+        }
+        break
+    }
+    if (!found_project) {
+        println "Creating job '" + job_name + "'" + dry_run_suffix
+        if (!dry_run) {
+            stream = new StringBufferInputStream(job_config)
+            Jenkins.instance.createProjectFromXML(job_name, stream)
+        }
+        created_jobs += 1
+    }
+}
+
+println 'Created ' + created_jobs + ' jobs, updated ' + updated_jobs + ' jobs, skipped ' + skipped_jobs + ' jobs' + dry_run_suffix + '.'
+println '# END SUBSECTION'
+
+
+// delete obsolete jobs
+for (item in job_prefixes_and_names) {
+    job_type = item.key
+    job_prefix = item.value.job_prefix
+    job_names = item.value.job_names
+    deleted = 0
+    println "# BEGIN SUBSECTION: Groovy script - delete obsolete '" + job_type + "' jobs"
+    println "Searching for obsolete jobs starting with '" + job_prefix + "'"
+    for (p in Jenkins.instance.allItems) {
+        if (!p.name.startsWith(job_prefix)) continue
+        if (p.name in job_names) continue
+        println "Deleting job '" + p.name + "'" + dry_run_suffix
+        if (!dry_run) {
+            p.delete()
+        }
+        deleted += 1
+    }
+    println 'Deleted ' + deleted + ' jobs' + dry_run_suffix + '.'
+    println '# END SUBSECTION'
+}
+
+println '# END SECTION'
+
+
+def diff_configs(current_config, new_config) {
 
     factory = DocumentBuilderFactory.newInstance()
     builder = factory.newDocumentBuilder()
 
-    current_doc = builder.parse(current_config_file.getFile())
+    current_doc = builder.parse(current_config)
 
     new_config_stream = new StringBufferInputStream(new_config)
     new_doc = builder.parse(new_config_stream)
@@ -80,90 +237,4 @@ def format_xml(doc) {
     serializer = new XMLSerializer(writer, format)
     serializer.serialize(doc)
     return writer.toString()
-}
-
-
-// reconfigure jobs
-println '# BEGIN SECTION: Groovy script - reconfigure jobs'
-dry_run = @('true' if dry_run else 'false')
-dry_run_suffix = dry_run ? ' (dry run)' : ''
-
-println 'Reconfiguring @(expected_num_jobs) jobs...'
-created = 0
-updated = 0
-skipped = 0
-
-config_dir = build.getWorkspace().toString() + '/reconfigure_jobs/configs'
-
-def dir = new File(config_dir)
-def jobs = dir.listFiles()
-jobs.sort()
-
-if (jobs.size() != @(expected_num_jobs)) {
-    println "ERROR: Found different number of job configs than expected!! " + jobs.size() + " is not @(expected_num_jobs) as expected."
-    // fail this build
-    throw new AbortException("Wrong number of job configs")
-}
-
-jobs.each{
-    found_project = false
-    job_name = it.getName()
-    job_config = new File(it.path).getText('UTF-8')
-    for (p in Jenkins.instance.allItems) {
-        if (p.name != job_name) continue
-        found_project = true
-        job_config_file = p.getConfigFile()
-
-        diff = diff_configs(job_config_file, job_config)
-        if (!diff) {
-            println "Skipped job '" + job_name + "' because the config is the same"
-            skipped += 1
-        } else {
-            println "Updating job '" + job_name + "'" + dry_run_suffix
-            println '    <<<'
-            for (line in diff) {
-                println '    ' + line
-            }
-            println '    <<<'
-
-            if (!dry_run) {
-                reader = new StringReader(job_config)
-                source = new StreamSource(reader)
-                p.updateByXml(source)
-            }
-            updated += 1
-        }
-        break
-    }
-    if (!found_project) {
-        println "Creating job '" + job_name + "'" + dry_run_suffix
-        if (!dry_run) {
-            stream = new StringBufferInputStream(job_config)
-            Jenkins.instance.createProjectFromXML(job_name, stream)
-        }
-        created += 1
-    }
-}
-println 'Created ' + created + ' jobs, updated ' + updated + ' jobs, skipped ' + skipped + ' jobs' + dry_run_suffix + '.'
-println '# END SECTION'
-
-// delete obsolete jobs
-for (item in job_prefixes_and_names) {
-    job_type = item.key
-    job_prefix = item.value.job_prefix
-    job_names = item.value.job_names
-    deleted = 0
-    println "# BEGIN SECTION: Groovy script - delete obsolete '" + job_type + "' jobs"
-    println "Searching for obsolete jobs starting with '" + job_prefix + "'"
-    for (p in Jenkins.instance.allItems) {
-        if (!p.name.startsWith(job_prefix)) continue
-        if (p.name in job_names) continue
-        println "Deleting job '" + p.name + "'" + dry_run_suffix
-        if (!dry_run) {
-            p.delete()
-        }
-        deleted += 1
-    }
-    println 'Deleted ' + deleted + ' jobs' + dry_run_suffix + '.'
-    println '# END SECTION'
 }
