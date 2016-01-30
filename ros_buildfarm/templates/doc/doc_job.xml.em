@@ -101,18 +101,22 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     script='\n'.join([
         'echo "# BEGIN SECTION: rsync (most of) the rosdoc_index to slave"',
         'rm -fr rosdoc_index',
-        '# must pass if the rosdistro specific folder does not exist yet',
-        'rsync -e ssh' +
+        'mkdir rosdoc_index',
+        '# since rsync fails if the source folder does not exist we need to check it before',
+        'if ssh %s@%s stat %s/%s > /dev/null 2> /dev/null; then' % \
+          (upload_user, upload_host, upload_root.rstrip('/'), rosdistro_name),
+        '  rsync -e ssh' +
         ' --prune-empty-dirs --quiet --recursive' +
-        ' --include="+ */"' +
-        ' --include="%s/deps/*"' % rosdistro_name +
-        ' --include="%s/hashes/%s"' % (rosdistro_name, doc_repo_spec.name) +
-        ' --include="%s/locations/*"' % rosdistro_name +
-        ' --include="%s/metapackage_deps/*"' % rosdistro_name +
-        ' --include="%s/symbols/*"' % rosdistro_name +
-        ' --exclude="- *"' +
-        ' %s@%s:%s/ $WORKSPACE/rosdoc_index' % \
-          (upload_user, upload_host, upload_root.rstrip('/')),
+        ' --include="*/"' +
+        ' --include="deps/*"' +
+        ' --include="hashes/%s"' % doc_repo_spec.name +
+        ' --include="locations/*"' +
+        ' --include="metapackage_deps/*"' +
+        ' --include="symbols/*"' +
+        ' --exclude="*"' +
+        ' %s@%s:%s/%s $WORKSPACE/rosdoc_index' % \
+          (upload_user, upload_host, upload_root.rstrip('/'), rosdistro_name),
+        'fi',
         'echo "# END SECTION"',
     ]),
 ))@
