@@ -39,6 +39,7 @@ dry_run = @('true' if dry_run else 'false')
 dry_run_suffix = dry_run ? ' (dry run)' : ''
 
 
+@[if vars().get('expected_num_views')]@
 // reconfigure views
 println '# BEGIN SUBSECTION: reconfigure @(expected_num_views) views'
 created_views = 0
@@ -104,6 +105,7 @@ println 'Created ' + created_views + ' views, updated ' + updated_views + ' view
 println '# END SUBSECTION'
 
 
+@[end if]@
 // reconfigure jobs
 println '# BEGIN SUBSECTION: reconfigure @(expected_num_jobs) jobs'
 created_jobs = 0
