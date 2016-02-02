@@ -5,6 +5,7 @@ Changelog for package ros_buildfarm
 Forthcoming
 -----------
 * fix navigation bar in the wiki to list the packages which are part of a meta package (`#193 <https://github.com/ros-infrastructure/ros_buildfarm/pull/193>`_)
+* add check if any upstream project is in progress to prevent notification email for jobs known to fail and being retriggered anyway (`#194 <https://github.com/ros-infrastructure/ros_buildfarm/pull/194>`_)
 
 1.0.0 (2016-02-01)
 ------------------
