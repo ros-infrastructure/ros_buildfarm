@@ -1,7 +1,7 @@
 @(SNIPPET(
     'builder_system-groovy',
     command=
-"""// VERFIY THAT NO RECURSIVE UPSTREAM PROJECT IS BROKEN
+"""// VERFIY THAT NO RECURSIVE UPSTREAM PROJECT IS IN PROGRESS OR BROKEN
 import hudson.model.Result
 
 println ""
@@ -9,6 +9,20 @@ println "# BEGIN SECTION: Check upstream projects"
 println "Verify that no recursive upstream project is broken:"
 
 def check_project(project, depth) {
+  if (project.isBuilding()) {
+    println ""
+    println "  " * depth + "- '" + project.name + "' is currently building"
+    println "  " * depth + "-> aborting build"
+    println ""
+    return false
+  }
+  if (project.isInQueue()) {
+    println ""
+    println "  " * depth + "- '" + project.name + "' is currently queued"
+    println "  " * depth + "-> aborting build"
+    println ""
+    return false
+  }
   if (project.getNextBuildNumber() == 1) {
     println ""
     println "  " * depth + "- '" + project.name + "' has not been built yet"
