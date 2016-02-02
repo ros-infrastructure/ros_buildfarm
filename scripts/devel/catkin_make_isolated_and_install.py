@@ -6,6 +6,7 @@ import sys
 from ros_buildfarm.catkin_workspace import call_catkin_make_isolated
 from ros_buildfarm.catkin_workspace import clean_workspace
 from ros_buildfarm.catkin_workspace import ensure_workspace_exists
+from ros_buildfarm.common import Scope
 
 
 def main(argv=sys.argv[1:]):
@@ -41,11 +42,12 @@ def main(argv=sys.argv[1:]):
         clean_workspace(args.workspace_root)
 
     try:
-        rc = call_catkin_make_isolated(
-            args.rosdistro_name, args.workspace_root,
-            ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1',
-             '--catkin-make-args', '-j1'],
-            parent_result_space=args.parent_result_space)
+        with Scope('SUBSECTION', 'build workspace in isolation and install'):
+            rc = call_catkin_make_isolated(
+                args.rosdistro_name, args.workspace_root,
+                ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1',
+                 '--catkin-make-args', '-j1'],
+                parent_result_space=args.parent_result_space)
     finally:
         if args.clean_after:
             clean_workspace(args.workspace_root)
