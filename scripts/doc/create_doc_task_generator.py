@@ -321,6 +321,9 @@ def main(argv=sys.argv[1:]):
             if pkg.name in rosdoc_index.metapackage_index:
                 data['metapackages'] = rosdoc_index.metapackage_index[pkg.name]
 
+            if pkg.name in rosdoc_index.metapackage_deps:
+                data['packages'] = rosdoc_index.metapackage_deps[pkg.name]
+
             if pkg.name in package_names_with_changelogs:
                 data['has_changelog_rst'] = True
 
