@@ -123,7 +123,7 @@ def main(argv=sys.argv[1:]):
     with Scope('SUBSECTION', 'determine need to run documentation generation'):
         # compare hashes to determine if documentation needs to be regenerated
         current_hashes = {}
-        current_hashes['ros_buildfarm'] = 1  # increase to retrigger doc jobs
+        current_hashes['ros_buildfarm'] = 2  # increase to retrigger doc jobs
         current_hashes['rosdoc_lite'] = get_git_hash(args.rosdoc_lite_dir)
         current_hashes['catkin-sphinx'] = get_git_hash(args.catkin_sphinx_dir)
         repo_dir = os.path.join(
