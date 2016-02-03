@@ -7,6 +7,7 @@ import sys
 from ros_buildfarm.catkin_workspace import call_catkin_make_isolated
 from ros_buildfarm.catkin_workspace import clean_workspace
 from ros_buildfarm.catkin_workspace import ensure_workspace_exists
+from ros_buildfarm.common import Scope
 
 
 def main(argv=sys.argv[1:]):
@@ -43,26 +44,29 @@ def main(argv=sys.argv[1:]):
         clean_workspace(args.workspace_root)
 
     try:
-        test_results_dir = os.path.join(args.workspace_root, 'test_results')
-        arguments = [
-            '--cmake-args', '-DCATKIN_ENABLE_TESTING=1',
-            '-DCATKIN_SKIP_TESTING=0',
-            '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir,
-            '--catkin-make-args', '-j1']
-        rc = call_catkin_make_isolated(
-            args.rosdistro_name, args.workspace_root,
-            arguments,
-            parent_result_space=args.parent_result_space)
-        if not rc:
+        with Scope('SUBSECTION', 'build workspace in isolation'):
+            test_results_dir = os.path.join(args.workspace_root, 'test_results')
+            arguments = [
+                '--cmake-args', '-DCATKIN_ENABLE_TESTING=1',
+                '-DCATKIN_SKIP_TESTING=0',
+                '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir,
+                '--catkin-make-args', '-j1']
             rc = call_catkin_make_isolated(
                 args.rosdistro_name, args.workspace_root,
-                arguments + ['tests'],
+                arguments,
                 parent_result_space=args.parent_result_space)
-            if not rc:
+        if not rc:
+            with Scope('SUBSECTION', 'build tests'):
                 rc = call_catkin_make_isolated(
                     args.rosdistro_name, args.workspace_root,
-                    arguments + ['run_tests'],
+                    arguments + ['tests'],
                     parent_result_space=args.parent_result_space)
+            if not rc:
+                with Scope('SUBSECTION', 'run tests'):
+                    rc = call_catkin_make_isolated(
+                        args.rosdistro_name, args.workspace_root,
+                        arguments + ['run_tests'],
+                        parent_result_space=args.parent_result_space)
     finally:
         if args.clean_after:
             clean_workspace(args.workspace_root)
