@@ -2,7 +2,7 @@
   <name>@view_name</name>
   <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
   <filterExecutors>false</filterExecutors>
-  <filterQueue>true</filterQueue>
+  <filterQueue>@('true' if filter_queue else 'false')</filterQueue>
   <properties class="hudson.model.View$PropertyList"/>
   <jobNames>
     <comparator class="hudson.util.CaseInsensitiveComparator"/>
@@ -21,7 +21,9 @@
     </jenkins.plugins.extracolumns.BuildDescriptionColumn>
     <hudson.views.BuildButtonColumn/>
   </columns>
-  <includeRegex>@(include_regex if include_regex else '')</includeRegex>
+@[if include_regex]@
+  <includeRegex>@include_regex</includeRegex>
+@[end if]@
   <recurse>false</recurse>
   <useCssStyle>false</useCssStyle>
   <includeStdJobList>false</includeStdJobList>

@@ -12,6 +12,7 @@ from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.config.doc_build_file import DOC_TYPE_MANIFEST
 from ros_buildfarm.config.doc_build_file import DOC_TYPE_ROSDOC
+from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
 
 
@@ -52,7 +53,10 @@ def main(argv=sys.argv[1:]):
             'buildfarm index: ' + ', '.join(sorted(invalid_ros_distro_name)))
 
     # try to connect to Jenkins master
-    connect(config.jenkins_url)
+    jenkins = connect(config.jenkins_url)
+
+    configure_view(
+        jenkins, 'Queue', filter_queue=False, dry_run=not args.commit)
 
     generate_check_slaves_job(args.config_url, dry_run=not args.commit)
 
