@@ -24,7 +24,9 @@
       <testResultFormat>1</testResultFormat>
     </jenkins.plugins.extracolumns.TestResultColumn>
   </columns>
-  <includeRegex>@(include_regex if include_regex else '')</includeRegex>
+@[if include_regex]@
+  <includeRegex>@include_regex</includeRegex>
+@[end if]@
   <recurse>false</recurse>
   <useCssStyle>false</useCssStyle>
   <includeStdJobList>false</includeStdJobList>

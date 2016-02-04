@@ -17,10 +17,8 @@
     <hudson.views.LastDurationColumn/>
     <hudson.views.BuildButtonColumn/>
   </columns>
-  <includeRegex>@
 @[if include_regex]@
-@include_regex@
+  <includeRegex>@include_regex</includeRegex>
 @[end if]@
-@ @ </includeRegex>
   <recurse>false</recurse>
 </hudson.model.ListView>
