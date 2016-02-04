@@ -45,7 +45,8 @@ def main(argv=sys.argv[1:]):
 
     try:
         with Scope('SUBSECTION', 'build workspace in isolation'):
-            test_results_dir = os.path.join(args.workspace_root, 'test_results')
+            test_results_dir = os.path.join(
+                args.workspace_root, 'test_results')
             arguments = [
                 '--cmake-args', '-DCATKIN_ENABLE_TESTING=1',
                 '-DCATKIN_SKIP_TESTING=0',
@@ -62,11 +63,16 @@ def main(argv=sys.argv[1:]):
                     arguments + ['tests'],
                     parent_result_space=args.parent_result_space)
             if not rc:
+                # since catkin_make_isolated doesn't provide a custom
+                # environment to run tests this needs to source the devel space
+                # and force a CMake run ro use the new environment
+                devel_space = os.path.join(
+                    args.workspace_root, 'devel_isolated')
                 with Scope('SUBSECTION', 'run tests'):
                     rc = call_catkin_make_isolated(
                         args.rosdistro_name, args.workspace_root,
-                        arguments + ['run_tests'],
-                        parent_result_space=args.parent_result_space)
+                        ['--force-cmake'] + arguments + ['run_tests'],
+                        parent_result_space=devel_space)
     finally:
         if args.clean_after:
             clean_workspace(args.workspace_root)
