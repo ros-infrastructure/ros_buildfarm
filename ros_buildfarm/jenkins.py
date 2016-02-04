@@ -96,10 +96,11 @@ def configure_management_view(jenkins, dry_run=False):
 
 
 def configure_view(
-        jenkins, view_name, include_regex=None,
+        jenkins, view_name, include_regex=None, filter_queue=True,
         template_name='generic_view.xml.em', dry_run=False):
     view_config = get_view_config(
-        template_name, view_name, include_regex=include_regex)
+        template_name, view_name, include_regex=include_regex,
+        filter_queue=filter_queue)
     if not jenkins:
         return view_config
     view_type = _get_view_type(view_config)
@@ -159,11 +160,14 @@ def configure_view(
     return view
 
 
-def get_view_config(template_name, view_name, include_regex=None, data=None):
+def get_view_config(
+        template_name, view_name, include_regex=None, filter_queue=True,
+        data=None):
     view_data = copy.deepcopy(data) if data is not None else {}
     view_data.update({
         'view_name': view_name,
         'include_regex': include_regex,
+        'filter_queue': filter_queue,
     })
     view_config = expand_template(template_name, view_data)
     return view_config
