@@ -60,20 +60,21 @@ def configure_devel_jobs(
     pull_request_view_name = get_devel_view_name(
         rosdistro_name, source_build_name, pull_request=True)
 
+    # all further configuration will be handled by either the Jenkins API
+    # or by a generated groovy script
     from ros_buildfarm.jenkins import connect
-    jenkins = connect(config.jenkins_url)
+    jenkins = connect(config.jenkins_url) if groovy_script is None else False
 
-    views = []
+    view_configs = {}
+    views = {}
     if build_file.test_commits_force is not False:
-        views.append(configure_devel_view(
-            jenkins, devel_view_name, dry_run=dry_run))
+        views[devel_view_name] = configure_devel_view(
+            jenkins, devel_view_name, dry_run=dry_run)
     if build_file.test_pull_requests_force is not False:
-        views.append(configure_devel_view(
-            jenkins, pull_request_view_name, dry_run=dry_run))
-
-    if groovy_script is not None:
-        # all further configuration will be handled by the groovy script
-        jenkins = False
+        views[pull_request_view_name] = configure_devel_view(
+            jenkins, pull_request_view_name, dry_run=dry_run)
+    if not jenkins:
+        view_configs.update(views)
 
     repo_names = dist_file.repositories.keys()
     filtered_repo_names = build_file.filter_repositories(repo_names)
@@ -166,10 +167,12 @@ def configure_devel_jobs(
             jenkins, pull_request_job_prefix, pull_request_job_names,
             dry_run=dry_run)
     else:
-        print("Writing groovy script '%s' to reconfigure %d jobs" %
-              (groovy_script, len(job_configs)))
+        print(
+            "Writing groovy script '%s' to reconfigure %d views and %d jobs" %
+            (groovy_script, len(view_configs), len(job_configs)))
         data = {
             'dry_run': dry_run,
+            'expected_num_views': len(view_configs),
             'expected_num_jobs': len(job_configs),
             'job_prefixes_and_names': {
                 'devel': (devel_job_prefix, devel_job_names),
@@ -179,7 +182,7 @@ def configure_devel_jobs(
         }
         content = expand_template('snippet/reconfigure_jobs.groovy.em', data)
         write_groovy_script_and_configs(
-            groovy_script, content, job_configs)
+            groovy_script, content, job_configs, view_configs=view_configs)
 
 
 def configure_devel_job(
