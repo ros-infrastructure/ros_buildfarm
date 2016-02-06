@@ -1,18 +1,15 @@
 @{
-cmds = []
-for filename in sorted(wrapper_scripts.keys())
-    cmd.append('\\n'.join(wrapper_scripts[filename].replace('\\', '\\\\\\\\').replace('"', '\\"').splitlines())') > wrapper_scripts/@(filename)
+filename = 'git.py'
+wrapper_script = wrapper_scripts[filename]
+cmd = 'echo "%s" > wrapper_scripts/%s' % ('\\n'.join(wrapper_script.replace('\\', '\\\\\\\\').replace('"', '\\"').splitlines()), filename)
 }@
-@[]@
-RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('\\', '\\\\\\\\').replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
-@[end for]@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Embed wrapper scripts"',
         'rm -fr wrapper_scripts',
         'mkdir wrapper_scripts',
-    ] + cmds + [
+        cmd,
         'echo "# END SECTION"',
     ]),
 ))@
