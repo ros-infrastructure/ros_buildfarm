@@ -46,6 +46,7 @@
 @(SNIPPET(
     'builder_shell_clone-ros-buildfarm',
     ros_buildfarm_repository=ros_buildfarm_repository,
+    wrapper_scripts=wrapper_scripts,
 ))@
 @(SNIPPET(
     'builder_shell',
@@ -60,7 +61,7 @@ repo_name = os.path.splitext(os.path.basename(repo_url))[0]
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone %s"' % repo_name,
-        'python3 -u /tmp/wrapper_scripts/git.py clone --depth 1 %s $WORKSPACE/repositories/%s' % (repo_url, repo_name),
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 %s $WORKSPACE/repositories/%s' % (repo_url, repo_name),
         'git -C $WORKSPACE/repositories/%s log -n 1' % repo_name,
         'rm -fr $WORKSPACE/repositories/%s/.git' % repo_name,
         'echo "# END SECTION"',

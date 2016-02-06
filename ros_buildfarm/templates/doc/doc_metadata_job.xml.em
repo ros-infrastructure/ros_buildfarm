@@ -46,6 +46,7 @@
 @(SNIPPET(
     'builder_shell_clone-ros-buildfarm',
     ros_buildfarm_repository=ros_buildfarm_repository,
+    wrapper_scripts=wrapper_scripts,
 ))@
 @(SNIPPET(
     'builder_shell_key-files',

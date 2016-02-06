@@ -75,6 +75,7 @@ def expand_template(template_name, data, options=None):
         tz_offset = time.strftime('%z', now)
         data['timezone'] = '%s%s%s' % \
             (tz_name, '+' if tz_offset[0] == '-' else '-', tz_offset[1:3])
+        data['wrapper_scripts'] = get_wrapper_scripts()
 
         _add_helper_functions(data)
 
@@ -133,7 +134,17 @@ def _expand_template(template_name, **kwargs):
 
 def create_dockerfile(template_name, data, dockerfile_dir):
     data['template_name'] = template_name
+    data['wrapper_scripts'] = get_wrapper_scripts()
+    content = expand_template(template_name, data)
+    dockerfile = os.path.join(dockerfile_dir, 'Dockerfile')
+    print("Generating Dockerfile '%s':" % dockerfile)
+    for line in content.splitlines():
+        print(' ', line)
+    with open(dockerfile, 'w') as h:
+        h.write(content)
 
+
+def get_wrapper_scripts():
     wrapper_scripts = {}
     wrapper_script_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
@@ -145,12 +156,4 @@ def create_dockerfile(template_name, data, dockerfile_dir):
         with open(abs_file_path, 'r') as h:
             content = h.read()
             wrapper_scripts[filename] = content
-    data['wrapper_scripts'] = wrapper_scripts
-
-    content = expand_template(template_name, data)
-    dockerfile = os.path.join(dockerfile_dir, 'Dockerfile')
-    print("Generating Dockerfile '%s':" % dockerfile)
-    for line in content.splitlines():
-        print(' ', line)
-    with open(dockerfile, 'w') as h:
-        h.write(content)
+    return wrapper_scripts
