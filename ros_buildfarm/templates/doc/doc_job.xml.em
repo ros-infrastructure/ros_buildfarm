@@ -76,20 +76,21 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @(SNIPPET(
     'builder_shell_clone-ros-buildfarm',
     ros_buildfarm_repository=ros_buildfarm_repository,
+    wrapper_scripts=wrapper_scripts,
 ))@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone rosdoc_lite"',
         'rm -fr rosdoc_lite',
-        'python3 -u /tmp/wrapper_scripts/git.py clone --depth 1 https://github.com/ros-infrastructure/rosdoc_lite.git rosdoc_lite',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 https://github.com/ros-infrastructure/rosdoc_lite.git rosdoc_lite',
         'git -C rosdoc_lite log -n 1',
         'rm -fr rosdoc_lite/doc',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Clone catkin-sphinx"',
         'rm -fr catkin-sphinx',
-        'python3 -u /tmp/wrapper_scripts/git.py clone --depth 1 https://github.com/ros-infrastructure/catkin-sphinx catkin-sphinx',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 https://github.com/ros-infrastructure/catkin-sphinx catkin-sphinx',
         'git -C catkin-sphinx log -n 1',
         'echo "# END SECTION"',
     ]),

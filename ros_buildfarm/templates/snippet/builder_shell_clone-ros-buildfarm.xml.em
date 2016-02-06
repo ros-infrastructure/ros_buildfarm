@@ -1,15 +1,33 @@
 @{
+cmds = []
+for filename in sorted(wrapper_scripts.keys())
+    cmd.append('\\n'.join(wrapper_scripts[filename].replace('\\', '\\\\\\\\').replace('"', '\\"').splitlines())') > wrapper_scripts/@(filename)
+}@
+@[]@
+RUN echo "@('\\n'.join(wrapper_scripts[filename].replace('\\', '\\\\\\\\').replace('"', '\\"').splitlines()))" > /tmp/wrapper_scripts/@(filename)
+@[end for]@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: Embed wrapper scripts"',
+        'rm -fr wrapper_scripts',
+        'mkdir wrapper_scripts',
+    ] + cmds + [
+        'echo "# END SECTION"',
+    ]),
+))@
+@{
 import re
 cmds = []
 if ros_buildfarm_repository.version and re.match('[0-9a-f]{40}', ros_buildfarm_repository.version):
     # cannot create a shallow clone for hashes
     cmds += [
-        'python3 -u /tmp/wrapper_scripts/git.py clone %s ros_buildfarm' % ros_buildfarm_repository.url,
+        'python3 -u wrapper_scripts/git.py clone %s ros_buildfarm' % ros_buildfarm_repository.url,
         'git -C ros_buildfarm checkout %s' % ros_buildfarm_repository.version,
     ]
 else:
     # shallow clone when version is a branch or tag
-    cmds.append('python3 -u /tmp/wrapper_scripts/git.py clone --depth 1 %s%s ros_buildfarm' % ('-b %s ' % ros_buildfarm_repository.version if ros_buildfarm_repository.version else '', ros_buildfarm_repository.url))
+    cmds.append('python3 -u wrapper_scripts/git.py clone --depth 1 %s%s ros_buildfarm' % ('-b %s ' % ros_buildfarm_repository.version if ros_buildfarm_repository.version else '', ros_buildfarm_repository.url))
 }@
 @(SNIPPET(
     'builder_shell',
