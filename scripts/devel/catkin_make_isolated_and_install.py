@@ -43,11 +43,14 @@ def main(argv=sys.argv[1:]):
 
     try:
         with Scope('SUBSECTION', 'build workspace in isolation and install'):
+            parent_result_spaces = None
+            if args.parent_result_space:
+                parent_result_spaces = [args.parent_result_space]
             rc = call_catkin_make_isolated(
                 args.rosdistro_name, args.workspace_root,
                 ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1',
                  '--catkin-make-args', '-j1'],
-                parent_result_space=args.parent_result_space)
+                parent_result_spaces=parent_result_spaces)
     finally:
         if args.clean_after:
             clean_workspace(args.workspace_root)
