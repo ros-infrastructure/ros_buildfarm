@@ -100,11 +100,11 @@ class RosdocIndex(object):
     def _build_metapackage_index(self):
         self.metapackage_index = {}
         for pkg_name, deps in self.metapackage_deps.items():
-            for dep in deps:
+            for dep in deps or []:
                 self.metapackage_index.setdefault(dep, []).append(pkg_name)
 
     def _build_reverse_deps(self):
         self.reverse_deps = {}
         for pkg_name, deps in self.forward_deps.items():
-            for dep in deps:
+            for dep in deps or []:
                 self.reverse_deps.setdefault(dep, []).append(pkg_name)
