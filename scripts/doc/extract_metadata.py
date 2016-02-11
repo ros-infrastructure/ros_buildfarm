@@ -64,15 +64,17 @@ def main(argv=sys.argv[1:]):
             continue
 
         # add devel job urls
-        build_files = {}
-        for build_name in source_build_files.keys():
-            build_files[build_name] = source_build_files[build_name]
         rel_pkg = distribution.release_packages[pkg_name]
         repo_name = rel_pkg.repository_name
-        devel_job_urls = get_devel_job_urls(
-            config.jenkins_url, build_files, args.rosdistro_name, repo_name)
-        if devel_job_urls:
-            data['devel_jobs'] = devel_job_urls
+        repo = distribution.repositories[repo_name]
+        if repo.source_repository and repo.source_repository.version:
+            build_files = {}
+            for build_name in source_build_files.keys():
+                build_files[build_name] = source_build_files[build_name]
+            devel_job_urls = get_devel_job_urls(
+                config.jenkins_url, build_files, args.rosdistro_name, repo_name)
+            if devel_job_urls:
+                data['devel_jobs'] = devel_job_urls
 
         # add release job urls
         build_files = {}
