@@ -279,9 +279,9 @@ def main(argv=sys.argv[1:]):
         repo_names = build_file.filter_repositories([args.repository_name])
         if not repo_names:
             continue
-        source_dist_file = get_distribution_file_matching_build_file(
+        matching_dist_file = get_distribution_file_matching_build_file(
             index, args.rosdistro_name, build_file)
-        repo = source_dist_file.repositories[args.repository_name]
+        repo = matching_dist_file.repositories[args.repository_name]
         if not repo.source_repository:
             continue
         if not repo.source_repository.version:
@@ -294,9 +294,6 @@ def main(argv=sys.argv[1:]):
                 not build_file.test_commits_default:
             continue
         used_source_build_names.append(source_build_name)
-
-    # TODO this should reuse the logic from the job generation
-    used_release_build_names = release_build_files.keys()
 
     vcs_type, vcs_version, vcs_url = args.vcs_info.split(' ', 2)
 
@@ -363,6 +360,21 @@ def main(argv=sys.argv[1:]):
                 args.repository_name)
             if devel_job_urls:
                 data['devel_jobs'] = devel_job_urls
+
+            # TODO this should reuse the logic from the job generation
+            used_release_build_names = []
+            for release_build_name, build_file in release_build_files.items():
+                filtered_pkg_names = build_file.filter_packages([pkg.name])
+                if not filtered_pkg_names:
+                    continue
+                matching_dist_file = get_distribution_file_matching_build_file(
+                    index, args.rosdistro_name, build_file)
+                repo = matching_dist_file.repositories[args.repository_name]
+                if not repo.release_repository:
+                    continue
+                if not repo.release_repository.version:
+                    continue
+                used_release_build_names.append(release_build_name)
 
             # add release job urls
             build_files = {}
