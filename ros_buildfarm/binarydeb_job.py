@@ -43,8 +43,12 @@ def get_sourcedeb(
             (package_version, ', '.join(debian_package_versions))
 
         # download sourcedeb
+        apt_get_script = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            'scripts', 'wrapper', 'apt-get.py')
         cmd = [
-            'apt-get', 'source', '--download-only', '--only-source',
+            sys.executable, apt_get_script,
+            'source', '--download-only', '--only-source',
             debian_package_name + '=' + debian_package_versions[0]]
         print("Invoking '%s'" % ' '.join(cmd))
         subprocess.check_call(cmd, cwd=sourcedeb_dir)
