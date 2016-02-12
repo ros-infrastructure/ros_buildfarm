@@ -15,7 +15,7 @@ def main(argv=sys.argv[1:]):
     ]
 
     command = argv[0]
-    if command == 'update':
+    if command in ['update', 'source']:
         rc, _, _ = call_apt_get_repeatedly(
             argv, known_error_strings, max_tries)
         return rc
