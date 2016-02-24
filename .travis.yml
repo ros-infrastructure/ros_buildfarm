@@ -1,6 +1,7 @@
 language: python
 python:
   - "3.4"
+sudo: false
 install:
   - pip install catkin-pkg PyYAML rosdistro
   - pip install coverage nose pep8 pyflakes
