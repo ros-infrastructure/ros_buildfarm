@@ -1,6 +1,7 @@
 import difflib.DiffUtils
 import groovy.io.FileType
 import hudson.AbortException
+import hudson.model.View
 import java.io.StringBufferInputStream
 import java.io.StringWriter
 import javax.xml.parsers.DocumentBuilderFactory
