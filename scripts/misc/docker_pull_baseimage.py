@@ -12,7 +12,10 @@ def main(argv=sys.argv[1:]):
     base_image = get_base_image_from_dockerfile(dockerfile)
     print(base_image)
 
-    known_error_strings = ['Server error: Status 502 while fetching image layer']
+    known_error_strings = [
+        'Error pulling image',
+        'Server error: Status 502 while fetching image layer',
+    ]
     max_tries = 10
     rc, _ = call_docker_pull_repeatedly(base_image, known_error_strings, max_tries)
     return rc
