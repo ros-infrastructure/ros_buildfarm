@@ -89,11 +89,13 @@ def call_apt_get(argv, known_error_strings):
     print("Invoking '%s'" % ' '.join(cmd))
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    lines = []
     while True:
         line = proc.stdout.readline()
         if not line:
             break
         line = line.decode()
+        lines.append(line)
         sys.stdout.write(line)
         for known_error_string in known_error_strings:
             if known_error_string in line:
@@ -101,6 +103,14 @@ def call_apt_get(argv, known_error_strings):
                     known_error_conditions.append(known_error_string)
     proc.wait()
     rc = proc.returncode
+    if rc and not known_error_conditions:
+        print('Invocation failed without any known error condition, '
+              'printing all lines to debug known error detection:')
+        for index, line in enumerate(lines):
+            print(' ', index + 1, "'%s'" % line)
+        print('Neither of the following known errors was detected:')
+        for index, known_error_string in enumerate(known_error_strings):
+            print(' ', index + 1, "'%s'" % known_error_string)
     return rc, known_error_conditions
 
 
