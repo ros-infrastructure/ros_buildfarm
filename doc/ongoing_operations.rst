@@ -21,6 +21,10 @@ Manually sync packages
 The *source* and *binary* are imported into the ``building`` repository and if
 the sync criteria is fulfilled automatically synced to the ``testing``
 repository.
+The maintainer should revisit the configured sync threshold to adjust it when
+the number of released packages changes over the lifetime of a distribution.
+The threshold should be set at a level below which a sync should not happen
+into testing as there has been a major regression during the build.
 
 It is the responsibility of the release manager to trigger a sync of packages
 from the ``testing`` to the ``main`` repository.
