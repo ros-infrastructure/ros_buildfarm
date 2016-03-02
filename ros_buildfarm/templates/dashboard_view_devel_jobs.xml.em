@@ -23,6 +23,7 @@
     <jenkins.plugins.extracolumns.TestResultColumn plugin="extra-columns@@1.16">
       <testResultFormat>1</testResultFormat>
     </jenkins.plugins.extracolumns.TestResultColumn>
+    <hudson.plugins.warnings.WarningsColumn plugin="warnings@@4.52"/>
   </columns>
 @[if include_regex]@
   <includeRegex>@include_regex</includeRegex>
