@@ -225,6 +225,10 @@ if pull_request:
   </builders>
   <publishers>
 @(SNIPPET(
+    'publisher_warnings',
+    unstable_threshold='',
+))@
+@(SNIPPET(
     'publisher_xunit',
     pattern='catkin_workspace/test_results/**/*.xml',
 ))@
