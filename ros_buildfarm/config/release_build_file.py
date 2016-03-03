@@ -87,11 +87,11 @@ class ReleaseBuildFile(BuildFile):
                 int(data['jenkins_source_job_timeout'])
 
         self.package_whitelist = []
-        if 'package_whitelist' in data:
+        if 'package_whitelist' in data and data['package_whitelist']:
             self.package_whitelist = data['package_whitelist']
             assert isinstance(self.package_whitelist, list)
         self.package_blacklist = []
-        if 'package_blacklist' in data:
+        if 'package_blacklist' in data and data['package_blacklist']:
             self.package_blacklist = data['package_blacklist']
             assert isinstance(self.package_blacklist, list)
         self.skip_ignored_packages = None
@@ -104,7 +104,7 @@ class ReleaseBuildFile(BuildFile):
         if 'sync' in data:
             if 'package_count' in data['sync']:
                 self.sync_package_count = int(data['sync']['package_count'])
-            if 'packages' in data['sync']:
+            if 'packages' in data['sync'] and data['sync']['packages']:
                 self.sync_packages = data['sync']['packages']
                 assert isinstance(self.sync_packages, list)
 
