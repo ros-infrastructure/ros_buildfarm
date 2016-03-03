@@ -241,6 +241,8 @@ def get_short_os_code_name(os_code_name):
         'trusty': 'T',
         'utopic': 'U',
         'vivid': 'V',
+        'wily': 'W',
+        'xenial': 'X',
     }
     return os_code_name_mappings.get(os_code_name, os_code_name)
 
