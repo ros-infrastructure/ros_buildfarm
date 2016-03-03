@@ -58,15 +58,17 @@ def configure_doc_jobs(
 
     doc_view_name = get_doc_view_name(rosdistro_name, doc_build_name)
 
+    # all further configuration will be handled by either the Jenkins API
+    # or by a generated groovy script
     from ros_buildfarm.jenkins import connect
-    jenkins = connect(config.jenkins_url)
+    jenkins = connect(config.jenkins_url) if groovy_script is None else False
 
-    views = []
-    views.append(configure_doc_view(jenkins, doc_view_name, dry_run=dry_run))
-
-    if groovy_script is not None:
-        # all further configuration will be handled by the groovy script
-        jenkins = False
+    view_configs = {}
+    views = {}
+    views[doc_view_name] = configure_doc_view(
+        jenkins, doc_view_name, dry_run=dry_run)
+    if not jenkins:
+        view_configs.update(views)
 
     repo_names = dist_file.repositories.keys()
     filtered_repo_names = build_file.filter_repositories(repo_names)
@@ -113,10 +115,12 @@ def configure_doc_jobs(
         print('Removing obsolete doc jobs')
         remove_jobs(jenkins, job_prefix, job_names, dry_run=dry_run)
     else:
-        print("Writing groovy script '%s' to reconfigure %d jobs" %
-              (groovy_script, len(job_configs)))
+        print(
+            "Writing groovy script '%s' to reconfigure %d views and %d jobs" %
+            (groovy_script, len(view_configs), len(job_configs)))
         data = {
             'dry_run': dry_run,
+            'expected_num_views': len(view_configs),
             'expected_num_jobs': len(job_configs),
             'job_prefixes_and_names': {
                 'doc': (job_prefix, job_names),
@@ -124,7 +128,7 @@ def configure_doc_jobs(
         }
         content = expand_template('snippet/reconfigure_jobs.groovy.em', data)
         write_groovy_script_and_configs(
-            groovy_script, content, job_configs)
+            groovy_script, content, job_configs, view_configs=view_configs)
 
 
 def configure_doc_job(
