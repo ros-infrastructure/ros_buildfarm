@@ -29,5 +29,15 @@
         <noTags>false</noTags>
         <reference/>
       </hudson.plugins.git.extensions.impl.CloneOption>
+@[if vars().get('merge_branch')]@
+      <hudson.plugins.git.extensions.impl.PreBuildMerge>
+        <options>
+          <mergeRemote>origin</mergeRemote>
+          <mergeTarget>@merge_branch</mergeTarget>
+          <mergeStrategy>default</mergeStrategy>
+          <fastForwardMode>FF</fastForwardMode>
+        </options>
+      </hudson.plugins.git.extensions.impl.PreBuildMerge>
+@[end if]@
     </extensions>
   </scm>

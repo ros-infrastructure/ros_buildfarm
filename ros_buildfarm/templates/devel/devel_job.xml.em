@@ -64,6 +64,7 @@ if pull_request:
     branch_name='${sha1}',
     relative_target_dir='catkin_workspace/src/%s' % source_repo_spec.name,
     git_ssh_credential_id=git_ssh_credential_id,
+    merge_branch=source_repo_spec.version,
 ))@
 @[end if]@
   <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
