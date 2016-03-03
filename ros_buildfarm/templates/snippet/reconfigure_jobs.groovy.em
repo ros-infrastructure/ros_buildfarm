@@ -96,7 +96,8 @@ views.each{
         println "Creating view '" + view_name + "'" + dry_run_suffix
         if (!dry_run) {
             stream = new StringBufferInputStream(view_config)
-            View.createViewFromXML(view_name, stream)
+            view = View.createViewFromXML(view_name, stream)
+            Jenkins.instance.addView(view)
         }
         created_views += 1
     }
