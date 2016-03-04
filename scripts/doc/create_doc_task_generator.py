@@ -417,106 +417,110 @@ def main(argv=sys.argv[1:]):
             with open(cmakelist_file, 'w') as h:
                 h.write(content)
 
-    # initialize rosdep view
-    context = initialize_resolver(
-        args.rosdistro_name, args.os_name, args.os_code_name)
+    with Scope(
+        'SUBSECTION',
+        'determine dependencies and generate Dockerfile'
+    ):
+        # initialize rosdep view
+        context = initialize_resolver(
+            args.rosdistro_name, args.os_name, args.os_code_name)
 
-    apt_cache = Cache()
+        apt_cache = Cache()
 
-    debian_pkg_names = [
-        'build-essential',
-        'openssh-client',
-        'python3',
-        'python3-yaml',
-        'rsync',
-        # the following are required by rosdoc_lite
-        'doxygen',
-        'python-catkin-pkg',
-        'python-epydoc',
-        'python-kitchen',
-        'python-rospkg',
-        'python-sphinx',
-        'python-yaml',
-        # since catkin is not a run dependency but provides the setup files
-        get_debian_package_name(args.rosdistro_name, 'catkin'),
-        # rosdoc_lite does not work without genmsg being importable
-        get_debian_package_name(args.rosdistro_name, 'genmsg'),
-    ]
-    if 'actionlib_msgs' in pkg_names:
-        # to document actions in other packages in the same repository
-        debian_pkg_names.append(
-            get_debian_package_name(args.rosdistro_name, 'actionlib_msgs'))
-    print('Always install the following generic dependencies:')
-    for debian_pkg_name in sorted(debian_pkg_names):
-        print('  -', debian_pkg_name)
+        debian_pkg_names = [
+            'build-essential',
+            'openssh-client',
+            'python3',
+            'python3-yaml',
+            'rsync',
+            # the following are required by rosdoc_lite
+            'doxygen',
+            'python-catkin-pkg',
+            'python-epydoc',
+            'python-kitchen',
+            'python-rospkg',
+            'python-sphinx',
+            'python-yaml',
+            # since catkin is not a run dependency but provides the setup files
+            get_debian_package_name(args.rosdistro_name, 'catkin'),
+            # rosdoc_lite does not work without genmsg being importable
+            get_debian_package_name(args.rosdistro_name, 'genmsg'),
+        ]
+        if 'actionlib_msgs' in pkg_names:
+            # to document actions in other packages in the same repository
+            debian_pkg_names.append(
+                get_debian_package_name(args.rosdistro_name, 'actionlib_msgs'))
+        print('Always install the following generic dependencies:')
+        for debian_pkg_name in sorted(debian_pkg_names):
+            print('  -', debian_pkg_name)
 
-    debian_pkg_versions = {}
+        debian_pkg_versions = {}
 
-    # get build, run and doc dependencies and map them to binary packages
-    depends = get_dependencies(
-        pkgs.values(), 'build, run and doc', _get_build_run_doc_dependencies)
-    debian_pkg_names_depends = resolve_names(depends, **context)
-    debian_pkg_names_depends -= set(debian_pkg_names)
-    debian_pkg_names += order_dependencies(debian_pkg_names_depends)
-    missing_debian_pkg_names = []
-    for debian_pkg_name in debian_pkg_names:
-        try:
-            debian_pkg_versions.update(
-                get_binary_package_versions(apt_cache, [debian_pkg_name]))
-        except KeyError:
-            missing_debian_pkg_names.append(debian_pkg_name)
-    if missing_debian_pkg_names:
-        # we allow missing dependencies to support basic documentation
-        # of packages which use not released dependencies
-        print('# BEGIN SUBSECTION: MISSING DEPENDENCIES might result in failing build')
-        for debian_pkg_name in missing_debian_pkg_names:
-            print("Could not find apt package '%s', skipping dependency" %
-                  debian_pkg_name)
-            debian_pkg_names.remove(debian_pkg_name)
-        print('# END SUBSECTION')
+        # get build, run and doc dependencies and map them to binary packages
+        depends = get_dependencies(
+            pkgs.values(), 'build, run and doc', _get_build_run_doc_dependencies)
+        debian_pkg_names_depends = resolve_names(depends, **context)
+        debian_pkg_names_depends -= set(debian_pkg_names)
+        debian_pkg_names += order_dependencies(debian_pkg_names_depends)
+        missing_debian_pkg_names = []
+        for debian_pkg_name in debian_pkg_names:
+            try:
+                debian_pkg_versions.update(
+                    get_binary_package_versions(apt_cache, [debian_pkg_name]))
+            except KeyError:
+                missing_debian_pkg_names.append(debian_pkg_name)
+        if missing_debian_pkg_names:
+            # we allow missing dependencies to support basic documentation
+            # of packages which use not released dependencies
+            print('# BEGIN SUBSECTION: MISSING DEPENDENCIES might result in failing build')
+            for debian_pkg_name in missing_debian_pkg_names:
+                print("Could not find apt package '%s', skipping dependency" %
+                      debian_pkg_name)
+                debian_pkg_names.remove(debian_pkg_name)
+            print('# END SUBSECTION')
 
-    build_files = get_doc_build_files(config, args.rosdistro_name)
-    build_file = build_files[args.doc_build_name]
+        build_files = get_doc_build_files(config, args.rosdistro_name)
+        build_file = build_files[args.doc_build_name]
 
-    rosdoc_config_files = {}
-    for pkg_path, pkg in pkgs.items():
-        abs_pkg_path = os.path.join(source_space, pkg_path)
+        rosdoc_config_files = {}
+        for pkg_path, pkg in pkgs.items():
+            abs_pkg_path = os.path.join(source_space, pkg_path)
 
-        rosdoc_exports = [
-            e.attributes['content'] for e in pkg.exports
-            if e.tagname == 'rosdoc' and 'content' in e.attributes]
-        prefix = '${prefix}'
-        rosdoc_config_file = rosdoc_exports[-1] \
-            if rosdoc_exports else '%s/rosdoc.yaml' % prefix
-        rosdoc_config_file = rosdoc_config_file.replace(prefix, abs_pkg_path)
-        if os.path.isfile(rosdoc_config_file):
-            rosdoc_config_files[pkg.name] = rosdoc_config_file
+            rosdoc_exports = [
+                e.attributes['content'] for e in pkg.exports
+                if e.tagname == 'rosdoc' and 'content' in e.attributes]
+            prefix = '${prefix}'
+            rosdoc_config_file = rosdoc_exports[-1] \
+                if rosdoc_exports else '%s/rosdoc.yaml' % prefix
+            rosdoc_config_file = rosdoc_config_file.replace(prefix, abs_pkg_path)
+            if os.path.isfile(rosdoc_config_file):
+                rosdoc_config_files[pkg.name] = rosdoc_config_file
 
-    # generate Dockerfile
-    data = {
-        'os_name': args.os_name,
-        'os_code_name': args.os_code_name,
-        'arch': args.arch,
+        # generate Dockerfile
+        data = {
+            'os_name': args.os_name,
+            'os_code_name': args.os_code_name,
+            'arch': args.arch,
 
-        'distribution_repository_urls': args.distribution_repository_urls,
-        'distribution_repository_keys': get_distribution_repository_keys(
-            args.distribution_repository_urls,
-            args.distribution_repository_key_files),
+            'distribution_repository_urls': args.distribution_repository_urls,
+            'distribution_repository_keys': get_distribution_repository_keys(
+                args.distribution_repository_urls,
+                args.distribution_repository_key_files),
 
-        'rosdistro_name': args.rosdistro_name,
+            'rosdistro_name': args.rosdistro_name,
 
-        'uid': get_user_id(),
+            'uid': get_user_id(),
 
-        'dependencies': debian_pkg_names,
-        'dependency_versions': debian_pkg_versions,
+            'dependencies': debian_pkg_names,
+            'dependency_versions': debian_pkg_versions,
 
-        'canonical_base_url': build_file.canonical_base_url,
+            'canonical_base_url': build_file.canonical_base_url,
 
-        'ordered_pkg_tuples': ordered_pkg_tuples,
-        'rosdoc_config_files': rosdoc_config_files,
-    }
-    create_dockerfile(
-        'doc/doc_task.Dockerfile.em', data, args.dockerfile_dir)
+            'ordered_pkg_tuples': ordered_pkg_tuples,
+            'rosdoc_config_files': rosdoc_config_files,
+        }
+        create_dockerfile(
+            'doc/doc_task.Dockerfile.em', data, args.dockerfile_dir)
 
 
 def get_hash(path):
