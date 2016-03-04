@@ -5,8 +5,10 @@ RUN curl https://www.samba.org/ftp/ccache/ccache-3.2.4.tar.bz2 -o /tmp/ccache.ta
 RUN tar -xf /tmp/ccache.tar.gz --directory /tmp
 RUN mkdir -p /usr/lib/ccache
 RUN cd /tmp/ccache-3.2.4 && ./configure && make && make install
-RUN ln -s /usr/local/bin/ccache /usr/lib/ccache/gcc
+RUN ln -s /usr/local/bin/ccache /usr/lib/ccache/c++
 RUN ln -s /usr/local/bin/ccache /usr/lib/ccache/cc
+RUN ln -s /usr/local/bin/ccache /usr/lib/ccache/g++
+RUN ln -s /usr/local/bin/ccache /usr/lib/ccache/gcc
 @[else]@
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y ccache
 @[end if]@
