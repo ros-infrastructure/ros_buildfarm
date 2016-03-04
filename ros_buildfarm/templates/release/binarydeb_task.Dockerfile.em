@@ -45,7 +45,11 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y ccache
+@(TEMPLATE(
+    'snippet/install_ccache.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+))@
 
 @(TEMPLATE(
     'snippet/install_dependencies.Dockerfile.em',
