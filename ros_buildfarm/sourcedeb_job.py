@@ -68,7 +68,7 @@ def _get_source_tag(
 
 def build_sourcedeb(sources_dir):
     cmd = [
-        'git', 'buildpackage',
+        'gbp', 'buildpackage',
         '--git-ignore-new',
         '--git-ignore-branch',
         # dpkg-buildpackage args
