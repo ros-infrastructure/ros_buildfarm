@@ -1,6 +1,6 @@
 # generated from @template_name
 
-FROM ubuntu:trusty
+FROM ubuntu:@os_code_name
 MAINTAINER Dirk Thomas dthomas+buildfarm@@osrfoundation.org
 
 VOLUME ["/var/cache/apt/archives"]
@@ -16,7 +16,7 @@ RUN useradd -u @uid -m buildfarm
     'snippet/add_distribution_repositories.Dockerfile.em',
     distribution_repository_keys=distribution_repository_keys,
     distribution_repository_urls=distribution_repository_urls,
-    os_code_name='trusty',
+    os_code_name=os_code_name,
     add_source=False,
 ))@
 
@@ -27,6 +27,12 @@ RUN useradd -u @uid -m buildfarm
 
 # automatic invalidation once every day
 RUN echo "@today_str"
+
+@(TEMPLATE(
+    'snippet/install_python3.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+))@
 
 RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y git mercurial python3-apt python3-catkin-pkg python3-empy python3-rosdep python3-rosdistro subversion
 
