@@ -107,6 +107,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         '  rsync -e ssh --stats' +
         ' --prune-empty-dirs --recursive' +
         ' --include="*/"' +
+        ' --include="api/*/manifest.yaml"' +
         ' --include="deps/*"' +
         ' --include="hashes/%s"' % doc_repo_spec.name +
         ' --include="locations/*"' +
@@ -234,6 +235,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     config_name='docs',
     remote_directory=rosdistro_name,
     source_files=[
+        'generated_documentation/api/**/manifest.yaml',
         'generated_documentation/api/**/stamp',
         'generated_documentation/changelogs/**/*.html',
         'generated_documentation/symbols/*.tag',
