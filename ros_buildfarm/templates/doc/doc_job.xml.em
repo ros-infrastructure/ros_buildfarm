@@ -104,8 +104,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         '# since rsync fails if the source folder does not exist we need to check it before',
         'if ssh %s@%s stat %s/%s > /dev/null 2> /dev/null; then' % \
           (upload_user, upload_host, upload_root.rstrip('/'), rosdistro_name),
-        '  rsync -e ssh' +
-        ' --prune-empty-dirs --quiet --recursive' +
+        '  rsync -e ssh --stats' +
+        ' --prune-empty-dirs --recursive' +
         ' --include="*/"' +
         ' --include="deps/*"' +
         ' --include="hashes/%s"' % doc_repo_spec.name +
@@ -252,7 +252,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         '  echo "# BEGIN SECTION: rsync API documentation to server"',
         '  cd $WORKSPACE/generated_documentation/api_rosdoc',
         '  for pkg_name in $(find . -maxdepth 1 -mindepth 1 -type d); do',
-        '    rsync -e ssh -r --delete $pkg_name %s@%s:%s' % \
+        '    rsync -e ssh --stats -r --delete $pkg_name %s@%s:%s' % \
           (upload_user, upload_host, os.path.join(upload_root, rosdistro_name, 'api')),
         '  done',
         '  echo "# END SECTION"',
