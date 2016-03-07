@@ -42,23 +42,39 @@ def call_apt_get_update_and_install(
             command = 'install'
 
         if command == 'install':
+            # any call is considered a try
+            tries += 1
             known_error_strings_redo_update = [
                 'Size mismatch', 'maybe run apt-get update']
             rc, known_error_conditions = \
                 call_apt_get(
                     [command] + install_argv,
                     known_error_strings + known_error_strings_redo_update)
-            if rc == 0 or not (
-                    set(known_error_conditions) &
-                    set(known_error_strings_redo_update)):
-                # abort if install was successful
-                # or failed with an unknown errror condition
+            if not known_error_conditions:
+                # break the loop and return the reported rc
                 break
+            # known errors are always interpreted as a non-zero rc
+            if rc == 0:
+                rc = 1
+            # check if update needs to be rerun
+            if (
+                set(known_error_conditions) &
+                set(known_error_strings_redo_update)
+            ):
+                command = 'update'
+                print("'apt-get install' failed and likely requires " +
+                      "'apt-get update' to run again")
+                # retry with update command
+                continue
 
-            # restart with update command
-            print("'apt-get install' failed and likely requires 'apt-get " +
-                  "update' to run again")
-            command = 'update'
+            print('Invocation failed due to the following known error '
+                  'conditions: ' + ', '.join(known_error_conditions))
+            if tries < max_tries:
+                sleep_time = 5
+                print("Reinvoke 'apt-get install' after sleeping %s seconds" %
+                      sleep_time)
+                sleep(sleep_time)
+                # retry install command
 
     return rc
 
@@ -72,8 +88,12 @@ def call_apt_get_repeatedly(argv, known_error_strings, max_tries, offset=0):
                   (command, i + offset, max_tries + offset, sleep_time))
             sleep(sleep_time)
         rc, known_error_conditions = call_apt_get(argv, known_error_strings)
-        if rc == 0 or not known_error_conditions:
+        if not known_error_conditions:
+            # break the loop and return the reported rc
             break
+        # known errors are always interpreted as a non-zero rc
+        if rc == 0:
+            rc = 1
         print('')
         print('Invocation failed due to the following known error conditions: '
               ', '.join(known_error_conditions))
