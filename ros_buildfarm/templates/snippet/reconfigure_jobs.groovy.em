@@ -81,7 +81,7 @@ views.each{
             for (line in diff) {
                 println '    ' + line
             }
-            println '    <<<'
+            println '    >>>'
 
             if (!dry_run) {
                 reader = new StringReader(view_config)
@@ -126,6 +126,43 @@ if (jobs.size() != @(expected_num_jobs)) {
     throw new AbortException("Wrong number of job configs")
 }
 
+def mergePullRequestData(job_name, current_file, job_config) {
+    factory = DocumentBuilderFactory.newInstance()
+    builder = factory.newDocumentBuilder()
+    document = builder.parse(current_file)
+
+    nodelist = document.getElementsByTagName("triggers")
+    if (nodelist.getLength() != 1) return job_config
+    trigger_node = nodelist.item(0)
+
+    nodelist = trigger_node.getElementsByTagName("org.jenkinsci.plugins.ghprb.GhprbTrigger")
+    if (nodelist.getLength() != 1) return job_config
+    ghprb_trigger_node = nodelist.item(0)
+
+    nodelist = ghprb_trigger_node.getElementsByTagName("pullRequests")
+    if (nodelist.getLength() != 1) return job_config
+    pull_requests_node = nodelist.item(0)
+
+    builder2 = factory.newDocumentBuilder()
+    stream = new StringBufferInputStream(job_config)
+    document2 = builder2.parse(stream)
+
+    nodelist = document2.getElementsByTagName("triggers")
+    if (nodelist.getLength() != 1) return job_config
+    trigger_node = nodelist.item(0)
+
+    nodelist = trigger_node.getElementsByTagName("org.jenkinsci.plugins.ghprb.GhprbTrigger")
+    if (nodelist.getLength() != 1) return job_config
+    ghprb_trigger_node = nodelist.item(0)
+
+    pull_requests_node = document2.importNode(pull_requests_node, true)
+    ghprb_trigger_node.appendChild(pull_requests_node)
+
+    println "Merged configuration with existing pull request job '" + job_name + "' to maintain pull request information"
+
+    return format_xml(document2)
+}
+
 jobs.each{
     found_project = false
     job_name = it.getName()
@@ -134,6 +171,10 @@ jobs.each{
         if (p.name != job_name) continue
         found_project = true
         job_config_file = p.getConfigFile()
+
+        if (p.name.substring(1, 5) == 'pr__') {
+            job_config = mergePullRequestData(job_name, job_config_file.getFile(), job_config)
+        }
 
         diff = diff_configs(job_config_file.getFile(), job_config)
         if (!diff) {
@@ -145,7 +186,7 @@ jobs.each{
             for (line in diff) {
                 println '    ' + line
             }
-            println '    <<<'
+            println '    >>>'
 
             if (!dry_run) {
                 reader = new StringReader(job_config)
