@@ -10,6 +10,8 @@ from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import \
     get_repositories_and_script_generating_key_files
 from ros_buildfarm.config import get_index
+from ros_buildfarm.config import get_release_build_files
+from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.git import get_repository
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_management_view
@@ -42,6 +44,14 @@ def get_job_config(args, config):
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config=config)
 
+    reconfigure_job_names = []
+    build_files = get_release_build_files(config, args.rosdistro_name)
+    for release_build_name in sorted(build_files.keys()):
+        group_name = get_release_job_prefix(
+            args.rosdistro_name, release_build_name)
+        job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
+        reconfigure_job_names.append(job_name)
+
     job_data = copy.deepcopy(args.__dict__)
     job_data.update({
         'ros_buildfarm_repository': get_repository(),
@@ -51,6 +61,8 @@ def get_job_config(args, config):
         'rosdistro_index_url': config.rosdistro_index_url,
 
         'repository_args': repository_args,
+
+        'reconfigure_job_names': reconfigure_job_names,
 
         'notification_emails':
         config.distributions[args.rosdistro_name]['notification_emails'],
