@@ -97,6 +97,10 @@
     remove_prefix='rosdistro_cache',
 ))@
 @(SNIPPET(
+    'publisher_groovy-postbuild_reconfigure-updated-packages',
+    reconfigure_job_names=reconfigure_job_names,
+))@
+@(SNIPPET(
     'publisher_mailer',
     recipients=notification_emails,
     dynamic_recipients=[],
