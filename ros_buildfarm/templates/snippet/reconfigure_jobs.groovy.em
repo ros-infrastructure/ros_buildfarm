@@ -194,6 +194,7 @@ jobs.each{
                 reader = new StringReader(job_config)
                 source = new StreamSource(reader)
                 p.updateByXml(source)
+                p.save()
             }
             updated_jobs += 1
         }
@@ -203,7 +204,8 @@ jobs.each{
         println "Creating job '" + job_name + "'" + dry_run_suffix
         if (!dry_run) {
             stream = new StringBufferInputStream(job_config)
-            Jenkins.instance.createProjectFromXML(job_name, stream)
+            p = Jenkins.instance.createProjectFromXML(job_name, stream)
+            p.save()
         }
         created_jobs += 1
     }
