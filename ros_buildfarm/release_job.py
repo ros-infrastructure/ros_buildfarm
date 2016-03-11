@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+from collections import OrderedDict
 import sys
 
 from rosdistro import get_distribution_cache
@@ -71,11 +72,7 @@ def configure_release_jobs(
         for pkg_name in sorted(explicitly_ignored_pkg_names):
             print('  -', pkg_name)
 
-    dist_cache = None
-    if build_file.notify_maintainers or \
-            build_file.abi_incompatibility_assumed or \
-            explicitly_ignored_pkg_names:
-        dist_cache = get_distribution_cache(index, rosdistro_name)
+    dist_cache = get_distribution_cache(index, rosdistro_name)
 
     if explicitly_ignored_pkg_names:
         # get direct dependencies from distro cache for each package
@@ -110,7 +107,7 @@ def configure_release_jobs(
     jenkins = connect(config.jenkins_url) if groovy_script is None else False
 
     all_view_configs = {}
-    all_job_configs = {}
+    all_job_configs = OrderedDict()
 
     job_name, job_config = configure_import_package_job(
         config_url, rosdistro_name, release_build_name,
@@ -149,11 +146,21 @@ def configure_release_jobs(
         'expected_num_views': len(views),
     }
 
+    # binary jobs must be generated in topological order
+    from catkin_pkg.package import parse_package_string
+    from catkin_pkg.topological_order import topological_order_packages
+    pkgs = {}
+    for pkg_name in pkg_names:
+        pkg_xml = dist_cache.release_package_xmls[pkg_name]
+        pkg = parse_package_string(pkg_xml)
+        pkgs[pkg_name] = pkg
+    ordered_pkg_tuples = topological_order_packages(pkgs)
+
     other_build_files = [v for k, v in build_files.items() if k != release_build_name]
 
     all_source_job_names = []
     all_binary_job_names = []
-    for pkg_name in sorted(pkg_names):
+    for pkg_name in [p.name for _, p in ordered_pkg_tuples]:
         if whitelist_package_names:
             if pkg_name not in whitelist_package_names:
                 print("Skipping package '%s' not in the explicitly passed list" %
@@ -206,7 +213,10 @@ def configure_release_jobs(
                 if groovy_script is not None:
                     print('Configuration for jobs: ' +
                           ', '.join(source_job_names + binary_job_names))
-                    all_job_configs.update(job_configs)
+                    for source_job_name in source_job_names:
+                        all_job_configs[source_job_name] = job_configs[source_job_name]
+                    for binary_job_name in binary_job_names:
+                        all_job_configs[binary_job_name] = job_configs[binary_job_name]
             except JobValidationError as e:
                 print(e.message, file=sys.stderr)
 

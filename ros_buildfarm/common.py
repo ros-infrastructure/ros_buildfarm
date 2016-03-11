@@ -396,7 +396,13 @@ def write_groovy_script_and_configs(
     job_config_dir = os.path.join(os.path.dirname(filename), 'job_configs')
     if not os.path.isdir(job_config_dir):
         os.makedirs(job_config_dir)
+    # prefix each config file with a serial number to maintain order
+    format_str = '%0' + str(len(str(len(job_configs)))) + 'd'
+    i = 0
     for config_name, config_body in job_configs.items():
-        config_filename = os.path.join(job_config_dir, config_name)
+        i += 1
+        config_filename = os.path.join(
+            job_config_dir,
+            format_str % i + ' ' + config_name)
         with open(config_filename, 'w') as config_fh:
             config_fh.write(config_body)
