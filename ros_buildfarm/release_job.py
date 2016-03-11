@@ -151,6 +151,10 @@ def configure_release_jobs(
     from catkin_pkg.topological_order import topological_order_packages
     pkgs = {}
     for pkg_name in pkg_names:
+        if pkg_name not in dist_cache.release_package_xmls:
+            print("Skipping package '%s': no released package.xml in cache" %
+                  (pkg_name), file=sys.stderr)
+            continue
         pkg_xml = dist_cache.release_package_xmls[pkg_name]
         pkg = parse_package_string(pkg_xml)
         pkgs[pkg_name] = pkg
