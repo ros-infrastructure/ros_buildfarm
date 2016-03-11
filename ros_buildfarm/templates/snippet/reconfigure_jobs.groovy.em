@@ -166,6 +166,8 @@ def mergePullRequestData(job_name, current_file, job_config) {
 jobs.each{
     found_project = false
     job_name = it.getName()
+    // remove leading serial number
+    job_name = job_name[job_name.indexOf(' ') + 1..-1]
     job_config = new File(it.path).getText('UTF-8')
     for (p in Jenkins.instance.allItems) {
         if (p.name != job_name) continue

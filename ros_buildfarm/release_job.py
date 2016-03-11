@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+from collections import OrderedDict
 import sys
 
 from rosdistro import get_distribution_cache
@@ -110,7 +111,7 @@ def configure_release_jobs(
     jenkins = connect(config.jenkins_url) if groovy_script is None else False
 
     all_view_configs = {}
-    all_job_configs = {}
+    all_job_configs = OrderedDict()
 
     job_name, job_config = configure_import_package_job(
         config_url, rosdistro_name, release_build_name,
@@ -206,7 +207,10 @@ def configure_release_jobs(
                 if groovy_script is not None:
                     print('Configuration for jobs: ' +
                           ', '.join(source_job_names + binary_job_names))
-                    all_job_configs.update(job_configs)
+                    for source_job_name in source_job_names:
+                        all_job_configs[source_job_name] = job_configs[source_job_name]
+                    for binary_job_name in binary_job_names:
+                        all_job_configs[binary_job_name] = job_configs[binary_job_name]
             except JobValidationError as e:
                 print(e.message, file=sys.stderr)
 
