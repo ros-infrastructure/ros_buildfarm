@@ -11,7 +11,6 @@ import time
 import yaml
 
 from catkin_pkg.packages import find_packages
-from catkin_pkg.topological_order import topological_order_packages
 from rosdep2 import create_default_installer_context
 from rosdep2.catkin_support import get_catkin_view
 from rosdep2.catkin_support import resolve_for_os
@@ -37,6 +36,7 @@ from ros_buildfarm.common import get_doc_job_url
 from ros_buildfarm.common import get_release_job_urls
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.common import Scope
+from ros_buildfarm.common import topological_order_packages
 from ros_buildfarm.config import get_distribution_file as \
     get_distribution_file_matching_build_file
 from ros_buildfarm.config import get_doc_build_files

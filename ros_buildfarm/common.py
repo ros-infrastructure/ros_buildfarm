@@ -406,3 +406,34 @@ def write_groovy_script_and_configs(
             format_str % i + ' ' + config_name)
         with open(config_filename, 'w') as config_fh:
             config_fh.write(config_body)
+
+
+def topological_order_packages(packages):
+    """
+    Order packages topologically.
+
+    First returning packages which have message generators and then
+    the rest based on all direct depends and indirect recursive run_depends.
+
+    :param packages: A dict mapping relative paths to ``Package`` objects ``dict``
+    :returns: A list of tuples containing the relative path and a ``Package`` object, ``list``
+    """
+    from catkin_pkg.topological_order import _PackageDecorator
+    from catkin_pkg.topological_order import _sort_decorated_packages
+
+    decorators_by_name = {}
+    for path, package in packages.items():
+        decorators_by_name[package.name] = _PackageDecorator(package, path)
+
+    # calculate transitive dependencies
+    for decorator in decorators_by_name.values():
+        decorator.depends_for_topological_order = set([])
+        all_depends = \
+            decorator.package.build_depends + decorator.package.buildtool_depends + \
+            decorator.package.run_depends + decorator.package.test_depends
+        # skip external dependencies, meaning names that are not known packages
+        for name in [d.name for d in all_depends if d.name in decorators_by_name.keys()]:
+            decorators_by_name[name]._add_recursive_run_depends(
+                decorators_by_name, decorator.depends_for_topological_order)
+
+    return _sort_decorated_packages(decorators_by_name)

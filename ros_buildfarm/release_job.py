@@ -148,7 +148,7 @@ def configure_release_jobs(
 
     # binary jobs must be generated in topological order
     from catkin_pkg.package import parse_package_string
-    from catkin_pkg.topological_order import topological_order_packages
+    from ros_buildfarm.common import topological_order_packages
     pkgs = {}
     for pkg_name in pkg_names:
         if pkg_name not in dist_cache.release_package_xmls:
