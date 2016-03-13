@@ -571,7 +571,7 @@ def _get_sourcedeb_job_config(
                 if other_build_file.notify_maintainers:
                     notify_maintainers = True
 
-    maintainer_emails = get_maintainer_emails(dist_cache, repo_name) \
+    maintainer_emails = _get_maintainer_emails(dist_cache, pkg_name) \
         if notify_maintainers \
         else set([])
 
@@ -634,7 +634,7 @@ def _get_binarydeb_job_config(
     sync_to_testing_job_name = [get_sync_packages_to_testing_job_name(
         rosdistro_name, os_code_name, arch)]
 
-    maintainer_emails = get_maintainer_emails(dist_cache, repo_name) \
+    maintainer_emails = _get_maintainer_emails(dist_cache, pkg_name) \
         if build_file.notify_maintainers \
         else set([])
 
@@ -812,18 +812,13 @@ def _get_sync_packages_to_main_job_config(rosdistro_name, build_file):
     return job_config
 
 
-def get_maintainer_emails(dist_cache, repo_name):
+def _get_maintainer_emails(dist_cache, pkg_name):
     maintainer_emails = set([])
-    if dist_cache and repo_name in dist_cache.distribution_file.repositories:
+    # add maintainers listed in latest release to recipients
+    if dist_cache and pkg_name in dist_cache.release_package_xmls:
         from catkin_pkg.package import parse_package_string
-        # add maintainers listed in latest release to recipients
-        repo = dist_cache.distribution_file.repositories[repo_name]
-        if repo.release_repository:
-            for pkg_name in repo.release_repository.package_names:
-                if pkg_name not in dist_cache.release_package_xmls:
-                    continue
-                pkg_xml = dist_cache.release_package_xmls[pkg_name]
-                pkg = parse_package_string(pkg_xml)
-                for m in pkg.maintainers:
-                    maintainer_emails.add(m.email)
+        pkg_xml = dist_cache.release_package_xmls[pkg_name]
+        pkg = parse_package_string(pkg_xml)
+        for m in pkg.maintainers:
+            maintainer_emails.add(m.email)
     return maintainer_emails
