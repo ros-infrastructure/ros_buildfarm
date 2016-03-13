@@ -15,12 +15,15 @@ def main(argv=sys.argv[1:]):
     ]
 
     command = argv[0]
-    if command in ['update', 'source']:
+    if command == 'update':
         rc, _, _ = call_apt_get_repeatedly(
             argv, known_error_strings, max_tries)
         return rc
     elif command == 'update-and-install':
         return call_apt_get_update_and_install(
+            argv[1:], known_error_strings, max_tries)
+    elif command == 'source':
+        return call_apt_get_source(
             argv[1:], known_error_strings, max_tries)
     else:
         assert "Command '%s' not implemented" % command
@@ -75,6 +78,45 @@ def call_apt_get_update_and_install(
                       sleep_time)
                 sleep(sleep_time)
                 # retry install command
+
+    return rc
+
+
+def call_apt_get_source(source_argv, known_error_strings, max_tries):
+    tries = 0
+    command = 'source'
+    while tries < max_tries:
+        if command == 'update':
+            rc, _, tries = call_apt_get_repeatedly(
+                [command], known_error_strings, max_tries - tries,
+                offset=tries)
+            if rc != 0:
+                # abort if update was unsuccessful even after retries
+                break
+            # move on to the source command if update was successful
+            command = 'source'
+
+        if command == 'source':
+            # any call is considered a try
+            tries += 1
+            rc, known_error_conditions = \
+                call_apt_get([command] + source_argv, known_error_strings)
+            if not known_error_conditions:
+                # break the loop and return the reported rc
+                break
+            # known errors are always interpreted as a non-zero rc
+            if rc == 0:
+                rc = 1
+
+            print('Invocation failed due to the following known error '
+                  'conditions: ' + ', '.join(known_error_conditions))
+            if tries < max_tries:
+                sleep_time = 5
+                print("Reinvoke 'apt-get update' after sleeping %s seconds" %
+                      sleep_time)
+                sleep(sleep_time)
+                command = 'update'
+                # retry update command
 
     return rc
 
