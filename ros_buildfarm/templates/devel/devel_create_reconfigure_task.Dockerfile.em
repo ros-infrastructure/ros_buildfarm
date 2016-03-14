@@ -6,9 +6,13 @@ MAINTAINER Dirk Thomas dthomas+buildfarm@@osrfoundation.org
 VOLUME ["/var/cache/apt/archives"]
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV TZ @timezone
+
+@(TEMPLATE(
+    'snippet/setup_locale.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+    timezone=timezone,
+))@
 
 RUN useradd -u @uid -m buildfarm
 
