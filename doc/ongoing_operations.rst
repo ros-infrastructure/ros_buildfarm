@@ -59,23 +59,17 @@ No arguments means import from the default location(s).
 We do this for things like new releases of the core ROS python tools.
 
 
-Tearing down a distribution
----------------------------
+Perform action on a set of jobs
+-------------------------------
 
-As time goes on, of if you make a mistake, sometimes you want to do bulk actions like delete all jobs from a distro.
-If you remove a distribution or architecture the reconfigure scripts will not automatically remove them from the build farm.
-To make this happen we recommend using some simple scripts in the groovy console.
+Sometimes you want to do bulk actions like disable or delete all jobs of a specific distro or architecture.
+We recommend running a Groovy scripts using the script console.
 
-To run a groovy script:
- * Log in to jenkins
- * Click on "Manage Jenkins"
- * Click on "Script Console"
- * Paste the script into that console, and click "Run"
-
-For example to delete all jobs starting with a prefix use the following. 
+The following Groovy script is a good starting point for various actions:
 
 .. code-block:: groovy
 
+   import hudson.model.Cause
    import java.util.regex.Matcher
    import java.util.regex.Pattern
 
@@ -84,11 +78,29 @@ For example to delete all jobs starting with a prefix use the following.
    for (p in Jenkins.instance.projects) {
      if (!pattern.matcher(p.name).matches()) continue
      println(p.name)
-     //p.delete()
+
+     // p.disable()
+     // p.enable()
+
+     // p.scheduleBuild(new Cause.UserIdCause())
+
+     // p.delete()
    }
 
-This script will print only, uncomment the p.delete() to remove it too.
-Also if you're deleting a whole architecture or distro, remember to remove the views at the top.
-If you have a view selected, there is a "Delete View" button on the left sidebar.
+This script will print only the matched job names.
+You can uncomment any of the actions to disable, enable, trigger or delete these projects.
 
-There are also methods ``disable()`` ``enable()`` which can be useful as well.
+To run a Groovy script:
+ * Log in to Jenkins
+ * Click on "Manage Jenkins"
+ * Click on "Script Console"
+ * Paste the script into that console, and click "Run"
+
+Remove a distribution / architecture
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When you remove a distribution or architecture the reconfigure scripts won't automatically remove the obsolete jobs.
+You can use the above Groovy script to delete obsolete jobs.
+
+The associated views as well as the management jobs need to be removed manually.
+If you have a job or view selected, there is a "Delete *" button on the left sidebar.
