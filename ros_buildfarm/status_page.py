@@ -37,7 +37,7 @@ def build_release_status_page(
     # get targets
     targets = []
     for os_name in sorted(build_file.targets.keys()):
-        if os_name != 'ubuntu':
+        if os_name not in ['debian', 'ubuntu']:
             continue
         for os_code_name in sorted(build_file.targets[os_name].keys()):
             targets.append(Target(os_name, os_code_name, 'source'))
