@@ -58,3 +58,37 @@ To do this run the `_import_upstream` job again without arguments.
 No arguments means import from the default location(s).
 We do this for things like new releases of the core ROS python tools.
 
+
+Tearing down a distribution
+---------------------------
+
+As time goes on, of if you make a mistake, sometimes you want to do bulk actions like delete all jobs from a distro.
+If you remove a distribution or architecture the reconfigure scripts will not automatically remove them from the build farm.
+To make this happen we recommend using some simple scripts in the groovy console.
+
+To run a groovy script:
+ * Log in to jenkins
+ * Click on "Manage Jenkins"
+ * Click on "Script Console"
+ * Paste the script into that console, and click "Run"
+
+For example to delete all jobs starting with a prefix use the following. 
+
+.. code-block:: groovy
+
+   import java.util.regex.Matcher
+   import java.util.regex.Pattern
+
+   pattern = Pattern.compile("MYPREFIX.+")
+
+   for (p in Jenkins.instance.projects) {
+     if (!pattern.matcher(p.name).matches()) continue
+     println(p.name)
+     //p.delete()
+   }
+
+This script will print only, uncomment the p.delete() to remove it too.
+Also if you're deleting a whole architecture or distro, remember to remove the views at the top.
+If you have a view selected, there is a "Delete View" button on the left sidebar.
+
+There are also methods ``disable()`` ``enable()`` which can be useful as well.
