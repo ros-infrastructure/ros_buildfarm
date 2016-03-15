@@ -58,3 +58,49 @@ To do this run the `_import_upstream` job again without arguments.
 No arguments means import from the default location(s).
 We do this for things like new releases of the core ROS python tools.
 
+
+Perform action on a set of jobs
+-------------------------------
+
+Sometimes you want to do bulk actions like disable or delete all jobs of a specific distro or architecture.
+We recommend running a Groovy scripts using the script console.
+
+The following Groovy script is a good starting point for various actions:
+
+.. code-block:: groovy
+
+   import hudson.model.Cause
+   import java.util.regex.Matcher
+   import java.util.regex.Pattern
+
+   pattern = Pattern.compile("MYPREFIX.+")
+
+   for (p in Jenkins.instance.projects) {
+     if (!pattern.matcher(p.name).matches()) continue
+     println(p.name)
+
+     // p.disable()
+     // p.enable()
+
+     // p.scheduleBuild(new Cause.UserIdCause())
+
+     // p.delete()
+   }
+
+This script will print only the matched job names.
+You can uncomment any of the actions to disable, enable, trigger or delete these projects.
+
+To run a Groovy script:
+ * Log in to Jenkins
+ * Click on "Manage Jenkins"
+ * Click on "Script Console"
+ * Paste the script into that console, and click "Run"
+
+Remove a distribution / architecture
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When you remove a distribution or architecture the reconfigure scripts won't automatically remove the obsolete jobs.
+You can use the above Groovy script to delete obsolete jobs.
+
+The associated views as well as the management jobs need to be removed manually.
+If you have a job or view selected, there is a "Delete *" button on the left sidebar.
