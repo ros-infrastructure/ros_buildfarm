@@ -108,6 +108,7 @@ def main(argv=sys.argv[1:]):
             'source_scripts': source_scripts,
             'binary_scripts': binary_scripts},
         options={BANGPATH_OPT: False})
+    value = value.replace('python3', sys.executable)
     print(value)
 
 

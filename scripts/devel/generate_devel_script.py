@@ -66,6 +66,7 @@ def main(argv=sys.argv[1:]):
             'scms': hook.scms,
             'scripts': hook.scripts},
         options={BANGPATH_OPT: False})
+    value = value.replace('python3', sys.executable)
     print(value)
 
 
