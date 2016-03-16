@@ -38,7 +38,7 @@ def main(argv=sys.argv[1:]):
     class IncludeHook(Hook):
 
         def __init__(self):
-            super(IncludeHook, self).__init__()
+            Hook.__init__(self)
             self.scripts = []
 
         def beforeFile(self, *args, **kwargs):
