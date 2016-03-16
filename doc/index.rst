@@ -86,12 +86,16 @@ Run jobs locally
 Some of the job types can be easily run locally.
 This allows to reproduce the behavior of the build farm locally, eases
 debugging, and shortens the round-trip time for testing.
+It also means that you can run any of these jobs anywhere, e.g. on Travis.
 
 * `release jobs#run-the-release-job-locally <jobs/release_jobs.rst#run-the-release-job-locally>`_
   generate binary packages
 
 * `devel jobs#run-the-devel-job-locally <jobs/devel_jobs.rst#run-the-devel-job-locally>`_
   build and test ROS repositories
+
+  * `devel jobs#run-the-devel-job-on-travis <jobs/devel_jobs.rst#run-the-devel-job-on-travis>`_
+    build and test ROS repositories using Travis
 
 * `doc jobs#run-the-doc-job-locally <jobs/doc_jobs.rst#run-the-doc-job-locally>`_
   generate the documentation for ROS repositories
