@@ -10,6 +10,8 @@ import sys
 import time
 from xml.sax.saxutils import escape
 
+from ros_buildfarm.common import find_executable
+
 template_prefix_path = [os.path.abspath(os.path.dirname(__file__))]
 
 interpreter = None
@@ -146,13 +148,13 @@ def create_dockerfile(template_name, data, dockerfile_dir):
 
 def get_wrapper_scripts():
     wrapper_scripts = {}
-    wrapper_script_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-        'scripts', 'wrapper')
-    for filename in os.listdir(wrapper_script_path):
-        if not filename.endswith('.py'):
-            continue
-        abs_file_path = os.path.join(wrapper_script_path, filename)
+    for filename in ['apt-get.py', 'git.py']:
+        abs_file_path = find_executable(filename)
+        if not abs_file_path:
+            wrapper_script_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+                'scripts', 'wrapper')
+            abs_file_path = os.path.join(wrapper_script_path, filename)
         with open(abs_file_path, 'r') as h:
             content = h.read()
             wrapper_scripts[filename] = content
