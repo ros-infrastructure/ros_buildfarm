@@ -33,7 +33,7 @@ def main(argv=sys.argv[1:]):
     class IncludeHook(Hook):
 
         def __init__(self):
-            super(IncludeHook, self).__init__()
+            Hook.__init__(self)
             self.scms = []
             self.scripts = []
 
@@ -66,6 +66,7 @@ def main(argv=sys.argv[1:]):
             'scms': hook.scms,
             'scripts': hook.scripts},
         options={BANGPATH_OPT: False})
+    value = value.replace('python3', sys.executable)
     print(value)
 
 
