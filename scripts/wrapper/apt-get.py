@@ -45,7 +45,10 @@ def call_apt_get_update_and_install(
             # any call is considered a try
             tries += 1
             known_error_strings_redo_update = [
-                'Size mismatch', 'maybe run apt-get update']
+                'Size mismatch',
+                'maybe run apt-get update',
+                'The following packages cannot be authenticated!',
+                ]
             rc, known_error_conditions = \
                 call_apt_get(
                     [command] + install_argv,
