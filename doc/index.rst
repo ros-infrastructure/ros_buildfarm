@@ -105,9 +105,9 @@ Another job type can be used locally which is not offered on the build farm.
 * `prerelease jobs <jobs/prerelease_jobs.rst>`_ build and test ROS
   repositories as well as build and test released ROS packages depending on them
 
-  Optimization
-  ------------
+Optimization
+------------
 
-  If you are going to be running one or more jobs on any machine we recommend `using squid-in-a-can<https://github.com/jpetazzo/squid-in-a-can>`_ to cache downloads.
-  It can greatly speed up download times and saves a lot of bandwidth.
-  It's used by all our developers as well as on all the build machines.
+If you are going to be running one or more jobs on any machine we recommend `using squid-in-a-can <https://github.com/jpetazzo/squid-in-a-can>`_ to cache downloads.
+It can greatly speed up download times and saves a lot of bandwidth.
+It's used by all our developers as well as on all the build machines.
