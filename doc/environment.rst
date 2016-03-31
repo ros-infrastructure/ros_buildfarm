@@ -54,6 +54,9 @@ Create the `.ini <https://en.wikipedia.org/wiki/INI_file>`_ file ``~/.buildfarm/
 
 You can put multiple separate sections for different hosts into the configuration file as well as use a section ``[DEFAULT]`` which is being used if no host specific section is found.
 
+Instead of putting the plain password in this configuration you can use the *API token* of your Jenkins user.
+To get the API token (or change it) go to the *configure* page of your Jenkins user (http://YOUR-JENKINS/me/configure).
+
 If you are using your GitHub account to log in to Jenkins you can use a token instead of your plain text password (see the `GitHub help <https://help.github.com/articles/creating-an-access-token-for-command-line-use/>`_ on how to create a token).
 
 Using a different version of ros_buildfarm
