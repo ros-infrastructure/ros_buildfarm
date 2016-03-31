@@ -46,14 +46,15 @@ Provide credentials for Jenkins master
 
 To allow ``ros_buildfarm`` to configure any jobs on the Jenkins master it
 requires credentials.
-
-Create the file ``~/.buildfarm/jenkins.ini`` containing your credentials to log
-in to the Jenkins master, e.g.::
+Create the `.ini <https://en.wikipedia.org/wiki/INI_file>`_ file ``~/.buildfarm/jenkins.ini`` containing your credentials to log in to the Jenkins master, e.g.::
 
   [http://jenkins-instance-url.example.com:8080]
   username=admin
   password=changeme
 
+You can put multiple separate sections for different hosts into the configuration file as well as use a section ``[DEFAULT]`` which is being used if no host specific section is found.
+
+If you are using your GitHub account to log in to Jenkins you can use a token instead of your plain text password (see the `GitHub help <https://help.github.com/articles/creating-an-access-token-for-command-line-use/>`_ on how to create a token).
 
 Using a different version of ros_buildfarm
 ------------------------------------------
