@@ -130,8 +130,8 @@ def call_apt_get(argv, known_error_strings):
         print('Invocation failed without any known error condition, '
               'printing all lines to debug known error detection:')
         for index, line in enumerate(lines):
-            print(' ', index + 1, "'%s'" % line)
-        print('Neither of the following known errors was detected:')
+            print(' ', index + 1, "'%s'" % line.rstrip('\n\r'))
+        print('None of the following known errors were detected:')
         for index, known_error_string in enumerate(known_error_strings):
             print(' ', index + 1, "'%s'" % known_error_string)
     return rc, known_error_conditions
