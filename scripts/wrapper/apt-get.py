@@ -48,6 +48,7 @@ def call_apt_get_update_and_install(
                 'Size mismatch',
                 'maybe run apt-get update',
                 'The following packages cannot be authenticated!',
+                'Unable to locate package',
                 ]
             rc, known_error_conditions = \
                 call_apt_get(
