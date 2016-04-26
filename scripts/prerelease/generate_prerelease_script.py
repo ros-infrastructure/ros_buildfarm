@@ -153,7 +153,6 @@ def main(argv=sys.argv[1:]):
 
         def beforeInclude(self, *args, **kwargs):
             template_path = kwargs['file'].name
-            print(template_path, file=sys.stderr)
             if template_path.endswith('/snippet/builder_shell.xml.em'):
                 self.scripts.append(kwargs['locals']['script'])
 
