@@ -219,6 +219,8 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``notifications``: a dictionary with the following keys:
 
+  * ``compiler_warnings``: boolean flag if compiler warnings should mark a job
+    as unstable (default: ``false``)
   * ``committers``: a boolean flag if the committers should be notified.
   * ``emails``: a list of static email addresses.
   * ``maintainers``: a boolean flag if the maintainers should be notified.
