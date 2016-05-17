@@ -9,7 +9,7 @@
       <useStableBuildAsReference>false</useStableBuildAsReference>
       <useDeltaValues>false</useDeltaValues>
       <thresholds plugin="analysis-core@@1.76">
-@[if unstable_threshold]@
+@[if unstable_threshold != '']@
         <unstableTotalAll>@unstable_threshold</unstableTotalAll>
 @[else]@
         <unstableTotalAll/>
