@@ -227,7 +227,7 @@ if pull_request:
   <publishers>
 @(SNIPPET(
     'publisher_warnings',
-    unstable_threshold='',
+    unstable_threshold=0 if notify_compiler_warnings else '',
 ))@
 @(SNIPPET(
     'publisher_xunit',

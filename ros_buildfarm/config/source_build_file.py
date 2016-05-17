@@ -74,10 +74,14 @@ class SourceBuildFile(BuildFile):
             self.jenkins_job_timeout = int(data['jenkins_job_timeout'])
 
         self.notify_committers = None
+        self.notify_compiler_warnings = False
         if 'notifications' in data:
             if 'committers' in data['notifications']:
                 self.notify_committers = \
                     bool(data['notifications']['committers'])
+            if 'compiler_warnings' in data['notifications'] and \
+                    data['notifications']['compiler_warnings']:
+                self.notify_compiler_warnings = True
 
         self.repository_blacklist = []
         if 'repository_blacklist' in data:
