@@ -32,7 +32,7 @@ else:
         'echo "# BEGIN SECTION: Clone ros_buildfarm"',
         'rm -fr ros_buildfarm',
     ] + cmds + [
-        'git -C ros_buildfarm log -n 1',
+        'git -C ros_buildfarm --no-pager log -n 1',
         'rm -fr ros_buildfarm/.git',
         'rm -fr ros_buildfarm/doc',
         'echo "# END SECTION"',
