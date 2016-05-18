@@ -22,8 +22,8 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The root path of the workspace to compile')
     parser.add_argument(
-        '--parent-result-space',
-        help='The path of the parent result space')
+        '--parent-result-space', nargs='*',
+        help='The paths of the parent result spaces')
     parser.add_argument(
         '--clean-before',
         action='store_true',
@@ -45,7 +45,7 @@ def main(argv=sys.argv[1:]):
         with Scope('SUBSECTION', 'build workspace in isolation and install'):
             parent_result_spaces = None
             if args.parent_result_space:
-                parent_result_spaces = [args.parent_result_space]
+                parent_result_spaces = args.parent_result_space
             rc = call_catkin_make_isolated(
                 args.rosdistro_name, args.workspace_root,
                 ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1',
