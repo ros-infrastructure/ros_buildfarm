@@ -24,6 +24,29 @@ window.body_ready = function() {
   }
 };
 
+window.body_ready_with_age = function(age) {
+  // Do age stuff
+  $(document).ready(function() {
+    $('.age p').replaceWith("<p>Page was generated: <br/>" + age.humanize() + " ago</p>");
+    if (age < moment.duration(15, 'minutes')) {
+      $('.age p').css('color', '#3c763d');
+      $('.age').css('background-color', '#dff0d8');
+      $('.age').css('border-color', '#d6e9c6');
+    }
+    else if (age < moment.duration(1, 'days')) {
+      $('.age p').css('color', '#8a6d3b');
+      $('.age').css('background-color', '#fcf8e3');
+      $('.age').css('border-color', '#faebcc');
+    } else {
+      $('.age p').css('color', '#a94442');
+      $('.age').css('background-color', '#f2dede');
+      $('.age').css('border-color', '#ebccd1');
+    }
+  });
+  // Call normal "body_ready"
+  return window.body_ready();
+};
+
 /* Counterpart to nth-child selectors—returns the number of the child that this
  * node is. eg, how many siblings preceed it. Do note that nth-child is 1-based,
  * while this function is zero based. */
