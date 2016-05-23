@@ -556,8 +556,9 @@ def build_release_compare_page(
 
     template_name = 'status/release_compare_page.html.em'
     data = {
-        'title': 'ROS %s - version compare' %
-        ' '.join([x.capitalize() for x in rosdistro_names]),
+        'title':
+            'ROS %s - version compare' % ' '.join([x.capitalize() for x in rosdistro_names]),
+
         'start_time': time.strftime('%Y-%m-%d %H:%M:%S %z', start_time),
 
         'resource_hashes': get_resource_hashes(),
@@ -569,7 +570,7 @@ def build_release_compare_page(
     html = expand_template(template_name, data)
     output_filename = os.path.join(
         output_dir, 'compare_%s.html' % '_'.join(rosdistro_names))
-    print("Generating compare page '%s':" % output_filename)
+    print("Generating compare page: '%s'" % output_filename)
     with open(output_filename, 'w') as h:
         h.write(html)
 

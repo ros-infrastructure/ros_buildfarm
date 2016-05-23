@@ -57,7 +57,7 @@ def get_job_config(args, config):
         'repository_args': repository_args,
 
         'notification_emails':
-        config.distributions[args.rosdistro_name]['notification_emails'],
+            config.distributions[args.rosdistro_name]['notification_emails'],
     })
     job_config = expand_template(template_name, job_data)
     return job_config
