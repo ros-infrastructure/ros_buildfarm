@@ -4,6 +4,7 @@
   <title>@title - @start_time</title>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 
+  <script type="text/javascript" src="js/moment.min.js"></script>
   <script type="text/javascript" src="js/zepto.min.js"></script>
   <script type="text/javascript">
     window.VERSION_COLUMN = 2;
@@ -39,7 +40,12 @@
   <link rel="stylesheet" type="text/css" href="css/status_page.css?@(resource_hashes['status_page.css'])" />
 </head>
 <body>
-  <script type="text/javascript">window.body_ready();</script>
+@{
+import time
+}@
+  <script type="text/javascript">
+    window.body_ready_with_age(moment.duration(moment() - moment("@(time.time())", "X")));
+  </script>
   <div class="top logo search">
     <h1><img src="http://wiki.ros.org/custom/images/ros_org.png" alt="ROS.org" width="150" height="32" /></h1>
     <h2>@title</h2>
@@ -78,6 +84,9 @@
       <li><a class="o"></a> obsolete</li>
       <li><a class="i"></a> intentionally missing</li>
     </ul>
+  </div>
+  <div class="top age">
+    <p>This should show the age of the page...</p>
   </div>
   <table>
     <caption></caption>

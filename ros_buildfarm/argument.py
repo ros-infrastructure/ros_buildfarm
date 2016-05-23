@@ -35,6 +35,13 @@ def add_argument_other_rosdistro_name(parser):
         help="The name of the other ROS distro from the index")
 
 
+def add_argument_older_rosdistro_names(parser):
+    parser.add_argument(
+        'older_rosdistro_names',
+        nargs='+',
+        help='List of older rosdistro names to compare with')
+
+
 def add_argument_build_name(parser, build_file_type):
     parser.add_argument(
         '%s_build_name' % build_file_type,

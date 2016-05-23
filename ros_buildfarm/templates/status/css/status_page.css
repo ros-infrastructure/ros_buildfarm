@@ -131,3 +131,11 @@ span.unknown { padding-right: 20px; width: auto; }
 .filter_column input { width: 55px; }
 th:first-child .filter_column input { width: 150px; }
 .search_init { color: gray; }*/
+
+.age {
+  border-radius: 4px;
+}
+
+.age p {
+  padding: 5px;
+}
