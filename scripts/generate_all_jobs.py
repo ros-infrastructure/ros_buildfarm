@@ -175,13 +175,12 @@ def generate_repos_status_page_jobs(
 
 
 def generate_release_compare_page_job(
-        config_url, ros_distro_name, other_ros_distro_name, dry_run=False):
+        config_url, ros_distro_name, older_ros_distro_names, dry_run=False):
     cmd = [
         _resolve_script('status', 'generate_release_compare_page_job.py'),
         config_url,
         ros_distro_name,
-        other_ros_distro_name,
-    ]
+    ] + older_ros_distro_names
     if dry_run:
         cmd.append('--dry-run')
     _check_call(cmd)

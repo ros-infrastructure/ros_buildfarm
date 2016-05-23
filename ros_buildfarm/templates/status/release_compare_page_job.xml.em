@@ -63,7 +63,7 @@
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/status/run_release_compare_page_job.py' +
         ' ' + config_url +
         ' ' + rosdistro_name +
-        ' ' + older_rosdistro_names +
+        ' ' + ' '.join(older_rosdistro_names) +
         ' ' + ' '.join(repository_args) +
         ' --dockerfile-dir $WORKSPACE/docker_generate_compare_page',
         'echo "# END SECTION"',

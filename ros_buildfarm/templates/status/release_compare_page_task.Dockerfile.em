@@ -42,7 +42,7 @@ cmd = \
     ' /tmp/ros_buildfarm/scripts/status/build_release_compare_page.py' + \
     ' ' + config_url + \
     ' ' + rosdistro_name + \
-    ' ' + older_rosdistro_names + \
+    ' ' + ' '.join(older_rosdistro_names) + \
     ' --output-dir /tmp/compare_page' + \
     ' --copy-resources'
 }@
