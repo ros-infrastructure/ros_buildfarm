@@ -112,8 +112,9 @@ def main(argv=sys.argv[1:]):
             args.config_url, ros_distro_name, dry_run=not args.commit)
         index = ros_distro_names.index(ros_distro_name)
         if index > 0:
+            # Generate comparison pages for this rosdistro against all older ones.
             generate_release_compare_page_job(
-                args.config_url, ros_distro_name, ros_distro_names[index - 1],
+                args.config_url, ros_distro_name, ros_distro_names[:index],
                 dry_run=not args.commit)
 
 

@@ -6,7 +6,7 @@ import sys
 
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_dry_run
-from ros_buildfarm.argument import add_argument_other_rosdistro_name
+from ros_buildfarm.argument import add_argument_older_rosdistro_names
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import \
@@ -24,7 +24,7 @@ def main(argv=sys.argv[1:]):
         description="Generate the 'release_compare_page' job on Jenkins")
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
-    add_argument_other_rosdistro_name(parser)
+    add_argument_older_rosdistro_names(parser)
     add_argument_dry_run(parser)
     args = parser.parse_args(argv)
 
