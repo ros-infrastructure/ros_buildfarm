@@ -27,6 +27,7 @@ def build_release_status_page(
     from rosdistro import get_index
 
     start_time = time.localtime()
+    unix_start_time = time.time()
 
     config = get_config_index(config_url)
     release_build_files = get_release_build_files(config, rosdistro_name)
@@ -100,6 +101,7 @@ def build_release_status_page(
     data = {
         'title': 'ROS %s - release status' % rosdistro_name.capitalize(),
         'start_time': time.strftime('%Y-%m-%d %H:%M:%S %z', start_time),
+        'unix_start_time': unix_start_time,
 
         'resource_hashes': get_resource_hashes(),
 
@@ -537,6 +539,7 @@ def build_release_compare_page(
     from rosdistro import get_index
 
     start_time = time.localtime()
+    unix_start_time = time.time()
 
     config = get_config_index(config_url)
 
@@ -560,6 +563,7 @@ def build_release_compare_page(
             'ROS %s - version compare' % ' '.join([x.capitalize() for x in rosdistro_names]),
 
         'start_time': time.strftime('%Y-%m-%d %H:%M:%S %z', start_time),
+        'unix_start_time': unix_start_time,
 
         'resource_hashes': get_resource_hashes(),
 

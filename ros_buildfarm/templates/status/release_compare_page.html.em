@@ -15,11 +15,8 @@
   <link rel="stylesheet" type="text/css" href="css/compare_page.css?@(resource_hashes['compare_page.css'])" />
 </head>
 <body>
-@{
-import time
-}@
   <script type="text/javascript">
-    window.body_ready_with_age(moment.duration(moment() - moment("@(time.time())", "X")));
+    window.body_ready_with_age(moment.duration(moment() - moment("@unix_start_time", "X")));
   </script>
   <div class="top logo">
     <h1><img src="http://wiki.ros.org/custom/images/ros_org.png" alt="ROS.org" width="150" height="32" /></h1>
