@@ -1,6 +1,6 @@
 # generated from @template_name
 
-FROM ubuntu:@os_code_name
+FROM @os_name:@os_code_name
 MAINTAINER Dirk Thomas dthomas+buildfarm@@osrfoundation.org
 
 VOLUME ["/var/cache/apt/archives"]
@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 @(TEMPLATE(
     'snippet/setup_locale.Dockerfile.em',
-    os_name='ubuntu',
+    os_name=os_name,
     os_code_name=os_code_name,
     timezone=timezone,
 ))@
