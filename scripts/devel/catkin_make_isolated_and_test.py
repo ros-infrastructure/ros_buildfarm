@@ -24,8 +24,8 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The root path of the workspace to compile')
     parser.add_argument(
-        '--parent-result-space',
-        help='The path of the parent result space')
+        '--parent-result-space', nargs='*',
+        help='The paths of the parent result spaces')
     parser.add_argument(
         '--clean-before',
         action='store_true',
@@ -45,7 +45,7 @@ def main(argv=sys.argv[1:]):
 
     parent_result_spaces = None
     if args.parent_result_space:
-        parent_result_spaces = [args.parent_result_space]
+        parent_result_spaces = args.parent_result_space
 
     try:
         with Scope('SUBSECTION', 'build workspace in isolation'):
