@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>@title - @start_time</title>
+  <title>@title - @start_time_local_str</title>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 
   <script type="text/javascript" src="js/moment.min.js"></script>
@@ -41,7 +41,7 @@
 </head>
 <body>
   <script type="text/javascript">
-    window.body_ready_with_age(moment.duration(moment() - moment("@unix_start_time", "X")));
+    window.body_ready_with_age(moment.duration(moment() - moment("@start_time", "X")));
   </script>
   <div class="top logo search">
     <h1><img src="http://wiki.ros.org/custom/images/ros_org.png" alt="ROS.org" width="150" height="32" /></h1>
