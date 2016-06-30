@@ -26,7 +26,7 @@ def build_release_status_page(
     from rosdistro import get_cached_distribution
     from rosdistro import get_index
 
-    start_time = time.localtime()
+    start_time = time.time()
 
     config = get_config_index(config_url)
     release_build_files = get_release_build_files(config, rosdistro_name)
@@ -99,7 +99,8 @@ def build_release_status_page(
     template_name = 'status/release_status_page.html.em'
     data = {
         'title': 'ROS %s - release status' % rosdistro_name.capitalize(),
-        'start_time': time.strftime('%Y-%m-%d %H:%M:%S %z', start_time),
+        'start_time': start_time,
+        'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),
 
         'resource_hashes': get_resource_hashes(),
 
@@ -136,7 +137,7 @@ def build_release_status_page(
 def build_debian_repos_status_page(
         repo_urls, os_code_name_and_arch_tuples,
         cache_dir, output_name, output_dir):
-    start_time = time.localtime()
+    start_time = time.time()
 
     # get targets
     targets = []
@@ -186,7 +187,8 @@ def build_debian_repos_status_page(
     template_name = 'status/release_status_page.html.em'
     data = {
         'title': 'ROS repository status',
-        'start_time': time.strftime('%Y-%m-%d %H:%M:%S %z', start_time),
+        'start_time': start_time,
+        'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),
 
         'resource_hashes': get_resource_hashes(),
 
@@ -536,7 +538,7 @@ def build_release_compare_page(
     from rosdistro import get_cached_distribution
     from rosdistro import get_index
 
-    start_time = time.localtime()
+    start_time = time.time()
 
     config = get_config_index(config_url)
 
@@ -559,7 +561,8 @@ def build_release_compare_page(
         'title':
             'ROS %s - version compare' % ' '.join([x.capitalize() for x in rosdistro_names]),
 
-        'start_time': time.strftime('%Y-%m-%d %H:%M:%S %z', start_time),
+        'start_time': start_time,
+        'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),
 
         'resource_hashes': get_resource_hashes(),
 
