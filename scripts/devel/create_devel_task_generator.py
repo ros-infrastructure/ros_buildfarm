@@ -94,7 +94,7 @@ def main(argv=sys.argv[1:]):
 
     # get build dependencies and map them to binary packages
     build_depends = get_dependencies(
-        pkgs.values(), 'build', _get_build_dependencies)
+        pkgs.values(), 'build', _get_build_and_recursive_run_dependencies)
     debian_pkg_names_building = resolve_names(build_depends, **context)
     debian_pkg_names_building -= set(debian_pkg_names)
     debian_pkg_names += order_dependencies(debian_pkg_names_building)
@@ -152,7 +152,7 @@ def get_dependencies(pkgs, label, get_dependencies_callback):
     depend_names = set([])
     for pkg in pkgs:
         depend_names.update(
-            [d.name for d in get_dependencies_callback(pkg)
+            [d.name for d in get_dependencies_callback(pkg, pkgs)
              if d.name not in pkg_names])
     print('Identified the following %s dependencies ' % label +
           '(ignoring packages available from source):')
@@ -161,11 +161,33 @@ def get_dependencies(pkgs, label, get_dependencies_callback):
     return depend_names
 
 
-def _get_build_dependencies(pkg):
-    return pkg.build_depends + pkg.buildtool_depends
+def _get_build_and_recursive_run_dependencies(pkg, pkgs):
+    depends = pkg.build_depends + pkg.buildtool_depends
+    # include recursive run dependencies on other pkgs in the workspace
+    # if pkg A in the workspace build depends on pkg B in the workspace
+    # then the recursive run dependencies of pkg B need to be installed
+    # in order to build the workspace
+    other_pkgs_by_names = dict([(p.name, p) for p in pkgs if p.name != pkg.name])
+    run_depends_in_pkgs = set([d.name for d in depends if d.name in other_pkgs_by_names])
+    while run_depends_in_pkgs:
+        # pick first element from sorted order to ensure deterministic results
+        pkg_name = sorted(run_depends_in_pkgs).pop(0)
+        pkg = other_pkgs_by_names[pkg_name]
+        other_pkgs_by_names.pop(pkg_name)
+        run_depends_in_pkgs.remove(pkg_name)
+
+        # append run dependencies
+        run_depends = pkg.build_export_depends + \
+            pkg.buildtool_export_depends + pkg.exec_depends
+        depends += run_depends
+
+        # consider recursive dependencies
+        run_depends_in_pkgs.update([d.name for d in run_depends if d.name in other_pkgs_by_names])
+
+    return depends
 
 
-def _get_run_and_test_dependencies(pkg):
+def _get_run_and_test_dependencies(pkg, pkgs):
     return pkg.build_export_depends + pkg.buildtool_export_depends + \
         pkg.exec_depends + pkg.test_depends
 
