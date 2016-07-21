@@ -439,4 +439,8 @@ def topological_order_packages(packages):
             decorators_by_name[name]._add_recursive_run_depends(
                 decorators_by_name, decorator.depends_for_topological_order)
 
-    return _sort_decorated_packages(decorators_by_name)
+    ordered_pkg_tuples = _sort_decorated_packages(decorators_by_name)
+    for pkg_path, pkg in ordered_pkg_tuples:
+        if pkg_path is None:
+            raise RuntimeError('Circular dependency in: %s' % pkg)
+    return ordered_pkg_tuples
