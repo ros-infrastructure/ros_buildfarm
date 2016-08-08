@@ -161,6 +161,10 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     dynamic_recipients=maintainer_emails,
     send_to_individuals=False,
 ))@
+@(SNIPPET(
+    'publisher_disable-failed-job',
+    failure_times=5,
+))@
   </publishers>
   <buildWrappers>
 @[if timeout_minutes is not None]@
