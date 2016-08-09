@@ -46,7 +46,7 @@
     script='\n'.join([
         'echo "# BEGIN SECTION: import debian package"',
         'export PYTHONPATH=$WORKSPACE/reprepro-updater/src:$PYTHONPATH',
-        'python -u $WORKSPACE/reprepro-updater/scripts/include_folder.py --folder /var/repos/ubuntu/building/queue/$subfolder --package $debian_package_name --delete-folder --commit' + (' --invalidate' if abi_incompatibility_assumed else ''),
+        'python -u $WORKSPACE/reprepro-updater/scripts/include_folder.py --folder ' + (target_queue if target_queue else '/var/repos/ubuntu/building/queue') + '/$subfolder --package $debian_package_name --delete-folder --commit' + (' --invalidate' if abi_incompatibility_assumed else ''),
         'echo "# END SECTION"',
     ]),
 ))@
