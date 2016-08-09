@@ -21,7 +21,7 @@
 @(SNIPPET(
     'scm_null',
 ))@
-  <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>
+  <assignedNode>@(node_label)</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>

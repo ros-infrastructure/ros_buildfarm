@@ -8,7 +8,9 @@ from rosdistro import get_index
 
 from ros_buildfarm.common import get_binarydeb_job_name
 from ros_buildfarm.common import get_debian_package_name
+from ros_buildfarm.common import get_default_node_label
 from ros_buildfarm.common import get_github_project_url
+from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common import get_release_binary_view_name
 from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import get_release_source_view_name
@@ -579,7 +581,10 @@ def _get_sourcedeb_job_config(
         'github_url': get_github_project_url(release_repository.url),
 
         'job_priority': build_file.jenkins_source_job_priority,
-        'node_label': build_file.jenkins_source_job_label,
+        'node_label': get_node_label(
+            build_file.jenkins_source_job_label,
+            get_default_node_label('%s_%s_%s' % (
+                rosdistro_name, 'sourcedeb', release_build_name))),
 
         'disabled': is_disabled,
 
@@ -642,7 +647,10 @@ def _get_binarydeb_job_config(
         'github_url': get_github_project_url(release_repository.url),
 
         'job_priority': build_file.jenkins_binary_job_priority,
-        'node_label': build_file.jenkins_binary_job_label,
+        'node_label': get_node_label(
+            build_file.jenkins_binary_job_label,
+            get_default_node_label('%s_%s_%s' % (
+                rosdistro_name, 'binarydeb', release_build_name))),
 
         'disabled': is_disabled,
 

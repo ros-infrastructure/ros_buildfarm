@@ -163,11 +163,11 @@ The following options are valid in version ``2`` (beside the generic options):
   For ROS 1 this flag must always be ``true``.
 
 * ``jenkins_binary_job_label``: the label expression for *binary* jobs
-  (default: ``buildslave``).
+  (default: ``buildslave <ROSDISTRO_NAME>_binarydeb_<BUILD_FILE_NAME>``).
 * ``jenkins_binary_job_priority``: the job priority of *binary* jobs.
 * ``jenkins_binary_job_timeout``: the job timeout for *binary* jobs.
 * ``jenkins_source_job_label``: the label expression for *source* jobs
-  (default: ``buildslave``).
+  (default: ``buildslave <ROSDISTRO_NAME>_sourcedeb_<BUILD_FILE_NAME>``).
 * ``jenkins_source_job_priority``: the job priority of *source* jobs.
 * ``jenkins_source_job_timeout``: the job timeout for *source* jobs.
 
@@ -211,7 +211,8 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``jenkins_commit_job_priority``: the job priority of *devel* jobs.
 * ``jenkins_job_label``: the label expression for both *devel* and
-  *pull request* jobs (default: ``buildslave``).
+  *pull request* jobs (default:
+  ``buildslave <ROSDISTRO_NAME>_devel_<BUILD_FILE_NAME>``).
 * ``jenkins_job_timeout``: the job timeout for both *devel* and *pull request*
   jobs.
 * ``jenkins_pull_request_job_priority``: the job priority of *pull request*
@@ -268,7 +269,7 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``jenkins_job_priority``: the job priority of *doc* jobs.
 * ``jenkins_job_label``: the label expression for both *doc* jobs (default:
-  ``buildslave``).
+  ``buildslave <ROSDISTRO_NAME>_doc_<BUILD_FILE_NAME>``).
 * ``jenkins_job_timeout``: the job timeout for *doc* jobs.
 
 * ``notifications``: a dictionary with the following keys:
