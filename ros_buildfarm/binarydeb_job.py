@@ -44,8 +44,7 @@ def get_sourcedeb(
 
         # download sourcedeb
         apt_get_script = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
-            'scripts', 'wrapper', 'apt-get.py')
+            os.path.dirname(__file__), 'wrapper', 'apt_get.py')
         cmd = [
             sys.executable, apt_get_script,
             'source', '--download-only', '--only-source',
