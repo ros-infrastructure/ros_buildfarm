@@ -34,6 +34,7 @@ RUN useradd -u @uid -m buildfarm
     distribution_repository_urls=distribution_repository_urls,
     os_code_name=os_code_name,
     add_source=True,
+    target_repository=target_repository,
 ))@
 
 @(TEMPLATE(

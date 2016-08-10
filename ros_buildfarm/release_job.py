@@ -644,6 +644,8 @@ def _get_binarydeb_job_config(
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(build_file=build_file)
+    repository_args.append(
+        '--target-repository ' + build_file.target_repository)
 
     binarydeb_files = [
         'binarydeb/*.changes',
