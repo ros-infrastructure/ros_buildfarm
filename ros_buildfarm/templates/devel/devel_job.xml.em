@@ -68,7 +68,7 @@ if pull_request:
 ))@
 @[end if]@
   <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
-  <assignedNode>@(node_label if node_label else 'buildslave')</assignedNode>
+  <assignedNode>@(node_label)</assignedNode>
   <canRoam>false</canRoam>
   <disabled>@('true' if disabled else 'false')</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>

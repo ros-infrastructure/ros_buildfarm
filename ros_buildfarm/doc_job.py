@@ -6,10 +6,12 @@ from catkin_pkg.package import parse_package_string
 from rosdistro import get_distribution_cache
 from rosdistro import get_index
 
+from ros_buildfarm.common import get_default_node_label
 from ros_buildfarm.common import get_doc_job_name
 from ros_buildfarm.common import get_doc_view_name
 from ros_buildfarm.common import git_github_orgunit
 from ros_buildfarm.common import get_github_project_url
+from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
 from ros_buildfarm.common import JobValidationError
@@ -258,7 +260,10 @@ def _get_doc_job_config(
         'github_url': get_github_project_url(doc_repo_spec.url),
 
         'job_priority': build_file.jenkins_job_priority,
-        'node_label': build_file.jenkins_job_label,
+        'node_label': get_node_label(
+            build_file.jenkins_job_label,
+            get_default_node_label('%s_%s_%s' % (
+                rosdistro_name, 'doc', doc_build_name))),
 
         'doc_repo_spec': doc_repo_spec,
 
@@ -329,7 +334,10 @@ def _get_doc_metadata_job_config(
 
     job_data = {
         'job_priority': build_file.jenkins_job_priority,
-        'node_label': build_file.jenkins_job_label,
+        'node_label': get_node_label(
+            build_file.jenkins_job_label,
+            get_default_node_label('%s_%s_%s' % (
+                rosdistro_name, 'doc', doc_build_name))),
 
         'ros_buildfarm_repository': get_repository(),
 
@@ -381,7 +389,7 @@ def _get_doc_independent_job_config(
 
     job_data = {
         'job_priority': build_file.jenkins_job_priority,
-        'node_label': build_file.jenkins_job_label,
+        'node_label': get_node_label(build_file.jenkins_job_label),
 
         'ros_buildfarm_repository': get_repository(),
 

@@ -444,3 +444,18 @@ def topological_order_packages(packages):
         if pkg_path is None:
             raise RuntimeError('Circular dependency in: %s' % pkg)
     return ordered_pkg_tuples
+
+
+def get_node_label(config_job_label, default_label=None):
+    if config_job_label is not None:
+        return config_job_label
+    if default_label is None:
+        default_label = get_default_node_label()
+    return default_label
+
+
+def get_default_node_label(additional_label=None):
+    label = 'buildslave'
+    if additional_label:
+        label += ' ' + additional_label
+    return label

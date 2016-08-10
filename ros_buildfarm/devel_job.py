@@ -6,10 +6,12 @@ from catkin_pkg.package import parse_package_string
 from rosdistro import get_distribution_cache
 from rosdistro import get_index
 
+from ros_buildfarm.common import get_default_node_label
 from ros_buildfarm.common import get_devel_job_name
 from ros_buildfarm.common import get_devel_view_name
 from ros_buildfarm.common import git_github_orgunit
 from ros_buildfarm.common import get_github_project_url
+from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
 from ros_buildfarm.common import JobValidationError
@@ -324,7 +326,10 @@ def _get_devel_job_config(
         'github_url': get_github_project_url(source_repo_spec.url),
 
         'job_priority': job_priority,
-        'node_label': build_file.jenkins_job_label,
+        'node_label': get_node_label(
+            build_file.jenkins_job_label,
+            get_default_node_label('%s_%s_%s' % (
+                rosdistro_name, 'devel', source_build_name))),
 
         'pull_request': pull_request,
 
