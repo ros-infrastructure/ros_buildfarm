@@ -108,6 +108,9 @@ class ReleaseBuildFile(BuildFile):
                 self.sync_packages = data['sync']['packages']
                 assert isinstance(self.sync_packages, list)
 
+        self.target_queue = None
+        if 'target_queue' in data:
+            self.target_queue = str(data['target_queue'])
         assert 'target_repository' in data
         self.target_repository = data['target_repository']
 

@@ -189,6 +189,9 @@ The following options are valid in version ``2`` (beside the generic options):
     available.
   * ``packages``: a list of package names which must be available.
 
+* ``target_queue``: the path where incoming changes to the target repository
+  are being queued (default: ``/var/repos/ubuntu/building/queue``).
+
 * ``target_repository``: the target repository to push built *source* and
   *binary* packages to.
   This should always refer to the *building* repository.
