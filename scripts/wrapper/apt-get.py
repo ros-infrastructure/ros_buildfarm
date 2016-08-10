@@ -14,9 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import sys
 
-from ros_buildfarm.wrapper.apt_get import main
+try:
+    from ros_buildfarm.wrapper.apt_get import main
+except ImportError:
+    sys.path.insert(
+        0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    from ros_buildfarm.wrapper.apt_get import main
 
 if __name__ == '__main__':
     sys.exit(main())
