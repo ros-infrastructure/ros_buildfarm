@@ -154,6 +154,12 @@ def add_argument_distribution_repository_key_files(parser):
              'corresponding URLs')
 
 
+def add_argument_target_repository(parser):
+    parser.add_argument(
+        '--target-repository',
+        help='The target repository where generated packages are pushed to')
+
+
 def add_argument_custom_rosdep_urls(parser):
     parser.add_argument(
         '--custom-rosdep-urls',
