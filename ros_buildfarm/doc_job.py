@@ -14,6 +14,7 @@
 
 from __future__ import print_function
 
+from collections import OrderedDict
 import sys
 
 from catkin_pkg.package import parse_package_string
@@ -90,7 +91,7 @@ def configure_doc_jobs(
     filtered_repo_names = build_file.filter_repositories(repo_names)
 
     job_names = []
-    job_configs = {}
+    job_configs = OrderedDict()
     for repo_name in sorted(repo_names):
         is_disabled = repo_name not in filtered_repo_names
         if is_disabled and build_file.skip_ignored_repositories:
