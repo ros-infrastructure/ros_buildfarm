@@ -157,6 +157,9 @@ if pull_request:
         ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
         ' -v $WORKSPACE/docker_build_and_test:/tmp/docker_build_and_test' +
         ' -v ~/.ccache:/home/buildfarm/.ccache' +
+        (' -v $HOME/.ssh/known_hosts:/etc/ssh/ssh_known_hosts:ro' +
+         ' -v $SSH_AUTH_SOCK:/tmp/ssh_auth_sock' +
+         ' -e SSH_AUTH_SOCK=/tmp/ssh_auth_sock' if git_ssh_credential_id else '') +
         ' devel_task_generation.%s_%s' % (rosdistro_name, source_repo_spec.name.lower()),
         'echo "# END SECTION"',
     ]),
@@ -254,6 +257,15 @@ if pull_request:
 @[end if]@
 @(SNIPPET(
     'build-wrapper_timestamper',
+))@
+@{
+credential_ids = []
+if git_ssh_credential_id:
+    credential_ids.append(git_ssh_credential_id)
+}@
+@(SNIPPET(
+    'build-wrapper_ssh-agent',
+    credential_ids=credential_ids,
 ))@
   </buildWrappers>
 </project>
