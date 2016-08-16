@@ -160,11 +160,11 @@ def create_dockerfile(template_name, data, dockerfile_dir):
 
 def get_wrapper_scripts():
     wrapper_scripts = {}
-    for filename in ['apt-get.py', 'git.py']:
+    for filename in ['apt.py', 'git.py']:
         wrapper_script_path = os.path.join(
             os.path.dirname(os.path.dirname(__file__)), 'wrapper')
         abs_file_path = os.path.join(
-            wrapper_script_path, filename.replace('-', '_'))
+            wrapper_script_path, filename)
         with open(abs_file_path, 'r') as h:
             content = h.read()
             wrapper_scripts[filename] = content

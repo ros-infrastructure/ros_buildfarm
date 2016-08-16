@@ -51,11 +51,11 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y devscripts dpkg-dev python3-apt python3-catkin-pkg python3-empy python3-rosdistro python3-yaml
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-and-install -q -y devscripts dpkg-dev python3-apt python3-catkin-pkg python3-empy python3-rosdistro python3-yaml
 
 # always invalidate to actually have the latest apt repo state
 RUN echo "@now_str"
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update
+RUN python3 -u /tmp/wrapper_scripts/apt.py update
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]

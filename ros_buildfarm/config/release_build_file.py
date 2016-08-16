@@ -31,8 +31,8 @@ class ReleaseBuildFile(BuildFile):
              "information") % self.name
         assert int(data['version']) in [1, 2], \
             ("Unable to handle '%s' format version '%d', please update " +
-             "rosdistro (e.g. on Ubuntu/Debian use: sudo apt-get update && " +
-             "sudo apt-get install --only-upgrade python-rosdistro)") % \
+             "rosdistro (e.g. on Ubuntu/Debian use: sudo apt update && " +
+             "sudo apt install --only-upgrade python-rosdistro)") % \
             (ReleaseBuildFile._type, int(data['version']))
         self.version = int(data['version'])
 

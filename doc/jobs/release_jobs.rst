@@ -111,7 +111,7 @@ Build binary package
 This task is performed by the script *run_binarydeb_job.py*.
 The task performs the following steps:
 
-* **get_sourcedeb.py** fetches the source package using ``apt-get source``.
+* **get_sourcedeb.py** fetches the source package using ``apt source``.
 * **append_build_timestamp.py** can optionally be used to append the timestamp
   of the build behind the version number of the package.
 * **build_binarydeb.py** invokes ``apt-src build`` to create a binary package.

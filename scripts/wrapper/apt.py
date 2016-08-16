@@ -18,11 +18,11 @@ import os
 import sys
 
 try:
-    from ros_buildfarm.wrapper.apt_get import main
+    from ros_buildfarm.wrapper.apt import main
 except ImportError:
     sys.path.insert(
         0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-    from ros_buildfarm.wrapper.apt_get import main
+    from ros_buildfarm.wrapper.apt import main
 
 if __name__ == '__main__':
     sys.exit(main())
