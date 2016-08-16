@@ -33,14 +33,14 @@ def main(argv=sys.argv[1:]):
         rc, _, _ = call_apt_repeatedly(
             argv, known_error_strings, max_tries)
         return rc
-    elif command == 'update-and-install':
-        return call_apt_update_and_install(
+    elif command == 'update-install-clean':
+        return call_apt_update_install_clean(
             argv[1:], known_error_strings, max_tries)
     else:
         assert "Command '%s' not implemented" % command
 
 
-def call_apt_update_and_install(
+def call_apt_update_install_clean(
         install_argv, known_error_strings, max_tries):
     tries = 0
     command = 'update'
@@ -69,8 +69,13 @@ def call_apt_update_and_install(
                     [command] + install_argv,
                     known_error_strings + known_error_strings_redo_update)
             if not known_error_conditions:
-                # break the loop and return the reported rc
-                break
+                if rc != 0:
+                    # abort if install was unsuccessful
+                    break
+                # move on to the clean command if install was successful
+                command = 'clean'
+                continue
+
             # known errors are always interpreted as a non-zero rc
             if rc == 0:
                 rc = 1
@@ -93,6 +98,10 @@ def call_apt_update_and_install(
                       sleep_time)
                 sleep(sleep_time)
                 # retry install command
+
+        if command == 'clean':
+            rc, _ = call_apt([command], [])
+            break
 
     return rc
 

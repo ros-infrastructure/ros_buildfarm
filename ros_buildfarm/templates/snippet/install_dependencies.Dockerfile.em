@@ -1,4 +1,4 @@
-# for each dependency: echo version, apt update, apt install
+# for each dependency: echo version, apt update, apt install, apt clean
 @{
 # in order to not exceed the maximum layer limit of docker
 # fold lines if they would exceed the limit
@@ -24,7 +24,7 @@ def get_run_command(index, dependencies, dependency_versions):
     name = dependencies[index]
     return \
         ('echo "{name}: {version}" && ' +
-         'python3 -u /tmp/wrapper_scripts/apt.py update-and-install -q -y -o Debug::pkgProblemResolver=yes {name}').format(
+         'python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y -o Debug::pkgProblemResolver=yes {name}').format(
             name=name, version=dependency_versions[name])
 }@
 @[if fold_factor > 1]@
