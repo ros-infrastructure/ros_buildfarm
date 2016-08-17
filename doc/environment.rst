@@ -21,7 +21,7 @@ installed Python 2 packages used by ROS.
 
 The following commands can be used on Ubuntu Trusty::
 
-  sudo apt-get update && sudo apt-get install python3 python3-all python3-pip
+  sudo apt update && sudo apt install python3 python3-all python3-pip
 
   mkdir /tmp/deploy_ros_buildfarm
   cd /tmp/deploy_ros_buildfarm

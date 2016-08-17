@@ -57,7 +57,7 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y ccache
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
 @(TEMPLATE(
     'snippet/install_dependencies.Dockerfile.em',

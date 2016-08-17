@@ -66,7 +66,7 @@ RUN echo "@today_str"
 @[if os_name == 'ubuntu' and os_code_name[0] == 't']@
 # Doxygen version 1.8.6 seems to generate excessive tagfiles when cross referencing,
 # overriding with older package (1.7.6) from Precise
-RUN python3 -u /tmp/wrapper_scripts/apt-get.py update-and-install -q -y wget
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y wget
 RUN rm /usr/bin/doxygen
 RUN wget --no-verbose http://us.archive.ubuntu.com/ubuntu/pool/main/d/doxygen/doxygen_1.7.6.1-2ubuntu1_amd64.deb --output-document=/tmp/doxygen_1.7.6.1-2ubuntu1_amd64.deb
 RUN dpkg -i /tmp/doxygen_1.7.6.1-2ubuntu1_amd64.deb

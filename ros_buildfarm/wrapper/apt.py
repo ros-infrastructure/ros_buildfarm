@@ -30,23 +30,23 @@ def main(argv=sys.argv[1:]):
 
     command = argv[0]
     if command in ['update', 'source']:
-        rc, _, _ = call_apt_get_repeatedly(
+        rc, _, _ = call_apt_repeatedly(
             argv, known_error_strings, max_tries)
         return rc
-    elif command == 'update-and-install':
-        return call_apt_get_update_and_install(
+    elif command == 'update-install-clean':
+        return call_apt_update_install_clean(
             argv[1:], known_error_strings, max_tries)
     else:
         assert "Command '%s' not implemented" % command
 
 
-def call_apt_get_update_and_install(
+def call_apt_update_install_clean(
         install_argv, known_error_strings, max_tries):
     tries = 0
     command = 'update'
     while tries < max_tries:
         if command == 'update':
-            rc, _, tries = call_apt_get_repeatedly(
+            rc, _, tries = call_apt_repeatedly(
                 [command], known_error_strings, max_tries - tries,
                 offset=tries)
             if rc != 0:
@@ -60,17 +60,22 @@ def call_apt_get_update_and_install(
             tries += 1
             known_error_strings_redo_update = [
                 'Size mismatch',
-                'maybe run apt-get update',
+                'maybe run apt update',
                 'The following packages cannot be authenticated!',
                 'Unable to locate package',
                 ]
             rc, known_error_conditions = \
-                call_apt_get(
+                call_apt(
                     [command] + install_argv,
                     known_error_strings + known_error_strings_redo_update)
             if not known_error_conditions:
-                # break the loop and return the reported rc
-                break
+                if rc != 0:
+                    # abort if install was unsuccessful
+                    break
+                # move on to the clean command if install was successful
+                command = 'clean'
+                continue
+
             # known errors are always interpreted as a non-zero rc
             if rc == 0:
                 rc = 1
@@ -80,8 +85,8 @@ def call_apt_get_update_and_install(
                 set(known_error_strings_redo_update)
             ):
                 command = 'update'
-                print("'apt-get install' failed and likely requires " +
-                      "'apt-get update' to run again")
+                print("'apt install' failed and likely requires " +
+                      "'apt update' to run again")
                 # retry with update command
                 continue
 
@@ -89,23 +94,27 @@ def call_apt_get_update_and_install(
                   'conditions: ' + ', '.join(known_error_conditions))
             if tries < max_tries:
                 sleep_time = 5
-                print("Reinvoke 'apt-get install' after sleeping %s seconds" %
+                print("Reinvoke 'apt install' after sleeping %s seconds" %
                       sleep_time)
                 sleep(sleep_time)
                 # retry install command
 
+        if command == 'clean':
+            rc, _ = call_apt([command], [])
+            break
+
     return rc
 
 
-def call_apt_get_repeatedly(argv, known_error_strings, max_tries, offset=0):
+def call_apt_repeatedly(argv, known_error_strings, max_tries, offset=0):
     command = argv[0]
     for i in range(1, max_tries + 1):
         if i > 1:
             sleep_time = 5 + 2 * (i + offset)
-            print("Reinvoke 'apt-get %s' (%d/%d) after sleeping %s seconds" %
+            print("Reinvoke 'apt %s' (%d/%d) after sleeping %s seconds" %
                   (command, i + offset, max_tries + offset, sleep_time))
             sleep(sleep_time)
-        rc, known_error_conditions = call_apt_get(argv, known_error_strings)
+        rc, known_error_conditions = call_apt(argv, known_error_strings)
         if not known_error_conditions:
             # break the loop and return the reported rc
             break
@@ -120,10 +129,10 @@ def call_apt_get_repeatedly(argv, known_error_strings, max_tries, offset=0):
     return rc, known_error_conditions, i + offset
 
 
-def call_apt_get(argv, known_error_strings):
+def call_apt(argv, known_error_strings):
     known_error_conditions = []
 
-    cmd = ['apt-get'] + argv
+    cmd = ['apt'] + argv
     print("Invoking '%s'" % ' '.join(cmd))
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
