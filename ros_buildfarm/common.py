@@ -44,6 +44,7 @@ class Scope(object):
 
 
 Target = namedtuple('Target', 'os_name os_code_name arch')
+github_url_pattern = re.compile("https:\/\/([a-f0-9]{40}@)?github\.com\/.*")
 
 
 def get_repositories_and_script_generating_key_files(
@@ -275,9 +276,7 @@ def get_short_arch(arch):
 
 
 def git_github_orgunit(url):
-    pattern = re.compile("https:\/\/([a-f0-9]{40}@)?github\.com\/.*")
-
-    if pattern.match(url) is None:
+    if github_url_pattern.match(url) is None:
         return None
     path = url[len(prefix):]
     index = path.index('/')
@@ -285,9 +284,7 @@ def git_github_orgunit(url):
 
 
 def get_github_project_url(url):
-    pattern = re.compile("https:\/\/([a-f0-9]{40}@)?github\.com\/.*")
-
-    if pattern.match(url) is None:
+    if github_url_pattern.match(url) is None:
         return None
     git_suffix = '.git'
     if not url.endswith(git_suffix):
