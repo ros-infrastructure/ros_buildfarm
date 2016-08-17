@@ -100,7 +100,7 @@ def call_apt_update_install_clean(
                 # retry install command
 
         if command == 'clean':
-            rc, _ = call_apt([command], [])
+            rc, _ = call_apt([command], [], use_apt_get=True)
             break
 
     return rc
@@ -129,10 +129,12 @@ def call_apt_repeatedly(argv, known_error_strings, max_tries, offset=0):
     return rc, known_error_conditions, i + offset
 
 
-def call_apt(argv, known_error_strings):
+def call_apt(argv, known_error_strings, use_apt_get=False):
     known_error_conditions = []
 
-    cmd = ['apt'] + argv
+    # on some older Ubuntu distros apt doesn't support clean yet
+    cmd = ['apt'] if not use_apt_get else ['apt-get']
+    cmd += argv
     print("Invoking '%s'" % ' '.join(cmd))
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
