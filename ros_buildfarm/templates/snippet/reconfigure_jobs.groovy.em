@@ -1,5 +1,7 @@
 import difflib.DiffUtils
 import groovy.io.FileType
+@@ThreadInterrupt
+import groovy.transform.ThreadInterrupt
 import hudson.AbortException
 import hudson.model.View
 import java.io.StringBufferInputStream
