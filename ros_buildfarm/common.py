@@ -274,7 +274,7 @@ def get_short_arch(arch):
 
 
 def git_github_orgunit(url):
-    pattern = re.compile("https:\/\/([a-z0-9]{40}@)?github\.com\/.*")
+    pattern = re.compile("https:\/\/([a-f0-9]{40}@)?github\.com\/.*")
     pattern.match(url)
 
     if pattern.match(url) is None:
@@ -285,7 +285,7 @@ def git_github_orgunit(url):
 
 
 def get_github_project_url(url):
-    pattern = re.compile("https:\/\/([a-z0-9]{40}@)?github\.com\/.*")
+    pattern = re.compile("https:\/\/([a-f0-9]{40}@)?github\.com\/.*")
     pattern.match(url)
 
     if pattern.match(url) is None:
