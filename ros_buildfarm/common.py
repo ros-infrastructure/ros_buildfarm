@@ -14,7 +14,7 @@
 
 from collections import namedtuple
 import os
-
+import re
 
 class JobValidationError(Exception):
     """
@@ -274,8 +274,10 @@ def get_short_arch(arch):
 
 
 def git_github_orgunit(url):
-    prefix = 'https://github.com/'
-    if not url.startswith(prefix):
+    pattern = re.compile("https:\/\/([a-z0-9]{40}@)?github\.com\/.*")
+    pattern.match(url)
+
+    if pattern.match(url) is None:
         return None
     path = url[len(prefix):]
     index = path.index('/')
@@ -283,7 +285,10 @@ def git_github_orgunit(url):
 
 
 def get_github_project_url(url):
-    if not url.startswith('https://github.com/'):
+    pattern = re.compile("https:\/\/([a-z0-9]{40}@)?github\.com\/.*")
+    pattern.match(url)
+
+    if pattern.match(url) is None:
         return None
     git_suffix = '.git'
     if not url.endswith(git_suffix):
