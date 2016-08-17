@@ -167,7 +167,7 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``jenkins_binary_job_priority``: the job priority of *binary* jobs.
 * ``jenkins_binary_job_timeout``: the job timeout for *binary* jobs.
 * ``jenkins_source_job_label``: the label expression for *source* jobs
-  (default: ``buildslave || <ROSDISTRO_NAME>_sourcedeb_<BUILD_FILE_NAME>``).
+  (default: ``buildslave || <ROSDISTRO_NAME>_sourcedeb``).
 * ``jenkins_source_job_priority``: the job priority of *source* jobs.
 * ``jenkins_source_job_timeout``: the job timeout for *source* jobs.
 

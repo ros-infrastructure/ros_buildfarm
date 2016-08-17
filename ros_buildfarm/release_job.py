@@ -597,8 +597,8 @@ def _get_sourcedeb_job_config(
         'job_priority': build_file.jenkins_source_job_priority,
         'node_label': get_node_label(
             build_file.jenkins_source_job_label,
-            get_default_node_label('%s_%s_%s' % (
-                rosdistro_name, 'sourcedeb', release_build_name))),
+            get_default_node_label('%s_%s' % (
+                rosdistro_name, 'sourcedeb'))),
 
         'disabled': is_disabled,
 
