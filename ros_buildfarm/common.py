@@ -16,6 +16,7 @@ from collections import namedtuple
 import os
 import re
 
+
 class JobValidationError(Exception):
     """
     Indicates that the validation of a build job failed.
