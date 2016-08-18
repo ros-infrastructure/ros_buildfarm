@@ -55,8 +55,7 @@ if pull_request:
     path='catkin_workspace/src/%s' % source_repo_spec.name,
     git_ssh_credential_id=git_ssh_credential_id,
 ))@
-@[end if]@
-@[if pull_request]@
+@[else]@
 @(SNIPPET(
     'scm_git',
     url=source_repo_spec.url,
