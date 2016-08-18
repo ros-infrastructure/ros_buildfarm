@@ -54,4 +54,4 @@ RUN echo "@now_str"
 RUN python3 -u /tmp/wrapper_scripts/apt.py update
 
 ENTRYPOINT ["sh", "-c"]
-CMD ["dpkg -i --force-depends /tmp/binarydeb/*.deb && apt -f -y install"]
+CMD ["dpkg -i --force-depends /tmp/binarydeb/*.deb && apt-get -f -y install"]
