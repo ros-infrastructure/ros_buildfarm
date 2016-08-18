@@ -278,7 +278,9 @@ def get_short_arch(arch):
 def git_github_orgunit(url):
     if github_url_pattern.match(url) is None:
         return None
-    path = url[len(prefix):]
+    git_domain = 'github.com/'
+    path_index = url.find(git_domain)
+    path = url[path_index + len(git_domain):]
     index = path.index('/')
     return path[:index]
 
