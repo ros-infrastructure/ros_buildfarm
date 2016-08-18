@@ -24,12 +24,13 @@
         <relativeTargetDir>@ESCAPE(relative_target_dir)</relativeTargetDir>
       </hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
 @[end if]@
+@[if not vars().get('merge_branch')]@
       <hudson.plugins.git.extensions.impl.CloneOption>
         <shallow>true</shallow>
         <noTags>false</noTags>
         <reference/>
       </hudson.plugins.git.extensions.impl.CloneOption>
-@[if vars().get('merge_branch')]@
+@[else]@
       <hudson.plugins.git.extensions.impl.PreBuildMerge>
         <options>
           <mergeRemote>origin</mergeRemote>
