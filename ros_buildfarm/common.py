@@ -14,6 +14,10 @@
 
 from collections import namedtuple
 import os
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 
 class JobValidationError(Exception):
@@ -274,22 +278,32 @@ def get_short_arch(arch):
 
 
 def git_github_orgunit(url):
-    prefix = 'https://github.com/'
-    if not url.startswith(prefix):
+    result = check_https_github_com(url)
+    if not result:
         return None
-    path = url[len(prefix):]
-    index = path.index('/')
-    return path[:index]
+    return result.path[1:result.path.index('/', 1)]
 
 
 def get_github_project_url(url):
-    if not url.startswith('https://github.com/'):
+    if not check_https_github_com(url):
         return None
     git_suffix = '.git'
     if not url.endswith(git_suffix):
         return None
     url = url[:-len(git_suffix)] + '/'
     return url
+
+
+def check_https_github_com(url):
+    result = urlparse(url)
+    if not result:
+        return False
+    if result.scheme != 'https':
+        return False
+    netloc = result.netloc[result.netloc.find('@') + 1:]
+    if netloc != 'github.com':
+        return False
+    return result
 
 
 def get_user_id():
