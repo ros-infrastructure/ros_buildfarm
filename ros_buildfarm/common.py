@@ -14,6 +14,7 @@
 
 from collections import namedtuple
 import os
+import re
 
 
 class JobValidationError(Exception):
@@ -43,6 +44,7 @@ class Scope(object):
 
 
 Target = namedtuple('Target', 'os_name os_code_name arch')
+github_url_pattern = re.compile("https:\/\/([a-f0-9]{40}@)?github\.com\/.*")
 
 
 def get_repositories_and_script_generating_key_files(
@@ -274,16 +276,17 @@ def get_short_arch(arch):
 
 
 def git_github_orgunit(url):
-    prefix = 'https://github.com/'
-    if not url.startswith(prefix):
+    if github_url_pattern.match(url) is None:
         return None
-    path = url[len(prefix):]
+    git_domain = 'github.com/'
+    path_index = url.find(git_domain)
+    path = url[path_index + len(git_domain):]
     index = path.index('/')
     return path[:index]
 
 
 def get_github_project_url(url):
-    if not url.startswith('https://github.com/'):
+    if github_url_pattern.match(url) is None:
         return None
     git_suffix = '.git'
     if not url.endswith(git_suffix):
