@@ -38,8 +38,11 @@
       <messagesPattern/>
       <parserConfigurations/>
       <consoleParsers>
-      <hudson.plugins.warnings.ConsoleParser>
-      <parserName>GNU C Compiler 4 (gcc)</parserName>
-      </hudson.plugins.warnings.ConsoleParser>
+        <hudson.plugins.warnings.ConsoleParser>
+          <parserName>CMake</parserName>
+        </hudson.plugins.warnings.ConsoleParser>
+        <hudson.plugins.warnings.ConsoleParser>
+          <parserName>GNU C Compiler 4 (gcc)</parserName>
+        </hudson.plugins.warnings.ConsoleParser>
       </consoleParsers>
     </hudson.plugins.warnings.WarningsPublisher>
