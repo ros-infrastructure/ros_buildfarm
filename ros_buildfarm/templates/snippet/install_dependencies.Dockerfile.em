@@ -20,12 +20,15 @@ end_entries_for_line = int(math.ceil(fold_factor))
 number_of_begin_blocks = int(round((end_entries_for_line - fold_factor) * max_lines))
 switch_index = number_of_begin_blocks * begin_entries_for_line
 
-def get_run_command(index, dependencies, dependency_versions):
-    name = dependencies[index]
-    return \
-        ('echo "{name}: {version}" && ' +
-         'python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y -o Debug::pkgProblemResolver=yes {name}').format(
-            name=name, version=dependency_versions[name])
+def get_run_command(indices, dependencies, dependency_versions):
+    cmds = []
+    names = []
+    for index in indices:
+      name = dependencies[index]
+      cmds.append('echo "{name}: {version}"'.format(name=name, version=dependency_versions[name]))
+      names.append(name)
+    cmds.append('python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y -o Debug::pkgProblemResolver=yes {names}'.format(names=' '.join(names)))
+    return ' && '.join(cmds)
 }@
 @[if fold_factor > 1]@
 # to prevent exceeding the docker layer limit several lines have been folded
@@ -33,20 +36,20 @@ def get_run_command(index, dependencies, dependency_versions):
 @[if begin_entries_for_line]@
 @[for i in range(0, switch_index, begin_entries_for_line)]@
 @{
-cmds = []
+indices = []
 for j in range(begin_entries_for_line):
-    cmds.append(get_run_command(i + j, dependencies, dependency_versions))
+    indices.append(i + j)
 }@
-RUN @(' && '.join(cmds))
+RUN @(get_run_command(indices, dependencies, dependency_versions))
 @[end for]@
 @[end if]@
 @[if end_entries_for_line]@
 @[for i in range(switch_index, len(dependencies), end_entries_for_line)]@
 @{
-cmds = []
+indices = []
 for j in range(end_entries_for_line):
-    cmds.append(get_run_command(i + j, dependencies, dependency_versions))
+    indices.append(i + j)
 }@
-RUN @(' && '.join(cmds))
+RUN @(get_run_command(indices, dependencies, dependency_versions))
 @[end for]@
 @[end if]@
