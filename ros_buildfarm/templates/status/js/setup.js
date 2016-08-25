@@ -28,7 +28,7 @@ window.body_ready_with_age = function(age) {
   // Do age stuff
   $(document).ready(function() {
     $('.age p').replaceWith("<p>Page was generated: <br/>" + age.humanize() + " ago</p>");
-    if (age < moment.duration(15, 'minutes')) {
+    if (age < moment.duration(20, 'minutes')) {
       $('.age p').css('color', '#3c763d');
       $('.age').css('background-color', '#dff0d8');
       $('.age').css('border-color', '#d6e9c6');
