@@ -1,7 +1,8 @@
 @{
 filename = 'git.py'
 wrapper_script = wrapper_scripts[filename]
-cmd = 'echo "%s" > wrapper_scripts/%s' % ('\\n'.join(wrapper_script.replace('\\', '\\\\\\\\').replace('"', '\\"').splitlines()), filename)
+# depending on the shell echo might not expand the escaped newlines
+cmd = 'printf "%s" > wrapper_scripts/%s' % ('\\n'.join(wrapper_script.replace('\\', '\\\\\\\\').replace('"', '\\"').replace('%', '%%').splitlines()), filename)
 }@
 @(SNIPPET(
     'builder_shell',
