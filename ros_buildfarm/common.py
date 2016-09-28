@@ -14,6 +14,7 @@
 
 from collections import namedtuple
 import os
+import platform
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -487,3 +488,16 @@ def get_default_node_label(additional_label=None):
     if additional_label:
         label += ' || ' + additional_label
     return label
+
+
+def get_system_architecture():
+    # this is used to determine the arch for the Docker image for source jobs
+    # which don't explicitly specify an architecture
+    machine = platform.machine()
+    if machine == 'x86_64':
+        return 'amd64'
+    if machine == 'i386':
+        return 'i386'
+    if machine == 'aarch64':
+        return 'armv8'
+    raise RuntimeError('Unable to determine architecture')
