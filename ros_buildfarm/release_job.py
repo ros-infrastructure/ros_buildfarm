@@ -32,6 +32,7 @@ from ros_buildfarm.common import get_release_view_name
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
 from ros_buildfarm.common import get_sourcedeb_job_name
+from ros_buildfarm.common import get_system_architecture
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_distribution_file
@@ -612,6 +613,7 @@ def _get_sourcedeb_job_config(
         'pkg_name': pkg_name,
         'os_name': os_name,
         'os_code_name': os_code_name,
+        'arch': get_system_architecture(),
         'repository_args': repository_args,
 
         'sourcedeb_files': sourcedeb_files,

@@ -98,6 +98,9 @@ if pull_request:
 ))@
 @(SNIPPET(
     'builder_check-docker',
+    os_name=os_name,
+    os_code_name=os_code_name,
+    arch=arch,
 ))@
 @(SNIPPET(
     'builder_shell_clone-ros-buildfarm',

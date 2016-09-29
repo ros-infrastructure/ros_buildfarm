@@ -65,6 +65,9 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
 @(SNIPPET(
     'builder_check-docker',
+    os_name=os_name,
+    os_code_name=os_code_name,
+    arch=arch,
 ))@
 @(SNIPPET(
     'builder_shell_clone-ros-buildfarm',

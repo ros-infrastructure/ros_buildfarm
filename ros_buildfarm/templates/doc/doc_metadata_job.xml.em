@@ -42,6 +42,9 @@
 ))@
 @(SNIPPET(
     'builder_check-docker',
+    os_name='ubuntu',
+    os_code_name='trusty',
+    arch='amd64',
 ))@
 @(SNIPPET(
     'builder_shell_clone-ros-buildfarm',

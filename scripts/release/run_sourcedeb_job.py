@@ -29,6 +29,7 @@ from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
+from ros_buildfarm.common import get_system_architecture
 from ros_buildfarm.templates import create_dockerfile
 
 
@@ -51,6 +52,8 @@ def main(argv=sys.argv[1:]):
 
     data = copy.deepcopy(args.__dict__)
     data.update({
+        'arch': get_system_architecture(),
+
         'distribution_repository_urls': args.distribution_repository_urls,
         'distribution_repository_keys': get_distribution_repository_keys(
             args.distribution_repository_urls,
