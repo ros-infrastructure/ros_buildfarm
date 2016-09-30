@@ -41,7 +41,7 @@ from ros_buildfarm.templates import expand_template
 
 def configure_doc_jobs(
         config_url, rosdistro_name, doc_build_name, groovy_script=None,
-        dry_run=False):
+        dry_run=False, whitelist_repository_names=None):
     """
     Configure all Jenkins doc jobs.
 
@@ -86,6 +86,10 @@ def configure_doc_jobs(
         jenkins, doc_view_name, dry_run=dry_run)
     if not jenkins:
         view_configs.update(views)
+    groovy_data = {
+        'dry_run': dry_run,
+        'expected_num_views': len(view_configs),
+    }
 
     repo_names = dist_file.repositories.keys()
     filtered_repo_names = build_file.filter_repositories(repo_names)
@@ -93,6 +97,11 @@ def configure_doc_jobs(
     job_names = []
     job_configs = OrderedDict()
     for repo_name in sorted(repo_names):
+        if whitelist_repository_names:
+            if repo_name not in whitelist_repository_names:
+                print("Skipping repository '%s' not in the explicitly passed list" %
+                      repo_name, file=sys.stderr)
+                continue
         is_disabled = repo_name not in filtered_repo_names
         if is_disabled and build_file.skip_ignored_repositories:
             print("Skipping ignored repository '%s'" % repo_name,
@@ -125,25 +134,24 @@ def configure_doc_jobs(
             except JobValidationError as e:
                 print(e.message, file=sys.stderr)
 
+    groovy_data['expected_num_jobs'] = len(job_configs)
+    groovy_data['job_prefixes_and_names'] = {}
+
     job_prefix = '%s__' % doc_view_name
-    if groovy_script is None:
-        # delete obsolete jobs in this view
-        from ros_buildfarm.jenkins import remove_jobs
-        print('Removing obsolete doc jobs')
-        remove_jobs(jenkins, job_prefix, job_names, dry_run=dry_run)
-    else:
+    if not whitelist_repository_names:
+        groovy_data['job_prefixes_and_names']['doc'] = (job_prefix, job_names)
+
+        if groovy_script is None:
+            # delete obsolete jobs in this view
+            from ros_buildfarm.jenkins import remove_jobs
+            print('Removing obsolete doc jobs')
+            remove_jobs(jenkins, job_prefix, job_names, dry_run=dry_run)
+    if groovy_script is not None:
         print(
             "Writing groovy script '%s' to reconfigure %d views and %d jobs" %
             (groovy_script, len(view_configs), len(job_configs)))
-        data = {
-            'dry_run': dry_run,
-            'expected_num_views': len(view_configs),
-            'expected_num_jobs': len(job_configs),
-            'job_prefixes_and_names': {
-                'doc': (job_prefix, job_names),
-            }
-        }
-        content = expand_template('snippet/reconfigure_jobs.groovy.em', data)
+        content = expand_template(
+            'snippet/reconfigure_jobs.groovy.em', groovy_data)
         write_groovy_script_and_configs(
             groovy_script, content, job_configs, view_configs=view_configs)
 

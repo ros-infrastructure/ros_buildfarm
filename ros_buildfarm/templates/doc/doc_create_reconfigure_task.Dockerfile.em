@@ -48,5 +48,7 @@ if groovy_script:
     cmd += ' --groovy-script ' + groovy_script
 if dry_run:
     cmd += ' --dry-run'
+if repository_names:
+    cmd += ' --repository-names ' + ' '.join(repository_names)
 }@
 CMD ["@cmd"]
