@@ -21,11 +21,15 @@ import sys
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_dry_run
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.common import get_doc_view_name
+from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import \
     get_repositories_and_script_generating_key_files
+from ros_buildfarm.common import get_devel_view_name
+from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
-from ros_buildfarm.common import get_release_job_prefix
+from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.git import get_repository
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_management_view
@@ -66,6 +70,22 @@ def get_job_config(args, config):
         job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
         reconfigure_job_names.append(job_name)
 
+    reconfigure_doc_repo_names = []
+    build_files = get_doc_build_files(config, args.rosdistro_name)
+    for doc_build_name in sorted(build_files.keys()):
+        group_name = get_doc_view_name(
+            args.rosdistro_name, doc_build_name)
+        job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
+        reconfigure_doc_repo_names.append(job_name)
+
+    reconfigure_source_repo_names = []
+    build_files = get_source_build_files(config, args.rosdistro_name)
+    for source_build_name in sorted(build_files.keys()):
+        group_name = get_devel_view_name(
+            args.rosdistro_name, doc_build_name)
+        job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
+        reconfigure_source_repo_names.append(job_name)
+
     job_data = copy.deepcopy(args.__dict__)
     job_data.update({
         'ros_buildfarm_repository': get_repository(),
@@ -77,6 +97,8 @@ def get_job_config(args, config):
         'repository_args': repository_args,
 
         'reconfigure_job_names': reconfigure_job_names,
+        'reconfigure_doc_repo_names': reconfigure_doc_repo_names,
+        'reconfigure_source_repo_names': reconfigure_source_repo_names,
 
         'notification_emails':
         config.distributions[args.rosdistro_name]['notification_emails'],
