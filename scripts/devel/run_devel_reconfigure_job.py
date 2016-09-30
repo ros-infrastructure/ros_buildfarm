@@ -26,6 +26,7 @@ from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_dry_run
 from ros_buildfarm.argument import add_argument_groovy_script
+from ros_buildfarm.argument import add_argument_repository_names
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
@@ -43,6 +44,7 @@ def main(argv=sys.argv[1:]):
     add_argument_groovy_script(parser)
     add_argument_dockerfile_dir(parser)
     add_argument_dry_run(parser)
+    add_argument_repository_names(parser)
     args = parser.parse_args(argv)
 
     data = copy.deepcopy(args.__dict__)

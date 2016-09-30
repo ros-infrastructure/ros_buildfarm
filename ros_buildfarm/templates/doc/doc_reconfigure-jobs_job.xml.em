@@ -23,6 +23,11 @@
             'name': 'dry_run',
             'description': 'Skip the actual reconfiguration but show the diffs',
         },
+        {
+            'type': 'string',
+            'name': 'repository_names',
+            'description': 'Only reconfigure the jobs of specific repositories',
+        },
     ],
 ))@
   </properties>
@@ -79,6 +84,7 @@ wget --no-verbose https://storage.googleapis.com/google-code-archive-downloads/v
         'echo "# BEGIN SECTION: Generate Dockerfile - reconfigure jobs"',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'if [ "$dry_run" = "true" ]; then DRY_RUN_FLAG="--dry-run"; fi',
+        'if [ "$repository_names" != "" ]; then REPOSITORY_NAMES_FLAG="--repository-names $repository_names"; fi',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/doc/run_doc_reconfigure_job.py' +
         ' ' + config_url +
         ' ' + rosdistro_name +
@@ -86,7 +92,8 @@ wget --no-verbose https://storage.googleapis.com/google-code-archive-downloads/v
         ' ' + ' '.join(repository_args) +
         ' --groovy-script /tmp/reconfigure_jobs/reconfigure_jobs.groovy' +
         ' --dockerfile-dir $WORKSPACE/docker_generate_doc_jobs' +
-        ' $DRY_RUN_FLAG',
+        ' $DRY_RUN_FLAG' +
+        ' $REPOSITORY_NAMES_FLAG',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',

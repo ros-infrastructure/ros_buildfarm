@@ -40,7 +40,7 @@ from ros_buildfarm.templates import expand_template
 
 def configure_devel_jobs(
         config_url, rosdistro_name, source_build_name, groovy_script=None,
-        dry_run=False):
+        dry_run=False, whitelist_repository_names=None):
     """
     Configure all Jenkins devel jobs.
 
@@ -92,6 +92,10 @@ def configure_devel_jobs(
             jenkins, pull_request_view_name, dry_run=dry_run)
     if not jenkins:
         view_configs.update(views)
+    groovy_data = {
+        'dry_run': dry_run,
+        'expected_num_views': len(view_configs),
+    }
 
     repo_names = dist_file.repositories.keys()
     filtered_repo_names = build_file.filter_repositories(repo_names)
@@ -100,6 +104,12 @@ def configure_devel_jobs(
     pull_request_job_names = []
     job_configs = OrderedDict()
     for repo_name in sorted(repo_names):
+        if whitelist_repository_names:
+            if repo_name not in whitelist_repository_names:
+                print("Skipping repository '%s' not in the explicitly passed list" %
+                      repo_name, file=sys.stderr)
+                continue
+
         is_disabled = repo_name not in filtered_repo_names
         if is_disabled and build_file.skip_ignored_repositories:
             print("Skipping ignored repository '%s'" % repo_name,
@@ -171,33 +181,33 @@ def configure_devel_jobs(
                 except JobValidationError as e:
                     print(e.message, file=sys.stderr)
 
+    groovy_data['expected_num_jobs'] = len(job_configs)
+    groovy_data['job_prefixes_and_names'] = {}
+
     devel_job_prefix = '%s__' % devel_view_name
     pull_request_job_prefix = '%s__' % pull_request_view_name
-    if groovy_script is None:
-        # delete obsolete jobs in these views
-        from ros_buildfarm.jenkins import remove_jobs
-        print('Removing obsolete devel jobs')
-        remove_jobs(
-            jenkins, devel_job_prefix, devel_job_names, dry_run=dry_run)
-        print('Removing obsolete pull request jobs')
-        remove_jobs(
-            jenkins, pull_request_job_prefix, pull_request_job_names,
-            dry_run=dry_run)
-    else:
+    if not whitelist_repository_names:
+        groovy_data['job_prefixes_and_names']['devel'] = \
+            (devel_job_prefix, devel_job_names)
+        groovy_data['job_prefixes_and_names']['pull_request'] = \
+            (pull_request_job_prefix, pull_request_job_names)
+
+        if groovy_script is None:
+            # delete obsolete jobs in these views
+            from ros_buildfarm.jenkins import remove_jobs
+            print('Removing obsolete devel jobs')
+            remove_jobs(
+                jenkins, devel_job_prefix, devel_job_names, dry_run=dry_run)
+            print('Removing obsolete pull request jobs')
+            remove_jobs(
+                jenkins, pull_request_job_prefix, pull_request_job_names,
+                dry_run=dry_run)
+    if groovy_script is not None:
         print(
             "Writing groovy script '%s' to reconfigure %d views and %d jobs" %
             (groovy_script, len(view_configs), len(job_configs)))
-        data = {
-            'dry_run': dry_run,
-            'expected_num_views': len(view_configs),
-            'expected_num_jobs': len(job_configs),
-            'job_prefixes_and_names': {
-                'devel': (devel_job_prefix, devel_job_names),
-                'pull_request': (
-                    pull_request_job_prefix, pull_request_job_names),
-            }
-        }
-        content = expand_template('snippet/reconfigure_jobs.groovy.em', data)
+        content = expand_template(
+            'snippet/reconfigure_jobs.groovy.em', groovy_data)
         write_groovy_script_and_configs(
             groovy_script, content, job_configs, view_configs=view_configs)
 
