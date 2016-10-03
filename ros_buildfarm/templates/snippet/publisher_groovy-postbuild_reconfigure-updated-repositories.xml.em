@@ -10,9 +10,9 @@
         'import java.util.regex.Pattern',
         'import jenkins.model.Jenkins',
         '',
-        'reconfigure_repo_names = []',
+        'reconfigure_job_names = []',
     ] +
-    ['reconfigure_repo_names << "%s"' % name for name in reconfigure_repo_names] +
+    ['reconfigure_job_names << "%s"' % name for name in reconfigure_job_names] +
     [
         '',
         'pattern = Pattern.compile(".*- updated \'%s\' entry for repository \'(.+)\'")' % entry_type,

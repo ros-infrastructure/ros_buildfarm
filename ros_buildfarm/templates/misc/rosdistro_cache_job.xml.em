@@ -103,12 +103,12 @@
 @(SNIPPET(
     'publisher_groovy-postbuild_reconfigure-updated-repositories',
     entry_type='doc',
-    reconfigure_repo_names=reconfigure_doc_repo_names,
+    reconfigure_job_names=reconfigure_doc_job_names,
 ))@
 @(SNIPPET(
     'publisher_groovy-postbuild_reconfigure-updated-repositories',
     entry_type='source',
-    reconfigure_repo_names=reconfigure_source_repo_names,
+    reconfigure_job_names=reconfigure_source_job_names,
 ))@
 @(SNIPPET(
     'publisher_mailer',

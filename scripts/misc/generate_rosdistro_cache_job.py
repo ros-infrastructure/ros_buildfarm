@@ -70,21 +70,21 @@ def get_job_config(args, config):
         job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
         reconfigure_job_names.append(job_name)
 
-    reconfigure_doc_repo_names = []
+    reconfigure_doc_job_names = []
     build_files = get_doc_build_files(config, args.rosdistro_name)
     for doc_build_name in sorted(build_files.keys()):
         group_name = get_doc_view_name(
             args.rosdistro_name, doc_build_name)
         job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
-        reconfigure_doc_repo_names.append(job_name)
+        reconfigure_doc_job_names.append(job_name)
 
-    reconfigure_source_repo_names = []
+    reconfigure_source_job_names = []
     build_files = get_source_build_files(config, args.rosdistro_name)
     for source_build_name in sorted(build_files.keys()):
         group_name = get_devel_view_name(
-            args.rosdistro_name, doc_build_name)
+            args.rosdistro_name, source_build_name)
         job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
-        reconfigure_source_repo_names.append(job_name)
+        reconfigure_source_job_names.append(job_name)
 
     job_data = copy.deepcopy(args.__dict__)
     job_data.update({
@@ -97,8 +97,8 @@ def get_job_config(args, config):
         'repository_args': repository_args,
 
         'reconfigure_job_names': reconfigure_job_names,
-        'reconfigure_doc_repo_names': reconfigure_doc_repo_names,
-        'reconfigure_source_repo_names': reconfigure_source_repo_names,
+        'reconfigure_doc_job_names': reconfigure_doc_job_names,
+        'reconfigure_source_job_names': reconfigure_source_job_names,
 
         'notification_emails':
         config.distributions[args.rosdistro_name]['notification_emails'],
