@@ -2,6 +2,11 @@
 Changelog for package ros_buildfarm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.1 (2016-10-20)
+------------------
+* fix installation of wrapper scripts (`#348 <https://github.com/ros-infrastructure/ros_buildfarm/pull/348>`_)
+* fix missing dependency on Python 3 empy when using Python 2 (`#349 <https://github.com/ros-infrastructure/ros_buildfarm/issues/349>`_)
+
 1.2.0 (2016-10-04)
 ------------------
 * New features
