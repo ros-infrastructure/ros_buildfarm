@@ -19,15 +19,12 @@ import os
 import sys
 import time
 import traceback
-import yaml
 
 from catkin_pkg.package import parse_package_string
-from rosdistro import get_cached_distribution
-from rosdistro import get_index
 
 from ros_buildfarm.argument import add_argument_build_name
-from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_devel_job_urls
 from ros_buildfarm.common import get_release_job_urls
@@ -35,6 +32,10 @@ from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.config import get_source_build_files
+
+from rosdistro import get_cached_distribution
+from rosdistro import get_index
+import yaml
 
 
 def main(argv=sys.argv[1:]):

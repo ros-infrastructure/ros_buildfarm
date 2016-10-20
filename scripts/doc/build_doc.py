@@ -18,7 +18,6 @@ import argparse
 import os
 import subprocess
 import sys
-import yaml
 
 from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.catkin_workspace import call_catkin_make_isolated
@@ -27,6 +26,8 @@ from ros_buildfarm.catkin_workspace import ensure_workspace_exists
 from ros_buildfarm.common import Scope
 from ros_buildfarm.rosdoc_index import RosdocIndex
 from ros_buildfarm.rosdoc_lite import get_generator_output_folders
+
+import yaml
 
 
 def main(argv=sys.argv[1:]):

@@ -17,9 +17,6 @@
 import argparse
 import sys
 
-from rosdistro import get_distribution_file
-from rosdistro import get_index
-
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_cache_dir
@@ -31,6 +28,9 @@ from ros_buildfarm.common import Target
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.debian_repo import get_debian_repo_index
+
+from rosdistro import get_distribution_file
+from rosdistro import get_index
 
 
 def main(argv=sys.argv[1:]):

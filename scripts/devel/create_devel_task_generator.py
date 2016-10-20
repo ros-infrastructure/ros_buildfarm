@@ -181,8 +181,10 @@ def _get_build_and_recursive_run_dependencies(pkg, pkgs):
     # if pkg A in the workspace build depends on pkg B in the workspace
     # then the recursive run dependencies of pkg B need to be installed
     # in order to build the workspace
-    other_pkgs_by_names = dict([(p.name, p) for p in pkgs if p.name != pkg.name])
-    run_depends_in_pkgs = set([d.name for d in depends if d.name in other_pkgs_by_names])
+    other_pkgs_by_names = \
+        dict([(p.name, p) for p in pkgs if p.name != pkg.name])
+    run_depends_in_pkgs = \
+        set([d.name for d in depends if d.name in other_pkgs_by_names])
     while run_depends_in_pkgs:
         # pick first element from sorted order to ensure deterministic results
         pkg_name = sorted(run_depends_in_pkgs).pop(0)
@@ -196,7 +198,8 @@ def _get_build_and_recursive_run_dependencies(pkg, pkgs):
         depends += run_depends
 
         # consider recursive dependencies
-        run_depends_in_pkgs.update([d.name for d in run_depends if d.name in other_pkgs_by_names])
+        run_depends_in_pkgs.update(
+            [d.name for d in run_depends if d.name in other_pkgs_by_names])
 
     return depends
 

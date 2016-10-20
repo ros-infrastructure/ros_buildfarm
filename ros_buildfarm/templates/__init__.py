@@ -14,7 +14,6 @@
 
 from __future__ import print_function
 
-from em import Interpreter
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -23,6 +22,8 @@ import os
 import sys
 import time
 from xml.sax.saxutils import escape
+
+from em import Interpreter
 
 template_prefix_path = [os.path.abspath(os.path.dirname(__file__))]
 

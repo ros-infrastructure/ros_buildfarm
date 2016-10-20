@@ -126,7 +126,7 @@ def main(argv=sys.argv[1:]):
             args.config_url, ros_distro_name, dry_run=not args.commit)
         index = ros_distro_names.index(ros_distro_name)
         if index > 0:
-            # Generate comparison pages for this rosdistro against all older ones.
+            # generate compare pages for this rosdistro against all older ones
             generate_release_compare_page_job(
                 args.config_url, ros_distro_name, ros_distro_names[:index],
                 dry_run=not args.commit)
@@ -272,7 +272,8 @@ def _resolve_script(subfolder, filename):
     sibling_path = os.path.join(os.path.dirname(__file__), filename)
     if os.path.exists(sibling_path):
         return sibling_path
-    assert False, "Could not find script '%s' from subfolder '%s'" % (filename, subfolder)
+    assert False, "Could not find script '%s' from subfolder '%s'" % \
+        (filename, subfolder)
 
 
 def _check_call(cmd):

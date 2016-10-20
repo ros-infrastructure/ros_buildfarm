@@ -13,24 +13,27 @@
 # limitations under the License.
 
 import os
-import sys
 
-from pyflakes.api import checkRecursive
-from pyflakes.reporter import Reporter
+from flake8.api.legacy import get_style_guide
 
 
-def test_pyflakes_conformance():
-    """Test source code for PyFlakes conformance."""
-    reporter = Reporter(sys.stdout, sys.stderr)
+def test_flake8_conformance():
+    """Test source code for flake8 conformance."""
+    style_guide = get_style_guide(
+        ignore=[
+            'D100', 'D101', 'D102', 'D103', 'D104', 'D105',
+            'E501',
+        ],
+    )
     base_path = os.path.join(os.path.dirname(__file__), '..')
     paths = [
         os.path.join(base_path, 'ros_buildfarm'),
         os.path.join(base_path, 'scripts'),
     ]
-    warning_count = checkRecursive(paths, reporter)
-    assert warning_count == 0, \
-        'Found %d code style warnings' % warning_count
+    report = style_guide.check_files(paths)
+    assert report.total_errors == 0, \
+        'Found %d code style warnings' % report.total_errors
 
 
 if __name__ == '__main__':
-    test_pyflakes_conformance()
+    test_flake8_conformance()

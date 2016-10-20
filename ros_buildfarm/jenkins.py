@@ -33,7 +33,6 @@ JENKINS_MANAGEMENT_VIEW = 'Manage'
 
 
 class JenkinsProxy(Jenkins):
-
     """Proxy for Jenkins instance caching data for performance reasons."""
 
     def __init__(self, *args, **kwargs):
@@ -99,8 +98,9 @@ def configure_view(
                 if view else None
 
     if not remote_view_config:
-        print('Can not produce diff during dry run if the view is new or of different type',
-              file=sys.stderr)
+        print(
+            'Can not produce diff during dry run if the view is new or of '
+            'different type', file=sys.stderr)
         return None
 
     diff = _diff_configs(remote_view_config, view_config)

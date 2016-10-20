@@ -21,11 +21,11 @@ import sys
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_dry_run
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.common import get_devel_view_name
 from ros_buildfarm.common import get_doc_view_name
 from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import \
     get_repositories_and_script_generating_key_files
-from ros_buildfarm.common import get_devel_view_name
 from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
