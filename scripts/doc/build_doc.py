@@ -26,6 +26,7 @@ from ros_buildfarm.catkin_workspace import clean_workspace
 from ros_buildfarm.catkin_workspace import ensure_workspace_exists
 from ros_buildfarm.common import Scope
 from ros_buildfarm.rosdoc_index import RosdocIndex
+from ros_buildfarm.rosdoc_lite import get_generator_output_folders
 
 
 def main(argv=sys.argv[1:]):
@@ -175,32 +176,6 @@ def main(argv=sys.argv[1:]):
         args.output_dir, ['locations'])
 
     return rc
-
-
-# this is reimplemented here since rosdoc_lite can not be used with Python 3
-def get_generator_output_folders(pkg_rosdoc_config_file, pkg_name):
-    output_folders = {}
-    if pkg_rosdoc_config_file:
-        with open(pkg_rosdoc_config_file, 'r') as h:
-            content = h.read()
-        try:
-            data = yaml.load(content)
-        except Exception as e:
-            print("WARNING: package '%s' has an invalid rosdoc config: %s" %
-                  (pkg_name, e), file=sys.stderr)
-        else:
-            if not isinstance(data, list):
-                print("WARNING: package '%s' has an invalid rosdoc config" %
-                      pkg_name, file=sys.stderr)
-            else:
-                for item in data:
-                    if 'builder' not in item:
-                        print("WARNING: package '%s' has an invalid rosdoc config "
-                              "- missing builder key" % pkg_name, file=sys.stderr)
-                        continue
-                    if item.get('output_dir'):
-                        output_folders[item['builder']] = item['output_dir']
-    return output_folders
 
 
 def add_canonical_link(base_path, base_link):

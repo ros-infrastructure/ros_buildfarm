@@ -59,6 +59,7 @@ from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.git import get_hash as get_git_hash
 from ros_buildfarm.rosdoc_index import RosdocIndex
+from ros_buildfarm.rosdoc_lite import get_generator_output_folders
 from ros_buildfarm.templates import create_dockerfile
 from ros_buildfarm.templates import expand_template
 
@@ -274,6 +275,20 @@ def main(argv=sys.argv[1:]):
 
     # create rosdoc tag list and location files
     with Scope('SUBSECTION', 'create rosdoc tag list and location files'):
+        rosdoc_config_files = {}
+        for pkg_path, pkg in pkgs.items():
+            abs_pkg_path = os.path.join(source_space, pkg_path)
+
+            rosdoc_exports = [
+                e.attributes['content'] for e in pkg.exports
+                if e.tagname == 'rosdoc' and 'content' in e.attributes]
+            prefix = '${prefix}'
+            rosdoc_config_file = rosdoc_exports[-1] \
+                if rosdoc_exports else '%s/rosdoc.yaml' % prefix
+            rosdoc_config_file = rosdoc_config_file.replace(prefix, abs_pkg_path)
+            if os.path.isfile(rosdoc_config_file):
+                rosdoc_config_files[pkg.name] = rosdoc_config_file
+
         for _, pkg in ordered_pkg_tuples:
             dst = os.path.join(
                 args.output_dir, 'rosdoc_tags', '%s.yaml' % pkg.name)
@@ -316,6 +331,14 @@ def main(argv=sys.argv[1:]):
                     args.output_dir, 'symbols', '%s.tag' % pkg.name),
                 'package': pkg.name,
             }
+
+            # fetch generator specific output folders from rosdoc_lite
+            if pkg.name in rosdoc_config_files:
+                output_folders = get_generator_output_folders(
+                    rosdoc_config_files[pkg.name], pkg.name)
+                if 'doxygen' in output_folders:
+                    data['docs_url'] += '/' + output_folders['doxygen']
+
             rosdoc_index.locations[pkg.name] = [data]
             # do not write these local locations
 
@@ -529,20 +552,6 @@ def main(argv=sys.argv[1:]):
 
         build_files = get_doc_build_files(config, args.rosdistro_name)
         build_file = build_files[args.doc_build_name]
-
-        rosdoc_config_files = {}
-        for pkg_path, pkg in pkgs.items():
-            abs_pkg_path = os.path.join(source_space, pkg_path)
-
-            rosdoc_exports = [
-                e.attributes['content'] for e in pkg.exports
-                if e.tagname == 'rosdoc' and 'content' in e.attributes]
-            prefix = '${prefix}'
-            rosdoc_config_file = rosdoc_exports[-1] \
-                if rosdoc_exports else '%s/rosdoc.yaml' % prefix
-            rosdoc_config_file = rosdoc_config_file.replace(prefix, abs_pkg_path)
-            if os.path.isfile(rosdoc_config_file):
-                rosdoc_config_files[pkg.name] = rosdoc_config_file
 
         # generate Dockerfile
         data = {
