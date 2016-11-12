@@ -1,4 +1,4 @@
-    <xunit plugin="xunit@@1.100">
+    <xunit plugin="xunit@@1.102">
       <types>
         <GoogleTestType>
           <pattern>@ESCAPE(pattern)</pattern>

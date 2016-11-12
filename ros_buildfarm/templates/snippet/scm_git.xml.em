@@ -1,4 +1,4 @@
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@@2.4.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@@3.0.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -29,6 +29,8 @@
         <shallow>true</shallow>
         <noTags>false</noTags>
         <reference/>
+        <depth>0</depth>
+        <honorRefspec>false</honorRefspec>
       </hudson.plugins.git.extensions.impl.CloneOption>
 @[else]@
       <hudson.plugins.git.extensions.impl.PreBuildMerge>

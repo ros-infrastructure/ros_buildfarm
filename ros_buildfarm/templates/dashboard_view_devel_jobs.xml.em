@@ -1,4 +1,4 @@
-<hudson.plugins.view.dashboard.Dashboard plugin="dashboard-view@@2.9.7">
+<hudson.plugins.view.dashboard.Dashboard plugin="dashboard-view@@2.9.10">
   <name>@view_name</name>
   <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
   <filterExecutors>false</filterExecutors>
@@ -23,7 +23,7 @@
     <jenkins.plugins.extracolumns.TestResultColumn plugin="extra-columns@@1.17">
       <testResultFormat>1</testResultFormat>
     </jenkins.plugins.extracolumns.TestResultColumn>
-    <hudson.plugins.warnings.WarningsColumn plugin="warnings@@4.52"/>
+    <hudson.plugins.warnings.WarningsColumn plugin="warnings@@4.57"/>
   </columns>
 @[if include_regex]@
   <includeRegex>@include_regex</includeRegex>
