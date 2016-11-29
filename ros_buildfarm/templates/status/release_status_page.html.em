@@ -70,7 +70,7 @@
     <ul class="squares">
       <li>
 @[for repo_name, repo_url in zip(repo_names, repo_urls)]@
-        <a class="w" href="@repo_url" title="@repo_name"></a>
+        <a class="w" href="@repo_url" title="@repo_name">@(repo_name[0].upper())</a>
 @[end for]@
         the repositories
       </li>
@@ -101,7 +101,7 @@
         <th class="sortable"><div>Maintainer</div></th>
 @[end if]@
 @[for target in targets]@
-        <th><div>@(target.os_code_name[0].upper())@(short_arches[target.arch])</div>@
+        <th><div title="@(target.os_name.capitalize()) @(target.os_code_name.capitalize()) @(target.arch)">@(target.os_code_name[0].upper())@(short_arches[target.arch])</div>@
 @[for count in package_counts[target]]@
 <span class="sum">@count</span>@
 @[end for]@

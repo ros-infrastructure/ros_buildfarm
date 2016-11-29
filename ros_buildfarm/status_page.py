@@ -112,7 +112,7 @@ def build_release_status_page(
 
     template_name = 'status/release_status_page.html.em'
     data = {
-        'title': 'ROS %s - release status' % rosdistro_name.capitalize(),
+        'title': 'ROS packages for %s' % rosdistro_name.capitalize(),
         'start_time': start_time,
         'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),
 
@@ -149,7 +149,7 @@ def build_release_status_page(
 
 
 def build_debian_repos_status_page(
-        repo_urls, os_code_name_and_arch_tuples,
+        rosdistro_name, repo_urls, os_code_name_and_arch_tuples,
         cache_dir, output_name, output_dir):
     start_time = time.time()
 
@@ -200,7 +200,7 @@ def build_debian_repos_status_page(
 
     template_name = 'status/release_status_page.html.em'
     data = {
-        'title': 'ROS repository status',
+        'title': 'All packages for %s targets' % rosdistro_name.capitalize(),
         'start_time': start_time,
         'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),
 
@@ -572,8 +572,7 @@ def build_release_compare_page(
 
     template_name = 'status/release_compare_page.html.em'
     data = {
-        'title':
-            'ROS %s - version compare' % ' '.join([x.capitalize() for x in rosdistro_names]),
+        'title': 'ROS packages in %s' % ' '.join([x.capitalize() for x in rosdistro_names]),
 
         'start_time': start_time,
         'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),

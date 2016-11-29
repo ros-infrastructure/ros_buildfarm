@@ -102,12 +102,11 @@ def get_targets_by_repo(config, ros_distro_name):
         targets_by_repo[target_repository] = []
         targets = target_dicts_by_repo[target_repository]
         # TODO support other OS names
-        if 'ubuntu' in targets:
-            ubuntu_targets = targets['ubuntu']
-            for os_code_name in sorted(ubuntu_targets.keys()):
+        for os_name in ['debian', 'ubuntu']:
+            for os_code_name in sorted(targets[os_name].keys()):
                 target = '%s:source' % os_code_name
                 targets_by_repo[target_repository].append(target)
-                for arch in sorted(ubuntu_targets[os_code_name].keys()):
+                for arch in sorted(targets[os_name][os_code_name].keys()):
                     target = '%s:%s' % (os_code_name, arch)
                     targets_by_repo[target_repository].append(target)
     return targets_by_repo
