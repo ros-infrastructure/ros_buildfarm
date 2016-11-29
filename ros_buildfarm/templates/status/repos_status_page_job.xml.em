@@ -58,6 +58,7 @@ os_code_name_and_arch_tuples = status_page['os_code_name_and_arch_tuples']
         'echo "# BEGIN SECTION: generate repos status page: %s"' % status_page_name,
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/status/build_repos_status_page.py' +
+        ' ' + rosdistro_name +
         ' ' + ' '.join(debian_repository_urls) +
         ' --os-code-name-and-arch-tuples ' +
         ' '.join(os_code_name_and_arch_tuples) +

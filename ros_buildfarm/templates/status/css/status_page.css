@@ -22,6 +22,7 @@ div.search input { width: 300px; font-size: 1.0em }
 div.search #search-count { color: #444; font-style: italic; }
 div.top.legend ul { list-style: none; }
 div.top.legend li a { margin: 0; position: relative; top: 3px; left: -5px; }
+div.top.legend li a.w { top: 3px; }
 
 /* Styles for the non-scrolling table header. */
 table {
