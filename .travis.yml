@@ -4,7 +4,7 @@ python:
 sudo: false
 install:
   - pip install catkin-pkg EmPy PyYAML rosdistro
-  - pip install coverage flake8 flake8-docstrings nose pep8 pyflakes
+  - pip install coverage flake8 flake8-docstrings flake8-import-order nose pep8 pyflakes
 script:
   - python setup.py nosetests -s --tests test
 notifications:
