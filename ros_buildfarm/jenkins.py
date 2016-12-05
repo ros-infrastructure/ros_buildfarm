@@ -239,8 +239,8 @@ def _diff_configs(remote_config, new_config):
     if ElementTree.tostring(remote_root) == ElementTree.tostring(new_root):
         return []
 
-    xml1 = ElementTree.tostring(remote_root, encoding='unicode')
-    xml2 = ElementTree.tostring(new_root, encoding='unicode')
+    xml1 = ElementTree.tostring(remote_root, encoding='utf-8')
+    xml2 = ElementTree.tostring(new_root, encoding='utf-8')
     lines1 = xml1.splitlines()
     lines2 = xml2.splitlines()
 
