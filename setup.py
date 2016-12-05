@@ -21,6 +21,8 @@ install_requires = [
     'PyYAML',
     'rosdistro >= 0.4.0',
 ]
+if os.sys.version_info.major == 2:
+    install_requires.append('configparser')
 
 # Get the long description out of the readme.md
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
