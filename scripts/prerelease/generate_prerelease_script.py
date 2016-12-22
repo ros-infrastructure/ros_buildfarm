@@ -79,7 +79,8 @@ def main(argv=sys.argv[1:]):
         type=_repository_name_and_type_and_url_and_branch,
         default=[],
         metavar='REPO_NAME:REPO_TYPE:REPO_URL:BRANCH_OR_TAG_NAME',
-        help='The name, type, url and branch / tag name of a repository')
+        help='The name, type, url and branch / tag name of a repository, '
+             'e.g. "common_tutorials:git:https://github.com/ros/common_tutorials:pullrequest-1"')
 
     add_overlay_arguments(parser)
 
