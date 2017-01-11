@@ -259,11 +259,14 @@ def get_short_os_code_name(os_code_name):
     os_code_name_mappings = {
         'jessie': 'J',
         'saucy': 'S',
+        'stretch': 'S',
         'trusty': 'T',
         'utopic': 'U',
         'vivid': 'V',
         'wily': 'W',
         'xenial': 'X',
+        'yakkety': 'Y',
+        'zesty': 'Z',
     }
     return os_code_name_mappings.get(os_code_name, os_code_name)
 
