@@ -11,7 +11,10 @@
 # if there are more dependencies then the limit
 # the folding will generate exactly the number of lines as allowed by the limit
 import math
-max_lines = 80
+# folding all dependencies into a single line
+# improves the performance of individual jobs especially with many dependencies
+# but makes it very unlikely to share layers across different jobs
+max_lines = 1
 fold_factor = 1.0 * len(dependencies) / max_lines
 # can be zero if no folding is necessary
 begin_entries_for_line = int(math.floor(fold_factor))
