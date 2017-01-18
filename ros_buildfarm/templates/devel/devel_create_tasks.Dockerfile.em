@@ -6,7 +6,6 @@
     os_code_name=os_code_name,
     arch=arch,
 ))@
-MAINTAINER Dirk Thomas dthomas+buildfarm@@osrfoundation.org
 
 VOLUME ["/var/cache/apt/archives"]
 
