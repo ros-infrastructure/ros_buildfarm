@@ -1,7 +1,6 @@
 # generated from @template_name
 
 FROM ubuntu:trusty
-MAINTAINER Dirk Thomas dthomas+buildfarm@@osrfoundation.org
 
 VOLUME ["/var/cache/apt/archives"]
 
