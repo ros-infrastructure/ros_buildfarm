@@ -15,8 +15,8 @@
 # limitations under the License.
 
 """
-This scripts monitors a specific process and ensures that its child processes
-are terminated correctly.
+This script ensured that a monitored process terminates all child processes.
+
 If any child process is a 'docker run' invocation it extracts the container id
 from the command line arguments and invokes 'docker kill' explicitly.
 """
@@ -25,11 +25,12 @@ from __future__ import print_function
 
 import argparse
 import os
-import psutil
 import signal
 import subprocess
 import sys
 import time
+
+import psutil
 
 
 def main(argv=None):

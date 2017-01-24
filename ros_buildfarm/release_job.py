@@ -17,9 +17,6 @@ from __future__ import print_function
 from collections import OrderedDict
 import sys
 
-from rosdistro import get_distribution_cache
-from rosdistro import get_index
-
 from ros_buildfarm.common import get_binarydeb_job_name
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_default_node_label
@@ -44,6 +41,9 @@ from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.jenkins import remove_jobs
 from ros_buildfarm.templates import expand_template
+
+from rosdistro import get_distribution_cache
+from rosdistro import get_index
 
 
 def configure_release_jobs(

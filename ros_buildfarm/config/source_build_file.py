@@ -80,7 +80,8 @@ class SourceBuildFile(BuildFile):
         self.custom_rosdep_urls = []
         if '_config' in data['targets']:
             if 'custom_rosdep_urls' in data['targets']['_config']:
-                self.custom_rosdep_urls = data['targets']['_config']['custom_rosdep_urls']
+                self.custom_rosdep_urls = \
+                    data['targets']['_config']['custom_rosdep_urls']
                 assert isinstance(self.custom_rosdep_urls, list)
 
         self.test_commits_default = False

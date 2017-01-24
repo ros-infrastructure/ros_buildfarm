@@ -19,6 +19,7 @@ import copy
 import sys
 
 from ros_buildfarm.argument import add_argument_append_timestamp
+from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_binarydeb_dir
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
@@ -26,7 +27,6 @@ from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
-from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name

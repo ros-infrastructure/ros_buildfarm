@@ -12,16 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rosdistro import get_index
 
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.jenkins import invoke_job
+
+from rosdistro import get_cached_distribution
+from rosdistro import get_index
 
 from .common import get_binarydeb_job_name
 from .common import get_debian_package_name
 from .common import get_sourcedeb_job_name
 from .common import Target
-from rosdistro import get_cached_distribution
 from .config import get_index as get_config_index
 from .config import get_release_build_files
 from .debian_repo import get_debian_repo_data

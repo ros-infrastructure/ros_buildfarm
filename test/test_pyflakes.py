@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pyflakes.api import checkRecursive
-from pyflakes.reporter import Reporter
 import os
 import sys
+
+from pyflakes.api import checkRecursive
+from pyflakes.reporter import Reporter
 
 
 def test_pyflakes_conformance():

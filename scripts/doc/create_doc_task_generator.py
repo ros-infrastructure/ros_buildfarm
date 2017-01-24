@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from apt import Cache
 import argparse
 import copy
 import os
@@ -22,19 +21,14 @@ import re
 import subprocess
 import sys
 import time
-import yaml
 
+from apt import Cache
 from catkin_pkg.packages import find_packages
-from rosdep2 import create_default_installer_context
-from rosdep2.catkin_support import get_catkin_view
-from rosdep2.catkin_support import resolve_for_os
-from rosdistro import get_distribution_file
-from rosdistro import get_index
 
 from ros_buildfarm.argument import add_argument_build_name
+from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
-from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_force
@@ -62,6 +56,13 @@ from ros_buildfarm.rosdoc_index import RosdocIndex
 from ros_buildfarm.rosdoc_lite import get_generator_output_folders
 from ros_buildfarm.templates import create_dockerfile
 from ros_buildfarm.templates import expand_template
+
+from rosdep2 import create_default_installer_context
+from rosdep2.catkin_support import get_catkin_view
+from rosdep2.catkin_support import resolve_for_os
+from rosdistro import get_distribution_file
+from rosdistro import get_index
+import yaml
 
 
 def main(argv=sys.argv[1:]):

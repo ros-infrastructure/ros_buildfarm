@@ -18,17 +18,15 @@ from collections import OrderedDict
 import sys
 
 from catkin_pkg.package import parse_package_string
-from rosdistro import get_distribution_cache
-from rosdistro import get_index
 
 from ros_buildfarm.common import get_default_node_label
 from ros_buildfarm.common import get_devel_job_name
 from ros_buildfarm.common import get_devel_view_name
-from ros_buildfarm.common import git_github_orgunit
 from ros_buildfarm.common import get_github_project_url
 from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
+from ros_buildfarm.common import git_github_orgunit
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_distribution_file
@@ -36,6 +34,9 @@ from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.git import get_repository
 from ros_buildfarm.templates import expand_template
+
+from rosdistro import get_distribution_cache
+from rosdistro import get_index
 
 
 def configure_devel_jobs(
@@ -106,8 +107,9 @@ def configure_devel_jobs(
     for repo_name in sorted(repo_names):
         if whitelist_repository_names:
             if repo_name not in whitelist_repository_names:
-                print("Skipping repository '%s' not in the explicitly passed list" %
-                      repo_name, file=sys.stderr)
+                print(
+                    "Skipping repository '%s' not in explicitly passed list" %
+                    repo_name, file=sys.stderr)
                 continue
 
         is_disabled = repo_name not in filtered_repo_names

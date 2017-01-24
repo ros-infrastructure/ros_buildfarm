@@ -15,9 +15,10 @@
 # limitations under the License.
 
 import argparse
+import sys
+
 from em import BANGPATH_OPT
 from em import Hook
-import sys
 
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name

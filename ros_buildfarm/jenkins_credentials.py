@@ -36,8 +36,9 @@ def get_credentials(jenkins_url=None):
 
     if section_name is None or 'username' not in config[section_name] or \
             'password' not in config[section_name]:
-        print("Could not find credentials for '%s' in file '%s'" % (jenkins_url, config_file),
-              file=sys.stderr)
+        print(
+            "Could not find credentials for '%s' in file '%s'" %
+            (jenkins_url, config_file), file=sys.stderr)
         return None, None
     return config[section_name]['username'], config[section_name]['password']
 

@@ -63,7 +63,7 @@ def call_apt_update_install_clean(
                 'maybe run apt update',
                 'The following packages cannot be authenticated!',
                 'Unable to locate package',
-                ]
+            ]
             rc, known_error_conditions = \
                 call_apt(
                     [command] + install_argv,
