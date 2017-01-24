@@ -34,6 +34,13 @@ ENV DEBIAN_FRONTEND noninteractive
 ))@
 
 @(TEMPLATE(
+    'snippet/add_additional_repositories.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+    arch=arch,
+))@
+
+@(TEMPLATE(
     'snippet/add_wrapper_scripts.Dockerfile.em',
     wrapper_scripts=wrapper_scripts,
 ))@
