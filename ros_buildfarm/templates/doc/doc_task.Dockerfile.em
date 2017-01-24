@@ -34,13 +34,12 @@ RUN useradd -u @uid -m buildfarm
     add_source=False,
 ))@
 
-@[if os_name == 'ubuntu']@
-# Enable multiverse
-RUN sed -i "/^# deb.*multiverse/ s/^# //" /etc/apt/sources.list
-@[else if os_name == 'debian']@
-# Add contrib and non-free to debian images
-RUN echo deb http://http.debian.net/debian @os_code_name contrib non-free | tee -a /etc/apt/sources.list
-@[end if]@
+@(TEMPLATE(
+    'snippet/add_additional_repositories.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+    arch=arch,
+))@
 
 @(TEMPLATE(
     'snippet/add_wrapper_scripts.Dockerfile.em',
