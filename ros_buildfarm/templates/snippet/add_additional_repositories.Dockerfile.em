@@ -1,10 +1,21 @@
 @[if os_name == 'ubuntu']@
+@{
+from itertools import product
+commands = []
+}@
 @[  if arch in ['amd64', 'i386']]@
-# Add multiverse
-RUN echo "deb http://archive.ubuntu.com/ubuntu/ @(os_code_name) multiverse" >> /etc/apt/sources.list && echo "deb-src http://archive.ubuntu.com/ubuntu/ @(os_code_name) multiverse" >> /etc/apt/sources.list && echo "deb-src http://archive.ubuntu.com/ubuntu/ @(os_code_name)-updates multiverse" >> /etc/apt/sources.list && echo "deb-src http://archive.ubuntu.com/ubuntu/ @(os_code_name)-updates multiverse" >> /etc/apt/sources.list && echo "deb-src http://archive.ubuntu.com/ubuntu/ @(os_code_name)-security multiverse" >> /etc/apt/sources.list && echo "deb-src http://archive.ubuntu.com/ubuntu/ @(os_code_name)-security multiverse" >> /etc/apt/sources.list
+@{
+for distribution, archive_type in product((os_code_name, os_code_name + '-updates', os_code_name + '-security'), ('deb', 'deb-src')):
+    commands.append('echo "%s http://archive.ubuntu.com/ubuntu/ %s multiverse" >> /etc/apt/sources.list' % (archive_type, distribution))
+}@
 @[  elif arch in ['armhf', 'armv8']]@
-# Add multiverse
-RUN echo "deb http://ports.ubuntu.com/ @(os_code_name) multiverse" >> /etc/apt/sources.list && echo "deb-src http://ports.ubuntu.com/ @(os_code_name) multiverse" >> /etc/apt/sources.list && echo "deb-src http://ports.ubuntu.com/ @(os_code_name)-updates multiverse" >> /etc/apt/sources.list && echo "deb-src http://ports.ubuntu.com/ @(os_code_name)-updates multiverse" >> /etc/apt/sources.list && echo "deb-src http://ports.ubuntu.com/ @(os_code_name)-security multiverse" >> /etc/apt/sources.list && echo "deb-src http://ports.ubuntu.com/ @(os_code_name)-security multiverse" >> /etc/apt/sources.list
+@{
+for distribution, archive_type in product((os_code_name, os_code_name + '-updates', os_code_name + '-security'), ('deb', 'deb-src')):
+    commands.append('echo "%s http://ports.ubuntu.com// %s multiverse" >> /etc/apt/sources.list' % (archive_type, distribution))
+}@
+@[  end if]@
+@[  if commands]@
+RUN @(' && '.join(commands))
 @[  end if]@
 @[else if os_name == 'debian']@
 # Add contrib and non-free to debian images
