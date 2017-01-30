@@ -263,13 +263,13 @@ function filter_table() {
       result_rows = $.map(window.rows, function(row) {
         for (var i = 0; i < queries.length; i++) {
           var is_known_query = false;
-          for(var q in QUERY_TRANSFORMS) {
-            if (queries[i] === QUERY_TRANSFORMS[q]) {
+          for (var q in QUERY_TRANSFORMS) {
+            if (RegExp("^("+QUERY_TRANSFORMS[q]+")$").test(queries[i])) {
               is_known_query = true;
               break;
             }
           }
-          if(is_known_query) {
+          if (is_known_query) {
             // search in full row html
             if (row[0].indexOf(queries[i]) == -1) return null;
           } else {
