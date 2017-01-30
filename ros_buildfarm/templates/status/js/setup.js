@@ -15,6 +15,7 @@ window.body_ready = function() {
     var query_parts = url_parts[1].split('&');
     $.each(query_parts, function(i, query_part) {
       key_val = query_part.split('=');
+      key_val[1] = decodeURIComponent(key_val[1]);
       switch(key_val[0]) {
         case 'q': window.queries = key_val[1]; break;
         case 's': window.sort = key_val[1]; break;
@@ -83,6 +84,7 @@ window.tbody_ready = function() {
       var query_parts = url_parts[1].split('&');
       $.each(query_parts, function(i, query_part) {
         key_val = query_part.split('=');
+        key_val[1] = decodeURIComponent(key_val[1]);
         if (key_val[0] == 'q') {
           window.queries = key_val[1];
         }
@@ -316,9 +318,9 @@ function filter_table() {
 
   if (window.history && window.history.replaceState) {
     var qs = [];
-    if (window.queries) qs.push("q=" + window.queries);
-    if (window.sort) qs.push("s=" + window.sort);
-    if (window.reverse) qs.push("r=" + window.reverse);
+    if (window.queries) qs.push("q=" + encodeURIComponent(window.queries));
+    if (window.sort) qs.push("s=" + encodeURIComponent(window.sort));
+    if (window.reverse) qs.push("r=" + encodeURIComponent(window.reverse));
     var url = document.location.origin + document.location.pathname;
     if (qs.length > 0) {
       url += "?" + qs.join("&");
@@ -327,6 +329,7 @@ function filter_table() {
       window.history.replaceState({}, document.title, url);
     } catch (e) {
       // ignore potential SecurityError when using file:// url
+      console.log("Attempted to change URL to: " + url);
     }
   }
 }
