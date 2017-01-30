@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
+
 from collections import namedtuple
 from distutils.version import LooseVersion
 import itertools
@@ -544,6 +546,301 @@ def _get_comparable_loose_versions(version_str1, version_str2):
                 version_parts1[i] = str(version_parts1[i])
                 version_parts2[i] = str(version_parts2[i])
     return loose_version1, loose_version2
+
+
+def build_blocked_releases_page(
+        config_url, rosdistro_name,
+        output_dir, repo_names=None, copy_resources=False):
+
+    start_time = time.localtime()
+
+    repos_info = _get_blocked_releases_info(config_url, rosdistro_name, repo_names)
+    repos_data = [_format_repo_table_row(name, data) for name, data in repos_info.items()]
+
+    template_name = 'status/blocked_releases_page.html.em'
+    data = {
+        'title': 'ROS %s - blocked releases' % rosdistro_name,
+        'start_time': time.strftime('%Y-%m-%d %H:%M:%S %z', start_time),
+
+        'resource_hashes': get_resource_hashes(),
+
+        'rosdistro_name': rosdistro_name.capitalize(),
+
+        'repos_data': repos_data,
+    }
+    html = expand_template(template_name, data)
+    output_filename = os.path.join(
+        output_dir, 'blocked_releases_%s.html' % rosdistro_name)
+    print("Generating blocked releases page '%s':" % output_filename)
+    with open(output_filename, 'w') as h:
+        h.write(html)
+
+    additional_resources(output_dir, copy_resources=copy_resources)
+
+
+def _div_wrap(data, name=None):
+    if_attr = ' id="%s"' % name if name is not None else ''
+    return '<div{0}>{1}</div>'.format(if_attr, data)
+
+
+def _filter_tag_wrap(label):
+    return '<span class="ht">label="{0}"</span>'.format(label)
+
+
+def _name_query_wrap(name):
+    import urllib
+    query = 'id="{0}"'.format(name)
+    return '<a href="?q={0}">{1}</a>'.format(urllib.parse.quote(query), name)
+
+
+def _format_repo_table_row(name, data):
+    # convert data in dictionary into data that can be used as an html table row
+    row = {}
+
+    repos_blocking = data.get('repos_blocking', [])
+    repos_blocked_by = data.get('repos_blocked_by', {})
+
+    # tags for filtering
+    tags = ''
+    if data['released']:
+        tags += _filter_tag_wrap('RELEASED')
+    else:
+        tags += _filter_tag_wrap('UNRELEASED')
+
+        if len(repos_blocked_by) > 0:
+            tags += _filter_tag_wrap('BLOCKED')
+        elif len(repos_blocking) > 0:
+            tags += _filter_tag_wrap('UNBLOCKED')
+            tags += _filter_tag_wrap('UNBLOCKED_BLOCKING')
+        else:
+            tags += _filter_tag_wrap('UNBLOCKED')
+            tags += _filter_tag_wrap('UNBLOCKED_UNBLOCKING')
+
+    url = data.get('url', None)
+    if url:
+        name_html = '<a href="{0}">{1}</a>'.format(url, name)
+    else:
+        name_html = name
+    name_cell = name_html + tags
+
+    # repo name cell
+    row['name'] = _div_wrap(name_cell, name)
+
+    # whether or not the repo has been released
+    row['version'] = _div_wrap(data.get('version', 'Not released'))
+
+    # num repos blocked by
+    row['num_repos_blocked_by'] = _div_wrap(len(repos_blocked_by))
+
+    # repos blocked by
+    row['repos_blocked_by'] = _div_wrap('<br />'.join(
+        _name_query_wrap(repo) for repo in sorted(repos_blocked_by.keys())))
+
+    # maintainers info
+    maintainers = data.get('maintainers', {})
+    maintainers_cell = ''
+    for repo_name in sorted(maintainers.keys()):
+        maintainers_cell += repo_name + ':<br />'
+        maintainers_cell += '<br />'.join(
+            '<a href="mailto:{0}" style="padding-left: 1em">{1}</a>'
+            .format(maintainers[repo_name][name], name)
+            for name in sorted(maintainers[repo_name].keys()))
+        maintainers_cell += '<br />'
+    row['maintainers_of_repos_blocked_by'] = _div_wrap(maintainers_cell)
+
+    # num repos blocking recursively
+    row['num_repos_recursively_blocked'] = _div_wrap(
+        len(data.get('recursive_repos_blocking', [])))
+
+    # num repos blocking
+    row['num_repos_blocked'] = _div_wrap(len(repos_blocking))
+
+    # repos blocking by not being released
+    row['repos_blocked'] = _div_wrap('<br />'.join(
+        _name_query_wrap(repo) for repo in sorted(repos_blocking)))
+
+    return row
+
+
+def _is_released(repo, dist_file):
+    return repo in dist_file.repositories and \
+        dist_file.repositories[repo].release_repository is not None and \
+        dist_file.repositories[repo].release_repository.version is not None
+
+
+def _get_blocked_releases_info(
+        config_url, rosdistro_name, repo_names=None, depth=1):
+    import rosdistro
+    from rosdistro.dependency_walker import DependencyWalker
+    from catkin_pkg.package import InvalidPackage, parse_package_string
+
+    prev_rosdistro_name = None
+
+    config = get_config_index(config_url)
+
+    index = rosdistro.get_index(config.rosdistro_index_url)
+    valid_rosdistro_names = list(index.distributions.keys())
+    valid_rosdistro_names.sort()
+    if rosdistro_name is None:
+        rosdistro_name = valid_rosdistro_names[-1]
+    print('Checking packages for "%s" distribution' % rosdistro_name)
+
+    # Find the previous distribution to the current one
+    try:
+        i = valid_rosdistro_names.index(rosdistro_name)
+    except ValueError:
+        print('Distribution key not found in list of valid distributions.', file=sys.stderr)
+        exit(-1)
+    if i == 0:
+        print('No previous distribution found.', file=sys.stderr)
+        exit(-1)
+    prev_rosdistro_name = valid_rosdistro_names[i - 1]
+
+    cache = rosdistro.get_distribution_cache(index, rosdistro_name)
+    distro_file = cache.distribution_file
+
+    prev_cache = rosdistro.get_distribution_cache(index, prev_rosdistro_name)
+    prev_distribution = rosdistro.get_cached_distribution(
+        index, prev_rosdistro_name, cache=prev_cache)
+
+    prev_distro_file = prev_cache.distribution_file
+
+    dependency_walker = DependencyWalker(prev_distribution)
+
+    if repo_names is None:
+        # Check missing dependencies for packages that were in the previous
+        # distribution that have not yet been released in the current distribution
+        # Filter repos without a version or a release repository
+        keys = prev_distro_file.repositories.keys()
+        prev_repo_names = set(
+            repo for repo in keys if _is_released(repo, prev_distro_file))
+        repo_names = prev_repo_names
+        ignored_inputs = []
+    else:
+        prev_repo_names = set(
+            repo for repo in repo_names if _is_released(repo, prev_distro_file))
+        ignored_inputs = list(set(repo_names).difference(prev_repo_names))
+        if len(ignored_inputs) > 0:
+            print(
+                'Ignoring inputs for which repository info not found in previous distribution '
+                '(did you list a package instead of a repository?):')
+            print('\n'.join(
+                sorted('\t{0}'.format(repo) for repo in ignored_inputs)))
+
+    keys = distro_file.repositories.keys()
+    current_repo_names = set(
+        repo for repo in keys if _is_released(repo, distro_file))
+
+    # Get a list of currently released packages
+    current_package_names = set(
+        pkg for repo in current_repo_names
+        for pkg in distro_file.repositories[repo].release_repository.package_names)
+
+    released_repos = prev_repo_names.intersection(
+        current_repo_names)
+
+    unreleased_repos = list(prev_repo_names.difference(
+        current_repo_names))
+
+    if len(unreleased_repos) == 0:
+        print('All inputs already released in {0}.'.format(
+            rosdistro_name))
+
+    repos_info = {}
+    for repo_name in prev_repo_names:
+        if repo_name not in repos_info:
+            repos_info[repo_name] = {}
+        repos_info[repo_name]['released'] = repo_name in released_repos
+
+        if repo_name in released_repos:
+            repo = distro_file.repositories[repo_name]
+            version = repo.release_repository.version
+            repos_info[repo_name]['version'] = version
+
+        else:
+            # Gather info on which required repos have not been released yet
+            # Assume dependencies will be the same as in the previous distribution and find
+            # which ones have been released
+            repo = prev_distro_file.repositories[repo_name]
+            release_repo = repo.release_repository
+            package_dependencies = set()
+            packages = release_repo.package_names
+            # Accumulate all dependencies for those packages
+            for package in packages:
+                recursive_dependencies = dependency_walker.get_recursive_depends(
+                    package, ['build', 'run', 'buildtool'], ros_packages_only=True,
+                    limit_depth=depth)
+                package_dependencies = package_dependencies.union(
+                    recursive_dependencies)
+
+            # For all package dependencies, check if they are released yet
+            unreleased_pkgs = package_dependencies.difference(
+                current_package_names)
+            # Remove the packages which this repo provides
+            unreleased_pkgs = unreleased_pkgs.difference(packages)
+
+            # Get maintainer info and repo of unreleased packages
+            maintainers = {}
+            repos_blocked_by = set()
+            for pkg_name in unreleased_pkgs:
+                unreleased_repo_name = prev_distro_file.release_packages[pkg_name].repository_name
+                repos_blocked_by.add(unreleased_repo_name)
+                pkg_xml = prev_distribution.get_release_package_xml(pkg_name)
+                if pkg_xml is not None:
+                    try:
+                        pkg = parse_package_string(pkg_xml)
+                        pkg_maintainers = {m.name: m.email for m in pkg.maintainers}
+                        try:
+                            maintainers[unreleased_repo_name].update(pkg_maintainers)
+                        except KeyError:
+                            maintainers[unreleased_repo_name] = pkg_maintainers
+                    except InvalidPackage:
+                        pkg_maintainers = None
+            if maintainers:
+                repos_info[repo_name]['maintainers'] = maintainers
+
+            repos_info[repo_name]['repos_blocked_by'] = {}
+            for blocking_repo_name in repos_blocked_by:
+                # Get url of blocking repos
+                repo_url = None
+                blocking_repo = prev_distro_file.repositories[blocking_repo_name]
+                if blocking_repo.source_repository:
+                    repo_url = blocking_repo.source_repository.url
+                elif blocking_repo.doc_repository:
+                    repo_url = blocking_repo.doc_repository.url
+                repos_info[repo_name]['repos_blocked_by'].update({blocking_repo_name: repo_url})
+
+                # Mark blocking relationship in other direction
+                if blocking_repo_name not in repos_info:
+                    repos_info[blocking_repo_name] = {}
+                try:
+                    repos_info[blocking_repo_name]['repos_blocking'].add(repo_name)
+                except KeyError:
+                    repos_info[blocking_repo_name]['repos_blocking'] = set([repo_name])
+
+        # Get url of repo
+        repo_url = None
+        if repo.source_repository:
+            repo_url = repo.source_repository.url
+        elif repo.doc_repository:
+            repo_url = repo.doc_repository.url
+        if repo_url:
+            repos_info[repo_name]['url'] = repo_url
+
+    for repo_name in repos_info.keys():
+        # Recursively get all repos being blocked by this repo
+        recursive_blocks = set([])
+        repos_to_check = set([repo_name])
+        while repos_to_check:
+            next_repo_to_check = repos_to_check.pop()
+            blocks = repos_info[next_repo_to_check].get('repos_blocking', set([]))
+            new_blocks = blocks - recursive_blocks
+            repos_to_check |= new_blocks
+            recursive_blocks |= new_blocks
+        if recursive_blocks:
+            repos_info[repo_name]['recursive_repos_blocking'] = recursive_blocks
+
+    return repos_info
 
 
 def build_release_compare_page(
