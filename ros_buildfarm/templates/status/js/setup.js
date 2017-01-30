@@ -303,8 +303,17 @@ function filter_table() {
     var order = 1;
     if (window.reverse == 1) order = -1;
     result_rows.sort(function(a, b) {
-      if (a[sort] > b[sort]) return order;
-      if (a[sort] < b[sort]) return -order;
+      var val1 = a[sort];
+      var val2 = b[sort];
+      
+      // Convert strings to floats if appropriate
+      var val1_float = parseFloat(val1);
+      var val2_float = parseFloat(val2);   
+      if (val1 == val1_float) val1 = val1_float;
+      if (val2 == val2_float) val2 = val2_float;
+
+      if (val1 > val2) return order;
+      if (val1 < val2) return -order;
       return 0;
     });
   }
