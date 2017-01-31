@@ -40,13 +40,13 @@ import time
       <input type="text" name="q" id="q" />
       <p>
         <a href="?q=" title="Show all repos">all</a>,
-        <script language="JavaScript">encoded_query_a_tag('label="RELEASED"', "Repositories which have already been released", "released")</script>,
-        <script language="JavaScript">encoded_query_a_tag('label="UNRELEASED"', "Repositories which have not been released", "unreleased")</script>,
-        <script language="JavaScript">encoded_query_a_tag('label="BLOCKED"', "Repositories which are blocked from being released because of unreleased dependencies", "blocked")</script>,
-        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED"', "Repositories which can be released", "releasable")</script>,
-        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED_BLOCKING"', "Repositories which can be released and are preventing others from being released", "releasable and blocking")</script>,
-        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED_UNBLOCKING"', "Repositories which can be released and are not preventing others from being released", "releasable and not blocking")</script>,
-        <script language="JavaScript">encoded_query_a_tag('id="metapackages"', "Repositories which are dependencies of the desktop-full metapackage", "desktop-full")</script>
+        <script language="JavaScript">encoded_query_a_tag('label="RELEASED"', "Repositories that have already been released", "released")</script>,
+        <script language="JavaScript">encoded_query_a_tag('label="UNRELEASED"', "Repositories that have not been released", "unreleased")</script>,
+        <script language="JavaScript">encoded_query_a_tag('label="BLOCKED"', "Repositories that are blocked from being released because of unreleased dependencies", "blocked")</script>,
+        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED"', "Repositories that can be released", "releasable")</script>,
+        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED_BLOCKING"', "Repositories that can be released and are preventing others from being released", "releasable and blocking")</script>,
+        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED_UNBLOCKING"', "Repositories that can be released and are not preventing others from being released", "releasable and not blocking")</script>,
+        <script language="JavaScript">encoded_query_a_tag('id="metapackages"', "Repositories that are dependencies of the desktop-full metapackage", "desktop-full")</script>
       </p>
       <p id="search-count"></p>
     </form>
@@ -64,32 +64,32 @@ import time
           <th class="sortable"><div>Repository</div></th>
           <th class="sortable"><div>Version</div></th>
           <th class="sortable">
-            <div title="Number of repositories which are directly blocking this one by not being released">
+            <div title="Number of unreleased repositories that are directly blocking this one">
               # blocking release
             </div>
           </th>
           <th class="sortable">
-            <div title="Repositories which are directly blocking this one by not being released">
+            <div title="Unreleased repositories that are directly blocking this one">
               Blocking repos
             </div>
           </th>
           <th class="sortable">
-            <div title="Maintainers of the repositories which are directly blocking this one by not being released">
+            <div title="Maintainers of the unreleased repositories that are directly blocking this one">
               Maintainers of blocks
             </div>
           </th>
           <th class="sortable">
-            <div title="Number of repositories which are being directly or indirectly blocked by this one not being released">
+            <div title="Number of unreleased repositories that are directly or indirectly blocking this one">
               # recursively blocked
             </div>
           </th>
           <th class="sortable">
-            <div title="Number of repositories which are being directly blocked by this one not being released">
+            <div title="Number of repositories that are being directly blocked by this one">
               # directly blocked
             </div>
           </th>
           <th class="sortable">
-            <div title="Repositories which are being directly blocked by this one not being released">
+            <div title="Repositories that are being directly blocked by this one">
               Directly blocked repos
             </div>
           </th>
