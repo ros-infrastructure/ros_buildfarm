@@ -46,7 +46,7 @@ import time
         <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED"', "Repositories that can be released", "releasable")</script>,
         <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED_BLOCKING"', "Repositories that can be released and are preventing others from being released", "releasable and blocking")</script>,
         <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED_UNBLOCKING"', "Repositories that can be released and are not preventing others from being released", "releasable and not blocking")</script>,
-        <script language="JavaScript">encoded_query_a_tag('id="metapackages"', "Repositories that are dependencies of the desktop-full metapackage", "desktop-full")</script>
+        <script language="JavaScript">encoded_query_a_tag('id="metapackages"', "Repositories that are dependencies of the metapackages repository", "metapackages")</script>
       </p>
       <p id="search-count"></p>
     </form>
