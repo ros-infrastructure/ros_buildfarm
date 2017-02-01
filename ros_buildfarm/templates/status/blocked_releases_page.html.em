@@ -96,8 +96,8 @@ import time
         </tr>
       </thead>
       <tbody>
-        <!-- Originally sort the table by the repos with the most recursively blocked dependencies -->
-        <script type="text/javascript">window.sort=6; window.reverse=1;</script>
+        <!-- Originally sort the table by the repo names -->
+        <script type="text/javascript">window.sort=1;</script>
         <script type="text/javascript">window.tbody_ready();</script>
 @[for row in repos_data]@
         <tr>
@@ -119,5 +119,8 @@ import time
     </table>
   </div>
   <script type="text/javascript">window.body_done();</script>
+
+  <!-- Sort the table by the repos with the most recursively blocked dependencies -->
+  <script type="text/javascript">window.sort=6; window.reverse=1; window.filter_table()</script>
 </body>
 </html>
