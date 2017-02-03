@@ -302,6 +302,7 @@ function filter_table() {
     var sort = parseInt(window.sort);
     var order = 1;
     if (window.reverse == 1) order = -1;
+    //TODO (dhood): ensure that a stable sort is used by all browsers
     result_rows.sort(function(a, b) {
       var val1 = a[sort];
       var val2 = b[sort];
