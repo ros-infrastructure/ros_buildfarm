@@ -555,7 +555,7 @@ def build_blocked_releases_page(
     start_time = time.localtime()
 
     repos_info = _get_blocked_releases_info(config_url, rosdistro_name, repo_names)
-    repos_data = [_format_repo_table_row(name, data) for name, data in repos_info.items()]
+    repos_data = [_format_repo_table_row(name, data) for name, data in sorted(repos_info.items())]
 
     template_name = 'status/blocked_releases_page.html.em'
     data = {
