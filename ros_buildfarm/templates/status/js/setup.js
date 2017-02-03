@@ -302,7 +302,10 @@ function filter_table() {
     var sort = parseInt(window.sort);
     var order = 1;
     if (window.reverse == 1) order = -1;
-    //TODO (dhood): ensure that a stable sort is used by all browsers
+    // temporary store index of each row
+    for (var i = 0; i < result_rows.length; ++i) {
+      result_rows[i].push(i);
+    }
     result_rows.sort(function(a, b) {
       var val1 = a[sort];
       var val2 = b[sort];
@@ -315,8 +318,18 @@ function filter_table() {
 
       if (val1 > val2) return order;
       if (val1 < val2) return -order;
-      return 0;
+
+      // emulate stable sorting by considering the previous index of each row
+      val1 = a[a.length - 1];
+      val2 = b[b.length - 1];
+      if (val1 > val2) return 1;
+      if (val1 < val2) return -1;
+      return 0;  // this should never be the case
     });
+    // remove temporary index from each row
+    for (var i = 0; i < result_rows.length; ++i) {
+      result_rows[i].pop();
+    }
   }
 
   var result_rows_plain = $.map(result_rows, function(row) { return row[0]; });
