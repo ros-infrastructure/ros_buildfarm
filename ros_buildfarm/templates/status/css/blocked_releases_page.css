@@ -1,0 +1,14 @@
+tbody tr td div { width: 150px; overflow-x: hidden; text-overflow: ellipsis; }
+tbody tr td.thincol div { width: 130px; overflow-x: hidden; text-overflow: ellipsis; }
+thead tr th:nth-child(even) div { font-weight: normal }
+
+/* Over-write settings in setup.js */
+tbody tr td:nth-child(1) div { width: 150px; overflow-x: hidden; text-overflow: ellipsis; }
+
+.table-div { padding-left: 15px; padding-right: 15px; }
+tbody tr td { padding-left: 10px; }
+
+/* Give the table more breathing room on a wider display. */
+@media (min-width: 1400px) {
+  tbody tr td { padding-right: 20px; }
+}

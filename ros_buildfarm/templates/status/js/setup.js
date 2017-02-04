@@ -15,6 +15,7 @@ window.body_ready = function() {
     var query_parts = url_parts[1].split('&');
     $.each(query_parts, function(i, query_part) {
       key_val = query_part.split('=');
+      key_val[1] = decodeURIComponent(key_val[1]);
       switch(key_val[0]) {
         case 'q': window.queries = key_val[1]; break;
         case 's': window.sort = key_val[1]; break;
@@ -83,6 +84,7 @@ window.tbody_ready = function() {
       var query_parts = url_parts[1].split('&');
       $.each(query_parts, function(i, query_part) {
         key_val = query_part.split('=');
+        key_val[1] = decodeURIComponent(key_val[1]);
         if (key_val[0] == 'q') {
           window.queries = key_val[1];
         }
@@ -261,13 +263,13 @@ function filter_table() {
       result_rows = $.map(window.rows, function(row) {
         for (var i = 0; i < queries.length; i++) {
           var is_known_query = false;
-          for(var q in QUERY_TRANSFORMS) {
-            if (queries[i] === QUERY_TRANSFORMS[q]) {
+          for (var q in QUERY_TRANSFORMS) {
+            if (RegExp("^("+QUERY_TRANSFORMS[q]+")$").test(queries[i])) {
               is_known_query = true;
               break;
             }
           }
-          if(is_known_query) {
+          if (is_known_query) {
             // search in full row html
             if (row[0].indexOf(queries[i]) == -1) return null;
           } else {
@@ -300,11 +302,34 @@ function filter_table() {
     var sort = parseInt(window.sort);
     var order = 1;
     if (window.reverse == 1) order = -1;
+    // temporary store index of each row
+    for (var i = 0; i < result_rows.length; ++i) {
+      result_rows[i].push(i);
+    }
     result_rows.sort(function(a, b) {
-      if (a[sort] > b[sort]) return order;
-      if (a[sort] < b[sort]) return -order;
-      return 0;
+      var val1 = a[sort];
+      var val2 = b[sort];
+      
+      // Convert strings to floats if appropriate
+      var val1_float = parseFloat(val1);
+      var val2_float = parseFloat(val2);   
+      if (val1 == val1_float) val1 = val1_float;
+      if (val2 == val2_float) val2 = val2_float;
+
+      if (val1 > val2) return order;
+      if (val1 < val2) return -order;
+
+      // emulate stable sorting by considering the previous index of each row
+      val1 = a[a.length - 1];
+      val2 = b[b.length - 1];
+      if (val1 > val2) return 1;
+      if (val1 < val2) return -1;
+      return 0;  // this should never be the case
     });
+    // remove temporary index from each row
+    for (var i = 0; i < result_rows.length; ++i) {
+      result_rows[i].pop();
+    }
   }
 
   var result_rows_plain = $.map(result_rows, function(row) { return row[0]; });
@@ -316,9 +341,9 @@ function filter_table() {
 
   if (window.history && window.history.replaceState) {
     var qs = [];
-    if (window.queries) qs.push("q=" + window.queries);
-    if (window.sort) qs.push("s=" + window.sort);
-    if (window.reverse) qs.push("r=" + window.reverse);
+    if (window.queries) qs.push("q=" + encodeURIComponent(window.queries));
+    if (window.sort) qs.push("s=" + encodeURIComponent(window.sort));
+    if (window.reverse) qs.push("r=" + encodeURIComponent(window.reverse));
     var url = document.location.origin + document.location.pathname;
     if (qs.length > 0) {
       url += "?" + qs.join("&");
@@ -327,6 +352,7 @@ function filter_table() {
       window.history.replaceState({}, document.title, url);
     } catch (e) {
       // ignore potential SecurityError when using file:// url
+      console.log("Attempted to change URL to: " + url);
     }
   }
 }
