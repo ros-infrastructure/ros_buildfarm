@@ -1,1 +1,1 @@
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.8.7"/>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.8.8"/>

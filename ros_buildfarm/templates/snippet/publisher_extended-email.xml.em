@@ -1,5 +1,5 @@
 @[if recipients]@
-    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@@2.52">
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@@2.55">
       <recipientList>@ESCAPE(' '.join(sorted(recipients)))</recipientList>
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>

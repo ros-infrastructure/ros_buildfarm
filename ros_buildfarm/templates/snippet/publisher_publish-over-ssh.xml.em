@@ -1,4 +1,4 @@
-    <jenkins.plugins.publish__over__ssh.BapSshPublisherPlugin plugin="publish-over-ssh@@1.14">
+    <jenkins.plugins.publish__over__ssh.BapSshPublisherPlugin plugin="publish-over-ssh@@1.17">
       <consolePrefix>SSH: </consolePrefix>
       <delegate>
         <publishers>
