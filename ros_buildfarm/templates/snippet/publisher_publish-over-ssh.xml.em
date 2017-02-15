@@ -20,6 +20,7 @@
                 <execCommand/>
                 <execTimeout>120000</execTimeout>
                 <usePty>false</usePty>
+                <useAgentForwarding>false</useAgentForwarding>
               </jenkins.plugins.publish__over__ssh.BapSshTransfer>
             </transfers>
             <useWorkspaceInPromotion>false</useWorkspaceInPromotion>

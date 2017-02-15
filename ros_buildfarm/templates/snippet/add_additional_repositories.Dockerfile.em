@@ -21,5 +21,5 @@ RUN @(' && '.join(commands))
 @[  end if]@
 @[else if os_name == 'debian']@
 # Add contrib and non-free to debian images
-RUN echo deb http://http.debian.net/debian @os_code_name contrib non-free | tee -a /etc/apt/sources.list
+RUN echo deb http://deb.debian.org/debian @os_code_name contrib non-free | tee -a /etc/apt/sources.list
 @[end if]@
