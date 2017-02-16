@@ -29,6 +29,7 @@ ENV DEBIAN_FRONTEND noninteractive
     'snippet/add_distribution_repositories.Dockerfile.em',
     distribution_repository_keys=distribution_repository_keys,
     distribution_repository_urls=distribution_repository_urls,
+    os_name=os_name,
     os_code_name=os_code_name,
     add_source=False,
 ))@
