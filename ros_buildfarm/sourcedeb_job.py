@@ -14,6 +14,7 @@
 
 import os
 import subprocess
+from urllib.request import urlretrieve
 
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.release_common import dpkg_parsechangelog
@@ -58,6 +59,22 @@ def get_sources(
             ('The cloned package version from the GBP (%s) does not match ' +
              'the expected package version from the distribution file (%s)') %
             (source_version, pkg_version))
+
+    # If a tarball already exists reuse it
+    origtgz_version = pkg_version.split('-')[0]
+    debian_package_name = get_debian_package_name(rosdistro_name, pkg_name)
+    filename = '%s_%s.orig.tar.gz' % (debian_package_name, origtgz_version)
+    # TODO(tfoote) remove the hardcoded repo url
+    URL_TEMPLATE='http://repositories.ros.org/ubuntu/building/pool/main/r/%s/%s'
+    url = URL_TEMPLATE % (debian_package_name, filename)
+
+    try:
+        output_file = os.path.join(sources_dir, '..', filename)
+        urlretrieve(url, output_file)
+        print("Fetched %s to %s" % (url, output_file))
+    except Exception as ex:
+        print(ex)
+        print("No tarball found at %s, that's ok it will be rebuilt" % url)
 
     # output package version for job description
     print("Package '%s' version: %s" % (pkg_name, source_version))
