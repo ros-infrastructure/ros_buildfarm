@@ -63,6 +63,7 @@ cmds = [
     ' ' + package_name +
     ' ' + os_name +
     ' ' + os_code_name +
+    ' ' + ' '.join(distribution_repository_urls) +
     ' --source-dir /tmp/sourcedeb/source',
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' +

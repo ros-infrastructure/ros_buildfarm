@@ -22,7 +22,7 @@ from ros_buildfarm.release_common import dpkg_parsechangelog
 
 def get_sources(
         rosdistro_index_url, rosdistro_name, pkg_name, os_name, os_code_name,
-        sources_dir):
+        sources_dir, debian_repository_urls):
     from rosdistro import get_cached_distribution
     from rosdistro import get_index
     index = get_index(rosdistro_index_url)
@@ -64,17 +64,19 @@ def get_sources(
     origtgz_version = pkg_version.split('-')[0]
     debian_package_name = get_debian_package_name(rosdistro_name, pkg_name)
     filename = '%s_%s.orig.tar.gz' % (debian_package_name, origtgz_version)
-    # TODO(tfoote) remove the hardcoded repo url
-    URL_TEMPLATE='http://repositories.ros.org/ubuntu/building/pool/main/r/%s/%s'
-    url = URL_TEMPLATE % (debian_package_name, filename)
 
-    try:
-        output_file = os.path.join(sources_dir, '..', filename)
-        urlretrieve(url, output_file)
-        print("Fetched %s to %s" % (url, output_file))
-    except Exception as ex:
-        print(ex)
-        print("No tarball found at %s, that's ok it will be rebuilt" % url)
+    for repo in debian_repository_urls:
+        URL_TEMPLATE = '%s/pool/main/r/%s/%s'
+        url = URL_TEMPLATE % (repo, debian_package_name, filename)
+
+        try:
+            output_file = os.path.join(sources_dir, '..', filename)
+            urlretrieve(url, output_file)
+            print("Found matching original tarball, "
+                  "downloading %s to %s" % (url, output_file))
+            continue
+        except:
+            print("No tarball found at %s, that's ok it will be rebuilt" % url)
 
     # output package version for job description
     print("Package '%s' version: %s" % (pkg_name, source_version))
