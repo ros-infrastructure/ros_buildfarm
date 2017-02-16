@@ -14,6 +14,7 @@
 
 import os
 import subprocess
+from urllib.request import urlretrieve
 
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.release_common import dpkg_parsechangelog
@@ -21,7 +22,7 @@ from ros_buildfarm.release_common import dpkg_parsechangelog
 
 def get_sources(
         rosdistro_index_url, rosdistro_name, pkg_name, os_name, os_code_name,
-        sources_dir):
+        sources_dir, debian_repository_urls):
     from rosdistro import get_cached_distribution
     from rosdistro import get_index
     index = get_index(rosdistro_index_url)
@@ -58,6 +59,25 @@ def get_sources(
             ('The cloned package version from the GBP (%s) does not match ' +
              'the expected package version from the distribution file (%s)') %
             (source_version, pkg_version))
+
+    # If a tarball already exists reuse it
+    origtgz_version = pkg_version.split('-')[0]
+    debian_package_name = get_debian_package_name(rosdistro_name, pkg_name)
+    filename = '%s_%s.orig.tar.gz' % (debian_package_name, origtgz_version)
+
+    URL_TEMPLATE = '%s/pool/main/%s/%s/%s'
+    prefix = debian_package_name[0]
+    for repo in debian_repository_urls:
+        url = URL_TEMPLATE % (repo, prefix, debian_package_name, filename)
+
+        output_file = os.path.join(sources_dir, '..', filename)
+        try:
+            urlretrieve(url, output_file)
+            print("Downloaded original tarball '%s' to '%s'" %
+                  (url, output_file))
+            break
+        except:
+            print("No tarball found at '%s'" % url)
 
     # output package version for job description
     print("Package '%s' version: %s" % (pkg_name, source_version))

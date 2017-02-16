@@ -17,6 +17,7 @@
 import argparse
 import sys
 
+from ros_buildfarm.argument import add_argument_debian_repository_urls
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
@@ -37,11 +38,12 @@ def main(argv=sys.argv[1:]):
         add_argument_os_name(parser)
         add_argument_os_code_name(parser)
         add_argument_source_dir(parser)
+        add_argument_debian_repository_urls(parser)
         args = parser.parse_args(argv)
 
         return get_sources(
             args.rosdistro_index_url, args.rosdistro_name, args.package_name,
-            args.os_name, args.os_code_name, args.source_dir)
+            args.os_name, args.os_code_name, args.source_dir, args.debian_repository_urls)
 
 
 if __name__ == '__main__':
