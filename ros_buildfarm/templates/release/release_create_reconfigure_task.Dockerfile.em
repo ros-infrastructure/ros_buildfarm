@@ -19,6 +19,7 @@ RUN useradd -u @uid -m buildfarm
     'snippet/add_distribution_repositories.Dockerfile.em',
     distribution_repository_keys=distribution_repository_keys,
     distribution_repository_urls=distribution_repository_urls,
+    os_name='ubuntu',
     os_code_name='trusty',
     add_source=False,
 ))@
