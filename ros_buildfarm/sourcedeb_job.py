@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import subprocess
 
 from ros_buildfarm.common import get_debian_package_name
@@ -80,7 +81,7 @@ def _get_source_tag(
          pkg_version, os_code_name)
 
 
-def build_sourcedeb(sources_dir):
+def build_sourcedeb(sources_dir, os_name=None, os_code_name=None):
     cmd = [
         'gbp', 'buildpackage',
         '--git-ignore-new',
@@ -109,5 +110,12 @@ def build_sourcedeb(sources_dir):
             '--git-upstream-tag=' + upstream_tag,
             '--git-upstream-tree=tag']
 
+    # workaround different default compression levels
+    # resulting in different checksums for the tarball
+    if os_name == 'ubuntu' and os_code_name == 'zesty':
+        env = dict(os.environ)
+        env['GZIP'] = '-9'
+    else:
+        env = None
     print("Invoking '%s' in '%s'" % (' '.join(cmd), sources_dir))
-    subprocess.check_call(cmd, cwd=sources_dir)
+    subprocess.check_call(cmd, cwd=sources_dir, env=env)
