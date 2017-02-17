@@ -66,8 +66,9 @@ def get_sources(
     filename = '%s_%s.orig.tar.gz' % (debian_package_name, origtgz_version)
 
     for repo in debian_repository_urls:
-        URL_TEMPLATE = '%s/pool/main/r/%s/%s'
-        url = URL_TEMPLATE % (repo, debian_package_name, filename)
+        URL_TEMPLATE = '%s/pool/main/%s/%s/%s'
+        prefix = debian_package_name[0]
+        url = URL_TEMPLATE % (repo, prefix, debian_package_name, filename)
 
         try:
             output_file = os.path.join(sources_dir, '..', filename)
