@@ -25,7 +25,7 @@ window.body_ready = function() {
   }
 };
 
-window.age_threshold_green = moment.duration(20, 'minutes');
+window.age_threshold_green = moment.duration(30, 'minutes');
 window.age_threshold_yellow = moment.duration(1, 'days');
 
 window.body_ready_with_age = function(age) {

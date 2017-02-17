@@ -16,6 +16,7 @@
 </head>
 <body>
   <script type="text/javascript">
+    window.age_threshold_green = moment.duration(7, 'hours');
     window.body_ready_with_age(moment.duration(moment() - moment("@start_time", "X")));
   </script>
   <div class="top logo">
