@@ -45,6 +45,12 @@ RUN echo "@today_str"
 ))@
 
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y debhelper dpkg dpkg-dev git git-buildpackage python3-catkin-pkg python3-rosdistro python3-yaml
+@[if os_name == 'ubuntu' and os_code_name == 'yakkety']@
+@# git-buildpackage in Yakkety has a bug resulting in using the current time for
+@# the to be archived files resulting in non-deterministic checksums for the tarball
+@# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=851645;msg=43
+RUN sed -i '/    main_tree = repo.tree_drop_dirs(upstream_tree, options.subtarballs)/c\    main_tree = repo.tree_drop_dirs(upstream_tree, options.subtarballs) if options.subtarballs else upstream_tree' /usr/lib/python2.7/dist-packages/gbp/scripts/buildpackage.py
+@[end if]@
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
