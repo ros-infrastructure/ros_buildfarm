@@ -25,16 +25,18 @@ window.body_ready = function() {
   }
 };
 
+window.age_threshold_green = moment.duration(20, 'minutes');
+window.age_threshold_yellow = moment.duration(1, 'days');
+
 window.body_ready_with_age = function(age) {
   // Do age stuff
   $(document).ready(function() {
     $('.age p').replaceWith("<p>Page was generated: <br/>" + age.humanize() + " ago</p>");
-    if (age < moment.duration(20, 'minutes')) {
+    if (age < window.age_threshold_green) {
       $('.age p').css('color', '#3c763d');
       $('.age').css('background-color', '#dff0d8');
       $('.age').css('border-color', '#d6e9c6');
-    }
-    else if (age < moment.duration(1, 'days')) {
+    } else if (age < window.age_threshold_yellow) {
       $('.age p').css('color', '#8a6d3b');
       $('.age').css('background-color', '#fcf8e3');
       $('.age').css('border-color', '#faebcc');
