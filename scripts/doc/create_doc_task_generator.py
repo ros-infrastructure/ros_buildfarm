@@ -507,7 +507,7 @@ def main(argv=sys.argv[1:]):
             'rsync',
             # the following are required by rosdoc_lite
             'doxygen',
-            'python-catkin-pkg',
+            'python-catkin-pkg-modules',
             'python-epydoc',
             'python-kitchen',
             'python-rospkg',
