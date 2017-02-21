@@ -87,7 +87,14 @@ def build_sourcedeb(sources_dir, os_name=None, os_code_name=None):
         '--git-ignore-new',
         '--git-ignore-branch',
         # dpkg-buildpackage args
-        '-S', '-us', '-uc',
+        '-S']
+    if os_name == 'debian' and os_code_name == 'stretch':
+        # without this dpkg-genbuildinfo assumes a full build
+        # which will check if the build deps are installed
+        cmd.append('--buildinfo-option=source')
+    cmd += [
+        # dpkg-buildpackage args
+        '-us', '-uc',
         # debuild args for lintian
         '--lintian-opts', '--suppress-tags', 'newer-standards-version']
 
