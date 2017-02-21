@@ -570,6 +570,7 @@ def _get_sourcedeb_job_config(
         'sourcedeb/*.debian.tar.xz',
         'sourcedeb/*.dsc',
         'sourcedeb/*.orig.tar.gz',
+        'sourcedeb/*_source.buildinfo',
         'sourcedeb/*_source.changes',
     ]
 
