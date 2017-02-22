@@ -89,9 +89,10 @@ def build_sourcedeb(sources_dir, os_name=None, os_code_name=None):
         # dpkg-buildpackage args
         '-S']
     if os_name == 'debian' and os_code_name == 'stretch':
-        # without this dpkg-genbuildinfo assumes a full build
-        # which will check if the build deps are installed
-        cmd.append('--buildinfo-option=source')
+        # don't fail for not installed build dependencies
+        cmd.append('-d')
+        # do not sign the .buildinfo file, since dpkg 1.18.19
+        cmd.append('-ui')
     cmd += [
         # dpkg-buildpackage args
         '-us', '-uc',
