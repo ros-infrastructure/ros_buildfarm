@@ -32,7 +32,7 @@ RUN useradd -u @uid -m buildfarm
 # automatic invalidation once every day
 RUN echo "@today_str"
 
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-catkin-pkg-modules python3-empy python3-rosdistro python3-yaml
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-catkin-pkg-modules python3-empy python3-rosdistro-modules python3-yaml
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
