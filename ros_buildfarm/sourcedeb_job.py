@@ -65,19 +65,20 @@ def get_sources(
     debian_package_name = get_debian_package_name(rosdistro_name, pkg_name)
     filename = '%s_%s.orig.tar.gz' % (debian_package_name, origtgz_version)
 
+    URL_TEMPLATE = '%s/pool/main/%s/%s/%s'
+    prefix = debian_package_name[0]
     for repo in debian_repository_urls:
-        URL_TEMPLATE = '%s/pool/main/%s/%s/%s'
-        prefix = debian_package_name[0]
         url = URL_TEMPLATE % (repo, prefix, debian_package_name, filename)
 
+        output_file = os.path.join(sources_dir, '..', filename)
         try:
-            output_file = os.path.join(sources_dir, '..', filename)
             urlretrieve(url, output_file)
-            print("Found matching original tarball, "
-                  "downloading %s to %s" % (url, output_file))
-            continue
+            break
         except:
-            print("No tarball found at %s, that's ok it will be rebuilt" % url)
+            print("No tarball found at '%s'." % url)
+        else:
+            print("Downloaded original tarball '%s' to '%s'" %
+                  (url, output_file))
 
     # output package version for job description
     print("Package '%s' version: %s" % (pkg_name, source_version))
