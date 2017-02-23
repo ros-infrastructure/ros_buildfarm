@@ -73,12 +73,11 @@ def get_sources(
         output_file = os.path.join(sources_dir, '..', filename)
         try:
             urlretrieve(url, output_file)
+            print("Downloaded original tarball '%s' to '%s'" %
+                  (url, output_file))
             break
         except:
             print("No tarball found at '%s'." % url)
-        else:
-            print("Downloaded original tarball '%s' to '%s'" %
-                  (url, output_file))
 
     # output package version for job description
     print("Package '%s' version: %s" % (pkg_name, source_version))
