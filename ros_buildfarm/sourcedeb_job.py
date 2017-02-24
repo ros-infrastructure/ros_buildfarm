@@ -120,7 +120,7 @@ def build_sourcedeb(sources_dir, os_name=None, os_code_name=None):
 
     # workaround different default compression levels
     # resulting in different checksums for the tarball
-    if os_name == 'ubuntu' and os_code_name == 'zesty':
+    if (os_name, os_code_name) in (('ubuntu', 'zesty'), ('debian', 'stretch')):
         env = dict(os.environ)
         env['GZIP'] = '-9'
     else:
