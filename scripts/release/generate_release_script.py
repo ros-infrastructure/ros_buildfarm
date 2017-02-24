@@ -60,6 +60,9 @@ def main(argv=sys.argv[1:]):
             template_path = kwargs['file'].name
             if template_path.endswith('/release/binarydeb_job.xml.em'):
                 self.scripts.append('--')
+
+        def beforeInclude(self, *args, **kwargs):
+            template_path = kwargs['file'].name
             if template_path.endswith('/snippet/builder_shell.xml.em'):
                 self.scripts.append(kwargs['locals']['script'])
 
