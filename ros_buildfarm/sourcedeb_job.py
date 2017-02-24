@@ -77,7 +77,7 @@ def get_sources(
                   (url, output_file))
             break
         except:
-            print("No tarball found at '%s'." % url)
+            print("No tarball found at '%s'" % url)
 
     # output package version for job description
     print("Package '%s' version: %s" % (pkg_name, source_version))
