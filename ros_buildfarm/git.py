@@ -48,8 +48,9 @@ def get_repository():
     if url != FALLBACK_REPOSITORY_URL:
         print(msg1 %
               ("url '%s'" % url, "fallback url '%s' defined in '%s'" %
-               (FALLBACK_REPOSITORY_URL, os.path.abspath(__file__))))
-        print(msg2 % 'fallback url')
+               (FALLBACK_REPOSITORY_URL, os.path.abspath(__file__))),
+              file=sys.stderr)
+        print(msg2 % 'fallback url', file=sys.stderr)
 
     # get repository version from git or fallback to version string
     version = _get_git_repository_version(basepath)
@@ -62,8 +63,8 @@ def get_repository():
     elif version not in [version_number, repository_version]:
         print(msg1 %
               ("version '%s'" % version,
-               "Python package version '%s'" % __version__))
-        print(msg2 % 'Python package version')
+               "Python package version '%s'" % __version__), file=sys.stderr)
+        print(msg2 % 'Python package version', file=sys.stderr)
 
     return namedtuple('Repository', 'url version')(url, version)
 
