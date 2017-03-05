@@ -151,6 +151,6 @@ from ROS *Indigo* for Ubuntu *Trusty* *amd64*:
 .. code:: sh
 
   mkdir /tmp/release_job
-  generate_release_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/master/index.yaml indigo default roscpp ubuntu trusty amd64 > /tmp/release_job/release_job_indigo_roscpp.sh
+  generate_release_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default roscpp ubuntu trusty amd64 > /tmp/release_job/release_job_indigo_roscpp.sh
   cd /tmp/release_job
   sh release_job_indigo_roscpp.sh

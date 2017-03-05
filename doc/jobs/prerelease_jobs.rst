@@ -68,7 +68,7 @@ The packages defining the *overlay* workspace are: *roscpp*
 .. code:: sh
 
   mkdir /tmp/prerelease_job
-  generate_prerelease_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/master/index.yaml indigo default ubuntu trusty amd64 roscpp_core std_msgs --level 0 --pkg roscpp --output-dir /tmp/prerelease_job
+  generate_prerelease_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default ubuntu trusty amd64 roscpp_core std_msgs --level 0 --pkg roscpp --output-dir /tmp/prerelease_job
   cd /tmp/prerelease_job
   ./prerelease.sh
 

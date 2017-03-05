@@ -141,7 +141,7 @@ from ROS *Indigo* for Ubuntu *Trusty* *amd64*:
 .. code:: sh
 
   mkdir /tmp/devel_job
-  generate_devel_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/master/index.yaml indigo default roscpp_core ubuntu trusty amd64 > /tmp/devel_job/devel_job_indigo_roscpp_core.sh
+  generate_devel_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default roscpp_core ubuntu trusty amd64 > /tmp/devel_job/devel_job_indigo_roscpp_core.sh
   cd /tmp/devel_job
   sh devel_job_indigo_roscpp_core.sh
 

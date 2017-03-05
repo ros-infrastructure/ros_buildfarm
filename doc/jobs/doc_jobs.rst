@@ -130,6 +130,6 @@ ROS *Indigo* for Ubuntu *Trusty* *amd64*:
 .. code:: sh
 
   mkdir /tmp/doc_job
-  generate_doc_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/master/index.yaml indigo default roscpp_core ubuntu trusty amd64 > /tmp/doc_job/doc_job_indigo_roscpp_core.sh
+  generate_doc_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default roscpp_core ubuntu trusty amd64 > /tmp/doc_job/doc_job_indigo_roscpp_core.sh
   cd /tmp/doc_job
   sh doc_job_indigo_roscpp_core.sh
