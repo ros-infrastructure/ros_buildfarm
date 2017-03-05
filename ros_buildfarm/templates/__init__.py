@@ -96,7 +96,8 @@ def expand_template(template_name, data, options=None):
 
         with open(template_path, 'r') as h:
             content = h.read()
-            interpreter.invoke('beforeFile', name=template_name, file=h)
+            interpreter.invoke(
+                'beforeFile', name=template_name, file=h, locals=data)
         interpreter.string(content, template_path, locals=data)
         interpreter.invoke('afterFile')
 
