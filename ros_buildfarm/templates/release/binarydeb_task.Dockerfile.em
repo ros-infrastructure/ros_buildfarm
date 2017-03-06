@@ -64,7 +64,7 @@ RUN echo "@today_str"
 ))@
 
 # magic https://github.com/docker/docker/issues/14203
-ENV DOCKER_FIX ' '
+ENV DOCKER_FIX '                                    '
 
 @(TEMPLATE(
     'snippet/install_dependencies.Dockerfile.em',
