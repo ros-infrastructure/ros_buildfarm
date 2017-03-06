@@ -57,6 +57,11 @@ RUN echo "@today_str"
     os_name=os_name,
     os_code_name=os_code_name,
 ))@
+@(TEMPLATE(
+    'snippet/install_apt-src.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+))@
 
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y devscripts dpkg-dev python3-apt python3-catkin-pkg-modules python3-empy python3-rosdistro-modules python3-yaml
 
