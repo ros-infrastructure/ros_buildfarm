@@ -166,7 +166,7 @@ def get_metadata(distribution, pkg_name):
     depends = pkg.build_depends + pkg.buildtool_depends + pkg.run_depends
     data['depends'] = sorted(set([dep.name for dep in depends]))
 
-    is_metapackage = 'metapackage' in pkg.exports
+    is_metapackage = 'metapackage' in [e.tagname for e in pkg.exports]
     data['package_type'] = 'metapackage' if is_metapackage else 'package'
     if is_metapackage:
         data['packages'] = sorted([dep.name for dep in pkg.run_depends])
