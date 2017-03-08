@@ -116,6 +116,10 @@ def build_sourcedeb(sources_dir, os_name=None, os_code_name=None):
     cmd += [
         # dpkg-buildpackage args
         '-us', '-uc',
+        # set the option for dpkg-source to auto-commit upstream changes
+        # This is needed for debian incrments where the upstream had changed.
+        # It's not the best practice but we have people doing it a bunch.
+        '--hook-source=\'bash -c "echo auto-commit > debian/source/options"\'',
         # debuild args for lintian
         '--lintian-opts', '--suppress-tags', 'newer-standards-version']
 
