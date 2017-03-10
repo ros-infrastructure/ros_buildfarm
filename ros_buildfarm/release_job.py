@@ -36,10 +36,6 @@ from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.git import get_repository
-from ros_buildfarm.jenkins import configure_job
-from ros_buildfarm.jenkins import configure_view
-from ros_buildfarm.jenkins import connect
-from ros_buildfarm.jenkins import remove_jobs
 from ros_buildfarm.templates import expand_template
 
 from rosdistro import get_distribution_cache
@@ -121,7 +117,10 @@ def configure_release_jobs(
 
     # all further configuration will be handled by either the Jenkins API
     # or by a generated groovy script
-    jenkins = connect(config.jenkins_url) if groovy_script is None else False
+    jenkins = False
+    if groovy_script is None:
+        from ros_buildfarm.jenkins import connect
+        jenkins = connect(config.jenkins_url)
 
     all_view_configs = {}
     all_job_configs = OrderedDict()
@@ -260,6 +259,7 @@ def configure_release_jobs(
                 if groovy_script is None:
                     print("Removing obsolete binary jobs with prefix '%s'" %
                           binary_job_prefix)
+                    from ros_buildfarm.jenkins import remove_jobs
                     remove_jobs(
                         jenkins, binary_job_prefix, excluded_job_names,
                         dry_run=dry_run)
@@ -314,6 +314,7 @@ def configure_release_jobs(
             if groovy_script is None:
                 print("Removing obsolete source jobs with prefix '%s'" %
                       source_job_prefix)
+                from ros_buildfarm.jenkins import remove_jobs
                 remove_jobs(
                     jenkins, source_job_prefix, excluded_job_names,
                     dry_run=dry_run)
@@ -413,6 +414,7 @@ def configure_release_job(
              build_file.abi_incompatibility_assumed):
         dist_cache = get_distribution_cache(index, rosdistro_name)
     if jenkins is None:
+        from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
     if views is None:
         targets = []
@@ -471,6 +473,7 @@ def configure_release_job(
         other_build_files_same_platform=other_build_files_same_platform)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
+        from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, source_job_name, job_config, dry_run=dry_run)
     source_job_names.append(source_job_name)
     job_configs[source_job_name] = job_config
@@ -518,6 +521,7 @@ def configure_release_job(
 
 def configure_release_views(
         jenkins, rosdistro_name, release_build_name, targets, dry_run=False):
+    from ros_buildfarm.jenkins import configure_view
     views = {}
 
     for os_name, os_code_name, arch in targets:
@@ -719,6 +723,7 @@ def configure_import_package_job(
         build_files = get_release_build_files(config, rosdistro_name)
         build_file = build_files[release_build_name]
     if jenkins is None:
+        from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
 
     job_name = get_import_package_job_name(rosdistro_name)
@@ -726,6 +731,7 @@ def configure_import_package_job(
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
+        from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
     return (job_name, job_config)
 
@@ -755,6 +761,7 @@ def configure_sync_packages_to_testing_job(
         build_files = get_release_build_files(config, rosdistro_name)
         build_file = build_files[release_build_name]
     if jenkins is None:
+        from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
 
     job_name = get_sync_packages_to_testing_job_name(
@@ -765,6 +772,7 @@ def configure_sync_packages_to_testing_job(
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
+        from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
     return (job_name, job_config)
 
@@ -811,6 +819,7 @@ def configure_sync_packages_to_main_job(
         build_files = get_release_build_files(config, rosdistro_name)
         build_file = build_files[release_build_name]
     if jenkins is None:
+        from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
 
     job_name = get_sync_packages_to_main_job_name(
@@ -820,6 +829,7 @@ def configure_sync_packages_to_main_job(
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
+        from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
     return (job_name, job_config)
 
