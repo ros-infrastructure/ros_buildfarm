@@ -107,6 +107,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_sourcedeb/docker.cid' +
+        ' -e=TRAVIS=$TRAVIS' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/sourcedeb:/tmp/sourcedeb' +
