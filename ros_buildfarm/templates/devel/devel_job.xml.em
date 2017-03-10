@@ -155,6 +155,7 @@ if pull_request:
         ' --cidfile=$WORKSPACE/docker_generating_dockers/docker.cid' +
         ' -e=HOME=/home/buildfarm' +
         ' -e=TRAVIS=$TRAVIS' +
+        ' -e=ROS_BUILDFARM_PULL_REQUEST_BRANCH=$ROS_BUILDFARM_PULL_REQUEST_BRANCH' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace:ro' +
         ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +

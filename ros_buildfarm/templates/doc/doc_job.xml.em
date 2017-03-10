@@ -175,6 +175,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
         ' -e=HOME=/home/buildfarm' +
         ' -e=TRAVIS=$TRAVIS' +
+        ' -e=ROS_BUILDFARM_PULL_REQUEST_BRANCH=$ROS_BUILDFARM_PULL_REQUEST_BRANCH' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/rosdoc_lite:/tmp/rosdoc_lite:ro' +
         ' -v $WORKSPACE/catkin-sphinx:/tmp/catkin-sphinx:ro' +

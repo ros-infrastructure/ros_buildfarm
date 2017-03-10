@@ -8,6 +8,7 @@ env:
     - OS_NAME=ubuntu
     - OS_CODE_NAME=xenial
     - ARCH=amd64
+    - ROS_BUILDFARM_PULL_REQUEST_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
 matrix:
   include:
     - language: python
