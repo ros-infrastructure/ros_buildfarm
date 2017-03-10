@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
+@{
+import os
+}@
 
 # fail script if any single command fails
 set -e
@@ -15,6 +18,9 @@ echo ""
 ))@
 
 echo ""
+@[if os.environ.get('TRAVIS') == 'true']@
+echo "travis_fold:start:doc-clone-source-repos"
+@[end if]@
 echo "Clone source repositories"
 echo ""
 
@@ -23,8 +29,14 @@ echo ""
     workspace_path='catkin_workspace',
     scms=scms,
 ))@
+@[if os.environ.get('TRAVIS') == 'true']@
+echo "travis_fold:end:doc-clone-source-repos"
+@[end if]@
 
 echo ""
+@[if os.environ.get('TRAVIS') == 'true']@
+echo "travis_fold:start:doc-build-workspace"
+@[end if]@
 echo "Build workspace"
 echo ""
 
@@ -32,6 +44,9 @@ echo ""
     'devel/devel_script_build.sh.em',
     scripts=scripts,
 ))@
+@[if os.environ.get('TRAVIS') == 'true']@
+echo "travis_fold:end:doc-build-workspace"
+@[end if]@
 
 echo ""
 echo "Generated documentation: $WORKSPACE/generated_documentation/api_rosdoc"

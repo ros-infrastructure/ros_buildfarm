@@ -123,6 +123,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
+        ' -e=TRAVIS=$TRAVIS' +
+        ' -e=ROS_BUILDFARM_PULL_REQUEST_BRANCH=$ROS_BUILDFARM_PULL_REQUEST_BRANCH' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' -v $WORKSPACE/docker_build_binarydeb:/tmp/docker_build_binarydeb' +
@@ -153,6 +155,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_binarydeb/docker.cid' +
         ' -e=HOME=' +
+        ' -e=TRAVIS=$TRAVIS' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
@@ -209,6 +212,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @#         'docker run' +
 @#         ' --rm ' +
 @#         ' --cidfile=$WORKSPACE/docker_install_binarydeb/docker.cid' +
+@#         ' -e=TRAVIS=$TRAVIS' +
 @#         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb:ro' +
 @#         ' binarydeb_install.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
 @#         'echo "# END SECTION"',

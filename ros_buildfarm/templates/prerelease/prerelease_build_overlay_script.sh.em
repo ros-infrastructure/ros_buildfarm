@@ -23,6 +23,7 @@ if [ -d "$WORKSPACE/catkin_workspace_overlay/test_results" ]; then
         'devel/devel_script_test_results.sh.em',
         workspace_path='catkin_workspace_overlay',
     ))@
+    catkin_test_results_RC_overlay=$catkin_test_results_RC
 else
     echo ""
     echo "No test results in overlay workspace"

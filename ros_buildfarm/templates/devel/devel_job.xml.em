@@ -154,6 +154,8 @@ if pull_request:
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_dockers/docker.cid' +
         ' -e=HOME=/home/buildfarm' +
+        ' -e=TRAVIS=$TRAVIS' +
+        ' -e=ROS_BUILDFARM_PULL_REQUEST_BRANCH=$ROS_BUILDFARM_PULL_REQUEST_BRANCH' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace:ro' +
         ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
@@ -163,6 +165,7 @@ if pull_request:
          ' -v $SSH_AUTH_SOCK:/tmp/ssh_auth_sock' +
          ' -e SSH_AUTH_SOCK=/tmp/ssh_auth_sock' if git_ssh_credential_id else '') +
         ' devel_task_generation.%s_%s' % (rosdistro_name, source_repo_spec.name.lower()),
+        'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
     ]),
 ))@
@@ -185,9 +188,11 @@ if pull_request:
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
+        ' -e=TRAVIS=$TRAVIS' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' devel_build_and_install.%s_%s' % (rosdistro_name, source_repo_spec.name.lower()),
+        'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
     ]),
 ))@
@@ -210,9 +215,11 @@ if pull_request:
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
+        ' -e=TRAVIS=$TRAVIS' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' devel_build_and_test.%s_%s' % (rosdistro_name, source_repo_spec.name.lower()),
+        'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
     ]),
 ))@

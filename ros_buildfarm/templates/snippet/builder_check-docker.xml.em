@@ -47,9 +47,13 @@ while ((line = br.readLine()) != null) {
     }
 }
 println "docker seems operational, continuing"
-
-println "# END SECTION"
 """,
     script_file=None,
     classpath='',
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# END SECTION"',
+    ]),
 ))@

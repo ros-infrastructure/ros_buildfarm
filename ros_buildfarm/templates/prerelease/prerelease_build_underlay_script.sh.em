@@ -22,3 +22,4 @@ echo ""
     'devel/devel_script_test_results.sh.em',
     workspace_path='catkin_workspace',
 ))@
+catkin_test_results_RC_underlay=$catkin_test_results_RC

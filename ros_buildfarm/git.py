@@ -52,14 +52,17 @@ def get_repository():
               file=sys.stderr)
         print(msg2 % 'fallback url', file=sys.stderr)
 
-    # get repository version from git or fallback to version string
+    # get repository version from git, PR branch or fallback to version string
     version = _get_git_repository_version(basepath)
     version_number, repository_version = _get_version_parts()
+    pr_branch = os.environ.get('ROS_BUILDFARM_PULL_REQUEST_BRANCH')
     if version is None:
-        if repository_version is None:
-            version = version_number
-        else:
+        if pr_branch is not None:
+            version = pr_branch
+        elif repository_version is not None:
             version = repository_version
+        else:
+            version = version_number
     elif version not in [version_number, repository_version]:
         print(msg1 %
               ("version '%s'" % version,

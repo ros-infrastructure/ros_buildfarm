@@ -34,17 +34,27 @@ class JobValidationError(Exception):
         self.message = message
 
 
+next_scope_id = 1
+
+
 class Scope(object):
 
     def __init__(self, scope_name, description):
+        global next_scope_id
         self.scope_name = scope_name
         self.description = description
+        self.scope_id = next_scope_id
+        next_scope_id += 1
 
     def __enter__(self):
+        if os.environ.get('TRAVIS') == 'true':
+            print('travis_fold:start:scope%d' % self.scope_id)
         print('# BEGIN %s: %s' % (self.scope_name, self.description))
 
     def __exit__(self, type, value, traceback):
         print('# END %s' % self.scope_name)
+        if os.environ.get('TRAVIS') == 'true':
+            print('travis_fold:end:scope%d' % self.scope_id)
 
 
 Target = namedtuple('Target', 'os_name os_code_name arch')
