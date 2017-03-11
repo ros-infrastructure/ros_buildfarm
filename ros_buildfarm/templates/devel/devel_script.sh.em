@@ -8,6 +8,10 @@ set -e
 
 echo "Devel job: @devel_job_name"
 echo ""
+echo "By default this script will not return an error code if any tests fail."
+echo "If you want the script to return a non-zero return code in that case"
+echo "you can set the environment variable ABORT_ON_TEST_FAILURE=1."
+echo ""
 
 export WORKSPACE=`pwd`
 echo "Use workspace: $WORKSPACE"
