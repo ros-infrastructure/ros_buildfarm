@@ -114,29 +114,9 @@ def build_sourcedeb(sources_dir, os_name=None, os_code_name=None):
         # do not sign the .buildinfo file, since dpkg 1.18.19
         cmd.append('-ui')
 
-    def no_hook_gbp():
-        for distro_name in ['saucy', 'trusty']:
-            yield ('ubuntu', distro_name)
-
-    def older_gbp():
-        yield ('debian', 'jessie')
-        for distro_name in ['utopic', 'vivid', 'wily', 'xenial', 'yakkety']:
-            yield ('ubuntu', distro_name)
-
     cmd += [
         # dpkg-buildpackage args
-        '-us', '-uc']
-
-    if (os_name, os_code_name) not in no_hook_gbp():
-        hook_quote = "'" if (os_name, os_code_name) in older_gbp() else ''
-        cmd += [
-            # set the option for dpkg-source to auto-commit upstream changes
-            # This is needed for Debian increments where the upstream has changed.
-            # It's not the best practice but we have people doing it a bunch.
-            '--hook-source=%(quote)sbash -c "mkdir -p debian/source'
-            ' && echo >> debian/source/options'
-            ' && echo auto-commit >> debian/source/options"%(quote)s' % {'quote': hook_quote}]
-    cmd += [
+        '-us', '-uc',
         # debuild args for lintian
         '--lintian-opts', '--suppress-tags', 'newer-standards-version']
 
