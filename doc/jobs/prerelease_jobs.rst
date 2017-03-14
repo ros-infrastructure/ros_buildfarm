@@ -48,7 +48,8 @@ The source repositories can be:
 * a source repositories and version registered in the rosdistro repository
 * a source repositories registered in the rosdistro repository but using a
   different version
-* a custom repository (usually a fork)
+* a custom repository (e.g a fork or a repository not yet registered in the ROS
+  distribution)
 
 For the overlay workspace only the
 `*build-and-test* <devel_jobs.rst#build-and-test>`_ task from the devel job is
@@ -71,6 +72,16 @@ The packages defining the *overlay* workspace are: *roscpp*
   generate_prerelease_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default ubuntu trusty amd64 roscpp_core std_msgs --level 0 --pkg roscpp --output-dir /tmp/prerelease_job
   cd /tmp/prerelease_job
   ./prerelease.sh
+
+By passing the optional command line argument `--custom-branch` a custom branch
+or tag can be selected for each repository.
+For each repository the repository name followed by a colon, followed by the
+custom branch or tag name need to be passed, e.g.:
+
+.. code:: sh
+
+  generate_prerelease_script.py ... roscpp_core std_msgs ... --custom-branch \
+    roscpp_core:mybranch std_msgs:mytag
 
 Instead of specifying the packages in the *overlay* workspace *by name* the
 script also supports passing a dependency depth (``--level N``) and / or
@@ -101,3 +112,32 @@ scripts which can be invoked manually in the same order:
   workspace.
   It also invokes the tool ``catkin_test_results --all`` to output a
   summary of all tests in the overlay workspace.
+
+Run the *prerelease* job on Travis
+----------------------------------
+
+Since it is easy to run a *prerelease* job locally it can also be run on Travis to either test every commit or pull request.
+The setup and invocation is the same as locally.
+The `.travis.yml <https://github.com/ros-infrastructure/ros_buildfarm/blob/master/.travis.yml>`_ file of the *ros_buildfarm* repository is a good starting point.
+
+Run for "custom" repositories
+-----------------------------
+
+Most job types require that the tested repository is being listed in a ROS distribution file.
+For the *prerelease* job that is not necessary.
+Any repository containing ROS packages can be processed by this job.
+
+Since the ROS distribution doesn't know about the repositories several pieces
+of information have to be passed using the command line argument
+`--custom-repo`.
+The following parts are all separated by colons: the repository name, the
+repository type, the repository URL, the branch or tag name, e.g.:
+
+.. code:: sh
+
+  generate_prerelease_script.py ... my_repo_name ... --custom-repo \
+    my_repo_name:git:https://github.com/dirk-thomas/roscpp_core.git:mybranch
+
+If the ROS packages in a repository depend on other packages not available in
+the ROS distribution the repositories containing them need to be listed too.
+The *underlay* workspace will then contain all "custom" repositories.

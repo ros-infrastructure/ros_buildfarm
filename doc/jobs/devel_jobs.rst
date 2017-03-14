@@ -145,6 +145,19 @@ from ROS *Indigo* for Ubuntu *Trusty* *amd64*:
   cd /tmp/devel_job
   sh devel_job_indigo_roscpp_core.sh
 
+Return code
+-----------
+
+The return code of the generated script will be zero if it successfully performed the build and ran the test even if some tests failed.
+By setting the environment variable `ABORT_ON_TEST_FAILURE=1` the return code will also be non-zero in case of failed tests.
+
+Instead of invoking the generated script it can also be *sourced*:
+
+.. code:: sh
+
+  . devel_job_indigo_roscpp_core.sh
+
+The return code of the invocation of `catkin_tests_results` is then available in the environment variable `catkin_test_results_RC`.
 
 Run the *devel* job on Travis
 -----------------------------
@@ -192,3 +205,11 @@ The following .travis.yml template is a good starting point and is ready to be u
     - /tmp/catkin/bin/catkin_test_results $JOB_PATH/catkin_workspace/test_results --all
   notifications:
     email: false
+
+An example can be found in the `.travis.yml <https://github.com/ros-infrastructure/ros_buildfarm/blob/master/.travis.yml>`_ file of the *ros_buildfarm* repository.
+
+Run for "custom" repositories
+-----------------------------
+
+A *devel* job requires that the tested repository is being listed in a ROS distribution file.
+If a repository is a fork or is not yet registered it can use a `*prerelease job* <prerelease.rst#run-for-custom-repositories>`_ instead.
