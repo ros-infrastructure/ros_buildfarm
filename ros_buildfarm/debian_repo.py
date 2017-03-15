@@ -19,9 +19,14 @@ import logging
 import os
 import socket
 import time
-from urllib.error import HTTPError
-from urllib.error import URLError
-from urllib.request import urlopen
+try:
+    from urllib.error import HTTPError
+    from urllib.error import URLError
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import HTTPError
+    from urllib2 import URLError
+    from urllib2 import urlopen
 
 
 def get_debian_repo_data(debian_repository_baseurl, targets, cache_dir):

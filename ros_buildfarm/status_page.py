@@ -588,9 +588,12 @@ def _filter_tag_wrap(label):
 
 
 def _name_query_wrap(name):
-    import urllib
+    try:
+        from urllib.parse import quote
+    except ImportError:
+        from urllib import quote
     query = 'id="{0}"'.format(name)
-    return '<a href="?q={0}">{1}</a>'.format(urllib.parse.quote(query), name)
+    return '<a href="?q={0}">{1}</a>'.format(quote(query), name)
 
 
 def _format_repo_table_row(name, data):
