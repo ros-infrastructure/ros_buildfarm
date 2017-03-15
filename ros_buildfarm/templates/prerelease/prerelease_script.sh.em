@@ -8,6 +8,12 @@ set -e
 
 echo "Prerelease script"
 echo ""
+echo "By default this script will continue even if tests fail."
+echo "If you want the script to abort and return a non-zero return code"
+echo "you can set the environment variable ABORT_ON_TEST_FAILURE=1."
+echo "You can also set ABORT_ON_TEST_FAILURE_UNDERLAY=1 or "
+echo "ABORT_ON_TEST_FAILURE_OVERLAY=1 to only affect a specific workspace."
+echo ""
 
 export WORKSPACE=`pwd`
 echo "Use workspace: $WORKSPACE"

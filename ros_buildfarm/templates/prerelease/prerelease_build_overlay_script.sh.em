@@ -24,8 +24,15 @@ if [ -d "$WORKSPACE/catkin_workspace_overlay/test_results" ]; then
         workspace_path='catkin_workspace_overlay',
     ))@
     catkin_test_results_RC_overlay=$catkin_test_results_RC
+    unset catkin_test_results_RC
+    if [ -n "$ABORT_ON_TEST_FAILURE_OVERLAY" -a \
+      "$ABORT_ON_TEST_FAILURE_OVERLAY" != "0" ]
+    then
+      (exit $catkin_test_results_RC_overlay)
+    fi
 else
     echo ""
     echo "No test results in overlay workspace"
     echo ""
+    catkin_test_results_RC_overlay=0
 fi
