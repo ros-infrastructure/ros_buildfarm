@@ -90,6 +90,84 @@ matrix:
         - build_release_status_page.py $CONFIG_URL $ROS_DISTRO_NAME default
         - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples xenial:source xenial:amd64 xenial:arm64 xenial:armhf xenial:i386 --cache-dir ./debian_repo_cache --output-name kinetic_xenial
         - ls -al
+    - language: python
+      python: "2.7"
+      sudo: required
+      services:
+        - docker
+      env: JOB_TYPE=devel REPOSITORY_NAME=roscpp_core
+      before_script:
+        # install catkin for test results
+        - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
+        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+        - sudo apt-get update -qq
+        - sudo apt-get install ros-indigo-catkin -y
+        - python setup.py install
+        - mkdir job && cd job
+      script:
+        - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
+        - . /opt/ros/indigo/setup.sh
+        - . job.sh -y
+        - (exit $catkin_test_results_RC)
+    - language: python
+      python: "2.7"
+      sudo: required
+      services:
+        - docker
+      env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
+      before_script:
+        - python setup.py install
+        - mkdir job && cd job
+      script:
+        - generate_doc_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
+        - sh job.sh
+        - ls -alR generated_documentation/api_rosdoc
+    - language: python
+      python: "2.7"
+      sudo: required
+      services:
+        - docker
+      env: JOB_TYPE=release PACKAGE_NAME=rostime
+      before_script:
+        - python setup.py install
+        - mkdir job && cd job
+      script:
+        - generate_release_script.py $CONFIG_URL $ROS_DISTRO_NAME default $PACKAGE_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
+        - sh job.sh
+    - language: python
+      python: "2.7"
+      sudo: required
+      services:
+        - docker
+      env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
+      before_script:
+        # install catkin for test results
+        - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
+        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+        - sudo apt-get update -qq
+        - sudo apt-get install ros-indigo-catkin -y
+        - python setup.py install
+        - mkdir job && cd job
+      script:
+        - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --level 0 --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
+        - . /opt/ros/indigo/setup.sh
+        - . prerelease.sh -y
+        - (exit $catkin_test_results_RC_underlay) && (exit $catkin_test_results_RC_overlay)
+    - language: python
+      python: "2.7"
+      sudo: required
+      services:
+        - docker
+      env: JOB_TYPE=status_pages
+      before_script:
+        - python setup.py install
+        - mkdir status_pages && cd status_pages
+      script:
+        - build_blocked_releases_page.py $CONFIG_URL $ROS_DISTRO_NAME
+        - build_release_compare_page.py $CONFIG_URL lunar kinetic
+        - build_release_status_page.py $CONFIG_URL $ROS_DISTRO_NAME default
+        - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples xenial:source xenial:amd64 xenial:arm64 xenial:armhf xenial:i386 --cache-dir ./debian_repo_cache --output-name kinetic_xenial
+        - ls -al
 install:
   - pip install catkin-pkg EmPy PyYAML rosdistro
   - pip install coverage flake8 flake8-docstrings flake8-import-order nose pep8 pyflakes
