@@ -135,7 +135,7 @@ repository type, the repository URL, the branch or tag name, e.g.:
 
 .. code:: sh
 
-  generate_prerelease_script.py ... my_repo_name ... --custom-repo \
+  generate_prerelease_script.py ... --custom-repo \
     my_repo_name:git:https://github.com/dirk-thomas/roscpp_core.git:mybranch
 
 If the ROS packages in a repository depend on other packages not available in
