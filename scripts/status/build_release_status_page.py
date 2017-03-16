@@ -17,12 +17,19 @@
 import argparse
 import sys
 
-from ros_buildfarm.argument import add_argument_build_name
-from ros_buildfarm.argument import add_argument_cache_dir
-from ros_buildfarm.argument import add_argument_config_url
-from ros_buildfarm.argument import add_argument_output_dir
-from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.status_page import build_release_status_page
+try:
+    # while this is not supposed to be done I don't see a different way atm
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+except NameError:
+    pass
+
+from ros_buildfarm.argument import add_argument_build_name  # noqa
+from ros_buildfarm.argument import add_argument_cache_dir  # noqa
+from ros_buildfarm.argument import add_argument_config_url  # noqa
+from ros_buildfarm.argument import add_argument_output_dir  # noqa
+from ros_buildfarm.argument import add_argument_rosdistro_name  # noqa
+from ros_buildfarm.status_page import build_release_status_page  # noqa
 
 
 def main(argv=sys.argv[1:]):
