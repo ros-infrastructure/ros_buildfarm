@@ -2,6 +2,42 @@
 Changelog for package ros_buildfarm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.3.0 (2017-03-16)
+------------------
+* New features
+
+  * get return codes of catkin_test_results from generated scripts (`#399 <https://github.com/ros-infrastructure/ros_buildfarm/pull/399>`_)
+  * fold sections in Travis log (`#396 <https://github.com/ros-infrastructure/ros_buildfarm/pull/396>`_)
+  * reuse existing source tarball if it exists (`#374 <https://github.com/ros-infrastructure/ros_buildfarm/pull/374>`_, `#395 <https://github.com/ros-infrastructure/ros_buildfarm/pull/395>`_, `#397 <https://github.com/ros-infrastructure/ros_buildfarm/pull/397>`_, `#398 <https://github.com/ros-infrastructure/ros_buildfarm/pull/398>`_)
+  * add blocking packages status page (`#279 <https://github.com/ros-infrastructure/ros_buildfarm/pull/279>`_, `#381 <https://github.com/ros-infrastructure/ros_buildfarm/pull/381>`_)
+  * add platforms targeted by ROS Lunar (`#360 <https://github.com/ros-infrastructure/ros_buildfarm/pull/360>`_, `#371 <https://github.com/ros-infrastructure/ros_buildfarm/pull/371>`_, `#372 <https://github.com/ros-infrastructure/ros_buildfarm/pull/372>`_, `#373 <https://github.com/ros-infrastructure/ros_buildfarm/pull/373>`_, `#375 <https://github.com/ros-infrastructure/ros_buildfarm/pull/375>`_, `#380 <https://github.com/ros-infrastructure/ros_buildfarm/pull/380>`_, `#384 <https://github.com/ros-infrastructure/ros_buildfarm/pull/384>`_, `#385 <https://github.com/ros-infrastructure/ros_buildfarm/pull/385>`_)
+
+* Improvements
+
+  * improve prerelease scripts to work for external repo which are not in the rosdistro, skip overlay step if the workspace is empty anyway (`#405 <https://github.com/ros-infrastructure/ros_buildfarm/pull/405>`_)
+  * create separate Debian packages (python(3)-ros-buildfarm, python(3)-ros-buildfarm-modules) to allow side-by-side installation of the modules (`#402 <https://github.com/ros-infrastructure/ros_buildfarm/pull/402>`_)
+  * add doc about return code environment variables and how to use prereleases for external repos (`#401 <https://github.com/ros-infrastructure/ros_buildfarm/pull/401>`_)
+  * use python(3)-rosdistro-modules instead of python(3)-rosdistro where possible (`#383 <https://github.com/ros-infrastructure/ros_buildfarm/pull/383>`_)
+  * use python(3)-catkin-pkg-modules instead of python(3)-catkin-pkg (`#379 <https://github.com/ros-infrastructure/ros_buildfarm/pull/379>`_)
+  * use different schedule for status pages (`#378 <https://github.com/ros-infrastructure/ros_buildfarm/pull/378>`_)
+  * avoid regenerating the source tarball and use already uploaded one if available (`#374 <https://github.com/ros-infrastructure/ros_buildfarm/pull/374>`_)
+  * use deb.debian.org instead of http.debian.net (`#370 <https://github.com/ros-infrastructure/ros_buildfarm/pull/370>`_)
+  * enable multiverse for binary jobs (`#364 <https://github.com/ros-infrastructure/ros_buildfarm/pull/364>`_, `#366 <https://github.com/ros-infrastructure/ros_buildfarm/pull/366>`_)
+  * remove deprecated MAINTAINER command from Docker files (`#362 <https://github.com/ros-infrastructure/ros_buildfarm/pull/362>`_)
+  * fold all dependency installation into a single Docker line (`#361 <https://github.com/ros-infrastructure/ros_buildfarm/pull/361>`_)
+  * improve help for prerelease script (`#358 <https://github.com/ros-infrastructure/ros_buildfarm/pull/358>`_)
+  * various improvements to the status pages (`#354 <https://github.com/ros-infrastructure/ros_buildfarm/pull/354>`_)
+
+* Fixes
+
+  * fix issues with Python 2 (`#357 <https://github.com/ros-infrastructure/ros_buildfarm/pull/357>`_, `#404 <https://github.com/ros-infrastructure/ros_buildfarm/pull/404>`_)
+  * fix package type for metapackages without a doc job (`#393 <https://github.com/ros-infrastructure/ros_buildfarm/pull/393>`_)
+  * workaround sporadically missing apt-src on Debian Jessie (`#387 <https://github.com/ros-infrastructure/ros_buildfarm/pull/387>`_)
+  * fix generate release script (`#386 <https://github.com/ros-infrastructure/ros_buildfarm/pull/386>`_, `#386 <https://github.com/ros-infrastructure/ros_buildfarm/pull/391>`_)
+  * fix plain apt retry logic (`#365 <https://github.com/ros-infrastructure/ros_buildfarm/pull/365>`_)
+  * add missing configparser dependency for Python 2 (`#356 <https://github.com/ros-infrastructure/ros_buildfarm/pull/356>`_)
+  * fix cross referencing with doxygen (`#352 <https://github.com/ros-infrastructure/ros_buildfarm/pull/352>`_)
+
 1.2.1 (2016-10-20)
 ------------------
 * fix installation of wrapper scripts (`#348 <https://github.com/ros-infrastructure/ros_buildfarm/pull/348>`_)
