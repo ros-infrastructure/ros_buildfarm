@@ -15,7 +15,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
 
 kwargs = {
     'name': 'ros_buildfarm',
-    'version': '1.3.0',  # same version as in ros_buildfarm/__init__.py
+    'version': '1.3.1-master',  # same version as in ros_buildfarm/__init__.py
     'packages': find_packages(exclude=['test']),
     'scripts': scripts,
     'include_package_data': True,
