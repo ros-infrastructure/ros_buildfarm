@@ -176,8 +176,9 @@ def main(argv=sys.argv[1:]):
     from ros_buildfarm import templates
     templates.template_hooks = [hook]
 
-    # use random source repo to pass to devel job template
-    source_repository = deepcopy(list(repositories.values())[0])
+    # use any source repo to pass to devel job template
+    source_repository = deepcopy(
+        dist_file.repositories['catkin'].source_repository)
     if not source_repository:
         print(("The repository '%s' does not have a source entry in the distribution " +
                'file. We cannot generate a prerelease without a source entry.') % repo_name,

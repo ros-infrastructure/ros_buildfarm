@@ -69,7 +69,7 @@ The packages defining the *overlay* workspace are: *roscpp*
 .. code:: sh
 
   mkdir /tmp/prerelease_job
-  generate_prerelease_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default ubuntu trusty amd64 roscpp_core std_msgs --level 0 --pkg roscpp --output-dir /tmp/prerelease_job
+  generate_prerelease_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default ubuntu trusty amd64 roscpp_core std_msgs --pkg roscpp --output-dir /tmp/prerelease_job
   cd /tmp/prerelease_job
   ./prerelease.sh
 
@@ -141,3 +141,17 @@ repository type, the repository URL, the branch or tag name, e.g.:
 If the ROS packages in a repository depend on other packages not available in
 the ROS distribution the repositories containing them need to be listed too.
 The *underlay* workspace will then contain all "custom" repositories.
+
+As an alternative to specify all custom repos as command line arguments it is possible to manually populate the underlay (and/or overlay) workspace.
+The following commands are all it takes to run a prerelease job for a custom repository not mentioned in any ROS distribution:
+
+.. code:: sh
+
+  mkdir /tmp/prerelease && cd /tmp/prerelease
+  git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm catkin_workspace/src/ros_buildfarm
+  generate_prerelease_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml kinetic default ubuntu xenial amd64 --output-dir .
+  # the argument -y suppresses the question if you want to continue with content already present in the workspace
+  ./prerelease.sh -y
+
+The git clone command is just an example.
+It can be substituted with any other commands to populate the workspaces (e.g. `wstool`, `vcstool`).

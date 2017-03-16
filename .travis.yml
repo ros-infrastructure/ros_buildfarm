@@ -71,10 +71,23 @@ matrix:
         - python setup.py install
         - mkdir job && cd job
       script:
-        - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --level 0 --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
+        - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
         - . /opt/ros/indigo/setup.sh
         - . prerelease.sh -y
         - (exit $catkin_test_results_RC_underlay) && (exit $catkin_test_results_RC_overlay)
+    - language: python
+      python: "3.4"
+      sudo: required
+      services:
+        - docker
+      env: JOB_TYPE=external_prerelease
+      before_script:
+        - python setup.py install
+        - mkdir job && cd job
+      script:
+        - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm catkin_workspace/src/ros_buildfarm
+        - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
+        - ./prerelease.sh -y
     - language: python
       python: "3.4"
       sudo: required
@@ -150,10 +163,24 @@ matrix:
         - python setup.py install
         - mkdir job && cd job
       script:
-        - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --level 0 --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
+        - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
         - . /opt/ros/indigo/setup.sh
         - . prerelease.sh -y
         - (exit $catkin_test_results_RC_underlay) && (exit $catkin_test_results_RC_overlay)
+    - language: python
+      python: "2.7"
+      sudo: required
+      services:
+        - docker
+      env: JOB_TYPE=external_prerelease
+      before_script:
+        - pip3 install EmPy
+        - python setup.py install
+        - mkdir job && cd job
+      script:
+        - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm catkin_workspace/src/ros_buildfarm
+        - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
+        - ./prerelease.sh -y
     - language: python
       python: "2.7"
       sudo: required
