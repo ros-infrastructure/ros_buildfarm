@@ -44,10 +44,10 @@ def add_overlay_arguments(parser):
     group.add_argument(
         '--level',
         type=int,
-        default=2,
+        default=0,
         metavar='DEPENDENCY_LEVEL',
         help="The depth of the depends-on tree to be included in the " +
-             "overlay workspace (-1 implies unlimited, default: 2)")
+             "overlay workspace (-1 implies unlimited, default: 0)")
 
 
 def get_overlay_package_names(
