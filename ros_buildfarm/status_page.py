@@ -605,7 +605,7 @@ def _format_repo_table_row(name, data):
 
     # tags for filtering
     tags = ''
-    if data['released']:
+    if data.get('released', False):
         tags += _filter_tag_wrap('RELEASED')
     else:
         tags += _filter_tag_wrap('UNRELEASED')
@@ -750,98 +750,112 @@ def _get_blocked_releases_info(
             rosdistro_name))
 
     repos_info = {}
-    for repo_name in prev_repo_names:
-        if repo_name not in repos_info:
-            repos_info[repo_name] = {}
-        repos_info[repo_name]['released'] = repo_name in released_repos
+    unprocessed_repos = prev_repo_names
+    while unprocessed_repos:
+        print('Processing repos:\n{0}\n'.format('\n'.join([str(r) for r in unprocessed_repos])))
+        new_repos_to_process = set()  # set containing repos that come up while processing others
 
-        if repo_name in released_repos:
-            repo = distro_file.repositories[repo_name]
-            version = repo.release_repository.version
-            repos_info[repo_name]['version'] = version
+        for repo_name in unprocessed_repos:
+            if repo_name not in repos_info:
+                repos_info[repo_name] = {}
+            repos_info[repo_name]['released'] = repo_name in released_repos
 
-        else:
-            # Gather info on which required repos have not been released yet
-            # Assume dependencies will be the same as in the previous distribution and find
-            # which ones have been released
-            repo = prev_distro_file.repositories[repo_name]
-            release_repo = repo.release_repository
-            package_dependencies = set()
-            packages = release_repo.package_names
-            # Accumulate all dependencies for those packages
-            for package in packages:
-                recursive_dependencies = dependency_walker.get_recursive_depends(
-                    package, ['build', 'buildtool', 'run', 'test'], ros_packages_only=True,
-                    limit_depth=depth)
-                package_dependencies = package_dependencies.union(
-                    recursive_dependencies)
+            if repo_name in released_repos:
+                repo = distro_file.repositories[repo_name]
+                version = repo.release_repository.version
+                repos_info[repo_name]['version'] = version
 
-            # For all package dependencies, check if they are released yet
-            unreleased_pkgs = package_dependencies.difference(
-                current_package_names)
-            # Remove the packages which this repo provides
-            unreleased_pkgs = unreleased_pkgs.difference(packages)
-
-            # Get maintainer info and repo of unreleased packages
-            maintainers = {}
-            repos_blocked_by = set()
-            for pkg_name in unreleased_pkgs:
-                unreleased_repo_name = prev_distro_file.release_packages[pkg_name].repository_name
-                repos_blocked_by.add(unreleased_repo_name)
-                pkg_xml = prev_distribution.get_release_package_xml(pkg_name)
-                if pkg_xml is not None:
+            else:
+                # Gather info on which required repos have not been released yet
+                # Assume dependencies will be the same as in the previous distribution and find
+                # which ones have been released
+                repo = prev_distro_file.repositories[repo_name]
+                release_repo = repo.release_repository
+                package_dependencies = set()
+                packages = release_repo.package_names
+                # Accumulate all dependencies for those packages
+                for package in packages:
                     try:
-                        pkg = parse_package_string(pkg_xml)
-                        pkg_maintainers = {m.name: m.email for m in pkg.maintainers}
+                        recursive_dependencies = dependency_walker.get_recursive_depends(
+                            package, ['build', 'buildtool', 'run', 'test'], ros_packages_only=True,
+                            limit_depth=depth)
+                        package_dependencies = package_dependencies.union(
+                            recursive_dependencies)
+                    except AssertionError as e:
+                        print(e, file=sys.stderr)
+
+                # For all package dependencies, check if they are released yet
+                unreleased_pkgs = package_dependencies.difference(
+                    current_package_names)
+                # Remove the packages which this repo provides
+                unreleased_pkgs = unreleased_pkgs.difference(packages)
+
+                # Get maintainer info and repo of unreleased packages
+                maintainers = {}
+                repos_blocked_by = set()
+                for pkg_name in unreleased_pkgs:
+                    unreleased_repo_name = \
+                        prev_distro_file.release_packages[pkg_name].repository_name
+                    repos_blocked_by.add(unreleased_repo_name)
+                    pkg_xml = prev_distribution.get_release_package_xml(pkg_name)
+                    if pkg_xml is not None:
                         try:
-                            maintainers[unreleased_repo_name].update(pkg_maintainers)
-                        except KeyError:
-                            maintainers[unreleased_repo_name] = pkg_maintainers
-                    except InvalidPackage:
-                        pkg_maintainers = None
-            if maintainers:
-                repos_info[repo_name]['maintainers'] = maintainers
+                            pkg = parse_package_string(pkg_xml)
+                            pkg_maintainers = {m.name: m.email for m in pkg.maintainers}
+                            try:
+                                maintainers[unreleased_repo_name].update(pkg_maintainers)
+                            except KeyError:
+                                maintainers[unreleased_repo_name] = pkg_maintainers
+                        except InvalidPackage:
+                            pkg_maintainers = None
+                if maintainers:
+                    repos_info[repo_name]['maintainers'] = maintainers
 
-            repos_info[repo_name]['repos_blocked_by'] = {}
-            for blocking_repo_name in repos_blocked_by:
-                # Get url of blocking repos
-                repo_url = None
-                blocking_repo = prev_distro_file.repositories[blocking_repo_name]
-                if blocking_repo.source_repository:
-                    repo_url = blocking_repo.source_repository.url
-                elif blocking_repo.doc_repository:
-                    repo_url = blocking_repo.doc_repository.url
-                repos_info[repo_name]['repos_blocked_by'].update({blocking_repo_name: repo_url})
+                repos_info[repo_name]['repos_blocked_by'] = {}
+                for blocking_repo_name in repos_blocked_by:
+                    # Get url of blocking repos
+                    repo_url = None
+                    blocking_repo = prev_distro_file.repositories[blocking_repo_name]
+                    if blocking_repo.source_repository:
+                        repo_url = blocking_repo.source_repository.url
+                    elif blocking_repo.doc_repository:
+                        repo_url = blocking_repo.doc_repository.url
+                    repos_info[repo_name]['repos_blocked_by'].update(
+                        {blocking_repo_name: repo_url})
 
-                # Mark blocking relationship in other direction
-                if blocking_repo_name not in repos_info:
-                    repos_info[blocking_repo_name] = {}
-                try:
-                    repos_info[blocking_repo_name]['repos_blocking'].add(repo_name)
-                except KeyError:
-                    repos_info[blocking_repo_name]['repos_blocking'] = set([repo_name])
+                    # Mark blocking relationship in other direction
+                    if blocking_repo_name not in repos_info:
+                        new_repos_to_process.add(blocking_repo_name)
+                        repos_info[blocking_repo_name] = {}
+                    try:
+                        repos_info[blocking_repo_name]['repos_blocking'].add(repo_name)
+                    except KeyError:
+                        repos_info[blocking_repo_name]['repos_blocking'] = set([repo_name])
 
-        # Get url of repo
-        repo_url = None
-        if repo.source_repository:
-            repo_url = repo.source_repository.url
-        elif repo.doc_repository:
-            repo_url = repo.doc_repository.url
-        if repo_url:
-            repos_info[repo_name]['url'] = repo_url
+            # Get url of repo
+            repo_url = None
+            if repo.source_repository:
+                repo_url = repo.source_repository.url
+            elif repo.doc_repository:
+                repo_url = repo.doc_repository.url
+            if repo_url:
+                repos_info[repo_name]['url'] = repo_url
 
-    for repo_name in repos_info.keys():
-        # Recursively get all repos being blocked by this repo
-        recursive_blocks = set([])
-        repos_to_check = set([repo_name])
-        while repos_to_check:
-            next_repo_to_check = repos_to_check.pop()
-            blocks = repos_info[next_repo_to_check].get('repos_blocking', set([]))
-            new_blocks = blocks - recursive_blocks
-            repos_to_check |= new_blocks
-            recursive_blocks |= new_blocks
-        if recursive_blocks:
-            repos_info[repo_name]['recursive_repos_blocking'] = recursive_blocks
+            new_repos_to_process.discard(repo_name)  # this repo has been fully processed now
+
+        for repo_name in repos_info.keys():
+            # Recursively get all repos being blocked by this repo
+            recursive_blocks = set([])
+            repos_to_check = set([repo_name])
+            while repos_to_check:
+                next_repo_to_check = repos_to_check.pop()
+                blocks = repos_info[next_repo_to_check].get('repos_blocking', set([]))
+                new_blocks = blocks - recursive_blocks
+                repos_to_check |= new_blocks
+                recursive_blocks |= new_blocks
+            if recursive_blocks:
+                repos_info[repo_name]['recursive_repos_blocking'] = recursive_blocks
+        unprocessed_repos = new_repos_to_process
 
     return repos_info
 
