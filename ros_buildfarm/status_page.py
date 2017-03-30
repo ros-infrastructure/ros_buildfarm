@@ -605,7 +605,7 @@ def _format_repo_table_row(name, data):
 
     # tags for filtering
     tags = ''
-    if data['released']:
+    if data.get('released', False):
         tags += _filter_tag_wrap('RELEASED')
     else:
         tags += _filter_tag_wrap('UNRELEASED')
