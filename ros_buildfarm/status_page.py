@@ -794,7 +794,8 @@ def _get_blocked_releases_info(
                 maintainers = {}
                 repos_blocked_by = set()
                 for pkg_name in unreleased_pkgs:
-                    unreleased_repo_name = prev_distro_file.release_packages[pkg_name].repository_name
+                    unreleased_repo_name = \
+                        prev_distro_file.release_packages[pkg_name].repository_name
                     repos_blocked_by.add(unreleased_repo_name)
                     pkg_xml = prev_distribution.get_release_package_xml(pkg_name)
                     if pkg_xml is not None:
@@ -819,7 +820,8 @@ def _get_blocked_releases_info(
                         repo_url = blocking_repo.source_repository.url
                     elif blocking_repo.doc_repository:
                         repo_url = blocking_repo.doc_repository.url
-                    repos_info[repo_name]['repos_blocked_by'].update({blocking_repo_name: repo_url})
+                    repos_info[repo_name]['repos_blocked_by'].update(
+                        {blocking_repo_name: repo_url})
 
                     # Mark blocking relationship in other direction
                     if blocking_repo_name not in repos_info:
@@ -853,7 +855,6 @@ def _get_blocked_releases_info(
                 recursive_blocks |= new_blocks
             if recursive_blocks:
                 repos_info[repo_name]['recursive_repos_blocking'] = recursive_blocks
-        known_repos = set(repos_info.keys())
         unprocessed_repos = new_repos_to_process
 
     return repos_info
