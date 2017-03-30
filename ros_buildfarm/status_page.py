@@ -775,11 +775,14 @@ def _get_blocked_releases_info(
                 packages = release_repo.package_names
                 # Accumulate all dependencies for those packages
                 for package in packages:
-                    recursive_dependencies = dependency_walker.get_recursive_depends(
-                        package, ['build', 'buildtool', 'run', 'test'], ros_packages_only=True,
-                        limit_depth=depth)
-                    package_dependencies = package_dependencies.union(
-                        recursive_dependencies)
+                    try:
+                        recursive_dependencies = dependency_walker.get_recursive_depends(
+                            package, ['build', 'buildtool', 'run', 'test'], ros_packages_only=True,
+                            limit_depth=depth)
+                        package_dependencies = package_dependencies.union(
+                            recursive_dependencies)
+                    except AssertionError as e:
+                        print(e, file=sys.stderr)
 
                 # For all package dependencies, check if they are released yet
                 unreleased_pkgs = package_dependencies.difference(
