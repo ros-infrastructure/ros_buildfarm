@@ -127,6 +127,10 @@ def main(argv=sys.argv[1:]):
             print(("The repository '%s' was not found in the distribution " +
                    "file") % repo_name, file=sys.stderr)
             return 1
+        if not repositories[repo_name]:
+            print(("The repository '%s' has no source entry in the " +
+                   "distribution file") % repo_name, file=sys.stderr)
+            return 1
 
     for repo_name, custom_version in args.custom_branch:
         if repo_name in repositories:
@@ -138,6 +142,10 @@ def main(argv=sys.argv[1:]):
         except KeyError:
             print(("The repository '%s' was not found in the distribution " +
                    "file") % repo_name, file=sys.stderr)
+            return 1
+        if not source_repo:
+            print(("The repository '%s' has no source entry in the " +
+                   "distribution file") % repo_name, file=sys.stderr)
             return 1
         source_repo = deepcopy(source_repo)
         source_repo.version = custom_version
