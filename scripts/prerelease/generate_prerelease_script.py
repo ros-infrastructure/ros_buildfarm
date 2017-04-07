@@ -170,7 +170,18 @@ def main(argv=sys.argv[1:]):
         def beforeInclude(self, *args, **kwargs):
             template_path = kwargs['file'].name
             if template_path.endswith('/snippet/builder_shell.xml.em'):
-                self.scripts.append(kwargs['locals']['script'])
+                script = kwargs['locals']['script']
+                # reuse existing ros_buildfarm folder if it exists
+                if 'Clone ros_buildfarm' in script:
+                    lines = script.splitlines()
+                    lines.insert(0, 'if [ ! -d "ros_buildfarm" ]; then')
+                    lines += [
+                        'else',
+                        'echo "Using existing ros_buildfarm folder"',
+                        'fi',
+                    ]
+                    script = '\n'.join(lines)
+                self.scripts.append(script)
 
     hook = IncludeHook()
     from ros_buildfarm import templates
