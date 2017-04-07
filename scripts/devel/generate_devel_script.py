@@ -58,7 +58,18 @@ def main(argv=sys.argv[1:]):
                 self.scms.append(
                     (kwargs['locals']['repo_spec'], kwargs['locals']['path']))
             if template_path.endswith('/snippet/builder_shell.xml.em'):
-                self.scripts.append(kwargs['locals']['script'])
+                script = kwargs['locals']['script']
+                # reuse existing ros_buildfarm folder if it exists
+                if 'Clone ros_buildfarm' in script:
+                    lines = script.splitlines()
+                    lines.insert(0, 'if [ ! -d "ros_buildfarm" ]; then')
+                    lines += [
+                        'else',
+                        'echo "Using existing ros_buildfarm folder"',
+                        'fi',
+                    ]
+                    script = '\n'.join(lines)
+                self.scripts.append(script)
 
     hook = IncludeHook()
     from ros_buildfarm import templates

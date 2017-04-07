@@ -26,6 +26,7 @@ matrix:
         - sudo apt-get install ros-indigo-catkin -y
         - python setup.py install
         - mkdir job && cd job
+        - ln -s .. ros_buildfarm
       script:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - . /opt/ros/indigo/setup.sh
@@ -40,9 +41,10 @@ matrix:
       before_script:
         - python setup.py install
         - mkdir job && cd job
+        - ln -s .. ros_buildfarm
       script:
         - generate_doc_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
-        - sh job.sh
+        - sh job.sh -y
         - ls -alR generated_documentation/api_rosdoc
     - language: python
       python: "3.4"
@@ -53,9 +55,11 @@ matrix:
       before_script:
         - python setup.py install
         - mkdir job && cd job
+        - mkdir source && cd source && ln -s ../.. ros_buildfarm && cd ..
+        - mkdir binary && cd binary && ln -s ../.. ros_buildfarm && cd ..
       script:
         - generate_release_script.py $CONFIG_URL $ROS_DISTRO_NAME default $PACKAGE_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
-        - sh job.sh
+        - sh job.sh -y
     - language: python
       python: "3.4"
       sudo: required
@@ -70,6 +74,7 @@ matrix:
         - sudo apt-get install ros-indigo-catkin -y
         - python setup.py install
         - mkdir job && cd job
+        - ln -s .. ros_buildfarm
       script:
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
         - . /opt/ros/indigo/setup.sh
@@ -84,6 +89,7 @@ matrix:
       before_script:
         - python setup.py install
         - mkdir job && cd job
+        - ln -s .. ros_buildfarm
       script:
         - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm catkin_workspace/src/ros_buildfarm
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
@@ -117,6 +123,7 @@ matrix:
         - sudo apt-get install ros-indigo-catkin -y
         - python setup.py install
         - mkdir job && cd job
+        - ln -s .. ros_buildfarm
       script:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - . /opt/ros/indigo/setup.sh
@@ -131,9 +138,10 @@ matrix:
       before_script:
         - python setup.py install
         - mkdir job && cd job
+        - ln -s .. ros_buildfarm
       script:
         - generate_doc_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
-        - sh job.sh
+        - sh job.sh -y
         - ls -alR generated_documentation/api_rosdoc
     - language: python
       python: "2.7"
@@ -144,9 +152,11 @@ matrix:
       before_script:
         - python setup.py install
         - mkdir job && cd job
+        - mkdir source && cd source && ln -s ../.. ros_buildfarm && cd ..
+        - mkdir binary && cd binary && ln -s ../.. ros_buildfarm && cd ..
       script:
         - generate_release_script.py $CONFIG_URL $ROS_DISTRO_NAME default $PACKAGE_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
-        - sh job.sh
+        - sh job.sh -y
     - language: python
       python: "2.7"
       sudo: required
@@ -162,6 +172,7 @@ matrix:
         - sudo apt-get install ros-indigo-catkin -y
         - python setup.py install
         - mkdir job && cd job
+        - ln -s .. ros_buildfarm
       script:
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
         - . /opt/ros/indigo/setup.sh
@@ -177,6 +188,7 @@ matrix:
         - pip3 install EmPy
         - python setup.py install
         - mkdir job && cd job
+        - ln -s .. ros_buildfarm
       script:
         - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm catkin_workspace/src/ros_buildfarm
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
