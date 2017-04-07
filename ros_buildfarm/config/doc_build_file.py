@@ -123,6 +123,13 @@ class DocBuildFile(BuildFile):
             self.skip_ignored_repositories = \
                 bool(data['skip_ignored_repositories'])
 
+        self.custom_rosdep_urls = []
+        if '_config' in data['targets']:
+            if 'custom_rosdep_urls' in data['targets']['_config']:
+                self.custom_rosdep_urls = \
+                    data['targets']['_config']['custom_rosdep_urls']
+                assert isinstance(self.custom_rosdep_urls, list)
+
         # repository black-/whitelist can only be used with doc type rosdoc
         assert not self.repository_blacklist or is_rosdoc_type
         assert not self.repository_whitelist or is_rosdoc_type

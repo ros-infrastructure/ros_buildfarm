@@ -45,7 +45,11 @@ RUN echo "@now_str"
 RUN python3 -u /tmp/wrapper_scripts/apt.py update
 
 ENV ROSDISTRO_INDEX_URL @rosdistro_index_url
-RUN rosdep init
+
+@(TEMPLATE(
+    'snippet/rosdep_init.Dockerfile.em',
+    custom_rosdep_urls=custom_rosdep_urls,
+))@
 
 USER buildfarm
 
