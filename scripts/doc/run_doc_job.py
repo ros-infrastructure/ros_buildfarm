@@ -21,6 +21,7 @@ import sys
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.argument import add_argument_custom_rosdep_urls
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
@@ -51,6 +52,7 @@ def main(argv=sys.argv[1:]):
     add_argument_vcs_information(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
+    add_argument_custom_rosdep_urls(parser)
     add_argument_force(parser)
     add_argument_dockerfile_dir(parser)
     args = parser.parse_args(argv)
@@ -61,7 +63,7 @@ def main(argv=sys.argv[1:]):
         'distribution_repository_keys': get_distribution_repository_keys(
             args.distribution_repository_urls,
             args.distribution_repository_key_files),
-
+        'custom_rosdep_urls': args.custom_rosdep_urls,
         'uid': get_user_id(),
     })
     create_dockerfile(
