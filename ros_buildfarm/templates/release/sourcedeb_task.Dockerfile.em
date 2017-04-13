@@ -8,8 +8,6 @@ ENV DEBIAN_FRONTEND noninteractive
 
 @(TEMPLATE(
     'snippet/setup_locale.Dockerfile.em',
-    os_name=os_name,
-    os_code_name=os_code_name,
     timezone=timezone,
 ))@
 
