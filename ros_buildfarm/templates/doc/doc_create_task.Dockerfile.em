@@ -36,7 +36,7 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git mercurial python3-apt python3-catkin-pkg-modules python3-empy python3-rosdep python3-rosdistro-modules subversion
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git mercurial python3-apt python3-catkin-pkg-modules python3-empy python3-rosdep python3-rosdistro-modules subversion wget
 
 # always invalidate to actually have the latest apt and rosdep state
 RUN echo "@now_str"
