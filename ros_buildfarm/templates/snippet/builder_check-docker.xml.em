@@ -49,7 +49,6 @@ while ((line = br.readLine()) != null) {
 println "docker seems operational, continuing"
 """,
     script_file=None,
-    classpath='',
 ))@
 @(SNIPPET(
     'builder_shell',

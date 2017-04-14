@@ -113,7 +113,6 @@
     'builder_system-groovy',
     command=None,
     script_file='$WORKSPACE/trigger_jobs/trigger_jobs.groovy',
-    classpath='',
 ))@
   </builders>
   <publishers>

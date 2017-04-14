@@ -130,7 +130,6 @@ for (p in hudson.model.Hudson.instance.getAllItems(AbstractProject)) {
 }
 """ % ('true' if has_force_parameter else 'false', project_name_pattern),
     script_file=None,
-    classpath='',
 ))@
   </builders>
   <publishers>

@@ -29,5 +29,4 @@ for (computer in Jenkins.instance.getComputers()) {
 }
 """,
     script_file=None,
-    classpath='',
 ))@
