@@ -182,10 +182,10 @@ for (it in jobs) {
 
         diff = diff_configs(job_config_file.getFile(), job_config)
         if (!diff) {
-            println "Skipped job '" + job_name + "' because the config is the same"
+            println "Skipped job '" + job_name + "' [" + (skipped_jobs + updated_jobs + created_jobs + 1) + " / " + jobs.length + "] because the config is the same"
             skipped_jobs += 1
         } else {
-            println "Updating job '" + job_name + "'" + dry_run_suffix
+            println "Updating job '" + job_name + "' [" + (skipped_jobs + updated_jobs + created_jobs + 1) + " / " + jobs.length + "]" + dry_run_suffix
             println '    <<<'
             for (line in diff) {
                 println '    ' + line
@@ -202,7 +202,7 @@ for (it in jobs) {
         break
     }
     if (!found_project) {
-        println "Creating job '" + job_name + "'" + dry_run_suffix
+        println "Creating job '" + job_name + "' [" + (skipped_jobs + updated_jobs + created_jobs + 1) + " / " + jobs.length + "]" + dry_run_suffix
         if (!dry_run) {
             stream = new StringBufferInputStream(job_config)
             Jenkins.instance.createProjectFromXML(job_name, stream)
