@@ -61,7 +61,7 @@ if (views.size() != @(expected_num_views)) {
     throw new AbortException("Wrong number of view configs")
 }
 
-views.each{
+for (it in views) {
     found_view = false
     view_name = it.getName()
     view_config = new File(it.path).getText('UTF-8')
@@ -165,7 +165,7 @@ def mergePullRequestData(job_name, current_file, job_config) {
     return format_xml(document2)
 }
 
-jobs.each{
+for (it in jobs) {
     found_project = false
     job_name = it.getName()
     // remove leading serial number
