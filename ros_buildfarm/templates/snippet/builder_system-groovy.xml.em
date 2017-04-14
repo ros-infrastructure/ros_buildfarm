@@ -1,14 +1,15 @@
-    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@1.30">
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.0">
 @[if command]@
-      <scriptSource class="hudson.plugins.groovy.StringScriptSource">
-        <command>@ESCAPE(command)</command>
-      </scriptSource>
+      <source class="hudson.plugins.groovy.StringSystemScriptSource">
+        <script plugin="script-security@@1.27">
+          <script>@ESCAPE(command)</script>
+          <sandbox>false</sandbox>
+        </script>
+      </source>
 @[end if]@
 @[if script_file]@
-      <scriptSource class="hudson.plugins.groovy.FileScriptSource">
+      <source class="hudson.plugins.groovy.FileSystemScriptSource">
         <scriptFile>@ESCAPE(script_file)</scriptFile>
-      </scriptSource>
+      </source>
 @[end if]@
-      <bindings/>
-      <classpath>@classpath</classpath>
     </hudson.plugins.groovy.SystemGroovy>

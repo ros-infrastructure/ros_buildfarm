@@ -54,5 +54,4 @@ try {
 }
 """,
     script_file=None,
-    classpath='',
 ))@

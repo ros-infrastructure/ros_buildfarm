@@ -142,5 +142,4 @@ for (v in view_stats) {
 }
 """,
     script_file=None,
-    classpath='',
 ))@
