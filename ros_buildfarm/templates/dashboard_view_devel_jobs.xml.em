@@ -15,12 +15,12 @@
     <hudson.views.LastSuccessColumn/>
     <hudson.views.LastFailureColumn/>
     <hudson.views.LastDurationColumn/>
-    <jenkins.plugins.extracolumns.BuildDescriptionColumn plugin="extra-columns@@1.17">
+    <jenkins.plugins.extracolumns.BuildDescriptionColumn plugin="extra-columns@@1.18">
       <columnWidth>80</columnWidth>
       <forceWidth>true</forceWidth>
     </jenkins.plugins.extracolumns.BuildDescriptionColumn>
     <hudson.views.BuildButtonColumn/>
-    <jenkins.plugins.extracolumns.TestResultColumn plugin="extra-columns@@1.17">
+    <jenkins.plugins.extracolumns.TestResultColumn plugin="extra-columns@@1.18">
       <testResultFormat>1</testResultFormat>
     </jenkins.plugins.extracolumns.TestResultColumn>
     <hudson.plugins.warnings.WarningsColumn plugin="warnings@@4.62"/>
