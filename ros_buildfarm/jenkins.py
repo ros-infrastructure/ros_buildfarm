@@ -107,7 +107,8 @@ def configure_view(
     # evaluate generator since it might yield no values
     diff = list(diff)
     if not diff:
-        print("Skipped '%s' because the config is the same" % view_name)
+        print("Skipped '%s' because the config is the same%s" %
+              (view_name, dry_run_suffix))
     else:
         print("Updating view '%s'%s" % (view_name, dry_run_suffix))
         if not create_view:
@@ -167,7 +168,8 @@ def configure_job(jenkins, job_name, job_config, view=None, dry_run=False):
             # evaluate generator since it might yield no values
             diff = list(diff)
             if not diff:
-                print("Skipped '%s' because the config is the same" % job_name)
+                print("Skipped '%s' because the config is the same%s" %
+                      (job_name, dry_run_suffix))
             else:
                 print("Updating job '%s'%s" % (job_name, dry_run_suffix))
                 print('   ', '<<<')

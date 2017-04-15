@@ -75,7 +75,7 @@ for (it in views) {
 
         diff = diff_configs(source, view_config)
         if (!diff) {
-            println "Skipped view '" + view_name + "' because the config is the same"
+            println "Skipped view '" + view_name + "' because the config is the same" + dry_run_suffix
             skipped_views += 1
         } else {
             println "Updating view '" + view_name + "'" + dry_run_suffix
@@ -182,7 +182,7 @@ for (it in jobs) {
 
         diff = diff_configs(job_config_file.getFile(), job_config)
         if (!diff) {
-            println "Skipped job '" + job_name + "' [" + (skipped_jobs + updated_jobs + created_jobs + 1) + " / " + jobs.length + "] because the config is the same"
+            println "Skipped job '" + job_name + "' [" + (skipped_jobs + updated_jobs + created_jobs + 1) + " / " + jobs.length + "] because the config is the same" + dry_run_suffix
             skipped_jobs += 1
         } else {
             println "Updating job '" + job_name + "' [" + (skipped_jobs + updated_jobs + created_jobs + 1) + " / " + jobs.length + "]" + dry_run_suffix
