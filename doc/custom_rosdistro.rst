@@ -48,6 +48,9 @@ repositories.
 Keeping the two sets in separate files eases merging in changes from the
 upstream repository avoiding any conflicts.
 
+Add-on distribution files require the use of version 3 rosdistro indexes, as
+defined in `REP-143 <http://www.ros.org/reps/rep-0143.html>`_
+
 
 Add a tag to custom distribution files
 """"""""""""""""""""""""""""""""""""""
