@@ -13,6 +13,7 @@
           <projects>@project</projects>
           <condition>ALWAYS</condition>
           <triggerWithNoParameters>false</triggerWithNoParameters>
+          <triggerFromChildProjects>false</triggerFromChildProjects>
           <block>
 @[if not continue_on_failure]@
             <buildStepFailureThreshold>
