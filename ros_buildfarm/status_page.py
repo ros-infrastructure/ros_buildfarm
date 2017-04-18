@@ -14,6 +14,7 @@
 
 from __future__ import print_function
 
+from collections import defaultdict
 from collections import namedtuple
 from distutils.version import LooseVersion
 import itertools
@@ -549,12 +550,12 @@ def _get_comparable_loose_versions(version_str1, version_str2):
 
 
 def build_blocked_releases_page(
-        config_url, rosdistro_name,
-        output_dir, repo_names=None, copy_resources=False):
-
+    config_url, rosdistro_name,
+    output_dir, repo_names=None, copy_resources=False
+):
     start_time = time.localtime()
 
-    repos_info = _get_blocked_releases_info(config_url, rosdistro_name, repo_names)
+    repos_info = _get_blocked_releases_info(config_url, rosdistro_name, repo_names=repo_names)
     repos_data = [_format_repo_table_row(name, data) for name, data in sorted(repos_info.items())]
 
     template_name = 'status/blocked_releases_page.html.em'
@@ -671,8 +672,7 @@ def _is_released(repo, dist_file):
         dist_file.repositories[repo].release_repository.version is not None
 
 
-def _get_blocked_releases_info(
-        config_url, rosdistro_name, repo_names=None, depth=1):
+def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
     import rosdistro
     from rosdistro.dependency_walker import DependencyWalker
     from catkin_pkg.package import InvalidPackage, parse_package_string
@@ -749,15 +749,14 @@ def _get_blocked_releases_info(
         print('All inputs already released in {0}.'.format(
             rosdistro_name))
 
-    repos_info = {}
+    repos_info = defaultdict(dict)
     unprocessed_repos = prev_repo_names
     while unprocessed_repos:
-        print('Processing repos:\n{0}\n'.format('\n'.join([str(r) for r in unprocessed_repos])))
+        print('Processing repos:\n%s' %
+              '\n'.join(['- %s' % r for r in sorted(unprocessed_repos)]))
         new_repos_to_process = set()  # set containing repos that come up while processing others
 
         for repo_name in unprocessed_repos:
-            if repo_name not in repos_info:
-                repos_info[repo_name] = {}
             repos_info[repo_name]['released'] = repo_name in released_repos
 
             if repo_name in released_repos:
@@ -776,11 +775,9 @@ def _get_blocked_releases_info(
                 # Accumulate all dependencies for those packages
                 for package in packages:
                     try:
-                        recursive_dependencies = dependency_walker.get_recursive_depends(
+                        package_dependencies |= dependency_walker.get_recursive_depends(
                             package, ['build', 'buildtool', 'run', 'test'], ros_packages_only=True,
-                            limit_depth=depth)
-                        package_dependencies = package_dependencies.union(
-                            recursive_dependencies)
+                            limit_depth=1)
                     except AssertionError as e:
                         print(e, file=sys.stderr)
 
@@ -801,13 +798,13 @@ def _get_blocked_releases_info(
                     if pkg_xml is not None:
                         try:
                             pkg = parse_package_string(pkg_xml)
-                            pkg_maintainers = {m.name: m.email for m in pkg.maintainers}
-                            try:
-                                maintainers[unreleased_repo_name].update(pkg_maintainers)
-                            except KeyError:
-                                maintainers[unreleased_repo_name] = pkg_maintainers
                         except InvalidPackage:
-                            pkg_maintainers = None
+                            pass
+                        else:
+                            pkg_maintainers = {m.name: m.email for m in pkg.maintainers}
+                            if unreleased_repo_name not in maintainers:
+                                maintainers[unreleased_repo_name] = {}
+                            maintainers[unreleased_repo_name].update(pkg_maintainers)
                 if maintainers:
                     repos_info[repo_name]['maintainers'] = maintainers
 
@@ -827,10 +824,9 @@ def _get_blocked_releases_info(
                     if blocking_repo_name not in repos_info:
                         new_repos_to_process.add(blocking_repo_name)
                         repos_info[blocking_repo_name] = {}
-                    try:
-                        repos_info[blocking_repo_name]['repos_blocking'].add(repo_name)
-                    except KeyError:
-                        repos_info[blocking_repo_name]['repos_blocking'] = set([repo_name])
+                    if 'repos_blocking' not in repos_info[blocking_repo_name]:
+                        repos_info[blocking_repo_name]['repos_blocking'] = set([])
+                    repos_info[blocking_repo_name]['repos_blocking'].add(repo_name)
 
             # Get url of repo
             repo_url = None
