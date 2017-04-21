@@ -2,6 +2,24 @@
 Changelog for package ros_buildfarm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.3.1 (2017-04-21)
+------------------
+* Improvements
+
+  * avoid iterating all items (if not necessary) improving reconfigure performance (`#423 <https://github.com/ros-infrastructure/ros_buildfarm/pull/423>`_)
+  * minor changes to the blocked repos status page generation (`#422 <https://github.com/ros-infrastructure/ros_buildfarm/pull/422>`_)
+  * add progress indicator for reconfigure Groovy scripts, mention dry run on skipped jobs
+  * improve error message when trying a prerelease for a released repo without a source entry (`#413 <https://github.com/ros-infrastructure/ros_buildfarm/pull/413>`_)
+  * use forked code in Travis tests (`#411 <https://github.com/ros-infrastructure/ros_buildfarm/pull/411>`_)
+  * avoid switching between DST and non-DST timezone (`#408 <https://github.com/ros-infrastructure/ros_buildfarm/pull/408>`_)
+
+* Fixes
+
+  * update plugin versions, fix Groovy failures (`#418 <https://github.com/ros-infrastructure/ros_buildfarm/pull/418>`_, `#421 <https://github.com/ros-infrastructure/ros_buildfarm/pull/421>`_, `#424 <https://github.com/ros-infrastructure/ros_buildfarm/pull/424>`_)
+  * fix wget not being available in doc jobs for custom rosdep rules (`#416 <https://github.com/ros-infrastructure/ros_buildfarm/pull/416>`_)
+  * fix using latest Ubuntu Docker images which don't have locales installed anymore (`#415 <https://github.com/ros-infrastructure/ros_buildfarm/pull/415>`_)
+  * fix blocking repos script (`#407 <https://github.com/ros-infrastructure/ros_buildfarm/pull/407>`_)
+
 1.3.0 (2017-03-16)
 ------------------
 * New features
