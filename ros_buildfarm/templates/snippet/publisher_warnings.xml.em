@@ -2,7 +2,7 @@
       <healthy/>
       <unHealthy/>
       <thresholdLimit>low</thresholdLimit>
-      <pluginName>[WARNINGS]</pluginName>
+      <pluginName>[WARNINGS] </pluginName>
       <defaultEncoding/>
       <canRunOnFailed>false</canRunOnFailed>
       <usePreviousBuildAsReference>false</usePreviousBuildAsReference>

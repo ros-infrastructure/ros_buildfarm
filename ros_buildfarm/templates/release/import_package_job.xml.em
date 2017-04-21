@@ -9,6 +9,10 @@
     num_to_keep=10000,
 ))@
 @(SNIPPET(
+    'property_job-priority',
+    priority=-1,
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
 @(SNIPPET(

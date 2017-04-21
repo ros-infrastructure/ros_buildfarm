@@ -1,6 +1,7 @@
     <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@@1.36.1">
       <spec/>
-      <triggerPhrase/>
+      <latestVersion>3</latestVersion>
+      <configVersion>3</configVersion>
       <adminlist/>
       <allowMembersOfWhitelistedOrgsAsAdmin>true</allowMembersOfWhitelistedOrgsAsAdmin>
       <orgslist>@ESCAPE(github_orgunit)</orgslist>
@@ -17,13 +18,17 @@
           <branch>@ESCAPE(branch_name)</branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
       </whiteListTargetBranches>
-      <project>@ESCAPE(job_name)</project>
+      <triggerPhrase/>
+      <skipBuildPhrase>.*\[skip\W+ci\].*</skipBuildPhrase>
+      <blackListLabels/>
+      <whiteListLabels/>
       <extensions>
         <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
           <commitStatusContext>@ESCAPE(job_name)</commitStatusContext>
           <triggeredStatus/>
           <startedStatus/>
           <statusUrl/>
+          <addTestResults>false</addTestResults>
         </org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
       </extensions>
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
