@@ -166,14 +166,12 @@ def mergePullRequestData(job_name, current_file, job_config) {
 }
 
 for (it in jobs) {
-    found_project = false
     job_name = it.getName()
     // remove leading serial number
     job_name = job_name[job_name.indexOf(' ') + 1..-1]
     job_config = new File(it.path).getText('UTF-8')
-    for (p in Jenkins.instance.allItems) {
-        if (p.name != job_name) continue
-        found_project = true
+    p = Jenkins.instance.getItemByFullName(job_name)
+    if (p) {
         job_config_file = p.getConfigFile()
 
         if (p.name.substring(1, 5) == 'pr__') {
@@ -199,9 +197,7 @@ for (it in jobs) {
             }
             updated_jobs += 1
         }
-        break
-    }
-    if (!found_project) {
+    } else {
         println "Creating job '" + job_name + "' [" + (skipped_jobs + updated_jobs + created_jobs + 1) + " / " + jobs.length + "]" + dry_run_suffix
         if (!dry_run) {
             stream = new StringBufferInputStream(job_config)
