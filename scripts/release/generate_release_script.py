@@ -97,9 +97,13 @@ def main(argv=sys.argv[1:]):
         args.rosdistro_name, args.release_build_name,
         args.package_name, args.os_name, args.os_code_name, args.arch)
 
-    separator_index = hook.scripts.index('--')
-    source_scripts = hook.scripts[:separator_index]
-    binary_scripts = hook.scripts[separator_index + 1:]
+    if '--' in hook.scripts:
+        separator_index = hook.scripts.index('--')
+        source_scripts = hook.scripts[:separator_index]
+        binary_scripts = hook.scripts[separator_index + 1:]
+    else:
+        source_scripts = []
+        binary_scripts = []
 
     # inject additional argument to skip fetching sourcedeb from repo
     script_name = '/run_binarydeb_job.py '
