@@ -1,10 +1,11 @@
-tbody tr td:nth-child(1) div { width: 300px; }
-tbody tr td:nth-child(2) a { display: block; width: 200px; }
-tbody tr td:nth-child(3) div,
+tbody tr td:nth-child(1) div,
+tbody tr td:nth-child(2) div { width: 300px; }
+tbody tr td:nth-child(3) a { display: block; width: 200px; }
 tbody tr td:nth-child(4) div,
-tbody tr td:nth-child(5) div { width: 80px; overflow-x: hidden; }
+tbody tr td:nth-child(5) div,
+tbody tr td:nth-child(6) div { width: 80px; overflow-x: hidden; }
 
 /* Give the table more breathing room on a wider display. */
 @media (min-width: 1380px) {
-  tbody tr td:nth-child(2) { padding-right: 20px; }
+  tbody tr td:nth-child(3) { padding-right: 20px; }
 }

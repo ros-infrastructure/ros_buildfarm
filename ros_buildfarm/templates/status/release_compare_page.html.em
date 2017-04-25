@@ -27,7 +27,7 @@
     <form action="?">
       <input type="text" name="q" id="q" />
       <p>Quick filter:
-        <a href="?q=" title="Show all repos">*</a>,
+        <a href="?q=" title="Show all packages">*</a>,
         <a href="?q=DIFF_PATCH" title="Filter packages which are only differ in the patch version">different patch version</a>,
         <a href="?q=DOWNGRADE_VERSION" title="Filter packages which disappear by a sync from shadow-fixed to public">downgrade</a>,
         <a href="?q=DIFF_BRANCH_SAME_VERSION" title="Filter packages which are are released from different branches but have same minor version">same version from different branches</a>
@@ -42,6 +42,7 @@
     <caption></caption>
     <thead>
       <tr>
+        <th class="sortable"><div>Package</div></th>
         <th class="sortable"><div>Repo</div></th>
         <th class="sortable"><div>Maintainer</div></th>
 @[for rosdistro_name in rosdistro_names]@
@@ -51,8 +52,8 @@
     </thead>
     <tbody>
       <script type="text/javascript">window.tbody_ready();</script>
-@[for repo_name in sorted(repos_data.keys())]@
-      <tr>@[for cell in repos_data[repo_name]]<td>@(cell)</td>@[end for]</tr>
+@[for pkg_name in sorted(pkgs_data.keys())]@
+      <tr>@[for cell in pkgs_data[pkg_name]]<td>@(cell)</td>@[end for]</tr>
 @[end for]@
     </tbody>
   </table>
