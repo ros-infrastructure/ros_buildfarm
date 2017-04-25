@@ -871,14 +871,14 @@ def build_release_compare_page(
     # get all input data
     distros = [get_cached_distribution(index, d) for d in rosdistro_names]
 
-    repo_names = [d.repositories.keys() for d in distros]
-    repo_names = [x for y in repo_names for x in y]
+    pkg_names = [d.release_packages.keys() for d in distros]
+    pkg_names = [x for y in pkg_names for x in y]
 
-    repos_data = {}
-    for repo_name in repo_names:
-        repo_data = _compare_repo_version(distros, repo_name)
-        if repo_data:
-            repos_data[repo_name] = repo_data
+    pkgs_data = {}
+    for pkg_name in pkg_names:
+        pkg_data = _compare_package_version(distros, pkg_name)
+        if pkg_data:
+            pkgs_data[pkg_name] = pkg_data
 
     template_name = 'status/release_compare_page.html.em'
     data = {
@@ -891,7 +891,7 @@ def build_release_compare_page(
 
         'rosdistro_names': rosdistro_names,
 
-        'repos_data': repos_data,
+        'pkgs_data': pkgs_data,
     }
     html = expand_template(template_name, data)
     output_filename = os.path.join(
@@ -905,8 +905,9 @@ def build_release_compare_page(
 
 class CompareRow(object):
 
-    def __init__(self, repo_name):
-        self.repo_name = repo_name
+    def __init__(self, pkg_name):
+        self.pkg_name = pkg_name
+        self.repo_name = ''
         self.repo_urls = []
         self.maintainers = {}
         self.versions = []
@@ -970,35 +971,36 @@ def _is_same_version_but_different_branch(version_a, version_b, branch_a, branch
         version_a.version[1] == version_b.version[1]
 
 
-def _compare_repo_version(distros, repo_name):
+def _compare_package_version(distros, pkg_name):
     from catkin_pkg.package import InvalidPackage, parse_package_string
-    row = CompareRow(repo_name)
+    row = CompareRow(pkg_name)
     for distro in distros:
         repo_url = None
         version = None
         branch = None
-        if repo_name in distro.repositories:
-            repo = distro.repositories[repo_name]
+        if pkg_name in distro.release_packages:
+            pkg = distro.release_packages[pkg_name]
+            row.repo_name = pkg.repository_name
+            repo = distro.repositories[pkg.repository_name]
 
             rel_repo = repo.release_repository
             if rel_repo:
                 version = rel_repo.version
-                for pkg_name in rel_repo.package_names:
-                    pkg_xml = distro.get_release_package_xml(pkg_name)
-                    if pkg_xml is not None:
-                        try:
-                            pkg = parse_package_string(pkg_xml)
-                            for m in pkg.maintainers:
-                                row.maintainers[m.name] = '<a href="mailto:%s">%s</a>' % \
-                                    (m.email, m.name)
-                        except InvalidPackage:
-                            row.maintainers['zzz'] = '<b>invalid package.xml in %s</b>' % \
-                                distro.name
+                pkg_xml = distro.get_release_package_xml(pkg_name)
+                if pkg_xml is not None:
+                    try:
+                        pkg = parse_package_string(pkg_xml)
+                        for m in pkg.maintainers:
+                            row.maintainers[m.name] = '<a href="mailto:%s">%s</a>' % \
+                                (m.email, m.name)
+                    except InvalidPackage:
+                        row.maintainers['zzz'] = '<b>invalid package.xml in %s</b>' % \
+                            distro.name
 
-                    if repo.source_repository:
-                        repo_url = repo.source_repository.url
-                    elif repo.doc_repository:
-                        repo_url = repo.doc_repository.url
+                if repo.source_repository:
+                    repo_url = repo.source_repository.url
+                elif repo.doc_repository:
+                    repo_url = repo.doc_repository.url
 
             source_repo = repo.source_repository
             if source_repo:
@@ -1016,12 +1018,12 @@ def _compare_repo_version(distros, repo_name):
     if not [v for v in row.versions if v]:
         return None
 
-    data = [row.get_repo_name_with_link(), row.get_maintainers()] + \
+    data = [row.pkg_name, row.get_repo_name_with_link(), row.get_maintainers()] + \
         [v if v else '' for v in row.versions]
 
     labels = row.get_labels(distros)
     if len(labels) > 0:
-        data[0] += ' <span class="ht">%s</span>' % ' '.join(labels)
+        data[1] += ' <span class="ht">%s</span>' % ' '.join(labels)
 
     # div-wrap all cells for layout reasons
     for i, value in enumerate(data):
