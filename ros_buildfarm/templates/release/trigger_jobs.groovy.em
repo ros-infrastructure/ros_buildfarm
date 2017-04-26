@@ -21,28 +21,22 @@ triggered = 0
 skipped = 0
 for (job_name in job_names) {
     p = Jenkins.instance.getItemByFullName(job_name)
-    if (p) {
-        if (p.isDisabled()) {
-            println "  " + job_name + " (skipped disabled project)"
-            skipped += 1
-            break
-        }
-        if (p.isBuilding()) {
-            println "  " + job_name + " (skipped already building project)"
-            skipped += 1
-            break
-        }
-        if (p.isInQueue()) {
-            println "  " + job_name + " (skipped already queued project)"
-            skipped += 1
-            break
-        }
+    if (!p) {
+        println "  " + job_name + " (skipped nonexisting project)"
+        skipped += 1
+    } else if (p.isDisabled()) {
+        println "  " + job_name + " (skipped disabled project)"
+        skipped += 1
+    } else if (p.isBuilding()) {
+        println "  " + job_name + " (skipped already building project)"
+        skipped += 1
+    } else if (p.isInQueue()) {
+        println "  " + job_name + " (skipped already queued project)"
+        skipped += 1
+    } else {
         println job_name
         p.scheduleBuild(new UpstreamCause(binding.variables["build"]))
         triggered += 1
-    } else {
-        println "  " + job_name + " (skipped nonexisting project)"
-        skipped += 1
     }
 }
 println "Triggered " + triggered + " jobs, skipped " + skipped + " jobs."
