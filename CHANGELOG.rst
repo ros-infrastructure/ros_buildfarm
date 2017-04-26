@@ -2,6 +2,11 @@
 Changelog for package ros_buildfarm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.3.2 (2017-04-26)
+------------------
+* modify compare page to list packages rather than repositories (`#425 <https://github.com/ros-infrastructure/ros_buildfarm/pull/425>`_)
+* fix regression in trigger logic introduced in 1.3.1 (`#427 <https://github.com/ros-infrastructure/ros_buildfarm/issues/427>`_)
+
 1.3.1 (2017-04-21)
 ------------------
 * Improvements
