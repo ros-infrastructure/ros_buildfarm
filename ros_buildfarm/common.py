@@ -477,7 +477,13 @@ def topological_order_packages(packages):
             decorator.package.build_depends + decorator.package.buildtool_depends + \
             decorator.package.run_depends + decorator.package.test_depends
         # skip external dependencies, meaning names that are not known packages
-        for name in [d.name for d in all_depends if d.name in decorators_by_name.keys()]:
+        unique_depend_names = set([
+            d.name for d in all_depends if d.name in decorators_by_name.keys()])
+        for name in unique_depend_names:
+            if name in decorator.depends_for_topological_order:
+                # avoid function call to improve performance
+                # check within the loop since the set changes every cycle
+                continue
             decorators_by_name[name]._add_recursive_run_depends(
                 decorators_by_name, decorator.depends_for_topological_order)
 
