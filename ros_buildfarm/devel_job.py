@@ -386,6 +386,7 @@ def _get_devel_job_config(
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
         'notify_committers': build_file.notify_committers,
+        'notify_pull_requests': build_file.notify_pull_requests,
 
         'timeout_minutes': build_file.jenkins_job_timeout,
 

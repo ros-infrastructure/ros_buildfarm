@@ -245,17 +245,19 @@ if pull_request:
     'publisher_xunit',
     pattern='catkin_workspace/test_results/**/*.xml',
 ))@
-@[if notify_maintainers]@
+@[if not pull_request or notify_pull_requests]@
+@[ if notify_maintainers]@
 @(SNIPPET(
     'publisher_groovy-postbuild_maintainer-notification',
 ))@
-@[end if]@
+@[ end if]@
 @(SNIPPET(
     'publisher_mailer',
     recipients=notify_emails,
     dynamic_recipients=maintainer_emails,
     send_to_individuals=notify_committers,
 ))@
+@[end if]@
   </publishers>
   <buildWrappers>
 @[if timeout_minutes is not None]@
