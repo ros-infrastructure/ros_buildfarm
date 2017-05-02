@@ -56,13 +56,17 @@ class SourceBuildFile(BuildFile):
 
         self.notify_committers = None
         self.notify_compiler_warnings = False
+        self.notify_pull_requests = False
         if 'notifications' in data:
             if 'committers' in data['notifications']:
                 self.notify_committers = \
                     bool(data['notifications']['committers'])
-            if 'compiler_warnings' in data['notifications'] and \
-                    data['notifications']['compiler_warnings']:
-                self.notify_compiler_warnings = True
+            if 'compiler_warnings' in data['notifications']:
+                self.notify_compiler_warnings = \
+                    bool(data['notifications']['compiler_warnings'])
+            if 'pull_requests' in data['notifications']:
+                self.notify_pull_requests = \
+                    bool(data['notifications']['pull_requests'])
 
         self.repository_blacklist = []
         if 'repository_blacklist' in data:
