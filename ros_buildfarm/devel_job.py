@@ -320,6 +320,16 @@ def configure_devel_view(jenkins, view_name, dry_run=False):
         template_name='dashboard_view_devel_jobs.xml.em', dry_run=dry_run)
 
 
+def _get_credential(config, repo_url):
+    from re import match, IGNORECASE
+    print('matching repo_url %s against config' % repo_url)
+    for regex in config.git_credentials:
+        print('  matching repo_url %s against config %s' % (repo_url, regex))
+        if match(regex, repo_url, IGNORECASE) is not None:
+            return config.git_credentials[regex]
+    return ''
+
+
 def _get_devel_job_config(
         config, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, source_repo_spec,
@@ -391,6 +401,8 @@ def _get_devel_job_config(
         'timeout_minutes': build_file.jenkins_job_timeout,
 
         'git_ssh_credential_id': config.git_ssh_credential_id,
+
+        'git_credential': _get_credential(config, source_repo_spec.url)
     }
     job_config = expand_template(template_name, job_data)
     return job_config

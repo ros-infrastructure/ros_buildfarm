@@ -99,6 +99,12 @@ class Index(object):
             self.git_ssh_credential_id = data['git_ssh_credential_id']
             assert isinstance(self.git_ssh_credential_id, str)
 
+        # find any URL->credential mappings to set credentials for repos
+        self.git_credentials = {}
+        if 'git_credentials' in data:
+            self.git_credentials = data['git_credentials']
+            assert isinstance(self.git_credentials, dict)
+
         self.jenkins_url = data['jenkins_url']
 
         self.notify_emails = []

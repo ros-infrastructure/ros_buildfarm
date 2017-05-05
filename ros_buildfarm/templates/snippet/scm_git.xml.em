@@ -9,6 +9,9 @@
 @[if vars().get('git_ssh_credential_id')]@
         <credentialsId>@git_ssh_credential_id</credentialsId>
 @[end if]@
+@[if vars().get('git_credential')]@
+        <credentialsId>@git_credential</credentialsId>
+@[end if]@
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
