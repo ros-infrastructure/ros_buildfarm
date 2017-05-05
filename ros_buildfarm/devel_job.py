@@ -321,13 +321,25 @@ def configure_devel_view(jenkins, view_name, dry_run=False):
 
 
 def _get_credential(config, repo_url):
+    """
+    assign credentials for a git base repository using the dictionary
+    `git_credentials` in `index.yaml` of the buildfarm configuration. E.g.:
+
+    ```
+    git_credentials:
+      "https://github.com/.*": global_github_strands_jenkins
+      "https://gitsvn-nt.oru.se/.*": iliad_user
+    ```
+
+    The key in this dictionary is a regular expression (test case-insensitive)
+    and the value is the respective credential ID in jenkins which needs to
+    be available in the jenkins credential store.
+    """
     from re import match, IGNORECASE
-    print('matching repo_url %s against config' % repo_url)
+    # matching repo_url against config
     for regex in config.git_credentials:
-        print('  matching repo_url %s against config %s' % (repo_url, regex))
+        # matching regular expression
         if match(regex, repo_url, IGNORECASE) is not None:
-            print ('found this credential id: %s' %
-                   config.git_credentials[regex])
             return config.git_credentials[regex]
     return ''
 
