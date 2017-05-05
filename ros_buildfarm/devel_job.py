@@ -326,6 +326,8 @@ def _get_credential(config, repo_url):
     for regex in config.git_credentials:
         print('  matching repo_url %s against config %s' % (repo_url, regex))
         if match(regex, repo_url, IGNORECASE) is not None:
+            print ('found this credential id: %s' %
+                   config.git_credentials[regex])
             return config.git_credentials[regex]
     return ''
 

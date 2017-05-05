@@ -6,6 +6,7 @@
     relative_target_dir=path,
     refspec=None,
     git_ssh_credential_id=git_ssh_credential_id,
+    git_credential=git_credential,
 ))@
 @[elif repo_spec.type == 'hg']@
 @(SNIPPET(
