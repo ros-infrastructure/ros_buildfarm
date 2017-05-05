@@ -54,6 +54,7 @@ if pull_request:
     repo_spec=source_repo_spec,
     path='catkin_workspace/src/%s' % source_repo_spec.name,
     git_ssh_credential_id=git_ssh_credential_id,
+    git_credential=git_credential,
 ))@
 @[else]@
 @(SNIPPET(
@@ -63,6 +64,7 @@ if pull_request:
     branch_name='${sha1}',
     relative_target_dir='catkin_workspace/src/%s' % source_repo_spec.name,
     git_ssh_credential_id=git_ssh_credential_id,
+    git_credential=git_credential,
     merge_branch=source_repo_spec.version,
 ))@
 @[end if]@
