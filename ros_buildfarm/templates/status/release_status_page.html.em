@@ -60,6 +60,7 @@
       <a href="?q=ORANGE">ORANGE</a>,
       <a href="?q=YELLOW">YELLOW</a>,
       <a href="?q=GRAY">GRAY</a>
+      <a href="?q=ORPHANED" title="Filter packages whth unmaintained or end-of-life status">ORPHANED</a>
     </p>
     <form action="?">
       <input type="text" name="q" id="q" />
