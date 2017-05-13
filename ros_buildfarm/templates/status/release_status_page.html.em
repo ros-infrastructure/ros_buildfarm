@@ -60,6 +60,7 @@
       <a href="?q=ORANGE">ORANGE</a>,
       <a href="?q=YELLOW">YELLOW</a>,
       <a href="?q=GRAY">GRAY</a>
+      <a href="?q=UNMAINTAINED" title="Filter packages with unmaintained status">UNMAINTAINED</a>
     </p>
     <form action="?">
       <input type="text" name="q" id="q" />

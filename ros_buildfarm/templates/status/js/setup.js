@@ -6,7 +6,8 @@ var QUERY_TRANSFORMS = {
   'GRAY': '<a class="i"></a>',
   'RED1': '<td><a class="m"></a>',
   'RED2': '</a><a class="m"></a><a',
-  'RED3': '<a class="m"></a></td>'
+  'RED3': '<a class="m"></a></td>',
+  'UNMAINTAINED' : '<span class="unmaintained"'
 };
 
 window.body_ready = function() {
