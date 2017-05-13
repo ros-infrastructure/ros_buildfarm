@@ -6,7 +6,8 @@ var QUERY_TRANSFORMS = {
   'GRAY': '<a class="i"></a>',
   'RED1': '<td><a class="m"></a>',
   'RED2': '</a><a class="m"></a><a',
-  'RED3': '<a class="m"></a></td>'
+  'RED3': '<a class="m"></a></td>',
+  'ORPHANED' : '<span class="end-of-life"|<span class="unmaintained"'
 };
 
 window.body_ready = function() {
@@ -266,14 +267,15 @@ function filter_table() {
         for (var i = 0; i < queries.length; i++) {
           var is_known_query = false;
           for (var q in QUERY_TRANSFORMS) {
-            if (RegExp("^("+QUERY_TRANSFORMS[q]+")$").test(queries[i])) {
+            // escape | for regex
+            if (RegExp("^("+QUERY_TRANSFORMS[q].replace('|','&#166;')+")$").test(queries[i].replace('|','&#166;'))) {
               is_known_query = true;
               break;
             }
           }
           if (is_known_query) {
             // search in full row html
-            if (row[0].indexOf(queries[i]) == -1) return null;
+            if (! RegExp(queries[i]).test(row[0])) return null;
           } else {
             // search in plain text of each column
             match = false;
