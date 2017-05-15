@@ -3,6 +3,7 @@
     command=
 """// VERFIY THAT FREE DISK SPACE THRESHOLD IS NOT VIOLATED
 import hudson.model.Cause.UserIdCause
+import hudson.model.ParametersAction
 import hudson.node_monitors.AbstractDiskSpaceMonitor
 import hudson.node_monitors.DiskSpaceMonitor
 import hudson.node_monitors.DiskSpaceMonitorDescriptor.DiskSpace
@@ -37,7 +38,9 @@ try {
         logger.warning(Messages.DiskSpaceMonitor_MarkedOffline(computer.getName()))
       }
 
-      // the job will be rescheduled automatically if it has corresponding flag set in the project configuration
+      // rescheduled a build with the same parameters
+      // the requeue flag in the project configuration seems to not be sufficient anymore
+      build.getProject().scheduleBuild(1, new UserIdCause(), *build.getActions(ParametersAction))
 
       // add badge to build
       build.getActions().add(GroovyPostbuildAction.createInfoBadge("Free disk space is too low, disabled slave '" + computer.name + "', rescheduled job"))

@@ -17,6 +17,7 @@ else:
     'builder_system-groovy',
     command=
 """// DISABLE SLAVE IF OUTPUT INDICATES DOCKER RUN PROBLEMS
+import hudson.model.ParametersAction
 import hudson.slaves.OfflineCause.UserCause
 import java.io.BufferedReader
 import java.util.regex.Pattern
@@ -37,7 +38,9 @@ while ((line = br.readLine()) != null) {
         def computer = node.toComputer()
         computer.setTemporarilyOffline(true, new UserCause(null, "'docker run' failed"))
 
-        // the job will be rescheduled automatically if it has corresponding flag set in the project configuration
+        // rescheduled a build with the same parameters
+        // the requeue flag in the project configuration seems to not be sufficient anymore
+        build.getProject().scheduleBuild(1, new UserIdCause(), *build.getActions(ParametersAction))
 
         // add badge to build
         build.getActions().add(GroovyPostbuildAction.createInfoBadge("'docker run' failed, disabled slave '" + computer.name + "', rescheduled job"))
