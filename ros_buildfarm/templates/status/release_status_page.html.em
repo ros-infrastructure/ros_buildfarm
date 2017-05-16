@@ -63,7 +63,7 @@
       <a href="?q=UNMAINTAINED" title="Filter packages with unmaintained status">UNMAINTAINED</a>
     </p>
     <form action="?">
-      <input type="text" name="q" id="q" />
+      <input type="text" name="q" id="q" title="A query string can contain multiple '+' separated parts which must all be satisfied. Each part can also be a RegExp (e.g. to combine two parts with 'OR': 'foo|bar'), but can't contain '+'." />
       <p id="search-count"></p>
     </form>
   </div>

@@ -38,7 +38,7 @@ import time
   </div>
   <div class="top search">
     <form action="?">
-      <input type="text" name="q" id="q" />
+      <input type="text" name="q" id="q" title="A query string can contain multiple '+' separated parts which must all be satisfied. Each part can also be a RegExp (e.g. to combine two parts with 'OR': 'foo|bar'), but can't contain '+'." />
       <p>
         <a href="?q=" title="Show all repos">all</a>,
         <script language="JavaScript">encoded_query_a_tag('label="RELEASED"', "Repositories that have already been released", "released")</script>,

@@ -25,7 +25,7 @@
   </div>
   <div class="top search">
     <form action="?">
-      <input type="text" name="q" id="q" />
+      <input type="text" name="q" id="q" title="A query string can contain multiple '+' separated parts which must all be satisfied. Each part can also be a RegExp (e.g. to combine two parts with 'OR': 'foo|bar'), but can't contain '+'." />
       <p>Quick filter:
         <a href="?q=" title="Show all packages">*</a>,
         <a href="?q=DIFF_PATCH" title="Filter packages which are only differ in the patch version">different patch version</a>,
