@@ -17,6 +17,7 @@ else:
     'builder_system-groovy',
     command=
 """// DISABLE SLAVE IF OUTPUT INDICATES DOCKER RUN PROBLEMS
+import hudson.model.Cause.UserIdCause
 import hudson.model.ParametersAction
 import hudson.slaves.OfflineCause.UserCause
 import java.io.BufferedReader
