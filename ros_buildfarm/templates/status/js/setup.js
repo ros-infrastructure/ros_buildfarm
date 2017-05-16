@@ -267,19 +267,20 @@ function filter_table() {
         for (var i = 0; i < queries.length; i++) {
           var is_known_query = false;
           for (var q in QUERY_TRANSFORMS) {
-            if (RegExp("^("+QUERY_TRANSFORMS[q]+")$").test(queries[i])) {
+            // need to escape RegExp characters, for example |
+            if (RegExp("^("+escape(QUERY_TRANSFORMS[q])+")$").test(escape(queries[i]))) {
               is_known_query = true;
               break;
             }
           }
           if (is_known_query) {
             // search in full row html
-            if (row[0].indexOf(queries[i]) == -1) return null;
+            if (! RegExp(queries[i]).test(row[0])) return null;
           } else {
             // search in plain text of each column
             match = false;
             for (var j = 1; j < row.length; j++) {
-              if (row[j] && row[j].indexOf(queries[i]) != -1) {
+              if (row[j] && RegExp(queries[i]).test(row[j])) {
                 match = true;
                 break;
               }
