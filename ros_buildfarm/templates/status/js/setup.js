@@ -266,13 +266,12 @@ function filter_table() {
         for (var i = 0; i < queries.length; i++) {
           var is_known_query = false;
           for (var q in QUERY_TRANSFORMS) {
-            if (RegExp("^("+QUERY_TRANSFORMS[q]+")$").test(queries[i])) {
+            // need to escape RegExp characters, for example |
+            if (RegExp("^("+escape(QUERY_TRANSFORMS[q])+")$").test(escape(queries[i]))) {
               is_known_query = true;
               break;
             }
           }
-          // replace OR to RegExp syntax(|)
-          queries[i] = queries[i].replace(/\s*\OR\s*/, '|');
           if (is_known_query) {
             // search in full row html
             if (! RegExp(queries[i]).test(row[0])) return null;
