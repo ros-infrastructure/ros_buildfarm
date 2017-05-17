@@ -7,7 +7,7 @@ var QUERY_TRANSFORMS = {
   'RED1': '<td><a class="m"></a>',
   'RED2': '</a><a class="m"></a><a',
   'RED3': '<a class="m"></a></td>',
-  'UNMAINTAINED' : '<span class="unmaintained"'
+  'ORPHANED' : '<span class="unmaintained"|<span class="end-of-life"'
 };
 
 window.body_ready = function() {

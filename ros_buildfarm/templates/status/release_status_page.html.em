@@ -60,7 +60,7 @@
       <a href="?q=ORANGE">ORANGE</a>,
       <a href="?q=YELLOW">YELLOW</a>,
       <a href="?q=GRAY">GRAY</a>,
-      <a href="?q=UNMAINTAINED" title="Filter packages with unmaintained status">UNMAINTAINED</a>
+      <a href="?q=ORPHANED" title="Filter packages with unmaintained or end-of-life status">ORPHANED</a>
     </p>
     <form action="?">
       <input type="text" name="q" id="q" title="A query string can contain multiple '+' separated parts which must all be satisfied. Each part can also be a RegExp (e.g. to combine two parts with 'OR': 'foo|bar'), but can't contain '+'." />
