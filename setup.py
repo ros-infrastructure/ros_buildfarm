@@ -37,7 +37,7 @@ kwargs = {
     'license': 'Apache 2.0',
 }
 
-if os.sys.version_info.major == 2:
+if os.sys.version_info[0] == 2:
     kwargs['install_requires'].append('configparser')
 
 if 'SKIP_PYTHON_MODULES' in os.environ:
