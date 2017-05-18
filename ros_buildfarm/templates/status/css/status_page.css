@@ -108,7 +108,7 @@ tbody tr td span {
 }
 span.developed:before { content: "developed"; color: #a2d39c; }
 span.maintained:before { content: "maintained"; color: #a2d39c; }
-span.unmaintained:before { content: "unmaintained"; color: #f0f078; }
+span.unmaintained:before { content: "unmaintained"; color: #f0ac78; }
 span.end-of-life:before { content: "end-of-life"; color: #f07878; }
 span.unknown:before { content:"unknown"; color: #c8c8c8; }
 span.developed,
