@@ -1,6 +1,10 @@
 <project>
   <actions/>
-  <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
+  <description>
+    &lt;p&gt;
+      &lt;b&gt;This job should not be aborted since reprepro will likely leave lockfile behind!&lt;/b&gt;
+    &lt;/p&gt;
+Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
   <keepDependencies>false</keepDependencies>
   <properties>
 @(SNIPPET(
