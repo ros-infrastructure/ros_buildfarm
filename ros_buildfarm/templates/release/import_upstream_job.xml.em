@@ -10,7 +10,7 @@
 ))@
 @(SNIPPET(
     'property_job-priority',
-    priority=-1,
+    priority=20,
 ))@
 @(SNIPPET(
     'property_requeue-job',
