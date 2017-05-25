@@ -41,7 +41,7 @@ def main(argv=sys.argv[1:]):
     parser.add_argument(
         '--os-code-name',
         required=True,
-        help="The OS code name (e.g. 'trusty')")
+        help="The OS code name (e.g. 'xenial')")
     parser.add_argument(
         '--arch',
         required=True,

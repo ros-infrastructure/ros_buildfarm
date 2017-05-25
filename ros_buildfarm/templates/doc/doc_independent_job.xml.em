@@ -43,7 +43,7 @@
 @(SNIPPET(
     'builder_check-docker',
     os_name='ubuntu',
-    os_code_name='trusty',
+    os_code_name='xenial',
     arch='amd64',
 ))@
 @(SNIPPET(
