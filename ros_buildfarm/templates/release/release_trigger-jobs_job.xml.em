@@ -23,6 +23,7 @@
           <choices class="java.util.Arrays$ArrayList">
             <a class="string-array">
               <string>--missing-only --source-only</string>
+              <string>--missing-only --not-failed-only</string>
               <string>--missing-only</string>
               <string>--source-only</string>
               <string> </string>

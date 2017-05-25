@@ -48,5 +48,7 @@ if missing_only:
     cmd += ' --missing-only'
 if source_only:
     cmd += ' --source-only'
+if not_failed_only:
+    cmd += ' --not-failed-only'
 }@
 CMD ["@(cmd.replace('"', '\\"'))"]
