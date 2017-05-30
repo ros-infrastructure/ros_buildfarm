@@ -1,6 +1,6 @@
 # generated from @template_name
 
-FROM ubuntu:trusty
+FROM ubuntu:xenial
 
 VOLUME ["/var/cache/apt/archives"]
 
@@ -18,7 +18,7 @@ RUN useradd -u @uid -m buildfarm
     distribution_repository_keys=distribution_repository_keys,
     distribution_repository_urls=distribution_repository_urls,
     os_name='ubuntu',
-    os_code_name='trusty',
+    os_code_name='xenial',
     add_source=False,
 ))@
 
