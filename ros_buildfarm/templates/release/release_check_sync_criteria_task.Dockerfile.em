@@ -30,6 +30,12 @@ RUN useradd -u @uid -m buildfarm
 # automatic invalidation once every day
 RUN echo "@today_str"
 
+@(TEMPLATE(
+    'snippet/install_python3.Dockerfile.em',
+    os_name='ubuntu',
+    os_code_name='xenial',
+))@
+
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-rosdistro-modules python3-yaml
 
 USER buildfarm
