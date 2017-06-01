@@ -205,6 +205,13 @@ def add_argument_source_only(parser):
         help='Only trigger source jobs')
 
 
+def add_argument_not_failed_only(parser):
+    parser.add_argument(
+        '--not-failed-only',
+        action='store_true',
+        help='Only trigger jobs for which the previous build did not fail')
+
+
 def add_argument_os_code_name_and_arch_tuples(parser):
     parser.add_argument(
         '--os-code-name-and-arch-tuples',

@@ -32,7 +32,8 @@ from .templates import expand_template
 
 def trigger_release_jobs(
         config_url, rosdistro_name, release_build_name,
-        missing_only, source_only, cache_dir, cause=None, groovy_script=None):
+        missing_only, source_only, cache_dir, cause=None, groovy_script=None,
+        not_failed_only=False):
     config = get_config_index(config_url)
     build_files = get_release_build_files(config, rosdistro_name)
     build_file = build_files[release_build_name]
@@ -129,6 +130,7 @@ def trigger_release_jobs(
               (groovy_script, len(triggered_jobs)))
         data = {
             'job_names': triggered_jobs,
+            'not_failed_only': not_failed_only,
         }
         content = expand_template('release/trigger_jobs.groovy.em', data)
         with open(groovy_script, 'w') as h:
