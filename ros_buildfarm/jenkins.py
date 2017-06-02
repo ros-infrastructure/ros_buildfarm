@@ -72,13 +72,23 @@ def configure_management_view(jenkins, dry_run=False):
         dry_run=dry_run)
 
 
+_cached_views = {}
+
+
 def configure_view(
         jenkins, view_name, include_regex=None, filter_queue=True,
         template_name='generic_view.xml.em', dry_run=False):
+    global _cached_views
+    key = (view_name, include_regex, filter_queue, template_name, dry_run)
+    if key in _cached_views:
+        print("Skipped view '%s' as it has been configured before" % view_name)
+        return _cached_views[key]
+
     view_config = get_view_config(
         template_name, view_name, include_regex=include_regex,
         filter_queue=filter_queue)
     if not jenkins:
+        _cached_views[key] = view_config
         return view_config
     view_type = _get_view_type(view_config)
     create_view = view_name not in jenkins.views
@@ -136,6 +146,7 @@ def configure_view(
             raise RuntimeError(
                 "Failed to configure view '%s':\n%s" %
                 (view_name, response_text))
+    _cached_views[key] = view
     return view
 
 
@@ -162,7 +173,16 @@ def _get_view_type(view_config):
     assert False, 'Unknown list type: ' + root.tag
 
 
+_cached_jobs = {}
+
+
 def configure_job(jenkins, job_name, job_config, view=None, dry_run=False):
+    global _cached_jobs
+    key = (job_name, job_config, view, dry_run)
+    if key in _cached_jobs:
+        print("Skipped job '%s' as it has been configured before" % job_name)
+        return _cached_jobs[key]
+
     dry_run_suffix = ' (dry run)' if dry_run else ''
     response_text = None
     try:
@@ -206,6 +226,7 @@ def configure_job(jenkins, job_name, job_config, view=None, dry_run=False):
                 if not dry_run else job
         else:
             print("Job '%s' is already in view '%s'" % (job_name, view.name))
+    _cached_jobs[key] = job
     return job
 
 
