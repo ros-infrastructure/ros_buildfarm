@@ -53,6 +53,17 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
 @(SNIPPET(
+    'builder_system-groovy',
+    command=
+"""// USE PARAMETER FOR BUILD DESCRIPTION
+package_names = build.buildVariableResolver.resolve('package_names')
+if (package_names) {
+  build.setDescription(package_names)
+}
+""",
+    script_file=None,
+))@
+@(SNIPPET(
     'builder_shell_docker-info',
 ))@
 @(SNIPPET(
