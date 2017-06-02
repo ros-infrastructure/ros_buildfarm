@@ -19,7 +19,7 @@ job_names << '@(job_names[j])'
 add_job_names_@(int(i / group_size) + 1)(job_names)
 @[end for]@
 
-@(TEMPLATE('snippet/check_recursive_upstream_projects.groovy.em'))@
+@(FILE('snippet/check_recursive_upstream_projects.groovy'))@
 
 println "Triggering " + job_names.size + " jobs..."
 triggered = 0
