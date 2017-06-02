@@ -112,9 +112,16 @@ def expand_template(template_name, data, options=None):
 
 
 def _add_helper_functions(data):
+    data['FILE'] = _get_file_content
     data['ESCAPE'] = _escape_value
     data['SNIPPET'] = _expand_snippet
     data['TEMPLATE'] = _expand_template
+
+
+def _get_file_content(filename):
+    path = get_template_path(filename)
+    with open(path, 'r') as h:
+        return h.read()
 
 
 def _escape_value(value):

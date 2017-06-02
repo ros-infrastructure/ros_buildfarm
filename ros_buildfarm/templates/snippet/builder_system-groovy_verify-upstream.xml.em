@@ -1,5 +1,5 @@
 @{
-code = TEMPLATE('snippet/check_recursive_upstream_projects.groovy.em')
+code = FILE('snippet/check_recursive_upstream_projects.groovy')
 }@
 @(SNIPPET(
     'builder_system-groovy',
