@@ -57,6 +57,8 @@ def main(argv=sys.argv[1:]):
         args, config, build_file)
     trigger_jobs_job_config = get_trigger_jobs_job_config(
         args, config, build_file)
+    trigger_missed_jobs_job_config = get_trigger_missed_jobs_job_config(
+        args, config, build_file)
     import_upstream_job_config = get_import_upstream_job_config(
         args, config, build_file)
     trigger_broken_with_non_broken_upstream_job_config = \
@@ -74,6 +76,11 @@ def main(argv=sys.argv[1:]):
     job_name = '%s_%s' % (group_name, 'trigger-jobs')
     configure_job(
         jenkins, job_name, trigger_jobs_job_config, dry_run=args.dry_run)
+
+    job_name = '%s_%s' % (group_name, 'trigger-missed-jobs')
+    configure_job(
+        jenkins, job_name, trigger_missed_jobs_job_config,
+        dry_run=args.dry_run)
 
     job_name = 'import_upstream'
     configure_job(
@@ -94,8 +101,18 @@ def get_reconfigure_jobs_job_config(args, config, build_file):
 
 def get_trigger_jobs_job_config(args, config, build_file):
     template_name = 'release/release_trigger-jobs_job.xml.em'
+    data = {'missed_jobs': False}
     return _get_job_config(
-        args, config, build_file.notify_emails, template_name)
+        args, config, build_file.notify_emails, template_name,
+        additional_data=data)
+
+
+def get_trigger_missed_jobs_job_config(args, config, build_file):
+    template_name = 'release/release_trigger-jobs_job.xml.em'
+    data = {'missed_jobs': True}
+    return _get_job_config(
+        args, config, build_file.notify_emails, template_name,
+        additional_data=data)
 
 
 def get_import_upstream_job_config(args, config, build_file):
@@ -103,11 +120,14 @@ def get_import_upstream_job_config(args, config, build_file):
     return _get_job_config(args, config, config.notify_emails, template_name)
 
 
-def _get_job_config(args, config, recipients, template_name):
+def _get_job_config(
+    args, config, recipients, template_name, additional_data=None
+):
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config=config)
 
-    job_data = {
+    job_data = dict(additional_data) if additional_data is not None else {}
+    job_data.update({
         'script_generating_key_files': script_generating_key_files,
 
         'config_url': args.config_url,
@@ -124,7 +144,7 @@ def _get_job_config(args, config, recipients, template_name):
             os.path.dirname(get_relative_credential_path())),
 
         'recipients': recipients,
-    }
+    })
     job_config = expand_template(template_name, job_data)
     return job_config
 
