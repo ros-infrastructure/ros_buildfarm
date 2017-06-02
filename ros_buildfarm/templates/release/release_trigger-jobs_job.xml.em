@@ -66,7 +66,7 @@ if missed_jobs:
 @[else]@
 @(SNIPPET(
     'trigger_timer',
-    spec='0 1 * * * *',
+    spec='0 1 * * *',
 ))@
 @[end if]@
   </triggers>
