@@ -15,8 +15,8 @@
 # limitations under the License.
 
 import argparse
+import imp
 import os
-import subprocess
 import sys
 
 from ros_buildfarm.argument import add_argument_config_url
@@ -296,7 +296,10 @@ def _check_call(cmd):
     print('')
     basepath = os.path.dirname(__file__)
     cmd[0] = os.path.join(basepath, cmd[0])
-    subprocess.check_call(cmd)
+    module = imp.load_source('script', cmd[0])
+    rc = module.main(cmd[1:])
+    if rc:
+        sys.exit(rc)
     print('')
 
 
