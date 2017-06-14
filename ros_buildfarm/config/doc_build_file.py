@@ -137,7 +137,7 @@ class DocBuildFile(BuildFile):
 
         # user host and docroot have default of uploading to the repo machine
         # next to the debs
-        self.upload_user = data.get('upload_user', 'jenkins-slave')
+        self.upload_user = data.get('upload_user', 'jenkins-agent')
         self.upload_host = data.get('upload_host', 'repo')
         self.upload_root = data.get('upload_root', '/var/repos/docs')
         assert 'upload_credential_id' in data

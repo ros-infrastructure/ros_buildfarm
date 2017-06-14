@@ -227,7 +227,7 @@ if pull_request:
     'builder_shell',
     script='\n'.join([
         'if [ "$skip_cleanup" = "false" ]; then',
-        'echo "# BEGIN SECTION: Clean up to save disk space on slaves"',
+        'echo "# BEGIN SECTION: Clean up to save disk space on agents"',
         'rm -fr catkin_workspace/build_isolated',
         'rm -fr catkin_workspace/devel_isolated',
         'rm -fr catkin_workspace/install_isolated',

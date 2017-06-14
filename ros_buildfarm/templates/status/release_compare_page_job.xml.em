@@ -24,7 +24,7 @@
     refspec=None,
 ))@
   <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
-  <assignedNode>slave_on_master</assignedNode>
+  <assignedNode>agent_on_master</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>

@@ -168,7 +168,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     'builder_shell',
     script='\n'.join([
         'if [ "$skip_cleanup" = "false" ]; then',
-        'echo "# BEGIN SECTION: Clean up to save disk space on slaves"',
+        'echo "# BEGIN SECTION: Clean up to save disk space on agents"',
         '# ensure to have write permission before trying to delete the folder',
         'chmod -R u+w $WORKSPACE/binarydeb',
         'rm -fr binarydeb/*/*',
