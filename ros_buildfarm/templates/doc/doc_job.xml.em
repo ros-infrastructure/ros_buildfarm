@@ -101,7 +101,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'echo "# BEGIN SECTION: rsync (most of) the rosdoc_index to slave"',
+        'echo "# BEGIN SECTION: rsync (most of) the rosdoc_index to agent"',
         'rm -fr rosdoc_index',
         'mkdir rosdoc_index',
         '# since rsync fails if the source folder does not exist we need to check it before',
@@ -225,7 +225,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     'builder_shell',
     script='\n'.join([
         'if [ "$skip_cleanup" = "false" ]; then',
-        'echo "# BEGIN SECTION: Clean up to save disk space on slaves"',
+        'echo "# BEGIN SECTION: Clean up to save disk space on agents"',
         'rm -fr catkin_workspace/build_isolated',
         'rm -fr catkin_workspace/devel_isolated',
         'rm -fr catkin_workspace/install_isolated',

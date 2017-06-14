@@ -503,7 +503,7 @@ def get_node_label(config_job_label, default_label=None):
 
 
 def get_default_node_label(additional_label=None):
-    label = 'buildslave'
+    label = 'buildagent'
     if additional_label:
         label += ' || ' + additional_label
     return label

@@ -72,7 +72,7 @@ def main(argv=sys.argv[1:]):
     configure_view(
         jenkins, 'Queue', filter_queue=False, dry_run=not args.commit)
 
-    generate_check_slaves_job(args.config_url, dry_run=not args.commit)
+    generate_check_agents_job(args.config_url, dry_run=not args.commit)
 
     if not args.ros_distro_names:
         generate_dashboard_job(args.config_url, dry_run=not args.commit)
@@ -137,9 +137,9 @@ def main(argv=sys.argv[1:]):
             args.config_url, ros_distro_name, dry_run=not args.commit)
 
 
-def generate_check_slaves_job(config_url, dry_run=False):
+def generate_check_agents_job(config_url, dry_run=False):
     cmd = [
-        _resolve_script('misc', 'generate_check_slaves_job.py'),
+        _resolve_script('misc', 'generate_check_agents_job.py'),
         config_url,
     ]
     if dry_run:
