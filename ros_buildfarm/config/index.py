@@ -60,6 +60,9 @@ class Index(object):
                     'release_builds': dict,
                     'source_builds': dict,
                 }
+                if distro_data is None:
+                    raise ValueError("no data for distribution", distro_name, data)
+
                 for key in distro_data:
                     if key not in value_types.keys():
                         assert False, "unknown key '%s'" % key

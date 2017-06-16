@@ -14,19 +14,43 @@
 
 import socket
 import time
+import os
+import sys
+import base64
+
 try:
-    from urllib.request import urlopen
+    from urllib.request import urlopen, Request
     from urllib.error import HTTPError
     from urllib.error import URLError
 except ImportError:
-    from urllib2 import urlopen
+    from urllib2 import urlopen, Request
     from urllib2 import HTTPError
     from urllib2 import URLError
 
 
+GITHUB_USER = os.getenv('GITHUB_USER', None)
+GITHUB_PASSWORD = os.getenv('GITHUB_PASSWORD', None)
+
+
+def auth_header(username=None, password=None, token=None):
+    if username and password:
+        if sys.version_info > (3, 0):
+            userandpass = base64.b64encode(bytes('%s:%s' % (username, password), 'utf-8'))
+        else:
+            userandpass = base64.b64encode('%s:%s' % (username, password))
+        userandpass = userandpass.decode('ascii')
+        return 'Basic %s' % userandpass
+    elif token:
+        return 'token %s' % token
+
+
 def load_url(url, retry=2, retry_period=1, timeout=10, skip_decode=False):
+    req = Request(url)
+    if GITHUB_USER and GITHUB_PASSWORD:
+        authheader = auth_header(username=GITHUB_USER, password=GITHUB_PASSWORD)
+        req.add_header('Authorization', authheader)
     try:
-        fh = urlopen(url, timeout=timeout)
+        fh = urlopen(req, timeout=timeout)
     except HTTPError as e:
         if e.code == 503 and retry:
             time.sleep(retry_period)
