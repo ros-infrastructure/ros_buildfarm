@@ -15,27 +15,16 @@
 # limitations under the License.
 
 import argparse
-import copy
 import sys
 
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_dry_run
 from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.common import get_devel_view_name
-from ros_buildfarm.common import get_doc_view_name
-from ros_buildfarm.common import get_release_job_prefix
-from ros_buildfarm.common import \
-    get_repositories_and_script_generating_key_files
-from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index
-from ros_buildfarm.config import get_release_build_files
-from ros_buildfarm.config import get_source_build_files
-from ros_buildfarm.git import get_repository
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_management_view
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.templates import expand_template
-
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
