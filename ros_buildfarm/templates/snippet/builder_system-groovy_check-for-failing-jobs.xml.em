@@ -9,7 +9,7 @@ min_number_of_failures = 5
 // Control the minimun amount of time failing
 min_days_failing = 7
 // rosdistro to search
-rosdistro = @ros_distribution
+rosdistro = "@ros_distro"
 
 boolean is_failing_from_n_days(int min_days_failing,
                                Job job)
