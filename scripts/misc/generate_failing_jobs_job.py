@@ -28,7 +28,7 @@ from ros_buildfarm.templates import expand_template
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
-        description="Generate the check_failing_jobs on Jenkins")
+        description="Generate the 'failing_jobs' job on Jenkins")
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_dry_run(parser)
