@@ -27,7 +27,7 @@
   <triggers>
 @(SNIPPET(
     'trigger_timer',
-    spec='@daily',
+    spec='0 5 * * *',
 ))@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
