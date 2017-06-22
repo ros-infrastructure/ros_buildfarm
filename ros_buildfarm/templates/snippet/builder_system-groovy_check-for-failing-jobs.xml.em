@@ -73,7 +73,7 @@ failed_jobs.each{ job ->
       return true
   
     // Conditions checked, reporting failing job                                  
-    println "Failing job: " + job.name + " " +  hudson.model.Hudson.instance.getRootUrl() + job.getUrl()
+    println hudson.model.Hudson.instance.getRootUrl() + job.getUrl()
 }
 
 return true
