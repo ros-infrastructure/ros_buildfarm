@@ -5,8 +5,14 @@ from setuptools import setup
 
 # Get a list of scripts to install
 scripts = []
-for root, _, filenames in os.walk('scripts'):
+for root, dirnames, filenames in os.walk('scripts'):
+    # don't install the wrapper scripts
+    # since they would overlay Python packages with the same name
+    if 'wrapper' in dirnames:
+        dirnames.remove('wrapper')
     for filename in filenames:
+        if not filename.endswith('.py'):
+            continue
         scripts.append(os.path.join(root, filename))
 
 # Get the long description out of the readme.md
