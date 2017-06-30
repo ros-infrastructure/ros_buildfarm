@@ -26,6 +26,7 @@ def main(argv=sys.argv[1:]):
         'Hash Sum mismatch',
         'Unable to locate package',
         'is not what the server reported',
+        'Failed to stat',
     ]
 
     command = argv[0]
