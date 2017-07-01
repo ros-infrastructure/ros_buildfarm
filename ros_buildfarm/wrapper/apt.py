@@ -23,6 +23,7 @@ def main(argv=sys.argv[1:]):
     max_tries = 10
     known_error_strings = [
         'Failed to fetch',
+        'Failed to stat',
         'Hash Sum mismatch',
         'Unable to locate package',
         'is not what the server reported',
