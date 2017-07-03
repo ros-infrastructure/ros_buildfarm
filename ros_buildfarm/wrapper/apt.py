@@ -92,8 +92,10 @@ def call_apt_update_install_clean(
                 # retry with update command
                 continue
 
+            print('')
             print('Invocation failed due to the following known error '
                   'conditions: ' + ', '.join(known_error_conditions))
+            print('')
             if tries < max_tries:
                 sleep_time = 5
                 print("Reinvoke 'apt install' after sleeping %s seconds" %
