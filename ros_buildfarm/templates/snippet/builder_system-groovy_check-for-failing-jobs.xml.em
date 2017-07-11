@@ -34,8 +34,11 @@ boolean are_previous_builds_failing(
   int number_of_builds_failing, Job job)
 {
   result = true
-  last_run_number = job.getLastFailedBuild().getNumber()
+  last_failed_build = job.getLastFailedBuild()
+  if (! last_failed_build)
+    return false
   
+  last_run_number = last_failed_build.getNumber()
   // loop the previous "min_number_of_failures" builds
   ((last_run_number -1)..(last_run_number - (min_number_of_failures-1))).each { num ->
     if (num <= 0) {
