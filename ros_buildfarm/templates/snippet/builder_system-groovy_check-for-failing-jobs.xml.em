@@ -29,7 +29,7 @@ boolean is_failing_from_n_days(
 }
 
 
-// check if the N previous from referece_build_num failed
+// check if the N (=$number_of_builds_failing) previous builds from $job failed
 boolean are_previous_builds_failing(
   int number_of_builds_failing, Job job)
 {
