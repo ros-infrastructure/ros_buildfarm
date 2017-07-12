@@ -5,6 +5,7 @@ Changelog for package ros_buildfarm
 1.4.0 (2017-07-12)
 -----------
 * New features
+
   * add new jobs to display the failing jobs by ROS distro (`#454 <https://github.com/ros-infrastructure/ros_buildfarm/issues/454>`_)
   * add nightly job to trigger missed jobs (`#451 <https://github.com/ros-infrastructure/ros_buildfarm/issues/451>`_)
   * add option to trigger only not-failed jobs (`#446 <https://github.com/ros-infrastructure/ros_buildfarm/issues/446>`_)
@@ -14,6 +15,7 @@ Changelog for package ros_buildfarm
   * add config option to enable / disable sending notification emails for pull request jobs (`#432 <https://github.com/ros-infrastructure/ros_buildfarm/issues/432>`_)
 
 * Improvements
+
   * print blank lines around error message (`#459 <https://github.com/ros-infrastructure/ros_buildfarm/issues/459>`_)
   * add 'Failed to stat' to the list of apt known errors (`#458 <https://github.com/ros-infrastructure/ros_buildfarm/issues/458>`_)
   * catch another apt hiccup (`#452 <https://github.com/ros-infrastructure/ros_buildfarm/issues/452>`_)
@@ -27,6 +29,7 @@ Changelog for package ros_buildfarm
   * improve performance to collect recursive dependencies (`#430 <https://github.com/ros-infrastructure/ros_buildfarm/issues/430>`_)
 
 * Fixes
+
   * use cloudfront.debian.net rather than deb.debian.org (`#461 <https://github.com/ros-infrastructure/ros_buildfarm/issues/461>`_)
   * avoid installing wrapper scripts (`#457 <https://github.com/ros-infrastructure/ros_buildfarm/issues/457>`_)
   * check version in a way that supports Python 2.6 (`#438 <https://github.com/ros-infrastructure/ros_buildfarm/issues/438>`_)
