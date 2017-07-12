@@ -2,6 +2,37 @@
 Changelog for package ros_buildfarm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.4.0 (2017-07-12)
+-----------
+* New features
+  * add new jobs to display the failing jobs by ROS distro (`#454 <https://github.com/ros-infrastructure/ros_buildfarm/issues/454>`_)
+  * add nightly job to trigger missed jobs (`#451 <https://github.com/ros-infrastructure/ros_buildfarm/issues/451>`_)
+  * add option to trigger only not-failed jobs (`#446 <https://github.com/ros-infrastructure/ros_buildfarm/issues/446>`_)
+  * use Xenial Docker images instead of Trusty (`#444 <https://github.com/ros-infrastructure/ros_buildfarm/issues/444>`_, `#445 <https://github.com/ros-infrastructure/ros_buildfarm/issues/445>`_)
+  * add ORPHANED that shows both end-of-life and unmaintaned (`#439 <https://github.com/ros-infrastructure/ros_buildfarm/issues/439>`_)
+  * support OR syntax as well as regex (`#435 <https://github.com/ros-infrastructure/ros_buildfarm/issues/435>`_, `#436 <https://github.com/ros-infrastructure/ros_buildfarm/issues/436>`_)
+  * add config option to enable / disable sending notification emails for pull request jobs (`#432 <https://github.com/ros-infrastructure/ros_buildfarm/issues/432>`_)
+
+* Improvements
+  * print blank lines around error message (`#459 <https://github.com/ros-infrastructure/ros_buildfarm/issues/459>`_)
+  * add 'Failed to stat' to the list of apt known errors (`#458 <https://github.com/ros-infrastructure/ros_buildfarm/issues/458>`_)
+  * catch another apt hiccup (`#452 <https://github.com/ros-infrastructure/ros_buildfarm/issues/452>`_)
+  * improve performance to generate maintenance jobs (`#450 <https://github.com/ros-infrastructure/ros_buildfarm/issues/450>`_)
+  * show parameter of reconfigure jobs in build description (`#449 <https://github.com/ros-infrastructure/ros_buildfarm/issues/449>`_)
+  * invert logic for future proofing (`#443 <https://github.com/ros-infrastructure/ros_buildfarm/issues/443>`_)
+  * update description of import_upstream job (`#442 <https://github.com/ros-infrastructure/ros_buildfarm/issues/442>`_)
+  * use higher prio for import_upstream job (`#441 <https://github.com/ros-infrastructure/ros_buildfarm/issues/441>`_)
+  * change color of "unmaintained" from yellow to orange (`#440 <https://github.com/ros-infrastructure/ros_buildfarm/issues/440>`_)
+  * add title to input fields (`#436 <https://github.com/ros-infrastructure/ros_buildfarm/issues/436>`_)
+  * improve performance to collect recursive dependencies (`#430 <https://github.com/ros-infrastructure/ros_buildfarm/issues/430>`_)
+
+* Fixes
+  * use cloudfront.debian.net rather than deb.debian.org (`#461 <https://github.com/ros-infrastructure/ros_buildfarm/issues/461>`_)
+  * avoid installing wrapper scripts (`#457 <https://github.com/ros-infrastructure/ros_buildfarm/issues/457>`_)
+  * check version in a way that supports Python 2.6 (`#438 <https://github.com/ros-infrastructure/ros_buildfarm/issues/438>`_)
+  * explicitly reschedule aborted builds (`#437 <https://github.com/ros-infrastructure/ros_buildfarm/issues/437>`_)
+
+
 1.3.2 (2017-04-26)
 ------------------
 * modify compare page to list packages rather than repositories (`#425 <https://github.com/ros-infrastructure/ros_buildfarm/pull/425>`_)
