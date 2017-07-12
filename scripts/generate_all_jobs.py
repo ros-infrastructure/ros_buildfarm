@@ -92,6 +92,9 @@ def main(argv=sys.argv[1:]):
             generate_rosdistro_cache_job(
                 args.config_url, ros_distro_name, dry_run=not args.commit)
 
+        generate_failing_jobs_job(
+                args.config_url, ros_distro_name, dry_run=not args.commit)
+
         release_build_files = get_release_build_files(config, ros_distro_name)
         for release_build_name in release_build_files.keys():
             generate_release_status_page_job(
@@ -164,6 +167,15 @@ def generate_rosdistro_cache_job(config_url, ros_distro_name, dry_run=False):
         cmd.append('--dry-run')
     _check_call(cmd)
 
+def generate_failing_jobs_job(config_url, ros_distro_name, dry_run=False):
+    cmd = [
+        _resolve_script('misc', 'generate_failing_jobs_job.py'),
+        config_url,
+        ros_distro_name,
+    ]
+    if dry_run:
+        cmd.append('--dry-run')
+    _check_call(cmd)
 
 def generate_release_status_page_job(
         config_url, ros_distro_name, release_build_name, dry_run=False):
