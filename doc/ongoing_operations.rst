@@ -126,7 +126,7 @@ In the case of deleting the jobs the views with the same names should be empty n
 After going to specific view you can click the "Delete *" button on the left sidebar.
 
 If your configuration also contains build files specific to the disabled target you should also disable the corresponding management jobs in the `Manage` view.
-They will start with `Ldev_<key>`, `Ldoc_<key>`, `Lrel_ <key>` followed by the key of the build file wrong your config.
+They will start with `Ldev_<key>`, `Ldoc_<key>`, `Lrel_ <key>` followed by the key of the build file from your config.
 
 Disable all jobs related to a ROS distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
