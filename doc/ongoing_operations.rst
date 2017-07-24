@@ -99,7 +99,7 @@ To run a Groovy script:
  * Paste the script into that console, and click "Run"
 
 Note: Be extra careful when deleting jobs.
-While you can easily regenerate the jobs you might loose the history of these jobs.
+While you can easily regenerate the jobs you might lose the history of these jobs.
 
 Disable / remove a distribution / target
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
