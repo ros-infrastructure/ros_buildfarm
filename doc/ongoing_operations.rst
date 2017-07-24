@@ -99,7 +99,7 @@ To run a Groovy script:
  * Paste the script into that console, and click "Run"
 
 Note: Be extra careful when deleting jobs.
-While you can easily regenerate the jobs you might lose the history of these jobs.
+While you can easily regenerate the jobs, you might lose the history of these jobs.
 
 Disable / remove a distribution / target
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -112,10 +112,10 @@ Usually you want to disable the jobs first, wait a little bit in case you need t
 Disable all jobs related to a specific target
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Assuming that the ROS distributions is called `lunar` and the architecture is `Ubuntu Yakkety` you can disable the jobs with the following prefixes:
+Assuming that the ROS distribution is called `lunar` and the platform is `Ubuntu Yakkety` you can disable the jobs with the following prefixes:
 * `Lsrc_uY__` which matches the Lunar source jobs for Ubuntu Yakkety.
 * `Lbin_uY64__` which matches the Lunar binary jobs for Ubuntu Yakkety for the `amd64` architecture.
-* ... add additional prefixes for other architecture.
+* ... add additional prefixes for other architectures.
 
 If the configuration also specifies `devel`, `doc` or `pull request` jobs for the specific target they can to be disabled too:
 * `Ldev_<key>__` which matches the Lunar devel jobs for the given build file key.
