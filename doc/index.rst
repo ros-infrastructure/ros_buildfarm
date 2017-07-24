@@ -76,7 +76,7 @@ After creating a custom configuration repository you can
 * generate all release / devel / doc jobs
 
 After the initial deployment the administrator should continuously
-`monitor the build farm <ongoing_operations.rst>` and perform some manual task
+`monitor the build farm <ongoing_operations.rst>`_ and perform some manual task
 in regular intervals.
 
 
