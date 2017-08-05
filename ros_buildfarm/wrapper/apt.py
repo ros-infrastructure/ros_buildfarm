@@ -65,6 +65,7 @@ def call_apt_update_install_clean(
                 'The following packages cannot be authenticated!',
                 'Unable to locate package',
                 'has no installation candidate',
+                'corrupted package archive',
             ]
             rc, known_error_conditions = \
                 call_apt(
