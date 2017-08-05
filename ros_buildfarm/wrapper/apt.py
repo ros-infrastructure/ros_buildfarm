@@ -27,7 +27,6 @@ def main(argv=sys.argv[1:]):
         'Hash Sum mismatch',
         'Unable to locate package',
         'is not what the server reported',
-        'corrupted package archive'
     ]
 
     command = argv[0]
@@ -66,6 +65,7 @@ def call_apt_update_install_clean(
                 'The following packages cannot be authenticated!',
                 'Unable to locate package',
                 'has no installation candidate',
+                'corrupted package archive',
             ]
             rc, known_error_conditions = \
                 call_apt(
