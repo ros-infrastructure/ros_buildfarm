@@ -10,7 +10,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
   <properties>
 @(SNIPPET(
     'property_log-rotator',
-    days_to_keep=100,
+    days_to_keep=365,
     num_to_keep=100,
 ))@
 @[if github_url]@

@@ -9,8 +9,8 @@ Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</descriptio
   <properties>
 @(SNIPPET(
     'property_log-rotator',
-    days_to_keep=100,
-    num_to_keep=100,
+    days_to_keep=365 * 3,
+    num_to_keep=1000,
 ))@
 @(SNIPPET(
     'property_job-priority',
