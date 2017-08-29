@@ -112,30 +112,30 @@ Usually you want to disable the jobs first, wait a little bit in case you need t
 Disable all jobs related to a specific target
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Assuming that the ROS distribution is called `lunar` and the platform is `Ubuntu Yakkety` you can disable the jobs with the following prefixes:
-* `Lsrc_uY__` which matches the Lunar source jobs for Ubuntu Yakkety.
-* `Lbin_uY64__` which matches the Lunar binary jobs for Ubuntu Yakkety for the `amd64` architecture.
-* ... add additional prefixes for other architectures.
+Assuming that the ROS distribution is called ``lunar`` and the platform is ``Ubuntu Yakkety`` you can disable the jobs with the following prefixes:
+ * ``Lsrc_uY__`` which matches the Lunar source jobs for Ubuntu Yakkety.
+ * ``Lbin_uY64__`` which matches the Lunar binary jobs for Ubuntu Yakkety for the ``amd64`` architecture.
+ * ... add additional prefixes for other architectures.
 
-If the configuration also specifies `devel`, `doc` or `pull request` jobs for the specific target they can to be disabled too:
-* `Ldev_<key>__` which matches the Lunar devel jobs for the given build file key.
-* `Ldoc_<key>__` which matches the Lunar doc jobs for the given build file key.
-* `Lpr_<key>__` which matches the Lunar PR jobs for the given build file key.
+If the configuration also specifies ``devel``, ``doc`` or ``pull request`` jobs for the specific target they can to be disabled too:
+ * ``Ldev_<key>__`` which matches the Lunar devel jobs for the given build file key.
+ * ``Ldoc_<key>__`` which matches the Lunar doc jobs for the given build file key.
+ * ``Lpr_<key>__`` which matches the Lunar PR jobs for the given build file key.
 
 In the case of deleting the jobs the views with the same names should be empty now and can be deleted as well.
 After going to specific view you can click the "Delete *" button on the left sidebar.
 
-If your configuration also contains build files specific to the disabled target you should also disable the corresponding management jobs in the `Manage` view.
-They will start with `Ldev_<key>`, `Ldoc_<key>`, `Lrel_ <key>` followed by the key of the build file from your config.
+If your configuration also contains build files specific to the disabled target you should also disable the corresponding management jobs in the ``Manage`` view.
+They will start with ``Ldev_<key>``, ``Ldoc_<key>``, ``Lrel_ <key>`` followed by the key of the build file from your config.
 
 Disable all jobs related to a ROS distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The process is the same as for for disabling a specific target.
 The prefixes are just slightly more generic to match all targets of that ROS distribution:
-* `Lsrc_` which matches all Lunar source jobs.
-* `Lbin_` which matches all Lunar binary jobs.
-* `Lrel_` which matches the Lunar release related management jobs.
-* `Ldev_` which matches the Lunar devel jobs as well as the management related jobs.
-* `Ldoc_` which matches the Lunar doc jobs as well as the management related jobs.
-* `Lpr_` which matches the Lunar PR jobs as well as the management related jobs.
+ * ``Lsrc_`` which matches all Lunar source jobs.
+ * ``Lbin_`` which matches all Lunar binary jobs.
+ * ``Lrel_`` which matches the Lunar release related management jobs.
+ * ``Ldev_`` which matches the Lunar devel jobs as well as the management related jobs.
+ * ``Ldoc_`` which matches the Lunar doc jobs as well as the management related jobs.
+ * ``Lpr_`` which matches the Lunar PR jobs as well as the management related jobs.
