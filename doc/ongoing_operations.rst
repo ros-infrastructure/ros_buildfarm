@@ -115,6 +115,7 @@ Disable all jobs related to a specific target
 Assuming that the ROS distribution is called ``lunar`` and the platform is ``Ubuntu Yakkety`` you can disable the jobs with the following prefixes:
  * ``Lsrc_uY__`` which matches the Lunar source jobs for Ubuntu Yakkety.
  * ``Lbin_uY64__`` which matches the Lunar binary jobs for Ubuntu Yakkety for the ``amd64`` architecture.
+ * ``Lrel_sync-packages-to-testing_yakkety_amd64`` which matches the management job to sync Lunar binary packages for Ubuntu Yakkety for the ``amd64`` architecture.
  * ... add additional prefixes for other architectures.
 
 If the configuration also specifies ``devel``, ``doc`` or ``pull request`` jobs for the specific target they can to be disabled too:
