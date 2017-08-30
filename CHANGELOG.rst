@@ -2,6 +2,19 @@
 Changelog for package ros_buildfarm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.4.1 (2017-08-30)
+-----------
+* Improvements
+
+  * increase limit of age and/or count for kept build logs for some jobs (`#471 <https://github.com/ros-infrastructure/ros_buildfarm/pull/471>`_)
+  * retry apt on corrupted package archive error (`#468 <https://github.com/ros-infrastructure/ros_buildfarm/pull/468>`_)
+  * improve docs to remove obsolete jobs (`#464 <https://github.com/ros-infrastructure/ros_buildfarm/issues/464>`_, `#473 <https://github.com/ros-infrastructure/ros_buildfarm/pull/473>`_)
+  * make Dockerfile template more flexible (`#463 <https://github.com/ros-infrastructure/ros_buildfarm/pull/463>`_)
+
+* Fixes
+
+  * use cloudfront mirror for all debian sources (`#467 <https://github.com/ros-infrastructure/ros_buildfarm/pull/467>`_)
+
 1.4.0 (2017-07-12)
 -----------
 * New features
@@ -34,7 +47,6 @@ Changelog for package ros_buildfarm
   * avoid installing wrapper scripts (`#457 <https://github.com/ros-infrastructure/ros_buildfarm/issues/457>`_)
   * check version in a way that supports Python 2.6 (`#438 <https://github.com/ros-infrastructure/ros_buildfarm/issues/438>`_)
   * explicitly reschedule aborted builds (`#437 <https://github.com/ros-infrastructure/ros_buildfarm/issues/437>`_)
-
 
 1.3.2 (2017-04-26)
 ------------------
