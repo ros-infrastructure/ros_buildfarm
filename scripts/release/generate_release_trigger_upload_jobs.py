@@ -41,10 +41,14 @@ def main(argv=sys.argv[1:]):
 
     for repo in ['main', 'testing']:
         job_name = 'upload_%s' % repo
+        block_when_upstream_building = 'true'
+        if repo == 'testing':
+            block_when_upstream_building = 'false'
         upstream_job_names = ['{0}_sync-packages-to-{1}'.format(
             get_release_job_prefix(rosdistro), repo) for rosdistro in distributions]
         upstream_job_names = ', '.join(sorted(upstream_job_names))
         job_config = expand_template(template_name, {
+            'block_when_upstream_building': block_when_upstream_building,
             'repo': repo,
             'upstream_job_names': upstream_job_names})
 
