@@ -43,7 +43,7 @@ def main(argv=sys.argv[1:]):
         job_name = 'upload_%s' % repo
         upstream_job_names = ['{0}_sync-packages-to-{1}'.format(
             get_release_job_prefix(rosdistro), repo) for rosdistro in distributions]
-        upstream_job_names = ', '.join(upstream_job_names)
+        upstream_job_names = ', '.join(sorted(upstream_job_names))
         job_config = expand_template(template_name, {
             'repo': repo,
             'upstream_job_names': upstream_job_names})
