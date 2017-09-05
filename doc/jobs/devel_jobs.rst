@@ -212,4 +212,4 @@ Run for "custom" repositories
 -----------------------------
 
 A *devel* job requires that the tested repository is being listed in a ROS distribution file.
-If a repository is a fork or is not yet registered it can use a `*prerelease job* <prerelease.rst#run-for-custom-repositories>`_ instead.
+If a repository is a fork or is not yet registered it can use a `*prerelease job* <prerelease_jobs.rst#run-for-custom-repositories>`_ instead.
