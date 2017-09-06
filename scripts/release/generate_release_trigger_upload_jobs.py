@@ -73,10 +73,10 @@ def get_upstream_job_names(config, repo):
             for code_name, archs in architectures_by_code_name.items():
                 for arch in archs:
                     upstream_job_names.append(
-                        '{prefix}_sync-packages-to-{repo}_{codename}_{arch}'.format(
+                        '{prefix}_sync-packages-to-{repo}_{code_name}_{arch}'.format(
                             prefix=get_release_job_prefix(rosdistro),
                             repo=repo,
-                            codename=code_name,
+                            code_name=code_name,
                             arch=arch))
     else:
         raise JobValidationError("Unknown upstream jobs for job 'upload_{}'." % repo)
