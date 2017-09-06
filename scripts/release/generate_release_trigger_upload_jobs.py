@@ -63,7 +63,7 @@ def get_upstream_job_names(config, repo):
         for rosdistro in distributions:
             architectures_by_code_name = {}
             build_files = get_release_build_files(config, rosdistro)
-            for k, build_file in build_files.items():
+            for build_file in build_files.values():
                 for os_name in build_file.targets.keys():
                     for code_name, architectures in build_file.targets[os_name].items():
                         architectures_by_code_name[code_name] = \
