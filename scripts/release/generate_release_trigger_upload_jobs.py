@@ -80,8 +80,7 @@ def get_upstream_job_names(config, repo):
                             arch=arch))
     else:
         raise JobValidationError("Unknown upstream jobs for job 'upload_{}'." % repo)
-    upstream_job_names = ','.join(sorted(upstream_job_names))
-    return upstream_job_names
+    return ','.join(sorted(upstream_job_names))
 
 
 if __name__ == '__main__':
