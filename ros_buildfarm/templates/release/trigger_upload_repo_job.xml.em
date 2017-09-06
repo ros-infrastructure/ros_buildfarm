@@ -34,7 +34,7 @@
     <hudson.tasks.Shell>
       <command>#!/bin/bash
 $HOME/upload_triggers/upload_repo.bash @repo
-    </command>
+</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
