@@ -67,8 +67,8 @@ def get_upstream_job_names(config, repo):
                 for os_name in build_file.targets.keys():
                     for code_name, architectures in build_file.targets[os_name].items():
                         architectures_by_code_name[code_name] = \
-                            architectures_by_code_name.get(code_name, set()) \
-                            | set(architectures.keys())
+                            architectures_by_code_name.get(code_name, set()) | \
+                            set(architectures.keys())
 
             for code_name, archs in architectures_by_code_name.items():
                 for arch in archs:
