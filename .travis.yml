@@ -164,7 +164,9 @@ matrix:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
       before_script:
-        - pip3 install EmPy
+        - sudo apt-get update
+        - sudo apt-get install -y python3-pip
+        - sudo pip3 install EmPy
         # install catkin for test results
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
         - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
@@ -185,7 +187,9 @@ matrix:
         - docker
       env: JOB_TYPE=external_prerelease
       before_script:
-        - pip3 install EmPy
+        - sudo apt-get update
+        - sudo apt-get install -y python3-pip
+        - sudo pip3 install EmPy
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
