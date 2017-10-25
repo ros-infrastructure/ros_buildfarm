@@ -36,6 +36,7 @@
       <includePattern/>
       <excludePattern/>
       <messagesPattern/>
+      <categoriesPattern/>
       <parserConfigurations/>
       <consoleParsers>
         <hudson.plugins.warnings.ConsoleParser>
