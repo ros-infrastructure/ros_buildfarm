@@ -37,6 +37,7 @@
     ros_distribution=ros_distro
 ))@
   </builders>
+  <publishers/>
   <buildWrappers>
 @(SNIPPET(
     'build-wrapper_timestamper',
