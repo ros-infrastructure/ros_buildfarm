@@ -26,7 +26,7 @@ Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</descriptio
             'type': 'string',
             'name': 'config_file',
             'description': 'A specific yaml file or files to use as reprepro_config arguments. The default is the ros_bootstrap config. If unset it defaults to aggregating all yaml files in the directory defined by upstream_config in reprepro-updater.ini(not recommended)',
-            'default_value': '/home/jenkins-slave/reprepro_config/ros_bootstrap.yaml',
+            'default_value': '/home/jenkins-agent/reprepro_config/ros_bootstrap.yaml',
         },
         {
             'type': 'boolean',

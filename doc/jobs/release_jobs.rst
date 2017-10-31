@@ -75,6 +75,9 @@ configuration:
   same tasks as the *source* and *binary* jobs for a specific package on a
   local machine.
 
+* **generate_release_trigger_upload_jobs.py** generates a pair of jobs that
+  trigger an upload to packages.ros.org. Only needed for the official buildfarm
+  at build.ros.org.
 
 The build process in detail
 ---------------------------

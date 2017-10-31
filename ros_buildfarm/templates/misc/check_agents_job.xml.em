@@ -33,7 +33,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
 @(SNIPPET(
-    'builder_system-groovy_check-free-disk-space-disabled-slaves',
+    'builder_system-groovy_check-free-disk-space-disabled-agents',
 ))@
   </builders>
   <publishers>

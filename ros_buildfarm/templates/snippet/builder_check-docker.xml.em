@@ -34,7 +34,7 @@ while ((line = br.readLine()) != null) {
     if (matcher.matches()) {
         println "'docker run' failed"
 
-        // mark slave as offline and log event
+        // mark agent as offline and log event
         def node = build.getBuiltOn()
         def computer = node.toComputer()
         computer.setTemporarilyOffline(true, new UserCause(null, "'docker run' failed"))
@@ -44,7 +44,7 @@ while ((line = br.readLine()) != null) {
         build.getProject().scheduleBuild(1, new UserIdCause(), *build.getActions(ParametersAction))
 
         // add badge to build
-        build.getActions().add(GroovyPostbuildAction.createInfoBadge("'docker run' failed, disabled slave '" + computer.name + "', rescheduled job"))
+        build.getActions().add(GroovyPostbuildAction.createInfoBadge("'docker run' failed, disabled agent '" + computer.name + "', rescheduled job"))
 
         // abort this build
         throw new InterruptedException()

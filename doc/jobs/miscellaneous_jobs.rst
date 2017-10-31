@@ -10,10 +10,10 @@ ROS distro cache
   automatically and pretty frequently (e.g. every five minutes).
 
 
-Check slaves
+Check agents
 ------------
 
-* The ``check_slaves`` job makes sure that slaves are automatically reenabled
+* The ``check_agents`` job makes sure that agents are automatically reenabled
   after they recovered from having not enough free disk space.
 
 

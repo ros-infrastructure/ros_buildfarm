@@ -70,7 +70,7 @@ Change the priority and timeouts of the Jenkins jobs
 ----------------------------------------------------
 
 You can customize the priorities of the generated jobs to fit your needs.
-Depending on the performance of your build slave you might also want to adjust
+Depending on the performance of your build agent you might also want to adjust
 the job timeouts.
 
 For both options please see the
