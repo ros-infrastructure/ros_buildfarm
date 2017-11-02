@@ -5,7 +5,7 @@
   <properties>
 @(SNIPPET(
     'property_log-rotator',
-    days_to_keep=365,
+    days_to_keep=730,
     num_to_keep=100,
 ))@
 @(SNIPPET(
