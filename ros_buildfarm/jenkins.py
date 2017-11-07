@@ -100,7 +100,7 @@ def configure_view(
         view = jenkins.views.create(view_name, view_type=view_type) \
             if not dry_run else None
         remote_view_config = view.get_config() \
-            if view else None
+            if view is not None else None
     else:
         print("Ensure that view '%s' exists" % view_name)
         view = jenkins.views[view_name]
@@ -114,7 +114,7 @@ def configure_view(
             view = jenkins.views.create(view_name, view_type=view_type) \
                 if not dry_run else None
             remote_view_config = view.get_config() \
-                if view else None
+                if view is not None else None
 
     if not remote_view_config:
         print(
