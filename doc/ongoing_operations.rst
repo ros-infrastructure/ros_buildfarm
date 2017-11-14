@@ -140,3 +140,26 @@ The prefixes are just slightly more generic to match all targets of that ROS dis
  * ``Ldev_`` which matches the Lunar devel jobs as well as the management related jobs.
  * ``Ldoc_`` which matches the Lunar doc jobs as well as the management related jobs.
  * ``Lpr_`` which matches the Lunar PR jobs as well as the management related jobs.
+
+Deleting all views related to a ROS distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you deleted all the jobs of a given ROS distribution, noe all the views associated with them are empty.
+You can delete them manually by going to specific view and click the "Delete View" button on the left sidebar.
+Or programmatically, using the same prefixes as the ones use to delete the jobs:
+
+.. code-block:: groovy
+
+import hudson.model.Cause
+for (p in Jenkins.instance.views) {
+  if (
+    p.name.startsWith("PREFIX1__") ||
+    p.name.startsWith("PREFIX2__") ||
+    ... ||
+    p.name.startsWith("PREFIXn__"))
+  {
+    viewOwner = Jenkins.instance.getView(p.name).getOwner();
+    println("deleting view: " + p.name);
+    // viewOwner.deleteView(p);
+  }
+}
