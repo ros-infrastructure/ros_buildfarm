@@ -144,9 +144,9 @@ The prefixes are just slightly more generic to match all targets of that ROS dis
 Deleting all views related to a ROS distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you deleted all the jobs of a given ROS distribution, noe all the views associated with them are empty.
-You can delete them manually by going to specific view and click the "Delete View" button on the left sidebar.
-Or programmatically, using the same prefixes as the ones use to delete the jobs:
+If you deleted all the jobs of a given ROS distribution, now all the views associated with them are empty.
+You can delete them manually by going to a specific view and click the "Delete View" button on the left sidebar.
+Or programmatically, using the same prefixes as the ones used to delete the jobs:
 
 .. code-block:: groovy
 
