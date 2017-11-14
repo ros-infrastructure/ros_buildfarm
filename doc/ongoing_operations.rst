@@ -93,10 +93,11 @@ This script will print only the matched job names.
 You can uncomment any of the actions to disable, enable, trigger or delete these projects.
 
 To run a Groovy script:
- * Log in to Jenkins
- * Click on "Manage Jenkins"
- * Click on "Script Console"
- * Paste the script into that console, and click "Run"
+
+* Log in to Jenkins
+* Click on "Manage Jenkins"
+* Click on "Script Console"
+* Paste the script into that console, and click "Run"
 
 Note: Be extra careful when deleting jobs.
 While you can easily regenerate the jobs, you might lose the history of these jobs.
@@ -113,18 +114,20 @@ Disable all jobs related to a specific target
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Assuming that the ROS distribution is called ``lunar`` and the platform is ``Ubuntu Yakkety`` you can disable the jobs with the following prefixes:
- * ``Lsrc_uY__`` which matches the Lunar source jobs for Ubuntu Yakkety.
- * ``Lbin_uY64__`` which matches the Lunar binary jobs for Ubuntu Yakkety for the ``amd64`` architecture.
- * ``Lrel_sync-packages-to-testing_yakkety_amd64`` which matches the management job to sync Lunar binary packages for Ubuntu Yakkety for the ``amd64`` architecture.
- * ... add additional prefixes for other architectures.
+
+* ``Lsrc_uY__`` which matches the Lunar source jobs for Ubuntu Yakkety.
+* ``Lbin_uY64__`` which matches the Lunar binary jobs for Ubuntu Yakkety for the ``amd64`` architecture.
+* ``Lrel_sync-packages-to-testing_yakkety_amd64`` which matches the management job to sync Lunar binary packages for Ubuntu Yakkety for the ``amd64`` architecture.
+* ... add additional prefixes for other architectures.
 
 If the configuration also specifies ``devel``, ``doc`` or ``pull request`` jobs for the specific target they can to be disabled too:
- * ``Ldev_<key>__`` which matches the Lunar devel jobs for the given build file key.
- * ``Ldoc_<key>__`` which matches the Lunar doc jobs for the given build file key.
- * ``Lpr_<key>__`` which matches the Lunar PR jobs for the given build file key.
+
+* ``Ldev_<key>__`` which matches the Lunar devel jobs for the given build file key.
+* ``Ldoc_<key>__`` which matches the Lunar doc jobs for the given build file key.
+* ``Lpr_<key>__`` which matches the Lunar PR jobs for the given build file key.
 
 In the case of deleting the jobs the views with the same names should be empty now and can be deleted as well.
-After going to specific view you can click the "Delete *" button on the left sidebar.
+After going to specific view you can click the ``"Delete *"`` button on the left sidebar.
 
 If your configuration also contains build files specific to the disabled target you should also disable the corresponding management jobs in the ``Manage`` view.
 They will start with ``Ldev_<key>``, ``Ldoc_<key>``, ``Lrel_ <key>`` followed by the key of the build file from your config.
@@ -134,9 +137,33 @@ Disable all jobs related to a ROS distribution
 
 The process is the same as for for disabling a specific target.
 The prefixes are just slightly more generic to match all targets of that ROS distribution:
- * ``Lsrc_`` which matches all Lunar source jobs.
- * ``Lbin_`` which matches all Lunar binary jobs.
- * ``Lrel_`` which matches the Lunar release related management jobs.
- * ``Ldev_`` which matches the Lunar devel jobs as well as the management related jobs.
- * ``Ldoc_`` which matches the Lunar doc jobs as well as the management related jobs.
- * ``Lpr_`` which matches the Lunar PR jobs as well as the management related jobs.
+
+* ``Lsrc_`` which matches all Lunar source jobs.
+* ``Lbin_`` which matches all Lunar binary jobs.
+* ``Lrel_`` which matches the Lunar release related management jobs.
+* ``Ldev_`` which matches the Lunar devel jobs as well as the management related jobs.
+* ``Ldoc_`` which matches the Lunar doc jobs as well as the management related jobs.
+* ``Lpr_`` which matches the Lunar PR jobs as well as the management related jobs.
+
+Deleting all views related to a ROS distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you deleted all the jobs of a given ROS distribution, now all the views associated with them are empty.
+You can delete them manually by going to a specific view and click the "Delete View" button on the left sidebar.
+Or programmatically, using the same prefixes as the ones used to delete the jobs:
+
+.. code-block:: groovy
+
+  import hudson.model.Cause
+  for (p in Jenkins.instance.views) {
+    if (
+      p.name.startsWith("PREFIX1__") ||
+      p.name.startsWith("PREFIX2__") ||
+      ... ||
+      p.name.startsWith("PREFIXn__"))
+    {
+      viewOwner = Jenkins.instance.getView(p.name).getOwner();
+      println("deleting view: " + p.name);
+      // viewOwner.deleteView(p);
+    }
+  }
