@@ -93,10 +93,10 @@ This script will print only the matched job names.
 You can uncomment any of the actions to disable, enable, trigger or delete these projects.
 
 To run a Groovy script:
- * Log in to Jenkins
- * Click on "Manage Jenkins"
- * Click on "Script Console"
- * Paste the script into that console, and click "Run"
+* Log in to Jenkins
+* Click on "Manage Jenkins"
+* Click on "Script Console"
+* Paste the script into that console, and click "Run"
 
 Note: Be extra careful when deleting jobs.
 While you can easily regenerate the jobs, you might lose the history of these jobs.
@@ -113,15 +113,15 @@ Disable all jobs related to a specific target
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Assuming that the ROS distribution is called ``lunar`` and the platform is ``Ubuntu Yakkety`` you can disable the jobs with the following prefixes:
- * ``Lsrc_uY__`` which matches the Lunar source jobs for Ubuntu Yakkety.
- * ``Lbin_uY64__`` which matches the Lunar binary jobs for Ubuntu Yakkety for the ``amd64`` architecture.
- * ``Lrel_sync-packages-to-testing_yakkety_amd64`` which matches the management job to sync Lunar binary packages for Ubuntu Yakkety for the ``amd64`` architecture.
- * ... add additional prefixes for other architectures.
+* ``Lsrc_uY__`` which matches the Lunar source jobs for Ubuntu Yakkety.
+* ``Lbin_uY64__`` which matches the Lunar binary jobs for Ubuntu Yakkety for the ``amd64`` architecture.
+* ``Lrel_sync-packages-to-testing_yakkety_amd64`` which matches the management job to sync Lunar binary packages for Ubuntu Yakkety for the ``amd64`` architecture.
+* ... add additional prefixes for other architectures.
 
 If the configuration also specifies ``devel``, ``doc`` or ``pull request`` jobs for the specific target they can to be disabled too:
- * ``Ldev_<key>__`` which matches the Lunar devel jobs for the given build file key.
- * ``Ldoc_<key>__`` which matches the Lunar doc jobs for the given build file key.
- * ``Lpr_<key>__`` which matches the Lunar PR jobs for the given build file key.
+* ``Ldev_<key>__`` which matches the Lunar devel jobs for the given build file key.
+* ``Ldoc_<key>__`` which matches the Lunar doc jobs for the given build file key.
+* ``Lpr_<key>__`` which matches the Lunar PR jobs for the given build file key.
 
 In the case of deleting the jobs the views with the same names should be empty now and can be deleted as well.
 After going to specific view you can click the ``"Delete *"`` button on the left sidebar.
