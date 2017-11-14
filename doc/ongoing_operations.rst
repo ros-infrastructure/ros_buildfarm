@@ -124,7 +124,7 @@ If the configuration also specifies ``devel``, ``doc`` or ``pull request`` jobs 
  * ``Lpr_<key>__`` which matches the Lunar PR jobs for the given build file key.
 
 In the case of deleting the jobs the views with the same names should be empty now and can be deleted as well.
-After going to specific view you can click the "Delete *" button on the left sidebar.
+After going to specific view you can click the ``"Delete *"`` button on the left sidebar.
 
 If your configuration also contains build files specific to the disabled target you should also disable the corresponding management jobs in the ``Manage`` view.
 They will start with ``Ldev_<key>``, ``Ldoc_<key>``, ``Lrel_ <key>`` followed by the key of the build file from your config.
@@ -134,12 +134,12 @@ Disable all jobs related to a ROS distribution
 
 The process is the same as for for disabling a specific target.
 The prefixes are just slightly more generic to match all targets of that ROS distribution:
- * ``Lsrc_`` which matches all Lunar source jobs.
- * ``Lbin_`` which matches all Lunar binary jobs.
- * ``Lrel_`` which matches the Lunar release related management jobs.
- * ``Ldev_`` which matches the Lunar devel jobs as well as the management related jobs.
- * ``Ldoc_`` which matches the Lunar doc jobs as well as the management related jobs.
- * ``Lpr_`` which matches the Lunar PR jobs as well as the management related jobs.
+* ``Lsrc_`` which matches all Lunar source jobs.
+* ``Lbin_`` which matches all Lunar binary jobs.
+* ``Lrel_`` which matches the Lunar release related management jobs.
+* ``Ldev_`` which matches the Lunar devel jobs as well as the management related jobs.
+* ``Ldoc_`` which matches the Lunar doc jobs as well as the management related jobs.
+* ``Lpr_`` which matches the Lunar PR jobs as well as the management related jobs.
 
 Deleting all views related to a ROS distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,16 +150,16 @@ Or programmatically, using the same prefixes as the ones use to delete the jobs:
 
 .. code-block:: groovy
 
-import hudson.model.Cause
-for (p in Jenkins.instance.views) {
-  if (
-    p.name.startsWith("PREFIX1__") ||
-    p.name.startsWith("PREFIX2__") ||
-    ... ||
-    p.name.startsWith("PREFIXn__"))
-  {
-    viewOwner = Jenkins.instance.getView(p.name).getOwner();
-    println("deleting view: " + p.name);
-    // viewOwner.deleteView(p);
+  import hudson.model.Cause
+  for (p in Jenkins.instance.views) {
+    if (
+      p.name.startsWith("PREFIX1__") ||
+      p.name.startsWith("PREFIX2__") ||
+      ... ||
+      p.name.startsWith("PREFIXn__"))
+    {
+      viewOwner = Jenkins.instance.getView(p.name).getOwner();
+      println("deleting view: " + p.name);
+      // viewOwner.deleteView(p);
+    }
   }
-}
