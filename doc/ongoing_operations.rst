@@ -93,6 +93,7 @@ This script will print only the matched job names.
 You can uncomment any of the actions to disable, enable, trigger or delete these projects.
 
 To run a Groovy script:
+
 * Log in to Jenkins
 * Click on "Manage Jenkins"
 * Click on "Script Console"
@@ -113,12 +114,14 @@ Disable all jobs related to a specific target
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Assuming that the ROS distribution is called ``lunar`` and the platform is ``Ubuntu Yakkety`` you can disable the jobs with the following prefixes:
+
 * ``Lsrc_uY__`` which matches the Lunar source jobs for Ubuntu Yakkety.
 * ``Lbin_uY64__`` which matches the Lunar binary jobs for Ubuntu Yakkety for the ``amd64`` architecture.
 * ``Lrel_sync-packages-to-testing_yakkety_amd64`` which matches the management job to sync Lunar binary packages for Ubuntu Yakkety for the ``amd64`` architecture.
 * ... add additional prefixes for other architectures.
 
 If the configuration also specifies ``devel``, ``doc`` or ``pull request`` jobs for the specific target they can to be disabled too:
+
 * ``Ldev_<key>__`` which matches the Lunar devel jobs for the given build file key.
 * ``Ldoc_<key>__`` which matches the Lunar doc jobs for the given build file key.
 * ``Lpr_<key>__`` which matches the Lunar PR jobs for the given build file key.
@@ -134,6 +137,7 @@ Disable all jobs related to a ROS distribution
 
 The process is the same as for for disabling a specific target.
 The prefixes are just slightly more generic to match all targets of that ROS distribution:
+
 * ``Lsrc_`` which matches all Lunar source jobs.
 * ``Lbin_`` which matches all Lunar binary jobs.
 * ``Lrel_`` which matches the Lunar release related management jobs.
