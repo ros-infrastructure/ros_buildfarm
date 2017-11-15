@@ -36,6 +36,7 @@
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern/>
       <presendScript>$DEFAULT_PRESEND_SCRIPT</presendScript>
+      <postsendScript/>
       <attachBuildLog>false</attachBuildLog>
       <compressBuildLog>false</compressBuildLog>
       <replyTo>$DEFAULT_REPLYTO</replyTo>
