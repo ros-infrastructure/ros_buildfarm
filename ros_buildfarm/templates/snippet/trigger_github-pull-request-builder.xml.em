@@ -18,11 +18,11 @@
           <branch>@ESCAPE(branch_name)</branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
       </whiteListTargetBranches>
-      <blacklistTargetBranches>
+      <blackListTargetBranches>
         <org.jenkinsci.plugins.ghprb.GhprbBranch>
           <branch></branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
-      </blacklistTargetBranches>
+      </blackListTargetBranches>
       <triggerPhrase/>
       <skipBuildPhrase>.*\[skip\W+ci\].*</skipBuildPhrase>
       <blackListCommitAuthor/>
