@@ -28,7 +28,7 @@ from ros_buildfarm.templates import expand_template
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
-        description="Generate the 'check_slaves' job on Jenkins")
+        description="Generate the 'check_agents' job on Jenkins")
     add_argument_config_url(parser)
     add_argument_dry_run(parser)
     args = parser.parse_args(argv)
@@ -40,12 +40,12 @@ def main(argv=sys.argv[1:]):
 
     configure_management_view(jenkins, dry_run=args.dry_run)
 
-    job_name = 'check_slaves'
+    job_name = 'check_agents'
     configure_job(jenkins, job_name, job_config, dry_run=args.dry_run)
 
 
 def get_job_config(notification_emails):
-    template_name = 'misc/check_slaves_job.xml.em'
+    template_name = 'misc/check_agents_job.xml.em'
     job_data = {
         'notification_emails': notification_emails,
     }
