@@ -104,7 +104,7 @@ def append_build_timestamp(rosdistro_name, package_name, sourcedeb_dir):
         '-v',
         '%s.%s' % (version, strftime('%Y%m%d.%H%M%S', gmtime()))
         # Backwards compatibility for #460
-        if rosdistro_name not in ('indigo', 'kinetic', 'lunar')
+        if rosdistro_name not in ('indigo', 'jade', 'kinetic', 'lunar')
         else '%s-%s' % (version, strftime('%Y%m%d-%H%M%S%z')),
         '-p',  # preserve directory name
         '-D', distribution,
@@ -112,7 +112,6 @@ def append_build_timestamp(rosdistro_name, package_name, sourcedeb_dir):
         '-m',  # keep maintainer details
         'Append timestamp when binarydeb was built.',
     ]
-    # End backwards compatibility removal section
     print("Invoking '%s' in '%s'" % (' '.join(cmd), source_dir))
     subprocess.check_call(cmd, cwd=source_dir)
 
