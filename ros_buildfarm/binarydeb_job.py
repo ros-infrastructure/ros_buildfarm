@@ -15,7 +15,7 @@
 import os
 import subprocess
 import sys
-from time import strftime
+from time import gmtime, strftime
 import traceback
 
 from ros_buildfarm.common import get_debian_package_name
@@ -101,7 +101,11 @@ def append_build_timestamp(rosdistro_name, package_name, sourcedeb_dir):
         source_dir, ['Source', 'Version', 'Distribution', 'Urgency'])
     cmd = [
         'debchange',
-        '-v', '%s-%s' % (version, strftime('%Y%m%d-%H%M%S%z')),
+        '-v',
+        '%s.%s' % (version, strftime('%Y%m%d.%H%M%S', gmtime()))
+        # Backwards compatibility for #460
+        if rosdistro_name not in ('indigo', 'jade', 'kinetic', 'lunar')
+        else '%s-%s' % (version, strftime('%Y%m%d-%H%M%S%z')),
         '-p',  # preserve directory name
         '-D', distribution,
         '-u', urgency,
