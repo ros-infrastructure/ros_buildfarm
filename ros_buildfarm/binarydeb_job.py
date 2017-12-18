@@ -101,17 +101,17 @@ def append_build_timestamp(rosdistro_name, package_name, sourcedeb_dir):
         source_dir, ['Source', 'Version', 'Distribution', 'Urgency'])
     cmd = [
         'debchange',
-        '-v', '%s.%s' % (version, strftime('%Y%m%d.%H%M%S', gmtime())),
+        '-v',
+        '%s.%s' % (version, strftime('%Y%m%d.%H%M%S', gmtime()))
+        # Backwards compatibility for #460
+        if rosdistro_name not in ('indigo', 'kinetic', 'lunar')
+        else '%s-%s' % (version, strftime('%Y%m%d-%H%M%S%z')),
         '-p',  # preserve directory name
         '-D', distribution,
         '-u', urgency,
         '-m',  # keep maintainer details
         'Append timestamp when binarydeb was built.',
     ]
-    # Backwards compatibility for #460
-    # TODO(tfoote) remove when kinetic EOL
-    if rosdistro_name in ['indigo', 'kinetic', 'lunar']:
-        cmd[2] = '%s-%s' % (version, strftime('%Y%m%d-%H%M%S%z'))
     # End backwards compatibility removal section
     print("Invoking '%s' in '%s'" % (' '.join(cmd), source_dir))
     subprocess.check_call(cmd, cwd=source_dir)
