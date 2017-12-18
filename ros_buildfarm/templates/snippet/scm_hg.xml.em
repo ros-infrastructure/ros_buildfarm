@@ -1,5 +1,5 @@
   <scm class="hudson.plugins.mercurial.MercurialSCM" plugin="mercurial@@2.1">
-    <installation>(Default)</installation>
+    <installation>Default</installation>
     <source>@ESCAPE(source)</source>
     <modules/>
     <revisionType>BRANCH</revisionType>
