@@ -16,7 +16,7 @@
           <failureNewThreshold/>
         </org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
         <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
-          <unstableThreshold>0</unstableThreshold>
+          <unstableThreshold/>
           <unstableNewThreshold/>
           <failureThreshold/>
           <failureNewThreshold/>
