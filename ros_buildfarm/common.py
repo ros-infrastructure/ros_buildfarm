@@ -267,7 +267,11 @@ def get_short_os_name(os_name):
 
 def get_short_os_code_name(os_code_name):
     os_code_name_mappings = {
+        'artful': 'A',
+        'bionic': 'B',
+        'jessie': 'J',
         'saucy': 'S',
+        'stretch': 'S',
         'trusty': 'T',
         'utopic': 'U',
         'vivid': 'V',
@@ -275,11 +279,6 @@ def get_short_os_code_name(os_code_name):
         'xenial': 'X',
         'yakkety': 'Y',
         'zesty': 'Z',
-        'artful': 'A',
-        'bionic': 'B',
-        'wheezy': 'W',
-        'jessie': 'J',
-        'stretch': 'S',
     }
     return os_code_name_mappings.get(os_code_name, os_code_name)
 
