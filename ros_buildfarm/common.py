@@ -275,9 +275,9 @@ def get_short_os_code_name(os_code_name):
         'xenial': 'X',
         'yakkety': 'Y',
         'zesty': 'Z',
-        'artful', : 'A',
-        'bionic', : 'B',
-        'wheezy', : 'W',
+        'artful': 'A',
+        'bionic': 'B',
+        'wheezy': 'W',
         'jessie': 'J',
         'stretch': 'S',
     }
