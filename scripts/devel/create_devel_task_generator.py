@@ -98,8 +98,7 @@ def main(argv=sys.argv[1:]):
         'python3',
     ]
     if 'catkin' not in pkg_names:
-        debian_pkg_names.append(
-            get_debian_package_name(args.rosdistro_name, 'catkin'))
+        debian_pkg_names += resolve_names(['catkin'], **context)
     print('Always install the following generic dependencies:')
     for debian_pkg_name in sorted(debian_pkg_names):
         print('  -', debian_pkg_name)
