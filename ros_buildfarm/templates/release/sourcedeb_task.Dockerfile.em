@@ -7,17 +7,17 @@ VOLUME ["/var/cache/apt/archives"]
 ENV DEBIAN_FRONTEND noninteractive
 
 @(TEMPLATE(
+    'snippet/old_release_set.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+))@
+
+@(TEMPLATE(
     'snippet/setup_locale.Dockerfile.em',
     timezone=timezone,
 ))@
 
 RUN useradd -u @uid -m buildfarm
-
-@(TEMPLATE(
-    'snippet/old_release_set.Dockerfile.em',
-    os_name=os_name,
-    os_code_name=os_code_name,
-))@
 
 @(TEMPLATE(
     'snippet/add_distribution_repositories.Dockerfile.em',
