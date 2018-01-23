@@ -1,5 +1,12 @@
 RUN mkdir /tmp/keys
-@[if os_name == 'debian' and os_code_name == 'stretch']@
+@{
+debian_before_stretch = ('squeeze', 'wheezy', 'jessie')
+ubuntu_before_bionic = (
+    'precise', 'quantal', 'raring', 'saucy',
+    'trusty', 'utopic', 'vivid', 'wily',
+    'xenial', 'yakkety', 'zesty', 'artful')
+}@
+@[if os_name == 'debian' and os_code_name not in debian_before_stretch or os_name == 'ubuntu' and os_code_name not in ubuntu_before_bionic]@
 @# In Debian Stretch apt doesn't depend on gnupg anymore
 @# https://anonscm.debian.org/cgit/apt/apt.git/commit/?id=87d468fe355c87325c943c40043a0bb236b2407f
 RUN for i in 1 2 3; do apt-get update && apt-get install -q -y gnupg && apt-get clean && break || if [[ $i < 3 ]]; then sleep 5; else false; fi; done
