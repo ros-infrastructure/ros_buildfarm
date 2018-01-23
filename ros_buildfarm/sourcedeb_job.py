@@ -108,7 +108,15 @@ def build_sourcedeb(sources_dir, os_name=None, os_code_name=None):
         '--git-ignore-branch',
         # dpkg-buildpackage args
         '-S']
-    if os_name == 'debian' and os_code_name == 'stretch':
+    debian_before_stretch = ('squeeze', 'wheezy', 'jessie')
+    ubuntu_before_artful = (
+        'precise', 'quantal', 'raring', 'saucy',
+        'trusty', 'utopic', 'vivid', 'wily',
+        'xenial', 'yakkety', 'zesty')
+    if (
+        os_name == 'debian' and os_code_name not in debian_before_stretch or
+        os_name == 'ubuntu' and os_code_name not in ubuntu_before_artful
+    ):
         # don't fail for not installed build dependencies
         cmd.append('-d')
         # do not sign the .buildinfo file, since dpkg 1.18.19
