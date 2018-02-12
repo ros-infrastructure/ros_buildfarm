@@ -38,7 +38,7 @@ The following commands can be used on Ubuntu Trusty::
   pip3 install empy
   pip3 install jenkinsapi
   pip3 install rosdistro
-  pip3 install ros_buildfarm
+  pip3 install git+https://github.com/ros-infrastructure/ros_buildfarm.git
 
 
 Provide credentials for Jenkins master
