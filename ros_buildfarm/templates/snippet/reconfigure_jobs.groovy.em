@@ -248,10 +248,10 @@ def diff_configs(current_config, new_config) {
     new_doc = builder.parse(new_config_stream)
 
     // ignore description which contains a timestamp
-    if (current_doc.getElementsByTagName('description')) {
+    if (current_doc.getElementsByTagName('description').getLength() > 0) {
         current_doc.getElementsByTagName('description').item(0).setTextContent('')
     }
-    if (new_doc.getElementsByTagName('description')) {
+    if (new_doc.getElementsByTagName('description').getLength() > 0) {
         new_doc.getElementsByTagName('description').item(0).setTextContent('')
     }
 
