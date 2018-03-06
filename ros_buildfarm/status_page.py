@@ -23,6 +23,7 @@ import re
 import shutil
 import sys
 import time
+import yaml
 
 from .common import get_debian_package_name
 from .common import get_release_view_name
@@ -149,6 +150,9 @@ def build_release_status_page(
         h.write(html)
 
     additional_resources(output_dir, copy_resources=copy_resources)
+
+    summary_filename = os.path.join(output_dir, 'ros_%s_%s.yaml' % (rosdistro_name, release_build_name))
+    write_summary(summary_filename, ordered_pkgs, repos_data)
 
 
 def build_debian_repos_status_page(
@@ -1030,3 +1034,39 @@ def _compare_package_version(distros, pkg_name):
         data[i] = '<div>%s</div>' % value
 
     return data
+
+
+REPOS_DATA_NAMES = ['build', 'test', 'main']
+def write_summary(summary_filename, ordered_pkgs, repos_data):
+    print("Generating status summary '%s':" % summary_filename)
+    summary = {}
+    for pkg in ordered_pkgs:
+        pkg_d = {'version': pkg.version, 'url': pkg.repository_url, 'status': pkg.status}
+        if pkg.status_description:
+            pkg_d['status_description'] = pkg.status_description
+        pkg_d['maintainers'] = []
+        for maintainer in pkg.maintainers:
+            maintainer_dict = {'email': maintainer.email}
+            try:
+                maintainer_dict['name'] = str(maintainer.name)
+            except:
+                maintainer_dict['name'] = maintainer.name
+            pkg_d['maintainers'].append(maintainer_dict)
+
+        pkg_d['build_status'] = {}
+
+        for name, repo_set in zip(REPOS_DATA_NAMES, repos_data):
+            for key, build_data in repo_set.items():
+                if pkg.debian_name not in build_data:
+                    continue
+
+                # Dynamically Create the Nested Dictionary
+                d = pkg_d['build_status']
+                for field in [key.os_name, key.os_code_name, key.arch]:
+                    if field not in d:
+                        d[field] = {}
+                    d = d[field]
+                d[name] = str(build_data[pkg.debian_name])
+        summary[pkg.name] = pkg_d
+
+    yaml.dump(summary, open(summary_filename, 'w'))
