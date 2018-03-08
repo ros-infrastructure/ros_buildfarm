@@ -151,8 +151,8 @@ def build_release_status_page(
 
     additional_resources(output_dir, copy_resources=copy_resources)
 
-    summary_filename = os.path.join(output_dir, 'ros_%s_%s.yaml' % (rosdistro_name, release_build_name))
-    write_summary(summary_filename, ordered_pkgs, repos_data)
+    yaml_filename = os.path.join(output_dir, 'ros_%s_%s.yaml' % (rosdistro_name, release_build_name))
+    write_yaml(yaml_filename, ordered_pkgs, repos_data)
 
 
 def build_debian_repos_status_page(
@@ -1037,8 +1037,8 @@ def _compare_package_version(distros, pkg_name):
 
 
 REPOS_DATA_NAMES = ['build', 'test', 'main']
-def write_summary(summary_filename, ordered_pkgs, repos_data):
-    print("Generating status summary '%s':" % summary_filename)
+def write_yaml(yaml_filename, ordered_pkgs, repos_data):
+    print("Generating status yaml '%s':" % yaml_filename)
     summary = {}
     for pkg in ordered_pkgs:
         pkg_d = {'version': pkg.version, 'url': pkg.repository_url, 'status': pkg.status}
@@ -1047,9 +1047,15 @@ def write_summary(summary_filename, ordered_pkgs, repos_data):
         pkg_d['maintainers'] = []
         for maintainer in pkg.maintainers:
             maintainer_dict = {'email': maintainer.email}
-            try:
-                maintainer_dict['name'] = str(maintainer.name)
-            except:
+            # In order to write the simplest data to the yaml, we try to encode the name to ascii.
+            ascii_name = maintainer.name.decode('utf-8').encode('ascii', 'ignore')
+            if maintainer.name == ascii_name:
+                # If it is the same, we write the ascii name to the dict
+                # Otherwise it will appear in the file as
+                # name: !!python/unicode 'David V. Lu!!'
+                maintainer_dict['name'] = ascii_name
+            else:
+                # Otherwise, we write in all its unicode glory
                 maintainer_dict['name'] = maintainer.name
             pkg_d['maintainers'].append(maintainer_dict)
 
@@ -1069,4 +1075,5 @@ def write_summary(summary_filename, ordered_pkgs, repos_data):
                 d[name] = str(build_data[pkg.debian_name])
         summary[pkg.name] = pkg_d
 
-    yaml.dump(summary, open(summary_filename, 'w'))
+    with open(yaml_filename, 'w') as f:
+        yaml.dump(summary, f, allow_unicode=True)
