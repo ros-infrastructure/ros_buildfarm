@@ -8,7 +8,7 @@ mkdir -p @workspace_path/src
 @[for repo_spec, path in scms]@
 if [ ! -d "@path" ]; then
 @[if repo_spec.type == 'git']@
-    (set -x; git clone -b @repo_spec.version @repo_spec.url @path)
+    (set -x; git clone --recurse-submodules -b @repo_spec.version @repo_spec.url @path)
     (set -x; git -C @path --no-pager log -n 1)
 @[elif repo_spec.type == 'hg']@
     (set -x; hg clone -b @repo_spec.version @repo_spec.url @path)
