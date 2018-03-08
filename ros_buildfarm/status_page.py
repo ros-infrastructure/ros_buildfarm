@@ -1044,20 +1044,7 @@ def write_yaml(yaml_filename, ordered_pkgs, repos_data):
         pkg_d = {'version': pkg.version, 'url': pkg.repository_url, 'status': pkg.status}
         if pkg.status_description:
             pkg_d['status_description'] = pkg.status_description
-        pkg_d['maintainers'] = []
-        for maintainer in pkg.maintainers:
-            maintainer_dict = {'email': maintainer.email}
-            # In order to write the simplest data to the yaml, we try to encode the name to ascii.
-            ascii_name = maintainer.name.decode('utf-8').encode('ascii', 'ignore')
-            if maintainer.name == ascii_name:
-                # If it is the same, we write the ascii name to the dict
-                # Otherwise it will appear in the file as
-                # name: !!python/unicode 'David V. Lu!!'
-                maintainer_dict['name'] = ascii_name
-            else:
-                # Otherwise, we write in all its unicode glory
-                maintainer_dict['name'] = maintainer.name
-            pkg_d['maintainers'].append(maintainer_dict)
+        pkg_d['maintainers'] = [{'email': m.email, 'name': m.name} for m in pkg.maintainers]
 
         pkg_d['build_status'] = {}
 
@@ -1076,4 +1063,4 @@ def write_yaml(yaml_filename, ordered_pkgs, repos_data):
         summary[pkg.name] = pkg_d
 
     with open(yaml_filename, 'w') as f:
-        yaml.dump(summary, f, allow_unicode=True)
+        yaml.safe_dump(summary, f, allow_unicode=True)
