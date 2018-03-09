@@ -151,7 +151,11 @@ def build_release_status_page(
 
     additional_resources(output_dir, copy_resources=copy_resources)
 
-    yaml_filename = os.path.join(output_dir, 'ros_%s_%s.yaml' % (rosdistro_name, release_build_name))
+    yaml_folder = os.path.join(output_dir, 'yaml')
+    if not os.path.exists(yaml_folder):
+        os.mkdir(yaml_folder)
+
+    yaml_filename = os.path.join(yaml_folder, 'ros_%s_%s.yaml' % (rosdistro_name, release_build_name))
     write_yaml(yaml_filename, ordered_pkgs, repos_data)
 
 
