@@ -31,7 +31,7 @@ class JobValidationError(Exception):
     """
 
     def __init__(self, message):
-        self.message = message
+        super(JobValidationError, self).__init__(message)
 
 
 next_scope_id = 1
