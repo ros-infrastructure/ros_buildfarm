@@ -127,6 +127,12 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     'builder_shell_key-files',
     script_generating_key_files=script_generating_key_files,
 ))@
+@{
+if doc_repo_spec.type == 'hg':
+    hgcache_mount_arg = ' -v $HOME/hgcache:$HOME/hgcache '
+else:
+    hgcache_mount_arg = ''
+}@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
@@ -183,6 +189,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
         ' -v $WORKSPACE/generated_documentation:/tmp/generated_documentation' +
         ' -v $WORKSPACE/docker_doc:/tmp/docker_doc' +
+        hgcache_mount_arg +
         ' doc_task_generation.%s_%s' % (rosdistro_name, doc_repo_spec.name.lower()),
         'echo "# END SECTION"',
     ]),
