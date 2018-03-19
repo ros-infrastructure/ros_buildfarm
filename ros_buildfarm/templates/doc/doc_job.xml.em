@@ -127,11 +127,11 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     'builder_shell_key-files',
     script_generating_key_files=script_generating_key_files,
 ))@
-
-@{if doc_repo_spec.type == 'hg':
-  hgcache_mount_arg = ' -v $HOME/hgcache:$HOME/hgcache '
+@{
+if doc_repo_spec.type == 'hg':
+    hgcache_mount_arg = ' -v $HOME/hgcache:$HOME/hgcache '
 else:
-  hgcache_mount_arg = ''
+    hgcache_mount_arg = ''
 }@
 @(SNIPPET(
     'builder_shell',
