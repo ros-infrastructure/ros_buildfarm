@@ -24,7 +24,6 @@ import shutil
 import sys
 import time
 import yaml
-import collections
 
 from .common import get_debian_package_name
 from .common import get_release_view_name
@@ -157,10 +156,7 @@ def build_release_status_page(
         os.mkdir(yaml_folder)
 
     yaml_filename = os.path.join(yaml_folder, 'ros_%s_%s.yaml' % (rosdistro_name, release_build_name))
-    summary = write_yaml(yaml_filename, ordered_pkgs, repos_data, rosdistro_name)
-
-    super_yaml_filename = os.path.join(yaml_folder, 'all_builds.yaml')
-    merge_yaml(super_yaml_filename, summary)
+    write_yaml(yaml_filename, ordered_pkgs, repos_data, rosdistro_name)
 
 
 def build_debian_repos_status_page(
@@ -1082,21 +1078,3 @@ def write_yaml(yaml_filename, ordered_pkgs, repos_data, rosdistro_name):
 
     with open(yaml_filename, 'w') as f:
         yaml.safe_dump(summary, f, allow_unicode=True)
-    return summary
-
-def dict_merge(dct, merge_dct):
-    for k, v in merge_dct.iteritems():
-        if (k in dct and isinstance(dct[k], dict) and isinstance(merge_dct[k], collections.Mapping)):
-            dict_merge(dct[k], merge_dct[k])
-        else:
-            dct[k] = merge_dct[k]
-
-def merge_yaml(super_yaml_filename, summary):
-    print("Updating aggregated yaml '%s':" % super_yaml_filename)
-    if os.path.exists(super_yaml_filename):
-        main_dict = yaml.load(open(super_yaml_filename))
-    else:
-        main_dict = {}
-    dict_merge(main_dict, summary)
-    with open(super_yaml_filename, 'w') as f:
-        yaml.safe_dump(main_dict, f, allow_unicode=True)
