@@ -39,7 +39,7 @@ $HOME/upload_triggers/upload_repo.bash @repo
   </builders>
   <publishers>
     <hudson.tasks.Mailer plugin="mailer@@1.20">
-      <recipients>steven+build.ros.org@@openrobotics.org tfoote+buildfarm@@osrfoundation.org</recipients>
+      <recipients>@notification_emails</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
