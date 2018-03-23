@@ -37,6 +37,13 @@ $HOME/upload_triggers/upload_repo.bash @repo
 </command>
     </hudson.tasks.Shell>
   </builders>
-  <publishers/>
+  <publishers>
+@(SNIPPET(
+    'publisher_mailer',
+    recipients=recipients,
+    dynamic_recipients=[],
+    send_to_individuals=False
+))@
+  </publishers>
   <buildWrappers/>
 </project>

@@ -48,7 +48,8 @@ def main(argv=sys.argv[1:]):
         job_config = expand_template(template_name, {
             'block_when_upstream_building': block_when_upstream_building,
             'repo': repo,
-            'upstream_job_names': get_upstream_job_names(config, repo)})
+            'upstream_job_names': get_upstream_job_names(config, repo),
+            'recipients': config.notify_emails})
 
         configure_job(jenkins, job_name, job_config, dry_run=args.dry_run)
 
