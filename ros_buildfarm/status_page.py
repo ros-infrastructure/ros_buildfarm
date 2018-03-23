@@ -156,7 +156,7 @@ def build_release_status_page(
         os.mkdir(yaml_folder)
 
     yaml_filename = os.path.join(yaml_folder, 'ros_%s_%s.yaml' % (rosdistro_name, release_build_name))
-    write_yaml(yaml_filename, ordered_pkgs, repos_data)
+    write_yaml(yaml_filename, ordered_pkgs, repos_data, rosdistro_name)
 
 
 def build_debian_repos_status_page(
@@ -1041,16 +1041,20 @@ def _compare_package_version(distros, pkg_name):
 
 
 REPOS_DATA_NAMES = ['build', 'test', 'main']
-def write_yaml(yaml_filename, ordered_pkgs, repos_data):
+VERSION_PATTERN = re.compile('([\d\.\-]+).*')
+def write_yaml(yaml_filename, ordered_pkgs, repos_data, rosdistro_name):
     print("Generating status yaml '%s':" % yaml_filename)
     summary = {}
     for pkg in ordered_pkgs:
-        pkg_d = {'version': pkg.version, 'url': pkg.repository_url, 'status': pkg.status}
+        pkg_d = {}
+        version_d = {'version': pkg.version, 'url': pkg.repository_url, 'status': pkg.status}
+        pkg_d[rosdistro_name] = version_d
         if pkg.status_description:
-            pkg_d['status_description'] = pkg.status_description
-        pkg_d['maintainers'] = [{'email': m.email, 'name': m.name} for m in pkg.maintainers]
+            version_d['status_description'] = pkg.status_description
 
-        pkg_d['build_status'] = {}
+        pkg_d['maintainers'] = dict([(m.email, m.name) for m in pkg.maintainers])
+
+        version_d['build_status'] = {}
 
         for name, repo_set in zip(REPOS_DATA_NAMES, repos_data):
             for key, build_data in repo_set.items():
@@ -1058,12 +1062,18 @@ def write_yaml(yaml_filename, ordered_pkgs, repos_data):
                     continue
 
                 # Dynamically Create the Nested Dictionary
-                d = pkg_d['build_status']
+                d = version_d['build_status']
                 for field in [key.os_name, key.os_code_name, key.arch]:
                     if field not in d:
                         d[field] = {}
                     d = d[field]
-                d[name] = str(build_data[pkg.debian_name])
+                debian_s = str(build_data[pkg.debian_name])
+                m = VERSION_PATTERN.match(debian_s)
+                if m:
+                    debian_version = m.group(1)
+                else:
+                    debian_version = debian_s
+                d[name] = debian_version
         summary[pkg.name] = pkg_d
 
     with open(yaml_filename, 'w') as f:
