@@ -38,11 +38,12 @@ $HOME/upload_triggers/upload_repo.bash @repo
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.Mailer plugin="mailer@@1.20">
-      <recipients>@notification_emails</recipients>
-      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
-      <sendToIndividuals>false</sendToIndividuals>
-    </hudson.tasks.Mailer>
+@(SNIPPET(
+    'publisher_mailer',
+    recipients=recipients,
+    dynamic_recipients=[],
+    send_to_individuals=False
+))@
   </publishers>
   <buildWrappers/>
 </project>
