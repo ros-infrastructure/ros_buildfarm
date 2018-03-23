@@ -9,8 +9,8 @@ old_releases_commands = []
 for distribution, archive_type in product((os_code_name, os_code_name + '-updates', os_code_name + '-security'), ('deb', 'deb-src')):
     archive_entry = '%s http://archive.ubuntu.com/ubuntu/ %s multiverse' % (archive_type, distribution)
     old_releases_entry = '%s http://old-releases.ubuntu.com/ubuntu/ %s multiverse' % (archive_type, distribution)
-    archive_commands.append('echo "%s" >> /etc/apt/sources.list' % archive_entry)
-    old_releases_commands.append('echo "%s" >> /etc/apt/sources.list' % old_releases_entry)
+    archive_commands.append('(grep -q -F -x -e "%s" /etc/apt/sources.list || echo "%s" >> /etc/apt/sources.list)' % (archive_entry, archive_entry))
+    old_releases_commands.append('(grep -q -F -x -e "%s" /etc/apt/sources.list || echo "%s" >> /etc/apt/sources.list)' % (old_releases_entry, old_releases_entry))
 }@
 RUN grep -q -F -e "deb http://old-releases.ubuntu.com" /etc/apt/sources.list && (@(' && '.join(old_releases_commands))) || (@(' && '.join(archive_commands)))
 @[  elif arch in ['armhf', 'armv8']]@
@@ -18,7 +18,7 @@ RUN grep -q -F -e "deb http://old-releases.ubuntu.com" /etc/apt/sources.list && 
 commands = []
 for distribution, archive_type in product((os_code_name, os_code_name + '-updates', os_code_name + '-security'), ('deb', 'deb-src')):
     entry = '%s http://ports.ubuntu.com// %s multiverse' % (archive_type, distribution)
-    commands.append('echo "%s" >> /etc/apt/sources.list' % entry)
+    commands.append('(grep -q -F -x -e "%s" /etc/apt/sources.list || echo "%s" >> /etc/apt/sources.list)' % (entry, entry))
 }@
 RUN @(' && '.join(commands))
 @[  end if]@
@@ -29,7 +29,7 @@ RUN @(' && '.join(commands))
 @{
 entry = 'deb http://httpredir.debian.org/debian %s contrib non-free' % os_code_name
 }@
-RUN echo "@(entry)" | tee -a /etc/apt/sources.list
+RUN grep -q -F -x -e "@(entry)" /etc/apt/sources.list || echo "@(entry)" >> /etc/apt/sources.list
 # Hit cloudfront mirror because of corrupted packages on fastly mirrors (https://github.com/ros-infrastructure/ros_buildfarm/issues/455)
 # You can remove this line to target the default mirror or replace this to use the mirror of your preference
 RUN sed -i 's/httpredir.debian.org/cloudfront.debian.net/' /etc/apt/sources.list
