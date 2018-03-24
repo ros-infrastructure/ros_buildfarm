@@ -27,9 +27,12 @@ RUN @(' && '.join(commands))
 # Using httpredir here to match mirror used in osrf image
 # (https://github.com/osrf/multiarch-docker-image-generation/blob/d251b9a/build-image.sh#L46)
 @{
-entry = 'deb http://httpredir.debian.org/debian %s contrib non-free' % os_code_name
+commands = []
+for component in ('contrib', 'non-free'):
+    entry = 'deb http://httpredir.debian.org/debian %s %s' % (os_code_name, component)
+    commands.append('(grep -q -F -x -e "%s" /etc/apt/sources.list || echo "%s" >> /etc/apt/sources.list)' % (entry, entry))
 }@
-RUN grep -q -F -x -e "@(entry)" /etc/apt/sources.list || echo "@(entry)" >> /etc/apt/sources.list
+RUN @(' && '.join(commands))
 # Hit cloudfront mirror because of corrupted packages on fastly mirrors (https://github.com/ros-infrastructure/ros_buildfarm/issues/455)
 # You can remove this line to target the default mirror or replace this to use the mirror of your preference
 RUN sed -i 's/httpredir.debian.org/cloudfront.debian.net/' /etc/apt/sources.list
