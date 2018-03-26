@@ -272,7 +272,7 @@ if pull_request:
 @[if git_ssh_credential_id]@
 @(SNIPPET(
     'build-wrapper_ssh-agent',
-    credential_ids=[git_ssh_gredential_id],
+    credential_ids=[git_ssh_credential_id],
 ))@
 @[end if]@
   </buildWrappers>
