@@ -174,6 +174,16 @@ def configure_release_jobs(
         pkg_xml = dist_cache.release_package_xmls[pkg_name]
         pkg = parse_package_string(pkg_xml)
         pkgs[pkg_name] = pkg
+
+    # We have seen situations in the past where the distribution
+    # file (dist_file) version we get is a cached, out-of-date version from a
+    # CDN, but where the distribution cache (dist_cache) is up-to-date.  Check
+    # for and warn about this situation so that nobody has to spend time
+    # debugging when this is the case.
+    for pkg_name in dist_cache.release_package_xmls.keys():
+        if pkg_name not in pkgs:
+            print("Skipping package '%s': in cache but not in distribution file (can happen if a CDN returns an outdated distfile)" % (pkg_name), file=sys.stderr)
+
     ordered_pkg_tuples = topological_order_packages(pkgs)
 
     other_build_files = [v for k, v in build_files.items() if k != release_build_name]
