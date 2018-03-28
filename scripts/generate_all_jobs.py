@@ -133,8 +133,8 @@ def main(argv=sys.argv[1:]):
             generate_release_compare_page_job(
                 args.config_url, ros_distro_name, ros_distro_names[:index],
                 dry_run=not args.commit)
-        generate_blocked_releases_page_job(
-            args.config_url, ros_distro_name, dry_run=not args.commit)
+            generate_blocked_releases_page_job(
+                args.config_url, ros_distro_name, dry_run=not args.commit)
 
 
 def generate_check_agents_job(config_url, dry_run=False):
