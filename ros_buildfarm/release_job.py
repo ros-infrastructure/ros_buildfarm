@@ -75,16 +75,7 @@ def configure_release_jobs(
         print('No distribution file matches the build file')
         return
 
-    dist_cache = get_distribution_cache(index, rosdistro_name)
-
-    # We can get the list of packages either from dist_file.release_packages,
-    # or from dist_cache.release_package_xmls.  The problem with the former
-    # is that it may come directly from GitHub, and we have seen cases where
-    # we get an outdated copy of the distribution file.  The cache file always
-    # comes directly from the infrastructure, so we use that as an
-    # authoritative source.
-    pkg_names = dist_cache.release_package_xmls.keys()
-
+    pkg_names = dist_file.release_packages.keys()
     filtered_pkg_names = build_file.filter_packages(pkg_names)
     explicitly_ignored_pkg_names = set(pkg_names) - set(filtered_pkg_names)
     if explicitly_ignored_pkg_names:
@@ -94,6 +85,7 @@ def configure_release_jobs(
         for pkg_name in sorted(explicitly_ignored_pkg_names):
             print('  -', pkg_name)
 
+    dist_cache = get_distribution_cache(index, rosdistro_name)
 
     if explicitly_ignored_pkg_names:
         # get direct dependencies from distro cache for each package
