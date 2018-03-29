@@ -70,7 +70,14 @@ def configure_release_jobs(
         print('  - %s %s: %s' % (os_name, os_code_name, ', '.join(
             build_file.targets[os_name][os_code_name])))
 
-    dist_file = get_distribution_file(index, rosdistro_name, build_file)
+    # We've seen situations in the past where fetching the distfile from
+    # GitHub gives us an out-of-date copy (probably because of some CDN in
+    # the middle).  The distribution cache, on the other hand, comes directly
+    # from the ROS infrastructure, so should always be up-to-date.  Get the
+    # dist_file from the dist_cache to ensure it is always the latest.
+    dist_cache = get_distribution_cache(index, rosdistro_name)
+    dist_file = dist_cache.distribution_file
+
     if not dist_file:
         print('No distribution file matches the build file')
         return
@@ -84,8 +91,6 @@ def configure_release_jobs(
               ('ignored' if build_file.skip_ignored_packages else 'disabled'))
         for pkg_name in sorted(explicitly_ignored_pkg_names):
             print('  -', pkg_name)
-
-    dist_cache = get_distribution_cache(index, rosdistro_name)
 
     if explicitly_ignored_pkg_names:
         # get direct dependencies from distro cache for each package
@@ -174,16 +179,6 @@ def configure_release_jobs(
         pkg_xml = dist_cache.release_package_xmls[pkg_name]
         pkg = parse_package_string(pkg_xml)
         pkgs[pkg_name] = pkg
-
-    # We have seen situations in the past where the distribution
-    # file (dist_file) version we get is a cached, out-of-date version from a
-    # CDN, but where the distribution cache (dist_cache) is up-to-date.  Check
-    # for and warn about this situation so that nobody has to spend time
-    # debugging when this is the case.
-    for pkg_name in dist_cache.release_package_xmls.keys():
-        if pkg_name not in pkgs:
-            print("Skipping package '%s': in cache but not in distribution file (can happen if a CDN returns an outdated distfile)" % (pkg_name), file=sys.stderr)
-
     ordered_pkg_tuples = topological_order_packages(pkgs)
 
     other_build_files = [v for k, v in build_files.items() if k != release_build_name]
