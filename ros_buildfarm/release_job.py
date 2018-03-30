@@ -547,14 +547,15 @@ def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
         return None
     pkg_xml = dist_cache.release_package_xmls[pkg_name]
     pkg = parse_package_string(pkg_xml)
+    # downstream binary packages don't change if an upstream package is rebuild
+    # if it only has a test dependency therefore don't use test dependencies
     depends = set([
         d.name for d in (
             pkg.buildtool_depends +
             pkg.build_depends +
             pkg.buildtool_export_depends +
             pkg.build_export_depends +
-            pkg.exec_depends +
-            pkg.test_depends)
+            pkg.exec_depends)
         if d.name in pkg_names])
     return depends
 
