@@ -2,8 +2,57 @@
 Changelog for package ros_buildfarm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.0 (2018-04-03)
+------------------
+This new major version requires the provisioned machines to be based on the updated `buildfarm_deployment` which is based on Ubuntu Xenial hosts with Java 8 and Jenkins up to version 2.89.x.
+Jenkins 2.107.x comes with additional changes which this version is not yet suitable for.
+
+* New features
+
+  * generate YAML files with build information (`#521 <https://github.com/ros-infrastructure/ros_buildfarm/pull/521>`_, `#522 <https://github.com/ros-infrastructure/ros_buildfarm/pull/522>`_)
+  * git clone with --recurse-submodules (`#515 <https://github.com/ros-infrastructure/ros_buildfarm/pull/515>`_)
+
+* Changes
+
+  * remove using the test_depend for binary jobs (`#534 <https://github.com/ros-infrastructure/ros_buildfarm/pull/534>`_)
+  * move all jobs that are at priority 40 down to 35 (`#500 <https://github.com/ros-infrastructure/ros_buildfarm/pull/500>`_)
+  * fix Debian revision (replace - with .) as of ROS Melodic and ROS 2 Bouncy (`#460 <https://github.com/ros-infrastructure/ros_buildfarm/pull/460>`_, `#512 <https://github.com/ros-infrastructure/ros_buildfarm/pull/512>`_)
+  * update plugin versions and configurations (`#477 <https://github.com/ros-infrastructure/ros_buildfarm/pull/477>`_, `#482 <https://github.com/ros-infrastructure/ros_buildfarm/pull/482>`_, `#486 <https://github.com/ros-infrastructure/ros_buildfarm/pull/486>`_)
+  * merge the changes for Xenial into master (`#480 <https://github.com/ros-infrastructure/ros_buildfarm/pull/480>`_)
+  * increase days_to_keep for some job types (`#481 <https://github.com/ros-infrastructure/ros_buildfarm/pull/481>`_)
+
+* Improvements
+
+  * add the mail publisher to the trigger_upload_repo_job (`#520 <https://github.com/ros-infrastructure/ros_buildfarm/pull/520>`_)
+  * document and use option canonical_base_url (`#517 <https://github.com/ros-infrastructure/ros_buildfarm/pull/517>`_)
+  * add artful and bionic to the short os names (`#493 <https://github.com/ros-infrastructure/ros_buildfarm/pull/493>`_)
+  * do not make job unstable if there are skipped tests (`#492 <https://github.com/ros-infrastructure/ros_buildfarm/pull/492>`_)
+  * add initial version of upload trigger job generators (`#474 <https://github.com/ros-infrastructure/ros_buildfarm/pull/474>`_)
+
+* Fixes
+
+  * do not generate a blocked-releases job for the first distro (`#533 <https://github.com/ros-infrastructure/ros_buildfarm/pull/533>`_)
+  * fix warning about duplicate apt repos (`#530 <https://github.com/ros-infrastructure/ros_buildfarm/pull/530>`_)
+  * don't set an empty ssh-agent wrapper on devel jobs (`#528 <https://github.com/ros-infrastructure/ros_buildfarm/pull/528>`_, `#531 <https://github.com/ros-infrastructure/ros_buildfarm/pull/531>`_)
+  * mount the shared jenkins hgcache to allow hg operations (`#526 <https://github.com/ros-infrastructure/ros_buildfarm/pull/526>`_)
+  * ignore the seccomp profile warning in docker info (`#527 <https://github.com/ros-infrastructure/ros_buildfarm/pull/527>`_)
+  * call super in JobValidationError to correcly print the error (`#524 <https://github.com/ros-infrastructure/ros_buildfarm/pull/524>`_)
+  * fix check for existing description tag (`#518 <https://github.com/ros-infrastructure/ros_buildfarm/pull/518>`_)
+  * install gnupg on newer Ubuntu (`#506 <https://github.com/ros-infrastructure/ros_buildfarm/pull/506>`_)
+  * use -d option to skip checking for build deps in source jobs on newer Ubuntu (`#505 <https://github.com/ros-infrastructure/ros_buildfarm/pull/505>`_)
+  * move old_releases sources before installing locales (`#504 <https://github.com/ros-infrastructure/ros_buildfarm/pull/504>`_)
+  * update list of EOL ubuntu distributions up to Zesty (`#503 <https://github.com/ros-infrastructure/ros_buildfarm/pull/503>`_)
+  * resolve catkin instead of assuming current rosdistro (`#501 <https://github.com/ros-infrastructure/ros_buildfarm/pull/501>`_)
+  * fix mercurial config (`#490 <https://github.com/ros-infrastructure/ros_buildfarm/pull/490>`_)
+  * fix config of created views if they have no jobs associated (`#483 <https://github.com/ros-infrastructure/ros_buildfarm/pull/483>`_)
+
+* Documentation
+
+  * point to the Buildfarm Discourse instead of the old SIG (`#499 <https://github.com/ros-infrastructure/ros_buildfarm/pull/499>`_)
+  * add delete views instructions (`#485 <https://github.com/ros-infrastructure/ros_buildfarm/pull/485>`_)
+
 1.4.1 (2017-08-30)
------------
+------------------
 * Improvements
 
   * increase limit of age and/or count for kept build logs for some jobs (`#471 <https://github.com/ros-infrastructure/ros_buildfarm/pull/471>`_)
@@ -16,7 +65,7 @@ Changelog for package ros_buildfarm
   * use cloudfront mirror for all debian sources (`#467 <https://github.com/ros-infrastructure/ros_buildfarm/pull/467>`_)
 
 1.4.0 (2017-07-12)
------------
+------------------
 * New features
 
   * add new jobs to display the failing jobs by ROS distro (`#454 <https://github.com/ros-infrastructure/ros_buildfarm/issues/454>`_)
