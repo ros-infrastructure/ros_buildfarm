@@ -61,9 +61,6 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
-# magic https://github.com/docker/docker/issues/14203
-ENV DOCKER_FIX ' '
-
 @(TEMPLATE(
     'snippet/install_dependencies.Dockerfile.em',
     dependencies=dependencies,
