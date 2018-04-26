@@ -547,6 +547,9 @@ def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
         return None
     pkg_xml = dist_cache.release_package_xmls[pkg_name]
     pkg = parse_package_string(pkg_xml)
+    # test dependencies are treated as build dependencies by bloom
+    # so we need them here to ensure that all dependencies are available
+    # before starting a build
     depends = set([
         d.name for d in (
             pkg.buildtool_depends +
