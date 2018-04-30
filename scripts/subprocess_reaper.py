@@ -61,7 +61,7 @@ def main(argv=None):
     # wait until monitored process has died
     print('Monitoring PID %i...' % args.pid)
     children = []
-    cid_files = set([])
+    cid_files = set()
     while proc.is_running():
         try:
             children = proc.get_children(recursive=True)
@@ -99,7 +99,7 @@ def main(argv=None):
         return 0
 
     if cid_files:
-        print("Sending KILL signal to %i docker containers:" % len(cid_files))
+        print('Sending KILL signal to %i docker containers:' % len(cid_files))
         for cid_file in cid_files:
             with open(cid_file, 'r') as h:
                 cid = h.read()
