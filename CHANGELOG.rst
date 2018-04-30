@@ -2,6 +2,18 @@
 Changelog for package ros_buildfarm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.1 (2018-04-30)
+------------------
+
+* Improvements
+
+  * use egrep to find repository components in arbitrary positions (`#532 <https://github.com/ros-infrastructure/ros_buildfarm/pull/532>`_)
+
+* Fixes
+
+  * revert "remove using the test_depend from binary jobs" introduced in 2.0.0 (`#540 <https://github.com/ros-infrastructure/ros_buildfarm/pull/540>`_)
+  * add missing import from future for Python 2 compatibility (`#537 <https://github.com/ros-infrastructure/ros_buildfarm/pull/537>`_)
+
 2.0.0 (2018-04-03)
 ------------------
 This new major version requires the provisioned machines to be based on the updated `buildfarm_deployment` which is based on Ubuntu Xenial hosts with Java 8 and Jenkins up to version 2.89.x.
