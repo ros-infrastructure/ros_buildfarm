@@ -312,7 +312,7 @@ if pull_request:
         '    tresult = b.getAction(hudson.tasks.junit.TestResultAction.class)?.result',
         '    if (tresult) {',
         '      data.history << [',
-        '        "job_id" : b.id as Integer,',
+        '        "build_id" : b.id as Integer,',
         '        "uri" : b.url,',
         '        "stamp" : b.getStartTimeInMillis() / 1e3,',
         '        "result" :  b.result.toString().toLowerCase(),',
