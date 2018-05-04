@@ -292,7 +292,7 @@ if pull_request:
         '  }',
         '',
         '',
-        '  // get acces to the job of the running build',
+        '  // get access to the job of the running build',
         '  def job_name = manager.build.getEnvironment(manager.listener).get(\'JOB_NAME\')',
         '  manager.listener.logger.println("Collating test statistics for \'${job_name}\'.")',
         '  def job = Jenkins.instance.getItem(job_name)',
