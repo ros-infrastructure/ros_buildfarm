@@ -391,6 +391,8 @@ def _get_devel_job_config(
         'timeout_minutes': build_file.jenkins_job_timeout,
 
         'git_ssh_credential_id': config.git_ssh_credential_id,
+
+        'collate_test_stats': build_file.collate_test_stats,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

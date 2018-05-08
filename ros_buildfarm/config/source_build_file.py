@@ -108,6 +108,8 @@ class SourceBuildFile(BuildFile):
                     self.test_pull_requests_force = bool(
                         data['test_pull_requests']['force'])
 
+        self.collate_test_stats = bool(data.get('collate_test_stats', False))
+
     def filter_repositories(self, repository_names):
         res = set(repository_names)
         if self.repository_whitelist:

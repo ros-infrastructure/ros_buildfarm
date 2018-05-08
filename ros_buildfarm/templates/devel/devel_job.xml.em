@@ -235,7 +235,7 @@ if pull_request:
         'fi',
     ]),
 ))@
-@[if not pull_request]@
+@[if (not pull_request) and collate_test_stats]@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
@@ -256,7 +256,7 @@ if pull_request:
     'publisher_xunit',
     pattern='catkin_workspace/test_results/**/*.xml',
 ))@
-@[if not pull_request]@
+@[if (not pull_request) and collate_test_stats]@
 @(SNIPPET(
     'publisher_groovy-postbuild',
     script='\n'.join([
