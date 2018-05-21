@@ -59,6 +59,7 @@ class Index(object):
                     'notification_emails': list,
                     'release_builds': dict,
                     'source_builds': dict,
+                    'tags': list,
                 }
                 for key in distro_data:
                     if key not in value_types.keys():

@@ -694,9 +694,9 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
     valid_rosdistro_names.sort()
     if rosdistro_name is None:
         rosdistro_name = valid_rosdistro_names[-1]
-    print('Checking packages for "%s" distribution' % rosdistro_name)
 
-    # Find the previous distribution to the current one
+    # Find the previous distribution to the current one; we prefer ones tagged
+    # as LTS but will settle for non-LTS ones.
     try:
         i = valid_rosdistro_names.index(rosdistro_name)
     except ValueError:
@@ -705,7 +705,16 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
     if i == 0:
         print('No previous distribution found.', file=sys.stderr)
         exit(-1)
-    prev_rosdistro_name = valid_rosdistro_names[i - 1]
+    for distro in reversed(valid_rosdistro_names[:i]):
+        if distro in config.distributions:
+            if 'lts' in config.distributions[distro]['tags']:
+                prev_rosdistro_name = distro
+                break
+    else:
+        # We couldn't find a distribution with 'lts' in the tags, so just use
+        # the immediately preceding one.
+        prev_rosdistro_name = valid_rosdistro_names[i - 1]
+    print('Checking packages for "%s" distribution against "%s"' % (rosdistro_name, prev_rosdistro_name))
 
     cache = rosdistro.get_distribution_cache(index, rosdistro_name)
     distro_file = cache.distribution_file
