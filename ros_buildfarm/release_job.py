@@ -660,6 +660,7 @@ def _get_binarydeb_job_config(
     binarydeb_files = [
         'binarydeb/*.changes',
         'binarydeb/*.deb',
+        'binarydeb/*.ddeb',
     ]
 
     sync_to_testing_job_name = [get_sync_packages_to_testing_job_name(
