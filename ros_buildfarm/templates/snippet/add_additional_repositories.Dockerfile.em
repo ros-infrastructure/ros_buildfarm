@@ -39,5 +39,5 @@ for component in ('contrib', 'non-free'):
 RUN @(' && '.join(commands))
 # Hit cloudfront mirror because of corrupted packages on fastly mirrors (https://github.com/ros-infrastructure/ros_buildfarm/issues/455)
 # You can remove this line to target the default mirror or replace this to use the mirror of your preference
-RUN sed -i 's/httpredir\.debian\.org/cloudfront.debian.net/' /etc/apt/sources.list
+# RUN sed -i 's/httpredir\.debian\.org/cloudfront.debian.net/' /etc/apt/sources.list
 @[end if]@
