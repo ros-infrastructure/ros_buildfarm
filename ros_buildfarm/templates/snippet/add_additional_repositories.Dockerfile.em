@@ -40,7 +40,6 @@ RUN @(' && '.join(commands))
 # Hit cloudfront mirror because of corrupted packages on fastly mirrors (https://github.com/ros-infrastructure/ros_buildfarm/issues/455)
 # You can remove this line to target the default mirror or replace this to use the mirror of your preference
 RUN sed -i 's/httpredir\.debian\.org/cloudfront.debian.net/' /etc/apt/sources.list
-# Make sure to install apt-transport-https as it is not installed by default on Debian (implements what was discussed at
-# https://github.com/ros-infrastructure/ros_buildfarm/pull/549#issuecomment-395209743
+# Make sure to install apt-transport-https since some CloudFront mirrors are currently being redirected to https
 RUN for i in 1 2 3; do apt-get update && apt-get install -q -y apt-transport-https && apt-get clean && break || if [[ $i < 3 ]]; then sleep 5; else false; fi; done
 @[end if]@
