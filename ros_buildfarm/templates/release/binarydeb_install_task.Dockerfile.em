@@ -33,6 +33,11 @@ ENV DEBIAN_FRONTEND noninteractive
 ))@
 
 @(TEMPLATE(
+    'snippet/install_apt-transport-https.Dockerfile.em',
+    os_name=os_name,
+))@
+
+@(TEMPLATE(
     'snippet/add_additional_repositories.Dockerfile.em',
     os_name=os_name,
     os_code_name=os_code_name,
