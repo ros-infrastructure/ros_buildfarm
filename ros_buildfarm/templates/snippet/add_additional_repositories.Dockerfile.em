@@ -37,6 +37,8 @@ for component in ('contrib', 'non-free'):
     commands.append('(grep -q -E -x -e "%s" /etc/apt/sources.list || echo "%s" >> /etc/apt/sources.list)' % (pattern, entry))
 }@
 RUN @(' && '.join(commands))
+# Make sure to install apt-transport-https since some CloudFront mirrors are currently being redirected to https
+RUN for i in 1 2 3; do apt-get update && apt-get install -q -y apt-transport-https && apt-get clean && break || if [[ $i < 3 ]]; then sleep 5; else false; fi; done
 # Hit cloudfront mirror because of corrupted packages on fastly mirrors (https://github.com/ros-infrastructure/ros_buildfarm/issues/455)
 # You can remove this line to target the default mirror or replace this to use the mirror of your preference
 RUN sed -i 's/httpredir\.debian\.org/cloudfront.debian.net/' /etc/apt/sources.list
