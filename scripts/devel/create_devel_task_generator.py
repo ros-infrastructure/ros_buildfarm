@@ -98,9 +98,23 @@ def main(argv=sys.argv[1:]):
     debian_pkg_names = [
         'build-essential',
         'python3',
-    ]
-    if 'catkin' not in pkg_names:
-        debian_pkg_names += resolve_names(['catkin'], **context)
+        'python3-colcon-bash',
+        'python3-colcon-cmake',
+        'python3-colcon-core',
+        'python3-colcon-defaults',
+        'python3-colcon-library-path',
+        'python3-colcon-metadata',
+        'python3-colcon-output',
+        'python3-colcon-package-information',
+        'python3-colcon-package-selection',
+        'python3-colcon-parallel-executor',
+        'python3-colcon-powershell',
+        'python3-colcon-python-setup-py',
+        'python3-colcon-recursive-crawl',
+        'python3-colcon-ros',
+        'python3-colcon-test-result',
+        'python3-colcon-zsh',
+   ]
     print('Always install the following generic dependencies:')
     for debian_pkg_name in sorted(debian_pkg_names):
         print('  -', debian_pkg_name)

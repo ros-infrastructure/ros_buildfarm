@@ -19,17 +19,12 @@ matrix:
         - docker
       env: JOB_TYPE=devel REPOSITORY_NAME=roscpp_core
       before_script:
-        # install catkin for test results
-        - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
-        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
-        - sudo apt-get update -qq
-        - sudo apt-get install ros-indigo-catkin -y
+        - pip install colcon-core colcon-test-result
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
-        - . /opt/ros/indigo/setup.sh
         - . job.sh -y
         - (exit $catkin_test_results_RC)
     - language: python
@@ -67,17 +62,12 @@ matrix:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
       before_script:
-        # install catkin for test results
-        - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
-        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
-        - sudo apt-get update -qq
-        - sudo apt-get install ros-indigo-catkin -y
+        - pip install colcon-core colcon-test-result
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
-        - . /opt/ros/indigo/setup.sh
         - . prerelease.sh -y
         - (exit $catkin_test_results_RC_underlay) && (exit $catkin_test_results_RC_overlay)
     - language: python
@@ -87,6 +77,7 @@ matrix:
         - docker
       env: JOB_TYPE=external_prerelease
       before_script:
+        - pip install colcon-core colcon-test-result
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
