@@ -64,4 +64,5 @@ def call_catkin_make_isolated(
             cmd = '. %s && %s' % (setup_file, cmd)
 
     print("Invoking '%s' in '%s'" % (cmd, workspace_root))
-    return subprocess.call(cmd, cwd=workspace_root, shell=True)
+    return subprocess.call(
+        cmd, cwd=workspace_root, shell=True, stderr=subprocess.STDOUT)
