@@ -57,6 +57,9 @@ RUN echo "@today_str"
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pip
 RUN pip3 install -U setuptools
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
+@[if rosdistro_name == 'bouncy']@
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ros-@(rosdistro_name)-ros-workspace
+@[end if]@
 
 @(TEMPLATE(
     'snippet/set_environment_variables.Dockerfile.em',
