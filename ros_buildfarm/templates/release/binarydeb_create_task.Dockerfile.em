@@ -56,6 +56,11 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 @(TEMPLATE(
+    'snippet/install_dh-python.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+))@
+@(TEMPLATE(
     'snippet/install_apt-src.Dockerfile.em',
     os_name=os_name,
     os_code_name=os_code_name,
