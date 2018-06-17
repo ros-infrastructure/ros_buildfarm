@@ -1,4 +1,4 @@
-catkin_test_results_CMD="colcon test-result --build-base $WORKSPACE/@workspace_path/test_results --all"
+catkin_test_results_CMD="colcon test-result --test-result-base $WORKSPACE/@workspace_path/test_results --all"
 echo "Invoking: $catkin_test_results_CMD"
 echo ""
 set +e

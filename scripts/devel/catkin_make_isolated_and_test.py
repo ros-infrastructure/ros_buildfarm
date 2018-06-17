@@ -66,12 +66,9 @@ def main(argv=sys.argv[1:]):
 
     try:
         with Scope('SUBSECTION', 'build workspace in isolation'):
-            test_results_dir = os.path.join(
-                args.workspace_root, 'test_results')
             arguments = [
                 '--cmake-args', '-DCATKIN_ENABLE_TESTING=1',
                 '-DCATKIN_SKIP_TESTING=0',
-                '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir,
                 '--executor', 'sequential',
                 '--event-handlers', 'console_direct+']
             if use_merge_install:
@@ -80,6 +77,7 @@ def main(argv=sys.argv[1:]):
                 arguments += [
                     '--cmake-clean-cache',
                     '--merge-install', '--install-base', 'install_merged']
+            arguments += ['--test-result-base', 'test_results']
             env = dict(os.environ)
             env['MAKEFLAGS'] = '-j1'
             rc = call_catkin_make_isolated(
@@ -109,6 +107,7 @@ def main(argv=sys.argv[1:]):
                     # keep using the same install layout
                     arguments += [
                         '--merge-install', '--install-base', 'install_merged']
+                arguments += ['--test-result-base', 'test_results']
                 with Scope('SUBSECTION', 'run tests'):
                     rc = call_catkin_make_isolated(
                         args.rosdistro_name, args.workspace_root, arguments,
