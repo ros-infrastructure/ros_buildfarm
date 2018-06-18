@@ -65,7 +65,8 @@ def main(argv=sys.argv[1:]):
             env['MAKEFLAGS'] = '-j1'
             rc = call_catkin_make_isolated(
                 args.rosdistro_name, args.workspace_root,
-                ['--cmake-args', '-DCATKIN_SKIP_TESTING=1',
+                ['--cmake-args',
+                 '-DBUILD_TESTING=0', '-DCATKIN_SKIP_TESTING=1',
                  '--executor', 'sequential',
                  '--event-handlers', 'console_direct+'],
                 parent_result_spaces=parent_result_spaces, env=env)
