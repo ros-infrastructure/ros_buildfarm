@@ -99,10 +99,10 @@ def main(argv=sys.argv[1:]):
             args.distribution_repository_urls,
             args.distribution_repository_key_files),
 
+        'build_environment_variables': args.env_vars,
+
         'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,
-
-        'build_environment_variables': args.env_vars,
 
         'rosdistro_name': args.rosdistro_name,
         'package_name': args.package_name,
