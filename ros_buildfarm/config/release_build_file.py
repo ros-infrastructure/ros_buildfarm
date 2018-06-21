@@ -43,6 +43,12 @@ class ReleaseBuildFile(BuildFile):
             self.abi_incompatibility_assumed = \
                 bool(data['abi_incompatibility_assumed'])
 
+        self.build_environment_variables = {}
+        if 'build_environment_variables' in data:
+            self.build_environment_variables = \
+                    data['build_environment_variables']
+            assert(isinstance(self.build_environment_variables, dict))
+
         self.jenkins_binary_job_label = None
         if 'jenkins_binary_job_label' in data:
             self.jenkins_binary_job_label = data['jenkins_binary_job_label']
