@@ -100,7 +100,7 @@ cmds.append(
     ' --distribution-repository-urls ' + ' '.join(distribution_repository_urls) +
     ' --distribution-repository-key-files ' + ' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))]) +
     ' --binarydeb-dir ' + binarydeb_dir +
-    (' --env-vars ' + ' '.join(build_environment_variables) if len(build_environment_variables) > 0 else '') +
+    (' --env-vars ' + ' '.join(build_environment_variables) if build_environment_variables else '') +
     ' --dockerfile-dir ' + dockerfile_dir)
 }@
 CMD ["@(' && '.join(cmds))"]
