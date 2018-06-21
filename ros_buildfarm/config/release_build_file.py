@@ -43,7 +43,7 @@ class ReleaseBuildFile(BuildFile):
             self.abi_incompatibility_assumed = \
                 bool(data['abi_incompatibility_assumed'])
 
-        self.build_environment_variables = {}
+        self.build_environment_variables = None
         if 'build_environment_variables' in data:
             self.build_environment_variables = \
                     data['build_environment_variables']
