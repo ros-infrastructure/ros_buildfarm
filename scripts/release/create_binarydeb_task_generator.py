@@ -28,6 +28,7 @@ from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
+from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
@@ -56,6 +57,7 @@ def main(argv=sys.argv[1:]):
     add_argument_distribution_repository_key_files(parser)
     add_argument_binarydeb_dir(parser)
     add_argument_dockerfile_dir(parser)
+    add_argument_env_vars(parser)
     args = parser.parse_args(argv)
 
     debian_package_name = get_debian_package_name(
@@ -99,6 +101,8 @@ def main(argv=sys.argv[1:]):
 
         'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,
+
+        'build_environment_variables': args.env_vars,
 
         'rosdistro_name': args.rosdistro_name,
         'package_name': args.package_name,
