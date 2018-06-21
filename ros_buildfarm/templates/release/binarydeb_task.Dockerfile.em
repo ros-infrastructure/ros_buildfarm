@@ -63,7 +63,7 @@ RUN echo "@today_str"
 
 @(TEMPLATE(
     'snippet/set_environment_variables.Dockerfile.em',
-    environment_variables=release_build_environment_variables,
+    environment_variables=build_environment_variables,
 ))@
 
 @(TEMPLATE(

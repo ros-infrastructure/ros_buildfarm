@@ -1,3 +1,3 @@
-@[for name, value in environment_variables.items()]@
-ENV @(name)='@(value)'
+@[for var in environment_variables]@
+ENV @var
 @[end for]@
