@@ -63,6 +63,13 @@ def add_argument_build_name(parser, build_file_type):
              build_file_type)
 
 
+def add_argument_env_vars(parser):
+    parser.add_argument(
+        '--env-vars',
+        nargs='*',
+        help="Environment variables as 'key=value' for Dockerfile ENV directives")
+
+
 def add_argument_repository_name(parser):
     parser.add_argument(
         'repository_name',
