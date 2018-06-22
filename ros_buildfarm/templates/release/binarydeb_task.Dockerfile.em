@@ -60,13 +60,11 @@ RUN echo "@today_str"
     os_name=os_name,
     os_code_name=os_code_name,
 ))@
-@[if build_environment_variables]@
 
 @(TEMPLATE(
     'snippet/set_environment_variables.Dockerfile.em',
     environment_variables=build_environment_variables,
 ))@
-@[end if]@
 
 @(TEMPLATE(
     'snippet/install_dependencies.Dockerfile.em',

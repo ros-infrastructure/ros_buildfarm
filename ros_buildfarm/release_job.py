@@ -663,7 +663,7 @@ def _get_binarydeb_job_config(
         'binarydeb/*.ddeb',
     ]
 
-    build_environment_variables = None
+    build_environment_variables = []
     if build_file.build_environment_variables:
         build_environment_variables = [
             '%s=%s' % (var, value)
