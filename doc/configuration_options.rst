@@ -164,9 +164,9 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``build_environment_variables``: a dictionary containing environment
   variables which will be inserted into binarydeb build containers before
-  package dependencies are installed using Dockerfile ``ENV`` directives. Note
-  that yaml will turn bare words like ``yes`` into boolean values so it is
-  recommended to quote values to avoid interpretation. (default: ``None``).
+  package dependencies are installed using Dockerfile ``ENV`` directives.
+  Note that yaml will turn bare words like ``yes`` into boolean values so it
+  is recommended to quote values to avoid interpretation.
 
 * ``jenkins_binary_job_label``: the label expression for *binary* jobs
   (default: ``buildagent || <ROSDISTRO_NAME>_binarydeb_<BUILD_FILE_NAME>``).
