@@ -68,7 +68,7 @@ def add_argument_env_vars(parser):
         '--env-vars',
         nargs='*',
         help="Environment variables as 'key=value' for Dockerfile "
-        'ENV directives')
+             'ENV directives')
 
 
 def add_argument_repository_name(parser):
