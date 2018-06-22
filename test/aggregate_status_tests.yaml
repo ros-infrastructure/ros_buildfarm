@@ -1,0 +1,143 @@
+test_cases:
+  - build_status:
+      ubuntu:
+        trusty:
+          amd64: {build: 1.2.1-0trusty-20180517-084419-0800, main: 1.2.1-0trusty-20180317-100619-0800,
+            test: 1.2.1-0trusty-20180517-084419-0800}
+          armhf: {build: 1.2.1-0trusty-20180519-162619-0800, main: 1.2.1-0trusty-20180319-012433-0800,
+            test: 1.2.1-0trusty-20180519-162619-0800}
+          i386: {build: 1.2.1-0trusty-20180517-080409-0800, main: 1.2.1-0trusty-20180317-102156-0800,
+            test: 1.2.1-0trusty-20180317-102156-0800}
+          source: {build: 1.2.1-0trusty, main: 1.2.1-0trusty, test: 1.2.1-0trusty}
+    result: released
+  - build_status:
+      ubuntu:
+        trusty:
+          amd64: {build: 1.2.1-0trusty-20180517-084419-0800,
+            test: 1.2.1-0trusty-20180517-084419-0800}
+          armhf: {build: 1.2.1-0trusty-20180519-162619-0800,
+            test: 1.2.1-0trusty-20180519-162619-0800}
+          i386: {build: 1.2.1-0trusty-20180517-080409-0800,
+            test: 1.2.1-0trusty-20180317-102156-0800}
+          source: {build: 1.2.1-0trusty, test: 1.2.1-0trusty}
+    result: waiting for new release
+  - build_status:
+      ubuntu:
+        trusty:
+          amd64: {build: 1.2.1-0trusty-20180517-084419-0800, main: 1.2.0-0trusty-20180317-100619-0800,
+            test: 1.2.1-0trusty-20180517-084419-0800}
+          armhf: {build: 1.2.1-0trusty-20180519-162619-0800, main: 1.2.0-0trusty-20180319-012433-0800,
+            test: 1.2.1-0trusty-20180519-162619-0800}
+          i386: {build: 1.2.1-0trusty-20180517-080409-0800, main: 1.2.0-0trusty-20180317-102156-0800,
+            test: 1.2.1-0trusty-20180317-102156-0800}
+          source: {build: 1.2.1-0trusty, main: 1.2.1-0trusty, test: 1.2.1-0trusty}
+    result: waiting for re-release
+  - build_status:
+      ubuntu:
+        trusty:
+          amd64: {build: 1.2.1-0trusty-20180517-084419-0800, main: 1.2.0-0trusty-20180317-100619-0800,
+            test: 1.2.1-0trusty-20180517-084419-0800}
+          armhf: {build: 1.2.1-0trusty-20180519-162619-0800,
+            test: 1.2.1-0trusty-20180519-162619-0800}
+          i386: {build: 1.2.1-0trusty-20180517-080409-0800, main: 1.2.0-0trusty-20180317-102156-0800,
+            test: 1.2.1-0trusty-20180317-102156-0800}
+          source: {build: 1.2.1-0trusty, main: 1.2.1-0trusty, test: 1.2.1-0trusty}
+    result: waiting for new/re-release
+  - build_status:
+        ubuntu:
+          trusty:
+            source: {build: 0.0.1-1trusty, main: 0.0.1-1trusty, test: 0.0.1-1trusty}
+    result: source builds, binary doesn't
+  - build_status:
+        ubuntu:
+          trusty:
+            amd64: {build: 1.2.3-0trusty-20180517-084419-0800, main: 1.2.3-0trusty-20180317-100619-0800,
+              test: 1.2.3-0trusty-20180517-084419-0800}
+            armhf: {build: 1.2.3-0trusty-20180519-162619-0800, main: 1.2.3-0trusty-20180319-012433-0800,
+              test: 1.2.3-0trusty-20180519-162619-0800}
+            i386: {build: 1.2.3-0trusty-20180517-080409-0800, main: 1.2.3-0trusty-20180317-102156-0800,
+              test: 1.2.3-0trusty-20180317-102156-0800}
+            source: {build: 1.2.1-0trusty, main: 1.2.1-0trusty, test: 1.2.1-0trusty}
+    result: source builds, binary doesn't
+  - result: does not build on armhf
+    build_status:
+      ubuntu:
+        trusty:
+          amd64: {build: 0.1.1-0trusty-20180604-045911-0800, main: 0.1.1-0trusty-20180604-045911-0800,
+            test: 0.1.1-0trusty-20180604-045911-0800}
+          i386: {build: 0.1.1-0trusty-20180605-064610-0800, main: 0.1.1-0trusty-20180605-064610-0800,
+            test: 0.1.1-0trusty-20180605-064610-0800}
+          source: {build: 0.1.1-0trusty, main: 0.1.1-0trusty, test: 0.1.1-0trusty}
+  - result: does not build on armhf, i386
+    build_status:
+      ubuntu:
+        trusty:
+          amd64: {build: 0.1.1-0trusty-20180604-045911-0800, main: 0.1.1-0trusty-20180604-045911-0800,
+            test: 0.1.1-0trusty-20180604-045911-0800}
+          source: {build: 0.1.1-0trusty, main: 0.1.1-0trusty, test: 0.1.1-0trusty}
+  - result: does not build on stretch/amd64, stretch/arm64
+    distro: melodic
+    build_status:
+        debian:
+          stretch:
+            source: {build: 0.1.22-0stretch, main: 0.1.22-0stretch, test: 0.1.22-0stretch}
+        ubuntu:
+          artful:
+            amd64: {build: 0.1.22-0artful.20180607.072438, main: 0.1.22-0artful.20180607.072438,
+              test: 0.1.22-0artful.20180607.072438}
+            source: {build: 0.1.22-0artful, main: 0.1.22-0artful, test: 0.1.22-0artful}
+          bionic:
+            amd64: {build: 0.1.22-0bionic.20180606.231409, main: 0.1.22-0bionic.20180606.231409,
+              test: 0.1.22-0bionic.20180606.231409}
+            arm64: {build: 0.1.22-0bionic.20180607.092205, main: 0.1.22-0bionic.20180607.092205,
+              test: 0.1.22-0bionic.20180607.092205}
+            armhf: {build: 0.1.22-0bionic.20180607.112928, main: 0.1.22-0bionic.20180607.112928,
+              test: 0.1.22-0bionic.20180607.112928}
+            source: {build: 0.1.22-0bionic, main: 0.1.22-0bionic, test: 0.1.22-0bionic}
+  - result: source builds, binary doesn't
+    build_status:
+        ubuntu:
+          trusty:
+            source: {build: 0.0.1-1trusty, main: 0.0.2-1trusty, test: 0.0.1-1trusty}
+  - result: does not build on trusty/armhf
+    build_status:
+      ubuntu:
+        trusty:
+          amd64: {build: 0.1.1-0trusty-20180604-045911-0800, main: 0.1.2-0trusty-20180604-045911-0800,
+            test: 0.1.1-0trusty-20180604-045911-0800}
+          i386: {build: 0.1.1-0trusty-20180605-064610-0800, main: 0.1.2-0trusty-20180605-064610-0800,
+            test: 0.1.1-0trusty-20180605-064610-0800}
+          source: {build: 0.1.1-0trusty, main: 0.1.2-0trusty, test: 0.1.1-0trusty}
+  - result: released
+    build_status:
+      ubuntu:
+        trusty:
+          amd64: {build: 0.1.1-0trusty-20180604-045911-0800, main: 0.1.1-0trusty-20180604-045911-0800,
+            test: 0.1.1-0trusty-20180604-045911-0800}
+          i386: {build: 0.1.1-0trusty-20180605-064610-0800, main: 0.1.1-0trusty-20180605-064610-0800,
+            test: 0.1.1-0trusty-20180605-064610-0800}
+          source: {build: 0.1.1-0trusty, main: 0.1.1-0trusty, test: 0.1.1-0trusty}
+    blacklist:
+        - [ubuntu, trusty, armhf]
+  - build_status:
+      ubuntu:
+        artful:
+          amd64: {build: 1.2.1-0trusty-20180517-084419-0800, main: 1.2.1-0trusty-20180317-100619-0800,
+            test: 1.2.1-0trusty-20180517-084419-0800}
+          source: {build: 1.2.1-0trusty, main: 1.2.1-0trusty, test: 1.2.1-0trusty}
+    result: does not build on bionic, stretch
+    distro: melodic
+expected:
+  indigo:
+    ubuntu:
+      trusty:
+        - source
+        - i386
+        - amd64
+        - armhf
+  melodic:
+    debian:
+      stretch: [amd64, arm64, source]
+    ubuntu:
+      artful: [amd64, source]
+      bionic: [amd64, arm64, armhf, source]

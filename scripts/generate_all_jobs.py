@@ -136,6 +136,8 @@ def main(argv=sys.argv[1:]):
             generate_blocked_releases_page_job(
                 args.config_url, ros_distro_name, dry_run=not args.commit)
 
+        generate_super_status_job(args.config_url, dry_run=not args.commit)
+
 
 def generate_check_agents_job(config_url, dry_run=False):
     cmd = [
@@ -291,6 +293,14 @@ def generate_doc_metadata_job(
         cmd.append('--dry-run')
     _check_call(cmd)
 
+def generate_super_status_job(config_url, dry_run=False):
+    cmd = [
+        _resolve_script('status', 'generate_super_status_job.py'),
+        config_url,
+    ]
+    if dry_run:
+        cmd.append('--dry-run')
+    _check_call(cmd)
 
 def _resolve_script(subfolder, filename):
     basepath = os.path.abspath(os.path.dirname(__file__))
