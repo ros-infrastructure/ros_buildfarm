@@ -42,6 +42,12 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
+@(TEMPLATE(
+    'snippet/install_dh-python.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+))@
+
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y debhelper dpkg dpkg-dev git git-buildpackage python3-catkin-pkg-modules python3-rosdistro-modules python3-yaml
 @[if os_name == 'ubuntu' and os_code_name == 'yakkety']@
 @# git-buildpackage in Yakkety has a bug resulting in using the current time for
