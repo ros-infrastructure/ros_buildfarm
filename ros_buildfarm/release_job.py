@@ -663,6 +663,12 @@ def _get_binarydeb_job_config(
         'binarydeb/*.ddeb',
     ]
 
+    build_environment_variables = []
+    if build_file.build_environment_variables:
+        build_environment_variables = [
+            '%s=%s' % (var, value)
+            for var, value in build_file.build_environment_variables.items()]
+
     sync_to_testing_job_name = [get_sync_packages_to_testing_job_name(
         rosdistro_name, os_code_name, arch)]
 
@@ -699,6 +705,7 @@ def _get_binarydeb_job_config(
         'append_timestamp': build_file.abi_incompatibility_assumed,
 
         'binarydeb_files': binarydeb_files,
+        'build_environment_variables': build_environment_variables,
 
         'import_package_job_name': get_import_package_job_name(rosdistro_name),
         'debian_package_name': get_debian_package_name(

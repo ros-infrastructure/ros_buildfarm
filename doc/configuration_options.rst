@@ -70,6 +70,12 @@ Generic options in build files
 
 A set of options which can be used in any build file.
 
+* ``build_environment_variables``: a dictionary containing environment
+  variables which will be inserted into binarydeb build containers before
+  package dependencies are installed using Dockerfile ``ENV`` directives.
+  Note that yaml will turn bare words like ``yes`` into boolean values so it
+  is recommended to quote values to avoid interpretation.
+
 * ``repositories``: additional repositories to fetch packages from.
 
   * ``keys``: a list of PGP keys each as a multi line string.

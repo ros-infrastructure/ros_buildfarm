@@ -104,6 +104,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' ' + ' '.join(repository_args) +
         ' --binarydeb-dir $WORKSPACE/binarydeb' +
         ' --dockerfile-dir $WORKSPACE/docker_generating_docker' +
+        ' --env-vars ' + ' '.join(build_environment_variables) +
         (' --append-timestamp' if append_timestamp else ''),
         'echo "# END SECTION"',
         '',

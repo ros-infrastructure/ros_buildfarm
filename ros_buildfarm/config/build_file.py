@@ -18,6 +18,12 @@ class BuildFile(object):
     def __init__(self, name, data):
         self.name = name
 
+        self.build_environment_variables = None
+        if 'build_environment_variables' in data:
+            self.build_environment_variables = \
+                    data['build_environment_variables']
+            assert(isinstance(self.build_environment_variables, dict))
+
         self.notify_emails = []
         self.notify_maintainers = None
         if 'notifications' in data:
