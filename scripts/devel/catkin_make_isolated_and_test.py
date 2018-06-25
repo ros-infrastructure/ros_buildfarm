@@ -67,7 +67,9 @@ def main(argv=sys.argv[1:]):
     try:
         with Scope('SUBSECTION', 'build workspace in isolation'):
             arguments = [
-                '--cmake-args', '-DCATKIN_ENABLE_TESTING=1',
+                '--cmake-args',
+                '-DBUILD_TESTING=1',
+                '-DCATKIN_ENABLE_TESTING=1',
                 '-DCATKIN_SKIP_TESTING=0',
                 '--executor', 'sequential',
                 '--event-handlers', 'console_direct+']
