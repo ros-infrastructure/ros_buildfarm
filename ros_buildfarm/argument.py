@@ -66,7 +66,7 @@ def add_argument_build_name(parser, build_file_type):
 def add_argument_env_vars(parser):
     parser.add_argument(
         '--env-vars',
-        nargs='*',
+        nargs='*', default=[],
         help="Environment variables as 'key=value' for Dockerfile "
              'ENV directives')
 
