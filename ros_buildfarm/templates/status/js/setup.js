@@ -7,7 +7,12 @@ var QUERY_TRANSFORMS = {
   'RED1': '<td><a class="m"></a>',
   'RED2': '</a><a class="m"></a><a',
   'RED3': '<a class="m"></a></td>',
-  'ORPHANED' : '<span class="unmaintained"|<span class="end-of-life"'
+  'ORPHANED' : '<span class="unmaintained"|<span class="end-of-life"',
+  'RELEASED': 'class="released',
+  'WAITING': 'class="waiting',
+  'SOURCE_PROBLEM': 'class="source',
+  'BROKEN': 'class="broken',
+  'COMPLICATED': 'class="complicated',
 };
 
 window.body_ready = function() {
@@ -334,6 +339,12 @@ function filter_table() {
     for (var i = 0; i < result_rows.length; ++i) {
       result_rows[i].pop();
     }
+
+    // Since the filtering can drastically change the size of the columns, we trigger a resize event to reset
+    // the custom table header
+    setTimeout(function() {
+      $(window).trigger('resize');
+    }, 0);
   }
 
   var result_rows_plain = $.map(result_rows, function(row) { return row[0]; });
@@ -361,3 +372,22 @@ function filter_table() {
   }
 }
 
+function expand(item)
+{
+  var child = item.children[0];
+  var cell = item.parentElement;
+  var row = cell.parentElement;
+
+  if (getComputedStyle(child).display == 'none') {
+    child.style.display = "inline";
+    child.style.width = row.clientWidth + 'px';
+    cell.style.height = (cell.offsetHeight + 5 + child.offsetHeight) + 'px';
+    item.classList.remove('expand_button');
+    item.classList.add('collapse_button');
+  } else {
+    cell.style.height = (cell.offsetHeight - 7 - child.offsetHeight) + 'px';
+    child.style.display = "none";
+    item.classList.remove('collapse_button');
+    item.classList.add('expand_button');
+  }
+}
