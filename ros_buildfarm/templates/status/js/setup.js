@@ -216,10 +216,17 @@ function scan_rows() {
   // go in chunks, with timeouts in between.
   window.rows = [];
   $('table tbody tr').each(function() {
-    // Add lowercased version of name (which is the last meta column) for faster case-insensitive search.
     var name_td = $('td:nth-child(' + window.META_COLUMNS + ')', this);
-    if (name_td.text() && name_td.text().length > 0) {
-      name_td.append(' <span class="ht">' + name_td.text().toLowerCase() + '</span>');
+    var hidden_text = '';
+    // Add lowercased version of name (which is the last meta column) for faster case-insensitive search.
+    // Also, add a copy of the email to the hidden text for additional searching
+    name_td.find('a').each(function() {
+      hidden_text += this.text.toLowerCase()
+      hidden_text += this['href'].replace('mailto:', ' ');
+      hidden_text += ' ';
+    });
+    if (hidden_text.length > 0) {
+      name_td.append(' <span class="ht">' + hidden_text + '</span>');
     }
     var row_info = [$(this).html()];
     for (var i = 1; i <= window.META_COLUMNS; i++) {
