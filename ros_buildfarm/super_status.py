@@ -172,6 +172,9 @@ def build_super_status_page(config_url, output_dir='.', distros=[]):
         d = {'status': status}
         if 'maintainers' in entry:
             d['maintainers'] = entry['maintainers']
+        versions = dict([(distro, entry[distro]['version']) for distro in status])
+        if versions:
+            d['versions'] = versions
         repo_dict[pkg] = d
 
     print('Getting status for each org/repo')

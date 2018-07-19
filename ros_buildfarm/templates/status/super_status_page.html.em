@@ -130,7 +130,7 @@ def status_cell(status):
         <th>
     </thead>
     <tbody>
-    @[for org in sorted(super_status, key=lambda d: d.lower())]@
+    @[for org in sorted(super_status, key=lambda d: str(d).lower())]@
         @[for repo in sorted(super_status[org]['repos'])]@
             @[for pkg in sorted(super_status[org]['repos'][repo]['pkgs'])]@
             <tr><td class="pkg">@pkg<td>@org<td>@repo
@@ -145,7 +145,8 @@ def status_cell(status):
                     <span class="moreinfo">
                         @[for distro in distros]@
                         @[if distro in super_status[org]['repos'][repo]['pkgs'][pkg]['status'] ]@
-                        <b>@distro</b>: @super_status[org]['repos'][repo]['pkgs'][pkg]['status'][distro] <br />
+                        <b>@distro</b>: @super_status[org]['repos'][repo]['pkgs'][pkg]['status'][distro]
+                                        (@super_status[org]['repos'][repo]['pkgs'][pkg]['versions'][distro])<br />
                         @[end if]@
                         @[end for]@
                     </span>
