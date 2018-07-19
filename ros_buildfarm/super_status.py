@@ -10,11 +10,25 @@ from .templates import expand_template
 
 YAML_FOLDER = 'http://repositories.ros.org/status_page/yaml/'
 YAML_PATTERN = re.compile('<a href="(ros_(\w+)_(\w+).yaml)">')
-GITHUB_PATTERN = re.compile('https?://github.com/([^/]+)/(.+)\.git')
-GITHUB_BRANCH_PATTERN = re.compile('https://github.com/([^/]+)/([^/]+)/tree/(.*)')
-BB_PATTERN = re.compile('https://bitbucket.org/(.*)/(.*)')
-GITLAB_PATTERN = re.compile('https?://gitlab.[^/]+/([^/]+)/(.+).git')
-URL_PATTERNS = [GITHUB_PATTERN, GITHUB_BRANCH_PATTERN, BB_PATTERN, GITLAB_PATTERN]
+
+# Patterns for extracting the organization and repo name
+GITHUB_PATTERN = re.compile('https?://github.com/(?P<org>[^/]+)/(?P<repo>.+)\.git')
+GITHUB_BRANCH_PATTERN = re.compile('https://github.com/(?P<org>[^/]+)/(?P<repo>[^/]+)/tree/(?P<branch>.*)')
+BB_PATTERN = re.compile('https://bitbucket.org/(?P<org>.*)/(?P<repo>.*)')
+GITLAB_PATTERN = re.compile('https?://gitlab.(?P<server>[^/]+)/(?P<org>[^/]+)/(?P<repo>.+).git')
+
+# Organization Templates
+GITHUB_ORG_TEMPLATE = 'http://github.com/{org}'
+BB_ORG_TEMPLATE = 'https://bitbucket.org/{org}'
+GITLAB_ORG_TEMPLATE = 'https://gitlab.{server}/{org}'
+
+# Map url patterns to their matching organization template
+URL_PATTERNS = {
+    GITHUB_PATTERN: GITHUB_ORG_TEMPLATE,
+    GITHUB_BRANCH_PATTERN: GITHUB_ORG_TEMPLATE,
+    BB_PATTERN: BB_ORG_TEMPLATE,
+    GITLAB_PATTERN: GITLAB_ORG_TEMPLATE
+}
 
 """
   Naming Conventions
@@ -76,12 +90,16 @@ def get_url_fields(s):
     for pattern in URL_PATTERNS:
         m = pattern.match(s)
         if m:
-            return m.groups()
+            fields = m.groupdict()
+            fields['repo_url'] = s
+            fields['org_url'] = URL_PATTERNS[pattern].format(**fields)
+            fields['repo'] = fields['repo'].replace('.git', '').replace('-release', '')
+            return fields
 
 
-def get_organization_and_repo(entry):
+def get_repo_info(entry):
     """
-       Iterates through the different distributions and returns the org and repo for the most recent distro
+       Iterates through the different distributions and parses the organization and repo for the most recent distro
     """
     url = None
     for key, distro_dict in sorted(entry.items(), reverse=True):
@@ -90,9 +108,9 @@ def get_organization_and_repo(entry):
         url = distro_dict['url']
         fields = get_url_fields(url)
         if fields is not None:
-            return fields[0], fields[1]
+            return fields
     # If nothing found, return organization=None and repo=full url
-    return None, url
+    return {'repo': url, 'repo_url': url}
 
 
 def get_blacklist(build_file_dict):
@@ -161,12 +179,16 @@ def build_super_status_page(config_url, output_dir='.', distros=[]):
     blacklist = get_blacklist(build_file_dict)
     expected = collect_expected_values(build_file_dict)
     for pkg, entry in sorted(multi_distro_status.items()):
-        org, repo = get_organization_and_repo(entry)
+        repo_info = get_repo_info(entry)
+        org = repo_info.get('org')
+        repo = repo_info.get('repo')
         if org not in super_status:
             super_status[org] = {'repos': {}}
+            if 'org_url' in repo_info:
+                super_status[org]['url'] = repo_info['org_url']
         org_dict = super_status[org]['repos']
         if repo not in org_dict:
-            org_dict[repo] = {'pkgs': {}}
+            org_dict[repo] = {'pkgs': {}, 'url': repo_info['repo_url']}
         repo_dict = org_dict[repo]['pkgs']
         status = get_aggregate_status(entry, expected, pkg, blacklist)
         d = {'status': status}

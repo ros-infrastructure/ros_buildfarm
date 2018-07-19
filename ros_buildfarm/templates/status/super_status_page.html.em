@@ -131,22 +131,26 @@ def status_cell(status):
     </thead>
     <tbody>
     @[for org in sorted(super_status, key=lambda d: str(d).lower())]@
+        @{ org_link = '<a href="%s">%s</a>' % (super_status[org]['url'], org) if ('url' in super_status[org]) else org }@
         @[for repo in sorted(super_status[org]['repos'])]@
             @[for pkg in sorted(super_status[org]['repos'][repo]['pkgs'])]@
-            <tr><td class="pkg">@pkg<td>@org<td>@repo
-                <td><div>@[for email, name in super_status[org]['repos'][repo]['pkgs'][pkg]['maintainers'].items() ]@
+            @{ PKG = super_status[org]['repos'][repo]['pkgs'][pkg] }@
+            <tr><td class="pkg">@pkg
+                <td><div>@org_link</div>
+                <td><div><a href="@super_status[org]['repos'][repo]['url']">@repo</a></div>
+                <td><div>@[for email, name in PKG['maintainers'].items() ]@
                     <a href="mailto:@email">@name.encode('ascii', 'xmlcharrefreplace')</a><br />
                     @[end for]@</div>
                 @[for distro in distros]@
-                @status_cell(super_status[org]['repos'][repo]['pkgs'][pkg]['status'].get(distro))
+                @status_cell(PKG['status'].get(distro))
                 @[end for]@
                 <td style="position:relative; text-align: right">
                   <span class="expand_button status" onclick="expand(this)">
                     <span class="moreinfo">
                         @[for distro in distros]@
-                        @[if distro in super_status[org]['repos'][repo]['pkgs'][pkg]['status'] ]@
-                        <b>@distro</b>: @super_status[org]['repos'][repo]['pkgs'][pkg]['status'][distro]
-                                        (@super_status[org]['repos'][repo]['pkgs'][pkg]['versions'][distro])<br />
+                        @[if distro in PKG['status'] ]@
+                        <b>@distro</b>: @PKG['status'][distro]
+                                        (@PKG['versions'][distro])<br />
                         @[end if]@
                         @[end for]@
                     </span>
