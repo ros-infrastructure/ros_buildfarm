@@ -23,6 +23,7 @@ matrix:
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
         - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
         - sudo apt-get update -qq
+        - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-indigo-catkin -y
         - python setup.py install
         - mkdir job && cd job
@@ -71,6 +72,7 @@ matrix:
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
         - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
         - sudo apt-get update -qq
+        - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-indigo-catkin -y
         - python setup.py install
         - mkdir job && cd job
@@ -120,6 +122,7 @@ matrix:
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
         - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
         - sudo apt-get update -qq
+        - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-indigo-catkin -y
         - python setup.py install
         - mkdir job && cd job
@@ -171,6 +174,7 @@ matrix:
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
         - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
         - sudo apt-get update -qq
+        - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-indigo-catkin -y
         - python setup.py install
         - mkdir job && cd job
