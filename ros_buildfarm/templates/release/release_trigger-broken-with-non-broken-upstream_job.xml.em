@@ -47,20 +47,20 @@ def source_prefix = "%s"
 def binary_prefix = "%s"
 
 // 1. prefix: e.g. Jsrc
-// 2. os_name, os_code_name, arch: e.g. _uT64
+// 2. os_name, os_code_name, arch: e.g. _uT64, but not _arm_uT64
 // 3. package name: e.g. __roscpp
 // 4. os_name, os_code_name: e.g. __ubuntu_trusty
 // 5. suffix: __source
-pattern_src = Pattern.compile(source_prefix + "_.+__.+__.+__source")
-//                            1............    2..3...4...5.......
+pattern_src = Pattern.compile(source_prefix + "_[^_]+__.+__.+__source")
+//                            1............    2.....3...4...5.......
 
 // 1. prefix including optional build file name: e.g. Jbin_arm
-// 2. os_name, os_code_name, arch: e.g. _uT64
+// 2. os_name, os_code_name, arch: e.g. _uT64, but not _arm_uT64
 // 3. package name: e.g. __roscpp
 // 4. os_name, os_code_name, arch: e.g. __ubuntu_trusty_amd64
 // 5. suffix: __binary
-pattern_bin = Pattern.compile(binary_prefix + "_.+__.+__.+__binary")
-//                            1............    2..3...4...5.......
+pattern_bin = Pattern.compile(binary_prefix + "_[^_]+__.+__.+__binary")
+//                            1............    2.....3...4...5.......
 
 for (p in hudson.model.Hudson.instance.projects) {
     if (!pattern_src.matcher(p.name).matches() && !pattern_bin.matcher(p.name).matches()) continue
