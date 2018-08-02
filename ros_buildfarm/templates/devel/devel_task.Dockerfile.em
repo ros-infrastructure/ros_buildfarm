@@ -57,6 +57,11 @@ RUN echo "@today_str"
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
 @(TEMPLATE(
+    'snippet/set_environment_variables.Dockerfile.em',
+    environment_variables=build_environment_variables,
+))@
+
+@(TEMPLATE(
     'snippet/install_dependencies.Dockerfile.em',
     dependencies=dependencies,
     dependency_versions=dependency_versions,

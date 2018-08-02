@@ -136,6 +136,7 @@ if pull_request:
         ' ' + os_code_name +
         ' ' + arch +
         ' ' + ' '.join(repository_args) +
+        ' --env-vars ' + ' '.join(build_environment_variables) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',
         '',

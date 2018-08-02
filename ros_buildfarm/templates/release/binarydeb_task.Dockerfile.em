@@ -56,9 +56,20 @@ RUN echo "@today_str"
 ))@
 
 @(TEMPLATE(
+    'snippet/install_dh-python.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+))@
+
+@(TEMPLATE(
     'snippet/install_ccache.Dockerfile.em',
     os_name=os_name,
     os_code_name=os_code_name,
+))@
+
+@(TEMPLATE(
+    'snippet/set_environment_variables.Dockerfile.em',
+    environment_variables=build_environment_variables,
 ))@
 
 @(TEMPLATE(
