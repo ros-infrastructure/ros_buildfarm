@@ -24,6 +24,7 @@ import shutil
 import sys
 import time
 import yaml
+from functools import reduce
 
 from .common import get_debian_package_name
 from .common import get_release_view_name
@@ -648,6 +649,14 @@ def _format_repo_table_row(name, data):
     row['repos_blocked_by'] = _div_wrap('<br />'.join(
         _name_query_wrap(repo) for repo in sorted(repos_blocked_by.keys())))
 
+    # repo_maintainers info
+    repo_maintainers = data.get('repo_maintainers', {})
+    repo_maintainers_cell = ''
+    for name, email in reduce(lambda x,y: dict(x, **y), repo_maintainers.values()).items():
+        repo_maintainers_cell += '<a href="mailto:{0}" style="padding-left: 1em">{1}</a>'.format(email, name)
+        repo_maintainers_cell += '<br />'
+    row['maintainers'] = _div_wrap(repo_maintainers_cell)
+
     # maintainers info
     maintainers = data.get('maintainers', {})
     maintainers_cell = ''
@@ -766,6 +775,26 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
 
         for repo_name in unprocessed_repos:
             repos_info[repo_name]['released'] = repo_name in released_repos
+
+            repo = prev_distro_file.repositories[repo_name]
+            release_repo = repo.release_repository
+            packages = release_repo.package_names
+            version = release_repo.version
+            repo_maintainers = {}
+            for package in packages:
+                pkg_xml = prev_distribution.get_release_package_xml(package)
+                if pkg_xml is not None:
+                    try:
+                        pkg = parse_package_string(pkg_xml)
+                    except InvalidPackage:
+                        pass
+                    else:
+                        pkg_maintainers = {m.name: m.email for m in pkg.maintainers}
+                        if package not in repo_maintainers:
+                            repo_maintainers[package] = {}
+                        repo_maintainers[package].update(pkg_maintainers)
+            if repo_maintainers:
+                repos_info[repo_name]['repo_maintainers'] = repo_maintainers
 
             if repo_name in released_repos:
                 repo = distro_file.repositories[repo_name]

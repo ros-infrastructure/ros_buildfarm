@@ -64,6 +64,7 @@ import time
           <!-- warning: if titles run onto two lines, first row of table data may be affected -->
           <th class="sortable"><div>Repository</div></th>
           <th class="sortable"><div>Version</div></th>
+          <th class="sortable"><div>Maintainers</div></th>
           <th class="sortable">
             <div title="Number of unreleased repositories that are directly blocking this one">
               # blocking release
@@ -105,6 +106,7 @@ import time
 @[  for col in [
       'name',
       'version',
+      'maintainers',
       'num_repos_blocked_by',
       'repos_blocked_by',
       'maintainers_of_repos_blocked_by',
