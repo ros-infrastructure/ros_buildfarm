@@ -789,7 +789,7 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
                     except InvalidPackage:
                         pass
                     else:
-                        pkg_maintainers = {m.name: m.email for m in pkg.maintainers}
+                        pkg_maintainers = {str(m.name.encode('utf-8')): m.email for m in pkg.maintainers}
                         if package not in repo_maintainers:
                             repo_maintainers[package] = {}
                         repo_maintainers[package].update(pkg_maintainers)
@@ -838,7 +838,7 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
                         except InvalidPackage:
                             pass
                         else:
-                            pkg_maintainers = {m.name: m.email for m in pkg.maintainers}
+                            pkg_maintainers = {str(m.name.encode('utf-8')): m.email for m in pkg.maintainers}
                             if unreleased_repo_name not in maintainers:
                                 maintainers[unreleased_repo_name] = {}
                             maintainers[unreleased_repo_name].update(pkg_maintainers)
