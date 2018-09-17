@@ -57,8 +57,12 @@ def main(argv=sys.argv[1:]):
              "'ws/src')"
     )
     parser.add_argument(
-        '--json', action='store_true',
+        '--json', action='store_true', default=False,
         help='Output overlay information as JSON instead of a shell script'
+    )
+    parser.add_argument(
+        '--vcstool', action='store_true', default=False,
+        help='Output overlay information as vcstool repos file'
     )
 
     args = parser.parse_args(argv)
@@ -98,14 +102,20 @@ def main(argv=sys.argv[1:]):
         (repositories[k], 'ws_overlay/src/%s' % k)
         for k in sorted(repositories.keys())]
 
-    if not args.json:
+    if args.json:
+        print(json.dumps([vars(r) for r, p in scms], sort_keys=True, indent=2))
+    elif args.vcstool:
+        print('repositories:')
+        for r, p in scms:
+            print('  %s:\n    %s\n    %s\n    %s' % (
+                p, 'type: ' + r.type, 'url: ' + r.url, 'version: ' + r.version),
+            )
+    else:
         value = expand_template(
             'prerelease/prerelease_overlay_script.sh.em', {
                 'scms': scms},
             options={BANGPATH_OPT: False})
         print(value)
-    else:
-        print(json.dumps([vars(r) for r, p in scms], sort_keys=True, indent=2))
 
 
 def get_repository_specification_for_released_package(dist_file, pkg_name):
