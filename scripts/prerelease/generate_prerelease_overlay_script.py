@@ -108,9 +108,10 @@ def main(argv=sys.argv[1:]):
     elif args.vcstool:
         print('repositories:')
         for r, p in scms:
-            print('  %s:\n    %s\n    %s\n    %s' % (
-                p, 'type: ' + r.type, 'url: ' + r.url, 'version: ' + r.version),
-            )
+            print('  %s:' % p)
+            print('    type: ' + r.type)
+            print('    url: ' + r.url)
+            print('    version: ' + r.version)
     else:
         value = expand_template(
             'prerelease/prerelease_overlay_script.sh.em', {
