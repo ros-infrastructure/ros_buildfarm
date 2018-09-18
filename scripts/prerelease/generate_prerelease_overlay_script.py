@@ -56,12 +56,13 @@ def main(argv=sys.argv[1:]):
              '(by default package names come from packages found in '
              "'ws/src')"
     )
-    parser.add_argument(
-        '--json', action='store_true', default=False,
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        '--json', action='store_true',
         help='Output overlay information as JSON instead of a shell script'
     )
-    parser.add_argument(
-        '--vcstool', action='store_true', default=False,
+    group.add_argument(
+        '--vcstool', action='store_true',
         help='Output overlay information as vcstool repos file'
     )
 
