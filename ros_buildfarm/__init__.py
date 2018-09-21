@@ -17,4 +17,4 @@
 # same version as in:
 # - setup.py
 # - stdeb.cfg
-__version__ = '2.0.2-master'
+__version__ = '2.0.2-ci-builds'
