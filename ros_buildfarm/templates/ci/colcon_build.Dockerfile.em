@@ -55,35 +55,33 @@ RUN echo "@today_str"
 ))@
 
 @(TEMPLATE(
+    'snippet/install_ccache.Dockerfile.em',
+    os_name=os_name,
+    os_code_name=os_code_name,
+))@
+
+@(TEMPLATE(
     'snippet/install_dependencies.Dockerfile.em',
     dependencies=dependencies,
     dependency_versions=dependency_versions,
 ))@
 
-@(TEMPLATE(
-    'snippet/rosdep_init.Dockerfile.em',
-    custom_rosdep_urls=custom_rosdep_urls,
-))@
+ENV RTI_NC_LICENSE_ACCEPTED yes
+COPY install_list.txt .
+RUN xargs -a install_list.txt apt-get install -q -y
+
+RUN update-ccache-symlinks
+ENV PATH="/usr/lib/ccache:${PATH}"
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
-cmds = [
-    'rosdep update',
-
+cmd = \
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
-    ' /tmp/ros_buildfarm/scripts/ci/create_workspace.py' + \
+    ' /tmp/ros_buildfarm/scripts/ci/colcon_build.py' + \
     ' --workspace-root /tmp/colcon_workspace' + \
-    ' --repos-file-urls ' + ' '.join(repos_file_urls),
-
-    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
-    ' /tmp/ros_buildfarm/scripts/ci/get_rosdep_dependencies.py' + \
-    ' --package-root /tmp/colcon_workspace/src' + \
-    ' --os-name ' + os_name + \
-    ' --os-code-name ' + os_code_name + \
     ' --rosdistro-name ' + rosdistro_name + \
-    ' --output-file /tmp/colcon_workspace/install_list.txt' + \
-    ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys),
-]
+    ' --testing' + \
+    ' --parent-result-space ' + ' '.join(parent_result_space)
 }@
-CMD ["@(' && '.join(cmds))"]
+CMD ["@(cmd)"]

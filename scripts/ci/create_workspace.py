@@ -17,6 +17,11 @@
 import argparse
 import os
 import sys
+from urllib.request import urlretrieve
+
+from ros_buildfarm.common import Scope
+from ros_buildfarm.vcs import import_repositories, export_repositories
+from ros_buildfarm.workspace import ensure_workspace_exists
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
@@ -30,16 +35,29 @@ def main(argv=sys.argv[1:]):
         help='URLs of repos files to import with vcs.',
         nargs='*',
         required=True)
+    parser.add_argument(
+        '--test-branch', default=None,
+        help="branch to attempt to checkout before doing batch job")
     args = parser.parse_args(argv)
 
-    if not os.path.isdir(args.workspace_root):
-        # TODO(nuclearsandwich) proper error out
-        print('no workspace')
-        sys.exit(1)
-    # get all repos files a la https://github.com/ros2/ci/pull/66/files#diff-dcc9b88c6bfa21d6151296e463494a16R395
-    # vcs import each of them
-    # Run vcs export --exact to get exact commit ids.
+    ensure_workspace_exists(args.workspace_root)
 
+    with Scope('SUBSECTION', 'fetch repos files(s)'):
+        repos_files = []
+        for repos_file_url in args.repos_file_urls:
+            repos_file = os.path.join(args.workspace_root, os.path.basename(repos_file_url))
+            print('Fetching \'%s\' to \'%s\'' % (repos_file_url, repos_file))
+            urlretrieve(repos_file_url, repos_file)
+            repos_files += [repos_file]
+
+    with Scope('SUBSECTION', 'import repositories'):
+        source_space = os.path.join(args.workspace_root, 'src')
+        for repos_file in repos_files:
+            print('Importing repositories from \'%s\'' % (repos_file))
+            import_repositories(source_space, repos_file, args.test_branch)
+
+    with Scope('SUBSECTION', 'vcs export --exact'):
+        export_repositories(args.workspace_root)
 
 if __name__ == '__main__':
     sys.exit(main())
