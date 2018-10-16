@@ -399,6 +399,7 @@ def configure_doc_independent_job(
 
     job_config = _get_doc_independent_job_config(
         config, config_url, job_name, build_file)
+
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
@@ -407,34 +408,49 @@ def configure_doc_independent_job(
 
 def _get_doc_independent_job_config(
         config, config_url, doc_build_name, build_file):
-    template_name = 'doc/doc_independent_job.xml.em'
-
-    repository_args, script_generating_key_files = \
-        get_repositories_and_script_generating_key_files(config=config)
-
     job_data = {
         'job_priority': build_file.jenkins_job_priority,
         'node_label': get_node_label(build_file.jenkins_job_label),
 
         'ros_buildfarm_repository': get_repository(),
 
-        'doc_repositories': build_file.doc_repositories,
-
-        'script_generating_key_files': script_generating_key_files,
-
         'config_url': config_url,
         'doc_build_name': doc_build_name,
-        'repository_args': repository_args,
-
-        'upload_user': build_file.upload_user,
-        'upload_host': build_file.upload_host,
-        'upload_root': build_file.upload_root,
 
         'notify_emails': build_file.notify_emails,
 
         'timeout_minutes': build_file.jenkins_job_timeout,
-
-        'credential_id': build_file.upload_credential_id,
     }
+
+    if build_file.documentation_type == 'make_target':
+        template_name = 'doc/doc_independent_job.xml.em'
+        job_data.update({
+            'doc_repositories': build_file.doc_repositories,
+            'upload_user': build_file.upload_user,
+            'upload_host': build_file.upload_host,
+            'upload_root': build_file.upload_root,
+            'upload_credential_id': build_file.upload_credential_id,
+        })
+    elif build_file.documentation_type == 'external_site':
+        template_name = 'doc/doc_independent_site_job.xml.em'
+        job_data.update({
+            'doc_repository_url': build_file.doc_repositories[0],
+            'upload_repository_url': build_file.upload_repository_url,
+            'upload_repository_branch': build_file.upload_repository_branch,
+            'upload_credential_id': build_file.upload_credential_id,
+        })
+    else:
+        raise JobValidationError(
+            "Not independent documentation_type: " +
+            build_file.documentation_type
+        )
+
+    repository_args, script_generating_key_files = \
+        get_repositories_and_script_generating_key_files(config=config)
+
+    job_data.update({
+        'script_generating_key_files': script_generating_key_files,
+        'repository_args': repository_args,
+    })
     job_config = expand_template(template_name, job_data)
     return job_config

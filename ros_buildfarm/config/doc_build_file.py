@@ -17,7 +17,9 @@ from .build_file import BuildFile
 DOC_TYPE_ROSDOC = 'rosdoc_lite'
 DOC_TYPE_MANIFEST = 'released_manifest'
 DOC_TYPE_MAKE = 'make_target'
-DOC_TYPES = [DOC_TYPE_ROSDOC, DOC_TYPE_MANIFEST, DOC_TYPE_MAKE]
+DOC_TYPE_EXTERNAL = 'external_site'
+DOC_TYPES = [DOC_TYPE_ROSDOC, DOC_TYPE_MANIFEST,
+             DOC_TYPE_MAKE, DOC_TYPE_EXTERNAL]
 
 
 class DocBuildFile(BuildFile):
@@ -72,9 +74,16 @@ class DocBuildFile(BuildFile):
             self.doc_repositories = data['doc_repositories']
             assert isinstance(self.doc_repositories, list)
 
-        # doc_repositories can only be used with doc type make_target
+        # doc_repositories can only be used with make_target and external_site
+        # doc types
         is_make_target_type = self.documentation_type == DOC_TYPE_MAKE
-        assert not self.doc_repositories or is_make_target_type
+        is_external_site_type = self.documentation_type == DOC_TYPE_EXTERNAL
+        are_doc_repositories_allowed = (is_make_target_type or
+                                        is_external_site_type)
+        assert not self.doc_repositories or are_doc_repositories_allowed
+
+        # Single doc_repository allowed for external_site doc type
+        assert not is_external_site_type or len(self.doc_repositories) == 1
 
         self.jenkins_job_label = None
         if 'jenkins_job_label' in data:
@@ -140,6 +149,12 @@ class DocBuildFile(BuildFile):
         self.upload_user = data.get('upload_user', 'jenkins-agent')
         self.upload_host = data.get('upload_host', 'repo')
         self.upload_root = data.get('upload_root', '/var/repos/docs')
+        if is_external_site_type:
+            assert 'upload_repository_url' in data
+            self.upload_repository_url = data['upload_repository_url']
+            self.upload_repository_branch = data.get(
+                'upload_repository_branch', 'gh-pages'
+            )
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']
 
