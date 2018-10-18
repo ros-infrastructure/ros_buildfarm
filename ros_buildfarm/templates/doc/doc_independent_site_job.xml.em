@@ -72,7 +72,7 @@ doc_repository_name = os.path.splitext(os.path.basename(doc_repository_url))[0]
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone %s"' % doc_repository_name,
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 -b hidmic/container-revamp %s $WORKSPACE/repository' % doc_repository_url,
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 %s $WORKSPACE/repository' % doc_repository_url,
         'git -C $WORKSPACE/repository log -n 1',
         'rm -fr $WORKSPACE/repository/.git',
         'echo "# END SECTION"',
