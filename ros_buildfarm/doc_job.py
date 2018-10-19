@@ -399,7 +399,6 @@ def configure_doc_independent_job(
 
     job_config = _get_doc_independent_job_config(
         config, config_url, job_name, build_file)
-
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
@@ -412,6 +411,7 @@ def _get_doc_independent_job_config(
         'job_priority': build_file.jenkins_job_priority,
         'node_label': get_node_label(build_file.jenkins_job_label),
 
+        'doc_repositories': build_file.doc_repositories,
         'ros_buildfarm_repository': get_repository(),
 
         'config_url': config_url,
@@ -425,7 +425,6 @@ def _get_doc_independent_job_config(
     if build_file.documentation_type == 'make_target':
         template_name = 'doc/doc_independent_job.xml.em'
         job_data.update({
-            'doc_repositories': build_file.doc_repositories,
             'upload_user': build_file.upload_user,
             'upload_host': build_file.upload_host,
             'upload_root': build_file.upload_root,
@@ -434,14 +433,13 @@ def _get_doc_independent_job_config(
     elif build_file.documentation_type == 'external_site':
         template_name = 'doc/doc_independent_site_job.xml.em'
         job_data.update({
-            'doc_repository_url': build_file.doc_repositories[0],
             'upload_repository_url': build_file.upload_repository_url,
             'upload_repository_branch': build_file.upload_repository_branch,
             'upload_credential_id': build_file.upload_credential_id,
         })
     else:
         raise JobValidationError(
-            "Not independent documentation_type: " +
+            'Not independent documentation_type: ' +
             build_file.documentation_type
         )
 

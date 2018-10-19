@@ -8,7 +8,7 @@ information from the package manifests.
 Different types of documentation
 --------------------------------
 
-Each *doc build files* can have one of three specific documentation types:
+Each *doc build files* can have one of four specific documentation types:
 
 * the **rosdoc_lite** type operates on doc repositories.
   For each *doc build file* with that type a separate Jenkins view is created.
@@ -31,11 +31,13 @@ Each *doc build files* can have one of three specific documentation types:
   honor an environment variable identifying the destination of the generated
   documentation.
 
-* the **external_site** type also operates on a single independent repository.
-  For each *doc build file* with that type a Jenkins job is created. Such repository
-  must provide its own Dockerfile below `docker/image/`. Within that container, an
-  **update_site** command taking the repository path and the site repository path
-  as arguments must be available.
+* the **external_site** type also operates on independent repositories.
+  For each *doc build file* with that type a Jenkins job is created.
+  Each repository must provide its own Dockerfile below `docker/image/`,
+  taking and enforcing *user* and *uid* arguments appropriately.
+  Provided containers are expected to **generate and commit** content to
+  the upload git repository mounted at $SITE when run with no arguments,
+  potentially using their own repository content mounted at $REPO.
 
 There is no specific diagram showing the correlation between the various
 scripts and templates but they follow the same naming scheme as the *release*
@@ -79,8 +81,8 @@ configuration:
 
   * **generate_doc_independent_job.py** generates a job which either invokes
     a custom *doc* target on all repositories listed in the *doc build file*
-    OR uses a containerized **update_site** command on the given repository
-    in the *doc build file*.
+    OR runs source-side containers as provided by each repository listed in
+    the same file, respectively.
 
 The build process in detail
 ---------------------------
