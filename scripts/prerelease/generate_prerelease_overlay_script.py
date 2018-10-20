@@ -54,7 +54,7 @@ def main(argv=sys.argv[1:]):
         '--underlay-packages', nargs='+',
         help='Names of packages on which the overlay builds '
              '(by default package names come from packages found in '
-             "'catkin_workspace/src')"
+             "'ws/src')"
     )
     parser.add_argument(
         '--json', action='store_true',
@@ -72,7 +72,7 @@ def main(argv=sys.argv[1:]):
     # determine source repositories for overlay workspace
     underlay_package_names = args.underlay_packages
     if underlay_package_names is None:
-        packages = find_packages('catkin_workspace/src')
+        packages = find_packages('ws/src')
         underlay_package_names = [pkg.name for pkg in packages.values()]
     print('Underlay workspace contains %d packages:%s' %
           (len(underlay_package_names),
@@ -95,7 +95,7 @@ def main(argv=sys.argv[1:]):
             get_repository_specification_for_released_package(
                 dist_file, pkg_name)
     scms = [
-        (repositories[k], 'catkin_workspace_overlay/src/%s' % k)
+        (repositories[k], 'ws_overlay/src/%s' % k)
         for k in sorted(repositories.keys())]
 
     if not args.json:

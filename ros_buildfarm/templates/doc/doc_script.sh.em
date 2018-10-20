@@ -26,7 +26,7 @@ echo ""
 
 @(TEMPLATE(
     'devel/devel_script_clone.sh.em',
-    workspace_path='catkin_workspace',
+    workspace_path='ws',
     scms=scms,
 ))@
 @[if os.environ.get('TRAVIS') == 'true']@

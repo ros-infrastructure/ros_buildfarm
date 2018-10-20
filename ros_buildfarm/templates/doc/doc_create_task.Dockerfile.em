@@ -61,7 +61,7 @@ cmds = [
     ' ' + config_url + \
     ' --rosdistro-name ' + rosdistro_name + \
     ' ' + doc_build_name + \
-    ' --workspace-root /tmp/catkin_workspace' + \
+    ' --workspace-root /tmp/ws' + \
     ' --rosdoc-lite-dir /tmp/rosdoc_lite' + \
     ' --catkin-sphinx-dir /tmp/catkin-sphinx' + \
     ' --rosdoc-index-dir /tmp/rosdoc_index' + \

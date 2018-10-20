@@ -11,6 +11,6 @@ fi
 
 @(TEMPLATE(
     'devel/devel_script_clone.sh.em',
-    workspace_path='catkin_workspace_overlay',
+    workspace_path='ws_overlay',
     scms=scms,
 ))@
