@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import argparse
+import os
 import sys
 
 from ros_buildfarm.catkin_workspace import call_catkin_make_isolated
@@ -60,11 +61,12 @@ def main(argv=sys.argv[1:]):
             parent_result_spaces = None
             if args.parent_result_space:
                 parent_result_spaces = args.parent_result_space
+            env = dict(os.environ)
+            env['MAKEFLAGS'] = '-j1'
             rc = call_catkin_make_isolated(
                 args.rosdistro_name, args.workspace_root,
-                ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1',
-                 '--catkin-make-args', '-j1'],
-                parent_result_spaces=parent_result_spaces)
+                ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1'],
+                parent_result_spaces=parent_result_spaces, env=env)
     finally:
         if args.clean_after:
             clean_workspace(args.workspace_root)

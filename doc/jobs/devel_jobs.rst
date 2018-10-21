@@ -74,7 +74,7 @@ The task performs the following steps:
 * Removes any *build*, *devel* and *install* folders left over from previous
   runs.
 * Invokes
-  ``catkin_make_isolated --install -DCATKIN_SKIP_TESTING=1 --catkin-make-args -j1``.
+  ``MAKEFLAGS=-j1 catkin_make_isolated --install -DCATKIN_SKIP_TESTING=1``.
 
   Since the CMake option ``CATKIN_ENABLE_TESTING`` is not enabled explicitly
   the packages must neither configure any tests nor use any test-only

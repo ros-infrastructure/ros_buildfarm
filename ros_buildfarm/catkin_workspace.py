@@ -43,7 +43,8 @@ def clean_workspace(workspace_root):
 
 
 def call_catkin_make_isolated(
-        rosdistro_name, workspace_root, args, parent_result_spaces=None):
+    rosdistro_name, workspace_root, args, parent_result_spaces=None, env=None
+):
     # command to run
     script_name = 'catkin_make_isolated'
     # use script from source space if available
@@ -65,4 +66,4 @@ def call_catkin_make_isolated(
 
     print("Invoking '%s' in '%s'" % (cmd, workspace_root))
     return subprocess.call(
-        cmd, cwd=workspace_root, shell=True, stderr=subprocess.STDOUT)
+        cmd, cwd=workspace_root, shell=True, stderr=subprocess.STDOUT, env=env)

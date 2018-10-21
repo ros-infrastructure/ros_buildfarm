@@ -78,10 +78,12 @@ def main(argv=sys.argv[1:]):
     clean_workspace(args.workspace_root)
 
     with Scope('SUBSECTION', 'build workspace in isolation and install'):
+        env = dict(os.environ)
+        env['MAKEFLAGS'] = '-j1'
         rc = call_catkin_make_isolated(
             args.rosdistro_name, args.workspace_root,
-            ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1',
-             '--catkin-make-args', '-j1'])
+            ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1'],
+            env=env)
     # TODO compile error should still allow to generate doc from static parts
     if rc:
         return rc
