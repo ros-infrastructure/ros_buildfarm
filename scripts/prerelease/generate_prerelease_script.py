@@ -236,7 +236,7 @@ def main(argv=sys.argv[1:]):
         # used by:
         # - create_devel_task_generator.py needs to find packages in both
         # the underlay as well as the overlay workspace
-        # - catkin_make_isolated_and_test.py needs to source the environment of
+        # - build_and_test.py needs to source the environment of
         # the underlay before building the overlay
         mount_volume = '-v $WORKSPACE/ws:/tmp/ws'
         if mount_volume in script:

@@ -18,8 +18,8 @@ import argparse
 import os
 import sys
 
-from ros_buildfarm.catkin_workspace import call_catkin_make_isolated
 from ros_buildfarm.common import Scope
+from ros_buildfarm.workspace import call_build_tool
 from ros_buildfarm.workspace import clean_workspace
 from ros_buildfarm.workspace import ensure_workspace_exists
 
@@ -65,21 +65,22 @@ def main(argv=sys.argv[1:]):
         with Scope('SUBSECTION', 'build workspace in isolation'):
             test_results_dir = os.path.join(
                 args.workspace_root, 'test_results')
-            arguments = [
-                '--cmake-args', '-DCATKIN_ENABLE_TESTING=1',
-                '-DCATKIN_SKIP_TESTING=0',
+            cmake_args = [
+                '-DCATKIN_ENABLE_TESTING=1', '-DCATKIN_SKIP_TESTING=0',
                 '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir]
             env = dict(os.environ)
             env['MAKEFLAGS'] = '-j1'
-            rc = call_catkin_make_isolated(
+            rc = call_build_tool(
+                'catkin_make_isolated',
                 args.rosdistro_name, args.workspace_root,
-                arguments,
+                cmake_args=cmake_args,
                 parent_result_spaces=parent_result_spaces, env=env)
         if not rc:
             with Scope('SUBSECTION', 'build tests'):
-                rc = call_catkin_make_isolated(
+                rc = call_build_tool(
+                    'catkin_make_isolated',
                     args.rosdistro_name, args.workspace_root,
-                    arguments + ['--catkin-make-args', 'tests'],
+                    cmake_args=cmake_args, make_args=['tests'],
                     parent_result_spaces=parent_result_spaces, env=env)
             if not rc:
                 # for workspaces with only plain cmake packages the setup files
@@ -93,10 +94,11 @@ def main(argv=sys.argv[1:]):
                 # environment to run tests this needs to source the devel space
                 # and force a CMake run ro use the new environment
                 with Scope('SUBSECTION', 'run tests'):
-                    rc = call_catkin_make_isolated(
+                    rc = call_build_tool(
+                        'catkin_make_isolated',
                         args.rosdistro_name, args.workspace_root,
-                        ['--force-cmake'] + arguments +
-                        ['--catkin-make-args', 'run_tests'],
+                        cmake_args=cmake_args, force_cmake=True,
+                        make_args=['run_tests'],
                         parent_result_spaces=parent_result_spaces, env=env)
     finally:
         if args.clean_after:

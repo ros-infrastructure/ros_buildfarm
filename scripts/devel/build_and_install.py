@@ -18,8 +18,8 @@ import argparse
 import os
 import sys
 
-from ros_buildfarm.catkin_workspace import call_catkin_make_isolated
 from ros_buildfarm.common import Scope
+from ros_buildfarm.workspace import call_build_tool
 from ros_buildfarm.workspace import clean_workspace
 from ros_buildfarm.workspace import ensure_workspace_exists
 
@@ -63,9 +63,10 @@ def main(argv=sys.argv[1:]):
                 parent_result_spaces = args.parent_result_space
             env = dict(os.environ)
             env['MAKEFLAGS'] = '-j1'
-            rc = call_catkin_make_isolated(
+            rc = call_build_tool(
+                'catkin_make_isolated',
                 args.rosdistro_name, args.workspace_root,
-                ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1'],
+                cmake_args=['-DCATKIN_SKIP_TESTING=1'], install=True,
                 parent_result_spaces=parent_result_spaces, env=env)
     finally:
         if args.clean_after:

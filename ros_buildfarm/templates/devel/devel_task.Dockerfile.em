@@ -75,11 +75,11 @@ cmd = \
     ' PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u'
 if not testing:
     cmd += \
-        ' /tmp/ros_buildfarm/scripts/devel/catkin_make_isolated_and_install.py' + \
+        ' /tmp/ros_buildfarm/scripts/devel/build_and_install.py' + \
         ' --rosdistro-name %s --clean-before' % rosdistro_name
 else:
     cmd += \
-        ' /tmp/ros_buildfarm/scripts/devel/catkin_make_isolated_and_test.py' + \
+        ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
         ' --rosdistro-name %s' % rosdistro_name
 if not prerelease_overlay:
     cmd += \
