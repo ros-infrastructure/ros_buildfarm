@@ -42,19 +42,30 @@ def clean_workspace(workspace_root):
         shutil.rmtree(test_results_dir)
 
 
-def call_catkin_make_isolated(
-    rosdistro_name, workspace_root, args, parent_result_spaces=None, env=None
+def call_build_tool(
+    build_tool, rosdistro_name, workspace_root, cmake_args=None,
+    force_cmake=False, install=False, make_args=None,
+    parent_result_spaces=None, env=None
 ):
     # command to run
     script_name = 'catkin_make_isolated'
+    assert build_tool == script_name
     # use script from source space if available
     source_space = os.path.join(workspace_root, 'src')
     script_from_source = os.path.join(
         source_space, 'catkin', 'bin', script_name)
     if os.path.exists(script_from_source):
         script_name = script_from_source
-    cmd = ' '.join(
-        ['PYTHONIOENCODING=utf_8', 'PYTHONUNBUFFERED=1', script_name] + args)
+    cmd = ['PYTHONIOENCODING=utf_8', 'PYTHONUNBUFFERED=1', script_name]
+    if force_cmake:
+        cmd.append('--force-cmake')
+    if install:
+        cmd.append('--install')
+    if cmake_args:
+        cmd += ['--cmake-args'] + cmake_args
+    if make_args:
+        cmd += ['--catkin-make-args'] + make_args
+    cmd = ' '.join(cmd)
 
     # prepend setup files if available
     if parent_result_spaces is None:
