@@ -67,7 +67,8 @@ def main(argv=sys.argv[1:]):
             env['MAKEFLAGS'] = '-j1'
             rc = call_build_tool(
                 args.build_tool, args.rosdistro_name, args.workspace_root,
-                cmake_args=['-DCATKIN_SKIP_TESTING=1'], install=True,
+                cmake_args=['-DBUILD_TESTING=0', '-DCATKIN_SKIP_TESTING=1'],
+                install=True,
                 parent_result_spaces=parent_result_spaces, env=env)
     finally:
         if args.clean_after:

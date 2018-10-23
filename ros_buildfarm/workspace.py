@@ -44,7 +44,7 @@ def clean_workspace(workspace_root):
 
 def call_build_tool(
     build_tool, rosdistro_name, workspace_root, cmake_args=None,
-    force_cmake=False, install=False, make_args=None,
+    force_cmake=False, install=False, make_args=None, args=None,
     parent_result_spaces=None, env=None, colcon_verb='build'
 ):
     # command to run
@@ -86,6 +86,14 @@ def call_build_tool(
             cmd += ['--catkin-make-args'] + make_args
         elif build_tool == 'colcon':
             cmd += ['--cmake-target'] + make_args
+
+    if build_tool == 'colcon':
+        cmd += [
+            '--executor', 'sequential',
+            '--event-handlers', 'console_direct+']
+
+    if args:
+        cmd += args
 
     cmd = ' '.join(cmd)
 

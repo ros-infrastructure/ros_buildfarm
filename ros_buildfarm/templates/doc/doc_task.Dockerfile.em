@@ -54,6 +54,11 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
+@[if build_tool == 'colcon']@
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pip
+RUN pip3 install -U setuptools
+@[end if]@
+
 @(TEMPLATE(
     'snippet/install_dependencies.Dockerfile.em',
     dependencies=dependencies,

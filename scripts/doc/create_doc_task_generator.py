@@ -523,6 +523,25 @@ def main(argv=sys.argv[1:]):
             # rosdoc_lite does not work without genmsg being importable
             get_debian_package_name(args.rosdistro_name, 'genmsg'),
         ]
+        if args.build_tool == 'colcon':
+            debian_pkg_names += [
+                'python3-colcon-bash',
+                'python3-colcon-cmake',
+                'python3-colcon-core',
+                'python3-colcon-defaults',
+                'python3-colcon-library-path',
+                # 'python3-colcon-metadata',
+                'python3-colcon-output',
+                'python3-colcon-package-information',
+                'python3-colcon-package-selection',
+                # 'python3-colcon-parallel-executor',
+                'python3-colcon-powershell',
+                'python3-colcon-python-setup-py',
+                'python3-colcon-recursive-crawl',
+                'python3-colcon-ros',
+                'python3-colcon-test-result',
+                'python3-colcon-zsh',
+            ]
         if 'actionlib_msgs' in pkg_names:
             # to document actions in other packages in the same repository
             debian_pkg_names.append(
