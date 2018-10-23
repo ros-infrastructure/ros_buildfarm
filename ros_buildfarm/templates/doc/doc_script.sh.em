@@ -9,6 +9,9 @@ set -e
 echo "Doc job: @doc_job_name"
 echo ""
 
+# consider CCACHE_DIR from environment, otherwise set to default
+CCACHE_DIR=${CCACHE_DIR:-~/.ccache}
+
 export WORKSPACE=`pwd`
 echo "Use workspace: $WORKSPACE"
 echo ""

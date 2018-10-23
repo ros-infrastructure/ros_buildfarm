@@ -6,6 +6,9 @@ import os
 # fail script if any single command fails
 set -e
 
+# consider CCACHE_DIR from environment, otherwise set to default
+CCACHE_DIR=${CCACHE_DIR:-~/.ccache}
+
 echo "Source job: @source_job_name"
 echo "Binary job: @binary_job_name"
 

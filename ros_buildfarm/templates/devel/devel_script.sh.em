@@ -13,6 +13,9 @@ echo "If you want the script to return a non-zero return code in that case"
 echo "you can set the environment variable ABORT_ON_TEST_FAILURE=1."
 echo ""
 
+# consider CCACHE_DIR from environment, otherwise set to default
+CCACHE_DIR=${CCACHE_DIR:-~/.ccache}
+
 export WORKSPACE=`pwd`
 echo "Use workspace: $WORKSPACE"
 echo ""

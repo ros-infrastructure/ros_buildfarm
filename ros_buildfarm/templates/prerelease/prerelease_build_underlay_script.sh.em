@@ -3,6 +3,9 @@
 # fail script if any single command fails
 set -e
 
+# consider CCACHE_DIR from environment, otherwise set to default
+CCACHE_DIR=${CCACHE_DIR:-~/.ccache}
+
 if [ -z "$WORKSPACE" ]; then
     WORKSPACE=`pwd`
     echo "Using workspace: $WORKSPACE"
