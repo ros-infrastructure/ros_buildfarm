@@ -4,10 +4,10 @@ python:
 sudo: false
 env:
   global:
-    - CONFIG_URL=https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
-    - ROS_DISTRO_NAME=kinetic
+    - CONFIG_URL=https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+    - ROS_DISTRO_NAME=bouncy
     - OS_NAME=ubuntu
-    - OS_CODE_NAME=xenial
+    - OS_CODE_NAME=bionic
     - ARCH=amd64
     - ROS_BUILDFARM_PULL_REQUEST_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
 matrix:
@@ -17,7 +17,7 @@ matrix:
       sudo: required
       services:
         - docker
-      env: JOB_TYPE=devel REPOSITORY_NAME=roscpp_core
+      env: JOB_TYPE=devel REPOSITORY_NAME=rcl
       before_script:
         # install colcon for test results
         - pip install colcon-core colcon-test-result
@@ -33,21 +33,7 @@ matrix:
       sudo: required
       services:
         - docker
-      env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
-      before_script:
-        - python setup.py install
-        - mkdir job && cd job
-        - ln -s .. ros_buildfarm
-      script:
-        - generate_doc_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH --build-tool colcon > job.sh
-        - sh job.sh -y
-        - ls -alR generated_documentation/api_rosdoc
-    - language: python
-      python: "3.6"
-      sudo: required
-      services:
-        - docker
-      env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
+      env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="rcl" OVERLAY_PACKAGE_NAMES=rclcpp
       before_script:
         # install colcon for test results
         - pip install colcon-core colcon-test-result
