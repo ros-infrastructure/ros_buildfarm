@@ -27,6 +27,7 @@ from em import Hook
 
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
+from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
@@ -53,6 +54,7 @@ def main(argv=sys.argv[1:]):
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
+    add_argument_build_tool(parser)
     add_argument_output_dir(parser, required=True)
 
     group = parser.add_argument_group(
@@ -189,6 +191,10 @@ def main(argv=sys.argv[1:]):
                         'fi',
                     ]
                     script = '\n'.join(lines)
+                if args.build_tool and ' --build-tool ' in script:
+                    script = script.replace(
+                        ' --build-tool catkin_make_isolated',
+                        ' --build-tool ' + args.build_tool)
                 self.scripts.append(script)
 
     hook = IncludeHook()
@@ -268,7 +274,7 @@ def main(argv=sys.argv[1:]):
             os.path.dirname(os.path.abspath(ros_buildfarm_file))),
         'python_executable': sys.executable,
         'prerelease_script_path': os.path.dirname(os.path.abspath(__file__)),
-        'build_tool': build_file.build_tool})
+        'build_tool': args.build_tool or build_file.build_tool})
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
