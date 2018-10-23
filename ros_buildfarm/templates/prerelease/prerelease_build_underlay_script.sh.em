@@ -21,6 +21,7 @@ echo ""
 @(TEMPLATE(
     'devel/devel_script_test_results.sh.em',
     workspace_path='ws',
+    build_tool=build_tool,
 ))@
 test_result_RC_underlay=$test_result_RC
 unset test_result_RC

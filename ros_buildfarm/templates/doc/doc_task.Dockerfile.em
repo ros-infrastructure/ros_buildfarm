@@ -82,6 +82,7 @@ cmd = 'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' --rosdistro-name ' + rosdistro_name + \
     ' --os-code-name ' + os_code_name + \
     ' --arch ' + arch + \
+    ' --build-tool ' + build_tool + \
     ' --workspace-root /tmp/ws' + \
     ' --rosdoc-lite-dir /tmp/rosdoc_lite' + \
     ' --catkin-sphinx-dir /tmp/catkin-sphinx' + \

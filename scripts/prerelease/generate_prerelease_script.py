@@ -267,7 +267,8 @@ def main(argv=sys.argv[1:]):
         'ros_buildfarm_python_path': os.path.dirname(
             os.path.dirname(os.path.abspath(ros_buildfarm_file))),
         'python_executable': sys.executable,
-        'prerelease_script_path': os.path.dirname(os.path.abspath(__file__))})
+        'prerelease_script_path': os.path.dirname(os.path.abspath(__file__)),
+        'build_tool': build_file.build_tool})
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)

@@ -22,6 +22,7 @@ from apt import Cache
 from catkin_pkg.packages import find_packages
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
+from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
@@ -61,6 +62,7 @@ def main(argv=sys.argv[1:]):
         help="The architecture (e.g. 'amd64')")
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
+    add_argument_build_tool(parser, required=True)
     add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)
     parser.add_argument(
@@ -144,6 +146,8 @@ def main(argv=sys.argv[1:]):
         'rosdistro_name': args.rosdistro_name,
 
         'uid': get_user_id(),
+
+        'build_tool': args.build_tool,
 
         'build_environment_variables': args.env_vars,
 

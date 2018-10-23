@@ -136,6 +136,7 @@ if pull_request:
         ' ' + os_code_name +
         ' ' + arch +
         ' ' + ' '.join(repository_args) +
+        ' --build-tool ' + build_tool +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',
@@ -218,12 +219,8 @@ if pull_request:
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-<<<<<<< HEAD
-        ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
-        ' -v ~/.ccache:/home/buildfarm/.ccache' +
-=======
         ' -v $WORKSPACE/ws:/tmp/ws' +
->>>>>>> remove catkin-specific naming from directories and variables
+        ' -v ~/.ccache:/home/buildfarm/.ccache' +
         ' devel_build_and_test.%s_%s' % (rosdistro_name, source_repo_spec.name.lower()),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',

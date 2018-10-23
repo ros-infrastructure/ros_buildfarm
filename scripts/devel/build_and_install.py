@@ -18,6 +18,7 @@ import argparse
 import os
 import sys
 
+from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.common import Scope
 from ros_buildfarm.workspace import call_build_tool
 from ros_buildfarm.workspace import clean_workspace
@@ -32,6 +33,7 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The name of the ROS distro to identify the setup file to be '
              'sourced (if available)')
+    add_argument_build_tool(parser, required=True)
     parser.add_argument(
         '--workspace-root',
         required=True,
@@ -64,8 +66,7 @@ def main(argv=sys.argv[1:]):
             env = dict(os.environ)
             env['MAKEFLAGS'] = '-j1'
             rc = call_build_tool(
-                'catkin_make_isolated',
-                args.rosdistro_name, args.workspace_root,
+                args.build_tool, args.rosdistro_name, args.workspace_root,
                 cmake_args=['-DCATKIN_SKIP_TESTING=1'], install=True,
                 parent_result_spaces=parent_result_spaces, env=env)
     finally:

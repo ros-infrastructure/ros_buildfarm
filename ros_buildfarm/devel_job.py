@@ -386,6 +386,7 @@ def _get_devel_job_config(
         'os_code_name': os_code_name,
         'arch': arch,
         'repository_args': repository_args,
+        'build_tool': build_file.build_tool,
         'build_environment_variables': build_environment_variables,
 
         'notify_compiler_warnings': build_file.notify_compiler_warnings,

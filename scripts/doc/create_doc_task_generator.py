@@ -561,6 +561,7 @@ def main(argv=sys.argv[1:]):
             'os_name': args.os_name,
             'os_code_name': args.os_code_name,
             'arch': args.arch,
+            'build_tool': doc_build_file.build_tool,
 
             'distribution_repository_urls': args.distribution_repository_urls,
             'distribution_repository_keys': get_distribution_repository_keys(

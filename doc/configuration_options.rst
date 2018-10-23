@@ -227,6 +227,11 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``jenkins_pull_request_job_priority``: the job priority of *pull request*
   jobs.
 
+* ``build_tool``: the build tool to use. The following are valid values:
+
+  * ``catkin_make_isolated`` (default)
+  * ``colcon``
+
 * ``notifications``: a dictionary with the following keys:
 
   * ``compiler_warnings``: boolean flag if compiler warnings should mark a job
@@ -307,6 +312,11 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``jenkins_job_label``: the label expression for both *doc* jobs (default:
   ``buildagent || <ROSDISTRO_NAME>_doc_<BUILD_FILE_NAME>``).
 * ``jenkins_job_timeout``: the job timeout for *doc* jobs.
+
+* ``build_tool``: the build tool to use. The following are valid values:
+
+  * ``catkin_make_isolated`` (default)
+  * ``colcon``
 
 * ``notifications``: a dictionary with the following keys:
 

@@ -61,7 +61,7 @@ echo ""
 
 @(TEMPLATE(
     'devel/devel_script_test_results.sh.em',
-    workspace_path='ws',
+    workspace_path='ws', build_tool=build_tool,
 ))@
 @[if os.environ.get('TRAVIS') == 'true']@
 echo "travis_fold:end:devel-test-results"

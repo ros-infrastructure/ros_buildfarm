@@ -81,6 +81,7 @@ else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
         ' --rosdistro-name %s' % rosdistro_name
+cmd += ' --build-tool ' + build_tool
 if not prerelease_overlay:
     cmd += \
         ' --workspace-root /tmp/ws'

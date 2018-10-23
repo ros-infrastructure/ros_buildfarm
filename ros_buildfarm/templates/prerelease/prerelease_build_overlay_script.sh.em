@@ -22,6 +22,7 @@ if [ -d "$WORKSPACE/ws_overlay/test_results" ]; then
     @(TEMPLATE(
         'devel/devel_script_test_results.sh.em',
         workspace_path='ws_overlay',
+        build_tool=build_tool,
     ))@
     test_result_RC_overlay=$test_result_RC
     unset test_result_RC

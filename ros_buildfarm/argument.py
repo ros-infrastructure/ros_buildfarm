@@ -281,3 +281,12 @@ def add_argument_repository_names(parser):
         '--repository-names',
         nargs='+',
         help='A space separated list of repository names')
+
+
+def add_argument_build_tool(parser, required=False):
+    default_help = '' if required else ' (default: as set in the build file)'
+    parser.add_argument(
+        '--build-tool',
+        choices=('catkin_make_isolated', 'colcon'),
+        required=required,
+        help='The build tool to use' + default_help)
