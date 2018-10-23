@@ -129,7 +129,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' -v $WORKSPACE/docker_build_binarydeb:/tmp/docker_build_binarydeb' +
-        ' -v $CCACHE_DIR:/home/buildfarm/.ccache' + \
+        ' -v ~/.ccache:/home/buildfarm/.ccache' + \
         ' binarydeb_task_generation.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),
@@ -160,7 +160,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
-        ' -v $CCACHE_DIR:/home/buildfarm/.ccache' +
+        ' -v ~/.ccache:/home/buildfarm/.ccache' +
         ' binarydeb_build.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),
