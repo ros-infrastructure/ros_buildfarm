@@ -17,9 +17,9 @@ from .build_file import BuildFile
 DOC_TYPE_ROSDOC = 'rosdoc_lite'
 DOC_TYPE_MANIFEST = 'released_manifest'
 DOC_TYPE_MAKE = 'make_target'
-DOC_TYPE_EXTERNAL = 'external_site'
+DOC_TYPE_DOCKER = 'docker_build'
 DOC_TYPES = [
-    DOC_TYPE_ROSDOC, DOC_TYPE_MANIFEST, DOC_TYPE_MAKE, DOC_TYPE_EXTERNAL
+    DOC_TYPE_ROSDOC, DOC_TYPE_MANIFEST, DOC_TYPE_MAKE, DOC_TYPE_DOCKER
 ]
 
 
@@ -75,9 +75,9 @@ class DocBuildFile(BuildFile):
             self.doc_repositories = data['doc_repositories']
             assert isinstance(self.doc_repositories, list)
 
-        # doc_repositories can only be used with make_target and external_site
+        # doc_repositories can only be used with make_target and docker_build
         # doc types
-        if self.documentation_type not in (DOC_TYPE_MAKE, DOC_TYPE_EXTERNAL):
+        if self.documentation_type not in (DOC_TYPE_MAKE, DOC_TYPE_DOCKER):
             assert not self.doc_repositories
 
         self.jenkins_job_label = None
@@ -144,7 +144,7 @@ class DocBuildFile(BuildFile):
         self.upload_user = data.get('upload_user', 'jenkins-agent')
         self.upload_host = data.get('upload_host', 'repo')
         self.upload_root = data.get('upload_root', '/var/repos/docs')
-        if self.documentation_type == DOC_TYPE_EXTERNAL:
+        if self.documentation_type == DOC_TYPE_DOCKER:
             assert 'upload_repository_url' in data
             self.upload_repository_url = data['upload_repository_url']
             self.upload_repository_branch = data.get(

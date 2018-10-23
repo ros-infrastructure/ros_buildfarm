@@ -31,7 +31,7 @@ Each *doc build files* can have one of four specific documentation types:
   honor an environment variable identifying the destination of the generated
   documentation.
 
-* the **external_site** type also operates on independent repositories.
+* the **docker_build** type also operates on independent repositories.
   For each *doc build file* with that type a Jenkins job is created.
   Each repository must provide its own Dockerfile below `docker/image/`,
   taking and enforcing *user* and *uid* arguments appropriately.
@@ -77,7 +77,7 @@ configuration:
     information from all releases packages matching the criteria from the
     *doc build file*.
 
-* related to the **make_target** and **external_site** types:
+* related to the **make_target** and **docker_build** types:
 
   * **generate_doc_independent_job.py** generates a job which either invokes
     a custom *doc* target on all repositories listed in the *doc build file*

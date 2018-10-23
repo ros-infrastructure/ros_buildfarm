@@ -407,15 +407,23 @@ def configure_doc_independent_job(
 
 def _get_doc_independent_job_config(
         config, config_url, doc_build_name, build_file):
+
+    repository_args, script_generating_key_files = \
+        get_repositories_and_script_generating_key_files(config=config)
+
     job_data = {
         'job_priority': build_file.jenkins_job_priority,
         'node_label': get_node_label(build_file.jenkins_job_label),
 
-        'doc_repositories': build_file.doc_repositories,
         'ros_buildfarm_repository': get_repository(),
+
+        'doc_repositories': build_file.doc_repositories,
+
+        'script_generating_key_files': script_generating_key_files,
 
         'config_url': config_url,
         'doc_build_name': doc_build_name,
+        'repository_args': repository_args,
 
         'notify_emails': build_file.notify_emails,
 
@@ -428,10 +436,10 @@ def _get_doc_independent_job_config(
             'upload_user': build_file.upload_user,
             'upload_host': build_file.upload_host,
             'upload_root': build_file.upload_root,
-            'upload_credential_id': build_file.upload_credential_id,
+            'credential_id': build_file.upload_credential_id
         })
-    elif build_file.documentation_type == 'external_site':
-        template_name = 'doc/doc_independent_site_job.xml.em'
+    elif build_file.documentation_type == 'docker_build':
+        template_name = 'doc/doc_independent_docker_job.xml.em'
         job_data.update({
             'upload_repository_url': build_file.upload_repository_url,
             'upload_repository_branch': build_file.upload_repository_branch,
@@ -442,13 +450,5 @@ def _get_doc_independent_job_config(
             'Not independent documentation_type: ' +
             build_file.documentation_type
         )
-
-    repository_args, script_generating_key_files = \
-        get_repositories_and_script_generating_key_files(config=config)
-
-    job_data.update({
-        'script_generating_key_files': script_generating_key_files,
-        'repository_args': repository_args,
-    })
     job_config = expand_template(template_name, job_data)
     return job_config
