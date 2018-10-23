@@ -2,14 +2,14 @@
 test_result_EXECUTABLE="catkin_test_results"
 test_result_CMD="$test_result_EXECUTABLE $WORKSPACE/@workspace_path/test_results --all"
 @[elif build_tool == 'colcon']@
-test_result_EXECUTABLE="colcon test-result"
-test_result_CMD="$test_result_EXECUTABLE test --test-result-base $WORKSPACE/@workspace_path/test_results --all"
+test_result_EXECUTABLE="colcon"
+test_result_CMD="$test_result_EXECUTABLE test-result --test-result-base $WORKSPACE/@workspace_path/test_results --all"
 @[else]@
 echo "Unsupported build tool: @build_tool"
 (exit 1)
 @[end if]@
 
-if [ ! type "$test_result_EXECUTABLE" > /dev/null ]; then
+if ! type "$test_result_EXECUTABLE" > /dev/null; then
   echo "'$test_result_EXECUTABLE' not found on the PATH. Please make sure the tool is installed and the environment is setup (if applicable) to output the test result summary."
   test_result_RC=0
 @[if build_tool == 'colcon']@
