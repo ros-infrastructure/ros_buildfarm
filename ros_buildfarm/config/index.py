@@ -52,12 +52,13 @@ class Index(object):
                     (type(data['distributions']).__name__,
                      data['distributions']))
             for distro_name in sorted(data['distributions']):
-                self.distributions[distro_name] = {}
+                self.distributions[distro_name] = {'ros_version': 1}
                 distro_data = data['distributions'][distro_name]
                 value_types = {
                     'doc_builds': dict,
                     'notification_emails': list,
                     'release_builds': dict,
+                    'ros_version': int,
                     'source_builds': dict,
                 }
                 for key in distro_data:
@@ -78,6 +79,8 @@ class Index(object):
                         self.distributions[distro_name][key] = []
                         for v in value:
                             self.distributions[distro_name][key].append(v)
+                    elif isinstance(value, int):
+                        self.distributions[distro_name][key] = value
                     else:
                         assert False
 

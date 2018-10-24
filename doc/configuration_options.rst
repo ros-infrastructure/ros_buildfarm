@@ -40,6 +40,8 @@ The following options are valid in version ``1``:
   * ``notification_emails``: a list of email addresses for notification about
     ROS distribution specific administrative jobs.
 
+  * ``ros_version``: the major version of ROS (default: ``1``).
+
 * ``git_ssh_credential_id``: the ID of the credential entry managed on the
   Jenkins master which is used to clone sources using Git over SSH.
   This credential id is set in the buildfarm_deployment.
