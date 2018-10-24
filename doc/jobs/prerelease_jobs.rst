@@ -106,12 +106,14 @@ scripts which can be invoked manually in the same order:
   workspace.
 * ``prerelease_build_underlay.py`` runs the *build-and-install* task as well as
   the *build-and-test* task on the underlay workspace.
-  It also invokes the tool ``catkin_test_results --all`` to output a
-  summary of all tests in the underlay workspace.
+  It also invokes the tool ``catkin_test_results --all`` /
+  ``colcon test-result --all`` to output a summary of all tests in the underlay
+  workspace.
 * ``prerelease_build_overlay.py`` runs the *build-and-test* task on the overlay
   workspace.
-  It also invokes the tool ``catkin_test_results --all`` to output a
-  summary of all tests in the overlay workspace.
+  It also invokes the tool ``catkin_test_results --all`` /
+  ``colcon test-result --all`` to output a summary of all tests in the overlay
+  workspace.
 
 Run the *prerelease* job on Travis
 ----------------------------------

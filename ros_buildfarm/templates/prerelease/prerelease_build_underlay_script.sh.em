@@ -20,6 +20,7 @@ echo ""
 
 @(TEMPLATE(
     'devel/devel_script_test_results.sh.em',
+    build_tool=build_tool,
     workspace_path='ws',
 ))@
 test_result_RC_underlay=$test_result_RC

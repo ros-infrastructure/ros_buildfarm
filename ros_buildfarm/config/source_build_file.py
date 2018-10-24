@@ -54,6 +54,9 @@ class SourceBuildFile(BuildFile):
         if 'jenkins_job_timeout' in data:
             self.jenkins_job_timeout = int(data['jenkins_job_timeout'])
 
+        self.build_tool = data.get('build_tool', 'catkin_make_isolated')
+        assert self.build_tool in ('catkin_make_isolated', 'colcon')
+
         self.notify_committers = None
         self.notify_compiler_warnings = False
         self.notify_pull_requests = False

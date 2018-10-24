@@ -301,7 +301,7 @@ def configure_devel_job(
         repo_name, os_name, os_code_name, arch, pull_request)
 
     job_config = _get_devel_job_config(
-        config, rosdistro_name, source_build_name,
+        index, config, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, source_repository,
         repo_name, pull_request, job_name, dist_cache=dist_cache,
         is_disabled=is_disabled)
@@ -321,7 +321,7 @@ def configure_devel_view(jenkins, view_name, dry_run=False):
 
 
 def _get_devel_job_config(
-        config, rosdistro_name, source_build_name,
+        index, config, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, source_repo_spec,
         repo_name, pull_request, job_name, dist_cache=None,
         is_disabled=False):
@@ -355,6 +355,11 @@ def _get_devel_job_config(
         if not pull_request \
         else build_file.jenkins_pull_request_job_priority
 
+    distribution_type = index.distributions[rosdistro_name] \
+        .get('distribution_type', 'ros1')
+    assert distribution_type in ('ros1', 'ros2')
+    ros_version = 1 if distribution_type == 'ros1' else 2
+
     job_data = {
         'github_url': get_github_project_url(source_repo_spec.url),
 
@@ -386,6 +391,8 @@ def _get_devel_job_config(
         'os_code_name': os_code_name,
         'arch': arch,
         'repository_args': repository_args,
+        'build_tool': build_file.build_tool,
+        'ros_version': ros_version,
         'build_environment_variables': build_environment_variables,
 
         'notify_compiler_warnings': build_file.notify_compiler_warnings,

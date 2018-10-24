@@ -22,12 +22,15 @@ from em import Hook
 
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
+from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_devel_job_name
+from ros_buildfarm.config import get_index as get_config_index
+from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.devel_job import configure_devel_job
 from ros_buildfarm.templates import expand_template
 
@@ -42,6 +45,7 @@ def main(argv=sys.argv[1:]):
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
+    add_argument_build_tool(parser)
     args = parser.parse_args(argv)
 
     # collect all template snippets of specific types
@@ -52,7 +56,7 @@ def main(argv=sys.argv[1:]):
             self.scms = []
             self.scripts = []
 
-        def beforeInclude(self, *args, **kwargs):
+        def beforeInclude(self, *_, **kwargs):
             template_path = kwargs['file'].name
             if template_path.endswith('/snippet/scm.xml.em'):
                 self.scms.append(
@@ -69,16 +73,24 @@ def main(argv=sys.argv[1:]):
                         'fi',
                     ]
                     script = '\n'.join(lines)
+                if args.build_tool and ' --build-tool ' in script:
+                    script = script.replace(
+                        ' --build-tool catkin_make_isolated',
+                        ' --build-tool ' + args.build_tool)
                 self.scripts.append(script)
 
     hook = IncludeHook()
     from ros_buildfarm import templates
     templates.template_hooks = [hook]
 
+    config = get_config_index(args.config_url)
+    build_files = get_source_build_files(config, args.rosdistro_name)
+    build_file = build_files[args.source_build_name]
+
     configure_devel_job(
         args.config_url, args.rosdistro_name, args.source_build_name,
         args.repository_name, args.os_name, args.os_code_name, args.arch,
-        jenkins=False, views=False)
+        config=config, build_file=build_file, jenkins=False, views=False)
 
     templates.template_hooks = None
 
@@ -90,7 +102,8 @@ def main(argv=sys.argv[1:]):
         'devel/devel_script.sh.em', {
             'devel_job_name': devel_job_name,
             'scms': hook.scms,
-            'scripts': hook.scripts},
+            'scripts': hook.scripts,
+            'build_tool': args.build_tool or build_file.build_tool},
         options={BANGPATH_OPT: False})
     value = value.replace('python3', sys.executable)
     print(value)

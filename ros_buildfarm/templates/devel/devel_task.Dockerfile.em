@@ -54,6 +54,14 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
+@[if build_tool == 'colcon']@
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pip
+@# colcon-core.package_identification.python needs at least version 30.3.0
+RUN pip3 install -U setuptools
+@[end if]@
+@[if ros_version == 2]@
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ros-@(rosdistro_name)-ros-workspace
+@[end if]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
 @(TEMPLATE(
@@ -81,6 +89,7 @@ else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
         ' --rosdistro-name %s' % rosdistro_name
+cmd += ' --build-tool ' + build_tool
 if not prerelease_overlay:
     cmd += \
         ' --workspace-root /tmp/ws'

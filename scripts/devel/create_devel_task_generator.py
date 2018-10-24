@@ -22,9 +22,11 @@ from apt import Cache
 from catkin_pkg.packages import find_packages
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
+from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
+from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_distribution_repository_keys
@@ -61,6 +63,8 @@ def main(argv=sys.argv[1:]):
         help="The architecture (e.g. 'amd64')")
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
+    add_argument_build_tool(parser, required=True)
+    add_argument_ros_version(parser)
     add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)
     parser.add_argument(
@@ -99,7 +103,12 @@ def main(argv=sys.argv[1:]):
         'build-essential',
         'python3',
     ]
-    if 'catkin' not in pkg_names:
+    if args.build_tool == 'colcon':
+        debian_pkg_names += [
+            'python3-colcon-ros',
+            'python3-colcon-test-result',
+        ]
+    elif 'catkin' not in pkg_names:
         debian_pkg_names += resolve_names(['catkin'], **context)
     print('Always install the following generic dependencies:')
     for debian_pkg_name in sorted(debian_pkg_names):
@@ -144,6 +153,9 @@ def main(argv=sys.argv[1:]):
         'rosdistro_name': args.rosdistro_name,
 
         'uid': get_user_id(),
+
+        'build_tool': args.build_tool,
+        'ros_version': args.ros_version,
 
         'build_environment_variables': args.env_vars,
 

@@ -78,12 +78,14 @@ class Index(object):
                         self.distributions[distro_name][key] = []
                         for v in value:
                             self.distributions[distro_name][key].append(v)
+                    elif isinstance(value, int):
+                        self.distributions[distro_name][key] = value
                     else:
                         assert False
 
                 unset_keys = [
                     k for k in value_types.keys()
-                    if k not in distro_data]
+                    if k not in self.distributions[distro_name]]
                 for key in unset_keys:
                     self.distributions[distro_name][key] = value_types[key]()
 
