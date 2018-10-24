@@ -26,6 +26,7 @@ from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
+from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_distribution_repository_keys
@@ -63,6 +64,7 @@ def main(argv=sys.argv[1:]):
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
     add_argument_build_tool(parser, required=True)
+    add_argument_ros_version(parser)
     add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)
     parser.add_argument(
@@ -167,6 +169,7 @@ def main(argv=sys.argv[1:]):
         'uid': get_user_id(),
 
         'build_tool': args.build_tool,
+        'ros_version': args.ros_version,
 
         'build_environment_variables': args.env_vars,
 

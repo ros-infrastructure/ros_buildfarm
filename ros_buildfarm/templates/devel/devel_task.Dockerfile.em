@@ -57,6 +57,8 @@ RUN echo "@today_str"
 @[if build_tool == 'colcon']@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pip
 RUN pip3 install -U setuptools
+@[end if]@
+@[if ros_version == 2]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ros-@(rosdistro_name)-ros-workspace
 @[end if]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache

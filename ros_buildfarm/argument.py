@@ -290,3 +290,9 @@ def add_argument_build_tool(parser, required=False):
         choices=('catkin_make_isolated', 'colcon'),
         required=required,
         help='The build tool to use' + default_help)
+
+
+def add_argument_ros_version(parser):
+    parser.add_argument(
+        '--ros-version', type=int, required=True,
+        help='The major ROS version')

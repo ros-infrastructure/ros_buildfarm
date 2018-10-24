@@ -137,6 +137,7 @@ if pull_request:
         ' ' + arch +
         ' ' + ' '.join(repository_args) +
         ' --build-tool ' + build_tool +
+        ' --ros-version ' + str(ros_version) +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',

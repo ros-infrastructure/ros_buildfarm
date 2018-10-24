@@ -202,8 +202,15 @@ def main(argv=sys.argv[1:]):
     templates.template_hooks = [hook]
 
     # use any source repo to pass to devel job template
+    if config.distributions[args.rosdistro_name]['ros_version'] == 1:
+        package_name = 'catkin'
+    elif config.distributions[args.rosdistro_name]['ros_version'] == 2:
+        package_name = 'ros_workspace'
+    else:
+        assert False, 'Unsupported ROS version ' + \
+            str(config.distributions[args.rosdistro_name]['ros_version'])
     source_repository = deepcopy(
-        dist_file.repositories['catkin'].source_repository)
+        dist_file.repositories[package_name].source_repository)
     if not source_repository:
         print(("The repository '%s' does not have a source entry in the distribution " +
                'file. We cannot generate a prerelease without a source entry.') % repo_name,
