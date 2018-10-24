@@ -63,7 +63,7 @@ echo ""
 @[if os.environ.get('TRAVIS') == 'true']@
 echo "travis_fold:start:prerelease-build-overlay-workspace"
 @[end if]@
-if [ "$(ls -A "$WORKSPACE/catkin_workspace_overlay/src" 2> /dev/null)" != "" ]; then
+if [ "$(ls -A "$WORKSPACE/ws_overlay/src" 2> /dev/null)" != "" ]; then
   echo "Build overlay workspace"
   echo ""
   . `pwd`/prerelease_build_overlay.sh

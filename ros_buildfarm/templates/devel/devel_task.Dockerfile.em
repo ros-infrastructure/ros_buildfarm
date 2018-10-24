@@ -75,24 +75,24 @@ cmd = \
     ' PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u'
 if not testing:
     cmd += \
-        ' /tmp/ros_buildfarm/scripts/devel/catkin_make_isolated_and_install.py' + \
+        ' /tmp/ros_buildfarm/scripts/devel/build_and_install.py' + \
         ' --rosdistro-name %s --clean-before' % rosdistro_name
 else:
     cmd += \
-        ' /tmp/ros_buildfarm/scripts/devel/catkin_make_isolated_and_test.py' + \
+        ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
         ' --rosdistro-name %s' % rosdistro_name
 if not prerelease_overlay:
     cmd += \
-        ' --workspace-root /tmp/catkin_workspace'
+        ' --workspace-root /tmp/ws'
 else:
     parent_result_spaces = [
         # also specify /opt/ros in case the install location has no setup files
         # e.g. if the workspace contains no packages
         '/opt/ros/%s' % rosdistro_name,
-        '/tmp/catkin_workspace/install_isolated',
+        '/tmp/ws/install_isolated',
     ]
     cmd += \
-        ' --workspace-root /tmp/catkin_workspace_overlay' + \
+        ' --workspace-root /tmp/ws_overlay' + \
         ' --parent-result-space %s' % ' '.join(parent_result_spaces)
 }@
 CMD ["@cmd"]

@@ -61,9 +61,9 @@ ENTRYPOINT ["sh", "-c"]
 cmds = [
 'rosdep update',
 ]
-workspace_root = '/tmp/catkin_workspace'
+workspace_root = '/tmp/ws'
 if prerelease_overlay:
-    workspace_root += ' /tmp/catkin_workspace_overlay'
+    workspace_root += ' /tmp/ws_overlay'
 cmd = \
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/devel/create_devel_task_generator.py' + \

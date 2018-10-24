@@ -52,7 +52,7 @@ if pull_request:
 @(SNIPPET(
     'scm',
     repo_spec=source_repo_spec,
-    path='catkin_workspace/src/%s' % source_repo_spec.name,
+    path='ws/src/%s' % source_repo_spec.name,
     git_ssh_credential_id=git_ssh_credential_id,
 ))@
 @[else]@
@@ -61,7 +61,7 @@ if pull_request:
     url=source_repo_spec.url,
     refspec='+refs/pull/*:refs/remotes/origin/pr/*',
     branch_name='${sha1}',
-    relative_target_dir='catkin_workspace/src/%s' % source_repo_spec.name,
+    relative_target_dir='ws/src/%s' % source_repo_spec.name,
     git_ssh_credential_id=git_ssh_credential_id,
     merge_branch=source_repo_spec.version,
 ))@
@@ -158,7 +158,7 @@ if pull_request:
         ' -e=TRAVIS=$TRAVIS' +
         ' -e=ROS_BUILDFARM_PULL_REQUEST_BRANCH=$ROS_BUILDFARM_PULL_REQUEST_BRANCH' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace:ro' +
+        ' -v $WORKSPACE/ws:/tmp/ws:ro' +
         ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
         ' -v $WORKSPACE/docker_build_and_test:/tmp/docker_build_and_test' +
         (' -v $HOME/.ssh/known_hosts:/etc/ssh/ssh_known_hosts:ro' +
@@ -190,7 +190,7 @@ if pull_request:
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
+        ' -v $WORKSPACE/ws:/tmp/ws' +
         ' -v ~/.ccache:/home/buildfarm/.ccache' +
         ' devel_build_and_install.%s_%s' % (rosdistro_name, source_repo_spec.name.lower()),
         'cd -',  # restore pwd when used in scripts
@@ -218,7 +218,7 @@ if pull_request:
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
+        ' -v $WORKSPACE/ws:/tmp/ws' +
         ' -v ~/.ccache:/home/buildfarm/.ccache' +
         ' devel_build_and_test.%s_%s' % (rosdistro_name, source_repo_spec.name.lower()),
         'cd -',  # restore pwd when used in scripts
@@ -230,9 +230,9 @@ if pull_request:
     script='\n'.join([
         'if [ "$skip_cleanup" = "false" ]; then',
         'echo "# BEGIN SECTION: Clean up to save disk space on agents"',
-        'rm -fr catkin_workspace/build_isolated',
-        'rm -fr catkin_workspace/devel_isolated',
-        'rm -fr catkin_workspace/install_isolated',
+        'rm -fr ws/build_isolated',
+        'rm -fr ws/devel_isolated',
+        'rm -fr ws/install_isolated',
         'echo "# END SECTION"',
         'fi',
     ]),
@@ -256,7 +256,7 @@ if pull_request:
 ))@
 @(SNIPPET(
     'publisher_xunit',
-    pattern='catkin_workspace/test_results/**/*.xml',
+    pattern='ws/test_results/**/*.xml',
 ))@
 @[if (not pull_request) and collate_test_stats]@
 @(SNIPPET(

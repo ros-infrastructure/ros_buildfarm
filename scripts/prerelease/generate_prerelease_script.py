@@ -165,7 +165,7 @@ def main(argv=sys.argv[1:]):
             })
         repositories[repo_name] = source_repo
 
-    scms = [(repositories[k], 'catkin_workspace/src/%s' % k)
+    scms = [(repositories[k], 'ws/src/%s' % k)
             for k in sorted(repositories.keys())]
 
     # collect all template snippets of specific types
@@ -236,13 +236,13 @@ def main(argv=sys.argv[1:]):
         # used by:
         # - create_devel_task_generator.py needs to find packages in both
         # the underlay as well as the overlay workspace
-        # - catkin_make_isolated_and_test.py needs to source the environment of
+        # - build_and_test.py needs to source the environment of
         # the underlay before building the overlay
-        mount_volume = '-v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace'
+        mount_volume = '-v $WORKSPACE/ws:/tmp/ws'
         if mount_volume in script:
             script = script.replace(
                 mount_volume, mount_volume + ':ro ' + '-v $WORKSPACE/' +
-                'catkin_workspace_overlay:/tmp/catkin_workspace_overlay')
+                'ws_overlay:/tmp/ws_overlay')
 
         # relocate all docker files
         docker_path = '$WORKSPACE/docker_'

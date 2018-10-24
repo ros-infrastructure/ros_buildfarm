@@ -161,7 +161,7 @@ def main(argv=sys.argv[1:]):
         os.path.join(os.path.dirname(__file__), '..', '..'))
     print('Mount the following volumes when running the container:')
     print('  -v %s:/tmp/ros_buildfarm:ro' % ros_buildfarm_basepath)
-    print('  -v %s:/tmp/catkin_workspace' % args.workspace_root[-1])
+    print('  -v %s:/tmp/ws' % args.workspace_root[-1])
 
 
 def get_dependencies(pkgs, label, get_dependencies_callback):

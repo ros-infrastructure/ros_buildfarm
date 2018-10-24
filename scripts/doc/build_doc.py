@@ -21,11 +21,11 @@ import sys
 
 from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.catkin_workspace import call_catkin_make_isolated
-from ros_buildfarm.catkin_workspace import clean_workspace
-from ros_buildfarm.catkin_workspace import ensure_workspace_exists
 from ros_buildfarm.common import Scope
 from ros_buildfarm.rosdoc_index import RosdocIndex
 from ros_buildfarm.rosdoc_lite import get_generator_output_folders
+from ros_buildfarm.workspace import clean_workspace
+from ros_buildfarm.workspace import ensure_workspace_exists
 
 import yaml
 

@@ -32,7 +32,7 @@ matrix:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - . /opt/ros/indigo/setup.sh
         - . job.sh -y
-        - (exit $catkin_test_results_RC)
+        - (exit $test_result_RC)
     - language: python
       python: "3.6"
       sudo: required
@@ -81,7 +81,7 @@ matrix:
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
         - . /opt/ros/indigo/setup.sh
         - . prerelease.sh -y
-        - (exit $catkin_test_results_RC_underlay) && (exit $catkin_test_results_RC_overlay)
+        - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
       python: "3.6"
       sudo: required
@@ -93,7 +93,7 @@ matrix:
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
-        - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm catkin_workspace/src/ros_buildfarm
+        - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm ws/src/ros_buildfarm
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
         - ./prerelease.sh -y
     - language: python
@@ -131,7 +131,7 @@ matrix:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - . /opt/ros/indigo/setup.sh
         - . job.sh -y
-        - (exit $catkin_test_results_RC)
+        - (exit $test_result_RC)
     - language: python
       python: "3.5"
       sudo: required
@@ -180,7 +180,7 @@ matrix:
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
         - . /opt/ros/indigo/setup.sh
         - . prerelease.sh -y
-        - (exit $catkin_test_results_RC_underlay) && (exit $catkin_test_results_RC_overlay)
+        - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
       python: "3.5"
       sudo: required
@@ -192,7 +192,7 @@ matrix:
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
-        - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm catkin_workspace/src/ros_buildfarm
+        - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm ws/src/ros_buildfarm
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
         - ./prerelease.sh -y
     - language: python
@@ -230,7 +230,7 @@ matrix:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - . /opt/ros/indigo/setup.sh
         - . job.sh -y
-        - (exit $catkin_test_results_RC)
+        - (exit $test_result_RC)
     - language: python
       python: "3.4"
       sudo: required
@@ -279,7 +279,7 @@ matrix:
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
         - . /opt/ros/indigo/setup.sh
         - . prerelease.sh -y
-        - (exit $catkin_test_results_RC_underlay) && (exit $catkin_test_results_RC_overlay)
+        - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
       python: "3.4"
       sudo: required
@@ -291,7 +291,7 @@ matrix:
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
-        - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm catkin_workspace/src/ros_buildfarm
+        - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm ws/src/ros_buildfarm
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
         - ./prerelease.sh -y
     - language: python
@@ -329,7 +329,7 @@ matrix:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - . /opt/ros/indigo/setup.sh
         - . job.sh -y
-        - (exit $catkin_test_results_RC)
+        - (exit $test_result_RC)
     - language: python
       python: "2.7"
       sudo: required
@@ -381,7 +381,7 @@ matrix:
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
         - . /opt/ros/indigo/setup.sh
         - . prerelease.sh -y
-        - (exit $catkin_test_results_RC_underlay) && (exit $catkin_test_results_RC_overlay)
+        - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
       python: "2.7"
       sudo: required
@@ -396,7 +396,7 @@ matrix:
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
-        - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm catkin_workspace/src/ros_buildfarm
+        - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm ws/src/ros_buildfarm
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
         - ./prerelease.sh -y
     - language: python

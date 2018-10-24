@@ -63,14 +63,14 @@ one to perform the *build-and-test* task.
 Build and install
 ^^^^^^^^^^^^^^^^^
 
-This task is performed by the script *catkin_make_isolated_and_install.py*.
+This task is performed by the script *build_and_install.py*.
 The environment will only contain the *build* dependencies declared by the
 packages in the source repository.
 
 The task performs the following steps:
 
 * The content of the source repository is expected to be available in the
-  folder *catkin_workspace/src*.
+  folder *ws/src*.
 * Removes any *build*, *devel* and *install* folders left over from previous
   runs.
 * Invokes
@@ -90,20 +90,20 @@ The task performs the following steps:
 Build and test
 ^^^^^^^^^^^^^^
 
-This task is performed by the script *catkin_make_isolated_and_test.py*.
+This task is performed by the script *build_and_test.py*.
 The environment will only contain the *build*, *run* and *test* dependencies
 declared by the packages in the source repository.
 
 The task performs the following steps:
 
 * The content of the source repository is expected to be available in the
-  folder *catkin_workspace/src*.
+  folder *ws/src*.
 * Invokes
 
-  ``catkin_make_isolated --cmake-args -DCATKIN_ENABLE_TESTING=1 -DCATKIN_SKIP_TESTING=0 -DCATKIN_TEST_RESULTS_DIR=path/to/catkin_workspace/test_results --catkin-make-args -j1 run_tests``.
+  ``catkin_make_isolated --cmake-args -DCATKIN_ENABLE_TESTING=1 -DCATKIN_SKIP_TESTING=0 -DCATKIN_TEST_RESULTS_DIR=path/to/ws/test_results --catkin-make-args -j1 run_tests``.
 
   The XUnit test results for each package will be created in the subfolder
-  *test_results* in the catkin workspace and be shown by Jenkins.
+  *test_results* in the workspace and be shown by Jenkins.
 
 
 Known limitations
@@ -192,8 +192,8 @@ The following .travis.yml template is a good starting point and is ready to be u
     # run devel job for a ROS repository with the same name as this repo
     - export REPOSITORY_NAME=`basename $TRAVIS_BUILD_DIR`
     # use the code already checked out by Travis
-    - mkdir -p $JOB_PATH/catkin_workspace/src
-    - cp -R $TRAVIS_BUILD_DIR $JOB_PATH/catkin_workspace/src/
+    - mkdir -p $JOB_PATH/ws/src
+    - cp -R $TRAVIS_BUILD_DIR $JOB_PATH/ws/src/
     # generate the script to run a devel job for that target and repo
     - generate_devel_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > $JOB_PATH/devel_job.sh
     - cd $JOB_PATH
@@ -202,7 +202,7 @@ The following .travis.yml template is a good starting point and is ready to be u
     - sh devel_job.sh -y
   script:
     # get summary of test results
-    - /tmp/catkin/bin/catkin_test_results $JOB_PATH/catkin_workspace/test_results --all
+    - /tmp/catkin/bin/catkin_test_results $JOB_PATH/ws/test_results --all
   notifications:
     email: false
 

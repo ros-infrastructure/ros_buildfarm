@@ -18,14 +18,14 @@ import argparse
 import sys
 
 from ros_buildfarm.catkin_workspace import call_catkin_make_isolated
-from ros_buildfarm.catkin_workspace import clean_workspace
-from ros_buildfarm.catkin_workspace import ensure_workspace_exists
 from ros_buildfarm.common import Scope
+from ros_buildfarm.workspace import clean_workspace
+from ros_buildfarm.workspace import ensure_workspace_exists
 
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
-        description="Invoke 'catkin_make_isolated --install' on a workspace")
+        description='Invoke the build tool on a workspace')
     parser.add_argument(
         '--rosdistro-name',
         required=True,
