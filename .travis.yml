@@ -4,7 +4,7 @@ python:
 sudo: false
 env:
   global:
-    - CONFIG_URL=https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+    - CONFIG_URL=https://raw.githubusercontent.com/ros2/ros_buildfarm_config/build_tool_and_ros_version/index.yaml
     - ROS_DISTRO_NAME=bouncy
     - OS_NAME=ubuntu
     - OS_CODE_NAME=bionic
