@@ -55,16 +55,15 @@ class BuildFile(object):
             assert isinstance(self.tag_blacklist, list)
 
         self.targets = {}
-        if 'targets' in data:
-            for os_name in data['targets'].keys():
-                if os_name == '_config':
-                    continue
-                self.targets[os_name] = {}
-                for os_code_name in data['targets'][os_name].keys():
-                    self.targets[os_name][os_code_name] = {}
-                    for arch in data['targets'][os_name][os_code_name].keys():
-                        self.targets[os_name][os_code_name][arch] = \
-                            data['targets'][os_name][os_code_name][arch]
+        for os_name in data.get('targets', {}).keys():
+            if os_name == '_config':
+                continue
+            self.targets[os_name] = {}
+            for os_code_name in data['targets'][os_name].keys():
+                self.targets[os_name][os_code_name] = {}
+                for arch in data['targets'][os_name][os_code_name].keys():
+                    self.targets[os_name][os_code_name][arch] = \
+                        data['targets'][os_name][os_code_name][arch]
 
     def filter_distribution_files_by_tags(self, dist_files):
         res = []
