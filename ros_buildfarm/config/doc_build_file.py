@@ -46,19 +46,23 @@ class DocBuildFile(BuildFile):
 
         super(DocBuildFile, self).__init__(name, data)
 
-        # ensure that a single target is specified
-        assert len(self.targets) == 1
-        os_name = list(self.targets.keys())[0]
-        assert len(self.targets[os_name]) == 1
-        os_code_name = list(self.targets[os_name].keys())[0]
-        assert len(self.targets[os_name][os_code_name]) == 1
-
         self.documentation_type = DOC_TYPE_ROSDOC
         if 'documentation_type' in data:
             assert data['documentation_type'] in DOC_TYPES, \
                 ("Doc build file for '%s' has unknown documentation type " +
                  "'%s'") % (self.name, data['documentation_type'])
             self.documentation_type = data['documentation_type']
+
+        if self.documentation_type != DOC_TYPE_DOCKER:
+            # ensure that a single target is specified
+            assert len(self.targets) == 1
+            os_name = list(self.targets.keys())[0]
+            assert len(self.targets[os_name]) == 1
+            os_code_name = list(self.targets[os_name].keys())[0]
+            assert len(self.targets[os_name][os_code_name]) == 1
+        else:
+            # ensure no target has been specified
+            assert len(self.targets) == 0
 
         # repository keys and urls can only be used with doc type rosdoc
         is_rosdoc_type = self.documentation_type == DOC_TYPE_ROSDOC
@@ -128,7 +132,7 @@ class DocBuildFile(BuildFile):
                 bool(data['skip_ignored_repositories'])
 
         self.custom_rosdep_urls = []
-        if '_config' in data['targets']:
+        if 'targets' in data and '_config' in data['targets']:
             if 'custom_rosdep_urls' in data['targets']['_config']:
                 self.custom_rosdep_urls = \
                     data['targets']['_config']['custom_rosdep_urls']
