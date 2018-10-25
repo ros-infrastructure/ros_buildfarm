@@ -98,8 +98,13 @@ A set of options which can be used in any build file.
   The OS names and OS code names specified must be listed as a
   *release platform* in the corresponding rosdistro distribution file.
 
-  A doc build file must only contain a single target.
+  A doc build file of **rosdoc_lite**, **released_manifest** or **make_target**
+  documentation type can only be built for a single target and thus it must not
+  specificy more than one.
 
+  A doc build file of **docker_build** documentation type is built for the
+  platform the associated docker image is based on, therefore no targets can
+  be specified.
 
 Description of common options
 -----------------------------
@@ -300,9 +305,14 @@ The following options are valid in version ``2`` (beside the generic options):
   * ``make_target``: Invokes ``make html`` in the ``doc`` subdirectory for a
     set of repositories. See ``doc_repositories`` to configure the
     repositories.
+  * ``docker_build``: Commits documentation content to be pushed to an
+    ``upload_repository_url`` generated from a set of repositories by
+    running Docker containers provided by each. See ``doc_repositories``
+    to configure the repositories. See *doc* jobs documentation to learn
+    about the expected Dockerfile structure.
 
-* ``doc_repositories``: a list of repository URLs (only used with the
-  ``documentation_type`` set to ``make_target``).
+* ``doc_repositories``: a list of repository URLs (used when the
+  ``documentation_type`` is set to ``make_target`` or ``docker_build``).
 * ``jenkins_job_priority``: the job priority of *doc* jobs.
 * ``jenkins_job_label``: the label expression for both *doc* jobs (default:
   ``buildagent || <ROSDISTRO_NAME>_doc_<BUILD_FILE_NAME>``).
@@ -337,8 +347,14 @@ The following options are valid in version ``2`` (beside the generic options):
   whitelisted) repositories should not be generated (default: ``false``) (only
   allowed if ``released_packages`` is ``false``).
 
+The following options are valid for all ``documentation_type`` values:
+
 * ``upload_credential_id``: the ID of the credential to upload the built
   packages to the repository host.
+
+The following options are valid for ``documentation_type`` values other
+than ``docker_build``:
+
 * ``upload_host``: The hostname to use to rsync the resultant files.
   This should match the config ``upload::docs::host`` in the buildfarm_deployment_config.
   The default is ``repo``.
@@ -348,6 +364,12 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``upload_user``: The username to use to rsync the resultant files.
   This should match the config ``upload::docs::user`` in the buildfarm_deployment_config.
   The default is ``jenkins-agent``
+
+The following options are valid when ``documentation_type`` is set to
+``docker_build``:
+
+* ``upload_repository_url``: The URL of the git repository to push resultant
+  files to.
 
 The following options are valid as keys in the ``_config`` dict under
 ``targets``:

@@ -33,7 +33,8 @@ Each *doc build files* can have one of four specific documentation types:
 
 * the **docker_build** type also operates on independent repositories.
   For each *doc build file* with that type a Jenkins job is created.
-  Each repository must provide its own Dockerfile below `docker/image/` (Example: [ros2/rosindex](https://github.com/ros2/rosindex/tree/ros2/docker/image)),
+  Each repository must provide its own Dockerfile below `docker/image/`
+  (Example: [ros2/rosindex](https://github.com/ros2/rosindex/tree/ros2/docker/image)),
   taking and enforcing *user* and *uid* arguments appropriately.
   Provided containers are expected to **generate and commit** content to
   the upload git repository mounted at $SITE when run with no arguments,
