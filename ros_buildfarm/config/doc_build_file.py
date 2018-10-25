@@ -132,7 +132,7 @@ class DocBuildFile(BuildFile):
                 bool(data['skip_ignored_repositories'])
 
         self.custom_rosdep_urls = []
-        if 'targets' in data and '_config' in data['targets']:
+        if '_config' in data.get('targets', {}):
             if 'custom_rosdep_urls' in data['targets']['_config']:
                 self.custom_rosdep_urls = \
                     data['targets']['_config']['custom_rosdep_urls']
