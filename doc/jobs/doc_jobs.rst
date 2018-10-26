@@ -8,7 +8,7 @@ information from the package manifests.
 Different types of documentation
 --------------------------------
 
-Each *doc build files* can have one of three specific documentation types:
+Each *doc build files* can have one of four specific documentation types:
 
 * the **rosdoc_lite** type operates on doc repositories.
   For each *doc build file* with that type a separate Jenkins view is created.
@@ -30,6 +30,15 @@ Each *doc build files* can have one of three specific documentation types:
   For each repository a simple **make doc** command is executed which must
   honor an environment variable identifying the destination of the generated
   documentation.
+
+* the **docker_build** type also operates on independent repositories.
+  For each *doc build file* with that type a Jenkins job is created.
+  Each repository must provide its own Dockerfile below `docker/image/`
+  (Example: [ros-infrastructure/rosindex](https://github.com/ros-infrastructure/rosindex/tree/ros2/docker/image)),
+  taking and enforcing *user* and *uid* arguments appropriately.
+  Provided containers are expected to **generate and commit** content to
+  the upload git repository mounted at $SITE when run with no arguments,
+  potentially using their own repository content mounted at $REPO.
 
 There is no specific diagram showing the correlation between the various
 scripts and templates but they follow the same naming scheme as the *release*
@@ -69,11 +78,12 @@ configuration:
     information from all releases packages matching the criteria from the
     *doc build file*.
 
-* related to the **make_target** type:
+* related to the **make_target** and **docker_build** types:
 
-  * **generate_doc_independent_job.py** generates a job which invokes a custom
-    *doc* target on all repositories listed in the *doc build file*.
-
+  * **generate_doc_independent_job.py** generates a job which either invokes
+    a custom *doc* target on all repositories listed in the *doc build file*
+    OR runs source-side containers as provided by each repository listed in
+    the same file, respectively.
 
 The build process in detail
 ---------------------------

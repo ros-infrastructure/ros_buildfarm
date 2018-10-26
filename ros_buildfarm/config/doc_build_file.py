@@ -17,7 +17,10 @@ from .build_file import BuildFile
 DOC_TYPE_ROSDOC = 'rosdoc_lite'
 DOC_TYPE_MANIFEST = 'released_manifest'
 DOC_TYPE_MAKE = 'make_target'
-DOC_TYPES = [DOC_TYPE_ROSDOC, DOC_TYPE_MANIFEST, DOC_TYPE_MAKE]
+DOC_TYPE_DOCKER = 'docker_build'
+DOC_TYPES = [
+    DOC_TYPE_ROSDOC, DOC_TYPE_MANIFEST, DOC_TYPE_MAKE, DOC_TYPE_DOCKER
+]
 
 
 class DocBuildFile(BuildFile):
@@ -43,19 +46,23 @@ class DocBuildFile(BuildFile):
 
         super(DocBuildFile, self).__init__(name, data)
 
-        # ensure that a single target is specified
-        assert len(self.targets) == 1
-        os_name = list(self.targets.keys())[0]
-        assert len(self.targets[os_name]) == 1
-        os_code_name = list(self.targets[os_name].keys())[0]
-        assert len(self.targets[os_name][os_code_name]) == 1
-
         self.documentation_type = DOC_TYPE_ROSDOC
         if 'documentation_type' in data:
             assert data['documentation_type'] in DOC_TYPES, \
                 ("Doc build file for '%s' has unknown documentation type " +
                  "'%s'") % (self.name, data['documentation_type'])
             self.documentation_type = data['documentation_type']
+
+        if self.documentation_type != DOC_TYPE_DOCKER:
+            # ensure that a single target is specified
+            assert len(self.targets) == 1
+            os_name = list(self.targets.keys())[0]
+            assert len(self.targets[os_name]) == 1
+            os_code_name = list(self.targets[os_name].keys())[0]
+            assert len(self.targets[os_name][os_code_name]) == 1
+        else:
+            # ensure no target has been specified
+            assert len(self.targets) == 0
 
         # repository keys and urls can only be used with doc type rosdoc
         is_rosdoc_type = self.documentation_type == DOC_TYPE_ROSDOC
@@ -72,9 +79,10 @@ class DocBuildFile(BuildFile):
             self.doc_repositories = data['doc_repositories']
             assert isinstance(self.doc_repositories, list)
 
-        # doc_repositories can only be used with doc type make_target
-        is_make_target_type = self.documentation_type == DOC_TYPE_MAKE
-        assert not self.doc_repositories or is_make_target_type
+        # doc_repositories can only be used with make_target and docker_build
+        # doc types
+        if self.documentation_type not in (DOC_TYPE_MAKE, DOC_TYPE_DOCKER):
+            assert not self.doc_repositories
 
         self.jenkins_job_label = None
         if 'jenkins_job_label' in data:
@@ -124,7 +132,7 @@ class DocBuildFile(BuildFile):
                 bool(data['skip_ignored_repositories'])
 
         self.custom_rosdep_urls = []
-        if '_config' in data['targets']:
+        if '_config' in data.get('targets', {}):
             if 'custom_rosdep_urls' in data['targets']['_config']:
                 self.custom_rosdep_urls = \
                     data['targets']['_config']['custom_rosdep_urls']
@@ -140,6 +148,12 @@ class DocBuildFile(BuildFile):
         self.upload_user = data.get('upload_user', 'jenkins-agent')
         self.upload_host = data.get('upload_host', 'repo')
         self.upload_root = data.get('upload_root', '/var/repos/docs')
+        if self.documentation_type == DOC_TYPE_DOCKER:
+            assert 'upload_repository_url' in data
+            self.upload_repository_url = data['upload_repository_url']
+            self.upload_repository_branch = data.get(
+                'upload_repository_branch', 'gh-pages'
+            )
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']
 

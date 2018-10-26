@@ -407,7 +407,6 @@ def configure_doc_independent_job(
 
 def _get_doc_independent_job_config(
         config, config_url, doc_build_name, build_file):
-    template_name = 'doc/doc_independent_job.xml.em'
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config=config)
@@ -426,15 +425,30 @@ def _get_doc_independent_job_config(
         'doc_build_name': doc_build_name,
         'repository_args': repository_args,
 
-        'upload_user': build_file.upload_user,
-        'upload_host': build_file.upload_host,
-        'upload_root': build_file.upload_root,
-
         'notify_emails': build_file.notify_emails,
 
         'timeout_minutes': build_file.jenkins_job_timeout,
-
-        'credential_id': build_file.upload_credential_id,
     }
+
+    if build_file.documentation_type == 'make_target':
+        template_name = 'doc/doc_independent_job.xml.em'
+        job_data.update({
+            'upload_user': build_file.upload_user,
+            'upload_host': build_file.upload_host,
+            'upload_root': build_file.upload_root,
+            'credential_id': build_file.upload_credential_id
+        })
+    elif build_file.documentation_type == 'docker_build':
+        template_name = 'doc/doc_independent_docker_job.xml.em'
+        job_data.update({
+            'upload_repository_url': build_file.upload_repository_url,
+            'upload_repository_branch': build_file.upload_repository_branch,
+            'upload_credential_id': build_file.upload_credential_id,
+        })
+    else:
+        raise JobValidationError(
+            'Not independent documentation_type: ' +
+            build_file.documentation_type
+        )
     job_config = expand_template(template_name, job_data)
     return job_config

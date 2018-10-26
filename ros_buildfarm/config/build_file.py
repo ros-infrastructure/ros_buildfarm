@@ -54,9 +54,8 @@ class BuildFile(object):
             self.tag_blacklist = data['tag_blacklist']
             assert isinstance(self.tag_blacklist, list)
 
-        assert 'targets' in data
         self.targets = {}
-        for os_name in data['targets'].keys():
+        for os_name in data.get('targets', {}).keys():
             if os_name == '_config':
                 continue
             self.targets[os_name] = {}

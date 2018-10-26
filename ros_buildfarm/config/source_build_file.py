@@ -38,6 +38,8 @@ class SourceBuildFile(BuildFile):
 
         super(SourceBuildFile, self).__init__(name, data)
 
+        assert len(self.targets) > 0
+
         self.jenkins_commit_job_priority = None
         if 'jenkins_commit_job_priority' in data:
             self.jenkins_commit_job_priority = \

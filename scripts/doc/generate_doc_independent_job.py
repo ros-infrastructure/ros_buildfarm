@@ -24,6 +24,7 @@ from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_dry_run
 from ros_buildfarm.config import get_global_doc_build_files
 from ros_buildfarm.config import get_index
+from ros_buildfarm.config.doc_build_file import DOC_TYPE_DOCKER
 from ros_buildfarm.config.doc_build_file import DOC_TYPE_MAKE
 from ros_buildfarm.doc_job import configure_doc_independent_job
 
@@ -40,7 +41,7 @@ def main(argv=sys.argv[1:]):
     build_files = get_global_doc_build_files(config)
     build_file = build_files[args.doc_build_name]
 
-    if build_file.documentation_type != DOC_TYPE_MAKE:
+    if build_file.documentation_type not in (DOC_TYPE_MAKE, DOC_TYPE_DOCKER):
         print(("The doc build file '%s' has the wrong documentation type to " +
                "be used with this script") % args.doc_build_name,
               file=sys.stderr)
