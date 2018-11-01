@@ -1,4 +1,4 @@
-    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@@1.39.0">
+    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@@1.42.0">
       <spec/>
       <latestVersion>3</latestVersion>
       <configVersion>3</configVersion>

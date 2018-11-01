@@ -1,4 +1,4 @@
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.28.0">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.29.3">
       <projectUrl>@ESCAPE(project_url)</projectUrl>
       <displayName/>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
