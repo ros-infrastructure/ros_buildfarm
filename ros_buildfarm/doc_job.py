@@ -307,6 +307,7 @@ def _get_doc_job_config(
         'os_name': os_name,
         'os_code_name': os_code_name,
         'arch': arch,
+        'build_tool': build_file.build_tool,
         'repository_args': repository_args,
 
         'upload_user': build_file.upload_user,

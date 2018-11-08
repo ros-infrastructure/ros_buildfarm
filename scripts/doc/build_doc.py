@@ -19,13 +19,14 @@ import os
 import subprocess
 import sys
 
+from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_output_dir
-from ros_buildfarm.catkin_workspace import call_catkin_make_isolated
-from ros_buildfarm.catkin_workspace import clean_workspace
-from ros_buildfarm.catkin_workspace import ensure_workspace_exists
 from ros_buildfarm.common import Scope
 from ros_buildfarm.rosdoc_index import RosdocIndex
 from ros_buildfarm.rosdoc_lite import get_generator_output_folders
+from ros_buildfarm.workspace import call_build_tool
+from ros_buildfarm.workspace import clean_workspace
+from ros_buildfarm.workspace import ensure_workspace_exists
 
 import yaml
 
@@ -46,6 +47,7 @@ def main(argv=sys.argv[1:]):
         '--arch',
         required=True,
         help="The architecture (e.g. 'amd64')")
+    add_argument_build_tool(parser, required=True)
     parser.add_argument(
         '--workspace-root',
         required=True,
@@ -78,10 +80,11 @@ def main(argv=sys.argv[1:]):
     clean_workspace(args.workspace_root)
 
     with Scope('SUBSECTION', 'build workspace in isolation and install'):
-        rc = call_catkin_make_isolated(
-            args.rosdistro_name, args.workspace_root,
-            ['--install', '--cmake-args', '-DCATKIN_SKIP_TESTING=1',
-             '--catkin-make-args', '-j1'])
+        env = dict(os.environ)
+        env['MAKEFLAGS'] = '-j1'
+        rc = call_build_tool(
+            args.build_tool, args.rosdistro_name, args.workspace_root,
+            cmake_args=['-DCATKIN_SKIP_TESTING=1'], install=True, env=env)
     # TODO compile error should still allow to generate doc from static parts
     if rc:
         return rc

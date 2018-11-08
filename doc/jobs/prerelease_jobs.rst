@@ -106,12 +106,14 @@ scripts which can be invoked manually in the same order:
   workspace.
 * ``prerelease_build_underlay.py`` runs the *build-and-install* task as well as
   the *build-and-test* task on the underlay workspace.
-  It also invokes the tool ``catkin_test_results --all`` to output a
-  summary of all tests in the underlay workspace.
+  It also invokes the tool ``catkin_test_results --all`` /
+  ``colcon test-result --all`` to output a summary of all tests in the underlay
+  workspace.
 * ``prerelease_build_overlay.py`` runs the *build-and-test* task on the overlay
   workspace.
-  It also invokes the tool ``catkin_test_results --all`` to output a
-  summary of all tests in the overlay workspace.
+  It also invokes the tool ``catkin_test_results --all`` /
+  ``colcon test-result --all`` to output a summary of all tests in the overlay
+  workspace.
 
 Run the *prerelease* job on Travis
 ----------------------------------
@@ -148,7 +150,7 @@ The following commands are all it takes to run a prerelease job for a custom rep
 .. code:: sh
 
   mkdir /tmp/prerelease && cd /tmp/prerelease
-  git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm catkin_workspace/src/ros_buildfarm
+  git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm ws/src/ros_buildfarm
   generate_prerelease_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml kinetic default ubuntu xenial amd64 --output-dir .
   # the argument -y suppresses the question if you want to continue with content already present in the workspace
   ./prerelease.sh -y

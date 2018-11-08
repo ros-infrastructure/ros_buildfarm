@@ -20,12 +20,13 @@ echo ""
 
 @(TEMPLATE(
     'devel/devel_script_test_results.sh.em',
-    workspace_path='catkin_workspace',
+    build_tool=build_tool,
+    workspace_path='ws',
 ))@
-catkin_test_results_RC_underlay=$catkin_test_results_RC
-unset catkin_test_results_RC
+test_result_RC_underlay=$test_result_RC
+unset test_result_RC
 if [ -n "$ABORT_ON_TEST_FAILURE_UNDERLAY" -a \
   "$ABORT_ON_TEST_FAILURE_UNDERLAY" != "0" ]
 then
-  (exit $catkin_test_results_RC_underlay)
+  (exit $test_result_RC_underlay)
 fi

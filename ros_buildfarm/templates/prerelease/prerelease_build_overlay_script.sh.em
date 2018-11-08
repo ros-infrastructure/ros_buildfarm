@@ -14,25 +14,26 @@ fi
     scripts=overlay_scripts,
 ))@
 
-if [ -d "$WORKSPACE/catkin_workspace_overlay/test_results" ]; then
+if [ -d "$WORKSPACE/ws_overlay/test_results" ]; then
     echo ""
     echo "Test results of overlay workspace"
     echo ""
 
     @(TEMPLATE(
         'devel/devel_script_test_results.sh.em',
-        workspace_path='catkin_workspace_overlay',
+        build_tool=build_tool,
+        workspace_path='ws_overlay',
     ))@
-    catkin_test_results_RC_overlay=$catkin_test_results_RC
-    unset catkin_test_results_RC
+    test_result_RC_overlay=$test_result_RC
+    unset test_result_RC
     if [ -n "$ABORT_ON_TEST_FAILURE_OVERLAY" -a \
       "$ABORT_ON_TEST_FAILURE_OVERLAY" != "0" ]
     then
-      (exit $catkin_test_results_RC_overlay)
+      (exit $test_result_RC_overlay)
     fi
 else
     echo ""
     echo "No test results in overlay workspace"
     echo ""
-    catkin_test_results_RC_overlay=0
+    test_result_RC_overlay=0
 fi

@@ -47,7 +47,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @(SNIPPET(
     'scm',
     repo_spec=doc_repo_spec,
-    path='catkin_workspace/src/%s' % doc_repo_spec.name,
+    path='ws/src/%s' % doc_repo_spec.name,
     git_ssh_credential_id=git_ssh_credential_id,
 ))@
   <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
@@ -161,6 +161,7 @@ else:
         ' ' + os_name +
         ' ' + os_code_name +
         ' ' + arch +
+        ' --build-tool ' + build_tool +
         ' --vcs-info "%s %s %s"' % (doc_repo_spec.type, doc_repo_spec.version if doc_repo_spec.version is not None else '', doc_repo_spec.url) +
         ' ' + ' '.join(repository_args) +
         ' $FORCE_FLAG' +
@@ -186,7 +187,7 @@ else:
         ' -v $WORKSPACE/rosdoc_lite:/tmp/rosdoc_lite:ro' +
         ' -v $WORKSPACE/catkin-sphinx:/tmp/catkin-sphinx:ro' +
         ' -v $WORKSPACE/rosdoc_index:/tmp/rosdoc_index:ro' +
-        ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
+        ' -v $WORKSPACE/ws:/tmp/ws' +
         ' -v $WORKSPACE/generated_documentation:/tmp/generated_documentation' +
         ' -v $WORKSPACE/docker_doc:/tmp/docker_doc' +
         hgcache_mount_arg +
@@ -222,7 +223,7 @@ else:
         ' -v $WORKSPACE/rosdoc_lite:/tmp/rosdoc_lite:ro' +
         ' -v $WORKSPACE/catkin-sphinx:/tmp/catkin-sphinx:ro' +
         ' -v $WORKSPACE/rosdoc_index:/tmp/rosdoc_index:ro' +
-        ' -v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace' +
+        ' -v $WORKSPACE/ws:/tmp/ws' +
         ' -v $WORKSPACE/generated_documentation:/tmp/generated_documentation' +
         ' doc.%s_%s' % (rosdistro_name, doc_repo_spec.name.lower()),
         'echo "# END SECTION"',
@@ -233,9 +234,9 @@ else:
     script='\n'.join([
         'if [ "$skip_cleanup" = "false" ]; then',
         'echo "# BEGIN SECTION: Clean up to save disk space on agents"',
-        'rm -fr catkin_workspace/build_isolated',
-        'rm -fr catkin_workspace/devel_isolated',
-        'rm -fr catkin_workspace/install_isolated',
+        'rm -fr ws/build_isolated',
+        'rm -fr ws/devel_isolated',
+        'rm -fr ws/install_isolated',
         'rm -fr catkin-sphinx',
         'rm -fr rosdoc_index',
         'rm -fr rosdoc_lite',

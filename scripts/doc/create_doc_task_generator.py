@@ -28,6 +28,7 @@ from apt import Cache
 from catkin_pkg.packages import find_packages
 
 from ros_buildfarm.argument import add_argument_build_name
+from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
@@ -106,6 +107,7 @@ def main(argv=sys.argv[1:]):
         '--arch',
         required=True,
         help="The architecture (e.g. 'amd64')")
+    add_argument_build_tool(parser, required=True)
     add_argument_vcs_information(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
@@ -523,6 +525,8 @@ def main(argv=sys.argv[1:]):
             # rosdoc_lite does not work without genmsg being importable
             get_debian_package_name(args.rosdistro_name, 'genmsg'),
         ]
+        if args.build_tool == 'colcon':
+            debian_pkg_names.append('python3-colcon-ros')
         if 'actionlib_msgs' in pkg_names:
             # to document actions in other packages in the same repository
             debian_pkg_names.append(
@@ -561,6 +565,7 @@ def main(argv=sys.argv[1:]):
             'os_name': args.os_name,
             'os_code_name': args.os_code_name,
             'arch': args.arch,
+            'build_tool': doc_build_file.build_tool,
 
             'distribution_repository_urls': args.distribution_repository_urls,
             'distribution_repository_keys': get_distribution_repository_keys(

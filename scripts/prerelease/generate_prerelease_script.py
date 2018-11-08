@@ -27,6 +27,7 @@ from em import Hook
 
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
+from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
@@ -53,6 +54,7 @@ def main(argv=sys.argv[1:]):
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
+    add_argument_build_tool(parser)
     add_argument_output_dir(parser, required=True)
 
     group = parser.add_argument_group(
@@ -165,7 +167,7 @@ def main(argv=sys.argv[1:]):
             })
         repositories[repo_name] = source_repo
 
-    scms = [(repositories[k], 'catkin_workspace/src/%s' % k)
+    scms = [(repositories[k], 'ws/src/%s' % k)
             for k in sorted(repositories.keys())]
 
     # collect all template snippets of specific types
@@ -175,7 +177,7 @@ def main(argv=sys.argv[1:]):
             Hook.__init__(self)
             self.scripts = []
 
-        def beforeInclude(self, *args, **kwargs):
+        def beforeInclude(self, *_, **kwargs):
             template_path = kwargs['file'].name
             if template_path.endswith('/snippet/builder_shell.xml.em'):
                 script = kwargs['locals']['script']
@@ -189,6 +191,10 @@ def main(argv=sys.argv[1:]):
                         'fi',
                     ]
                     script = '\n'.join(lines)
+                if args.build_tool and ' --build-tool ' in script:
+                    script = script.replace(
+                        ' --build-tool catkin_make_isolated',
+                        ' --build-tool ' + args.build_tool)
                 self.scripts.append(script)
 
     hook = IncludeHook()
@@ -196,11 +202,18 @@ def main(argv=sys.argv[1:]):
     templates.template_hooks = [hook]
 
     # use any source repo to pass to devel job template
+    if index.distributions[args.rosdistro_name].get('distribution_type', 'ros1') == 'ros1':
+        package_name = 'catkin'
+    elif index.distributions[args.rosdistro_name].get('distribution_type', 'ros1') == 'ros2':
+        package_name = 'ros_workspace'
+    else:
+        assert False, 'Unsupported ROS version ' + \
+            str(index.distributions[args.rosdistro_name].get('distribution_type', None))
     source_repository = deepcopy(
-        dist_file.repositories['catkin'].source_repository)
+        dist_file.repositories[package_name].source_repository)
     if not source_repository:
         print(("The repository '%s' does not have a source entry in the distribution " +
-               'file. We cannot generate a prerelease without a source entry.') % repo_name,
+               'file. We cannot generate a prerelease without a source entry.') % package_name,
               file=sys.stderr)
         return 1
     source_repository.name = 'prerelease'
@@ -236,13 +249,13 @@ def main(argv=sys.argv[1:]):
         # used by:
         # - create_devel_task_generator.py needs to find packages in both
         # the underlay as well as the overlay workspace
-        # - catkin_make_isolated_and_test.py needs to source the environment of
+        # - build_and_test.py needs to source the environment of
         # the underlay before building the overlay
-        mount_volume = '-v $WORKSPACE/catkin_workspace:/tmp/catkin_workspace'
+        mount_volume = '-v $WORKSPACE/ws:/tmp/ws'
         if mount_volume in script:
             script = script.replace(
                 mount_volume, mount_volume + ':ro ' + '-v $WORKSPACE/' +
-                'catkin_workspace_overlay:/tmp/catkin_workspace_overlay')
+                'ws_overlay:/tmp/ws_overlay')
 
         # relocate all docker files
         docker_path = '$WORKSPACE/docker_'
@@ -267,7 +280,8 @@ def main(argv=sys.argv[1:]):
         'ros_buildfarm_python_path': os.path.dirname(
             os.path.dirname(os.path.abspath(ros_buildfarm_file))),
         'python_executable': sys.executable,
-        'prerelease_script_path': os.path.dirname(os.path.abspath(__file__))})
+        'prerelease_script_path': os.path.dirname(os.path.abspath(__file__)),
+        'build_tool': args.build_tool or build_file.build_tool})
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)

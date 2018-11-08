@@ -61,7 +61,7 @@ cmds = [
     ' ' + config_url + \
     ' --rosdistro-name ' + rosdistro_name + \
     ' ' + doc_build_name + \
-    ' --workspace-root /tmp/catkin_workspace' + \
+    ' --workspace-root /tmp/ws' + \
     ' --rosdoc-lite-dir /tmp/rosdoc_lite' + \
     ' --catkin-sphinx-dir /tmp/catkin-sphinx' + \
     ' --rosdoc-index-dir /tmp/rosdoc_index' + \
@@ -69,6 +69,7 @@ cmds = [
     ' --os-name ' + os_name + \
     ' --os-code-name ' + os_code_name + \
     ' --arch ' + arch + \
+    ' --build-tool ' + build_tool + \
     ' --vcs-info "%s"' % vcs_info + \
     ' --distribution-repository-urls ' + ' '.join(distribution_repository_urls) + \
     ' --distribution-repository-key-files ' + ' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))]) + \

@@ -94,6 +94,9 @@ class DocBuildFile(BuildFile):
         if 'jenkins_job_timeout' in data:
             self.jenkins_job_timeout = int(data['jenkins_job_timeout'])
 
+        self.build_tool = data.get('build_tool', 'catkin_make_isolated')
+        assert self.build_tool in ('catkin_make_isolated', 'colcon')
+
         self.notify_committers = None
         if 'notifications' in data:
             if 'committers' in data['notifications']:

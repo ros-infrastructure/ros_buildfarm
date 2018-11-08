@@ -63,18 +63,35 @@ one to perform the *build-and-test* task.
 Build and install
 ^^^^^^^^^^^^^^^^^
 
-This task is performed by the script *catkin_make_isolated_and_install.py*.
+This task is performed by the script *build_and_install.py*.
 The environment will only contain the *build* dependencies declared by the
 packages in the source repository.
 
 The task performs the following steps:
 
 * The content of the source repository is expected to be available in the
-  folder *catkin_workspace/src*.
+  folder *ws/src*.
 * Removes any *build*, *devel* and *install* folders left over from previous
   runs.
-* Invokes
-  ``catkin_make_isolated --install -DCATKIN_SKIP_TESTING=1 --catkin-make-args -j1``.
+* Depending on the chosen build tool it invokes either of the two:
+
+  * ``catkin_make_isolated --install ...``
+  * ``colcon build --executor sequential --event-handlers console_direct+ ...``
+
+    The direct output allows the output to be streamed while it is progressing.
+    The sequential execution avoids interleaved output between packages.
+
+  Both commands use the environment variable ``MAKEFLAGS=-j1``.
+
+  The build is performed single threaded to achieve deterministic build results
+  (a different target order could break the build if it lacks correct target
+  dependencies).
+
+  Additionally the following CMake flags are being passed:
+  ``--cmake-args -DBUILD_TESTING=0 -DCATKIN_SKIP_TESTING=1``.
+
+  Since the CMake option ``BUILD_TESTING`` is enabled by default it is
+  explicitly disabled.
 
   Since the CMake option ``CATKIN_ENABLE_TESTING`` is not enabled explicitly
   the packages must neither configure any tests nor use any test-only
@@ -82,28 +99,39 @@ The task performs the following steps:
   The option ``CATKIN_SKIP_TESTING`` prevents CMake from failing if packages
   violate this restriction and only outputs a CMake warning instead.
 
-  The build is performed single threaded to achieve deterministic build results
-  (a different target order could break the build if it lacks correct target
-  dependencies) and make errors easier to read.
-
 
 Build and test
 ^^^^^^^^^^^^^^
 
-This task is performed by the script *catkin_make_isolated_and_test.py*.
+This task is performed by the script *build_and_test.py*.
 The environment will only contain the *build*, *run* and *test* dependencies
 declared by the packages in the source repository.
 
 The task performs the following steps:
 
 * The content of the source repository is expected to be available in the
-  folder *catkin_workspace/src*.
-* Invokes
+  folder *ws/src*.
+* Depending on the chosen build tool it invokes either of the two:
 
-  ``catkin_make_isolated --cmake-args -DCATKIN_ENABLE_TESTING=1 -DCATKIN_SKIP_TESTING=0 -DCATKIN_TEST_RESULTS_DIR=path/to/catkin_workspace/test_results --catkin-make-args -j1 run_tests``.
+  * ``catkin_make_isolated --catkin-make-args run_tests ...``
+  * ``colcon test --executor sequential --event-handlers console_direct+``
+
+    The direct output allows the output to be streamed while it is progressing.
+    The sequential execution avoids interleaved output between packages.
+
+  Both commands use the environment variable ``MAKEFLAGS=-j1``.
+
+  The tests are performed single threaded to achieve deterministic test results
+  (otherwise some tests might affect each other).
+
+  Additionally the following CMake flags are being passed to reenable tests and
+  determine the location of the test results:
+  ``--cmake-args -DCATKIN_ENABLE_TESTING=1 -DCATKIN_SKIP_TESTING=0 -DCATKIN_TEST_RESULTS_DIR=path/to/ws/test_results``.
+  For colcon the test result directory is additionally passed via
+  ``--test-result-base``
 
   The XUnit test results for each package will be created in the subfolder
-  *test_results* in the catkin workspace and be shown by Jenkins.
+  *test_results* in the workspace and be shown by Jenkins.
 
 
 Known limitations
@@ -128,8 +156,8 @@ packages ``catkin_pkg``, ``rosdistro``).
 
 When the generated script is being invoked in runs the *build-and-install* task
 as well as the *build-and-test* task in separate Docker containers.
-Additionally it invokes the tool ``catkin_test_results --all`` to output a
-summary of all tests.
+Additionally it invokes the tool ``catkin_test_results --all`` /
+``colcon test-result --all`` to output a summary of all tests.
 
 
 Example invocation
@@ -157,7 +185,9 @@ Instead of invoking the generated script it can also be *sourced*:
 
   . devel_job_indigo_roscpp_core.sh
 
-The return code of the invocation of `catkin_tests_results` is then available in the environment variable `catkin_test_results_RC`.
+The return code of the invocation of ``catkin_tests_results`` /
+``colcon test-result``is then available in the environment variable
+``test_result_RC``.
 
 Run the *devel* job on Travis
 -----------------------------
@@ -187,13 +217,18 @@ The following .travis.yml template is a good starting point and is ready to be u
     # or checkout a specific branch
     #- git clone -b master https://github.com/ros-infrastructure/ros_buildfarm /tmp/ros_buildfarm
     #- pip install /tmp/ros_buildfarm
+
+    # use either of the two following options depending on the chosen build tool
     # checkout catkin for catkin_test_results script
     - git clone https://github.com/ros/catkin /tmp/catkin
+    # install colcon for test results
+    - pip install colcon-core colcon-test-result
+
     # run devel job for a ROS repository with the same name as this repo
     - export REPOSITORY_NAME=`basename $TRAVIS_BUILD_DIR`
     # use the code already checked out by Travis
-    - mkdir -p $JOB_PATH/catkin_workspace/src
-    - cp -R $TRAVIS_BUILD_DIR $JOB_PATH/catkin_workspace/src/
+    - mkdir -p $JOB_PATH/ws/src
+    - cp -R $TRAVIS_BUILD_DIR $JOB_PATH/ws/src/
     # generate the script to run a devel job for that target and repo
     - generate_devel_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > $JOB_PATH/devel_job.sh
     - cd $JOB_PATH
@@ -202,7 +237,9 @@ The following .travis.yml template is a good starting point and is ready to be u
     - sh devel_job.sh -y
   script:
     # get summary of test results
-    - /tmp/catkin/bin/catkin_test_results $JOB_PATH/catkin_workspace/test_results --all
+    # use either of the two following options depending on the chosen build tool
+    - /tmp/catkin/bin/catkin_test_results $JOB_PATH/ws/test_results --all
+    - colcon test-result --test-result-base $JOB_PATH/ws/test_results --all
   notifications:
     email: false
 

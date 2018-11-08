@@ -42,18 +42,55 @@ def clean_workspace(workspace_root):
         shutil.rmtree(test_results_dir)
 
 
-def call_catkin_make_isolated(
-        rosdistro_name, workspace_root, args, parent_result_spaces=None):
+def call_build_tool(
+    build_tool, rosdistro_name, workspace_root, cmake_args=None,
+    force_cmake=False, install=False, make_args=None, args=None,
+    parent_result_spaces=None, env=None, colcon_verb='build'
+):
     # command to run
-    script_name = 'catkin_make_isolated'
+    assert build_tool in ('catkin_make_isolated', 'colcon')
+    script_name = build_tool
+
     # use script from source space if available
-    source_space = os.path.join(workspace_root, 'src')
-    script_from_source = os.path.join(
-        source_space, 'catkin', 'bin', script_name)
-    if os.path.exists(script_from_source):
-        script_name = script_from_source
-    cmd = ' '.join(
-        ['PYTHONIOENCODING=utf_8', 'PYTHONUNBUFFERED=1', script_name] + args)
+    if build_tool == 'catkin_make_isolated':
+        source_space = os.path.join(workspace_root, 'src')
+        script_from_source = os.path.join(
+            source_space, 'catkin', 'bin', script_name)
+        if os.path.exists(script_from_source):
+            script_name = script_from_source
+
+    cmd = ['PYTHONIOENCODING=utf_8', 'PYTHONUNBUFFERED=1', script_name]
+
+    if build_tool == 'colcon':
+        cmd.append(colcon_verb)
+        # match directory naming of catkin_make_isolated
+        if colcon_verb in ('build', 'test'):
+            cmd += ['--build-base', 'build_isolated']
+            cmd += ['--install-base', 'install_isolated']
+            cmd += ['--test-result-base', 'test_results']
+
+    if force_cmake:
+        if build_tool == 'catkin_make_isolated':
+            cmd.append('--force-cmake')
+        elif build_tool == 'colcon':
+            cmd.append('--cmake-force-configure')
+
+    if install and build_tool == 'catkin_make_isolated':
+        cmd.append('--install')
+
+    if cmake_args:
+        cmd += ['--cmake-args'] + cmake_args
+
+    if make_args:
+        if build_tool == 'catkin_make_isolated':
+            cmd += ['--catkin-make-args'] + make_args
+        elif build_tool == 'colcon':
+            cmd += ['--cmake-target'] + make_args
+
+    if args:
+        cmd += args
+
+    cmd = ' '.join(cmd)
 
     # prepend setup files if available
     if parent_result_spaces is None:
@@ -65,4 +102,4 @@ def call_catkin_make_isolated(
 
     print("Invoking '%s' in '%s'" % (cmd, workspace_root))
     return subprocess.call(
-        cmd, cwd=workspace_root, shell=True, stderr=subprocess.STDOUT)
+        cmd, cwd=workspace_root, shell=True, stderr=subprocess.STDOUT, env=env)

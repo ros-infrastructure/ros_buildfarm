@@ -30,7 +30,7 @@ echo ""
 
 @(TEMPLATE(
     'devel/devel_script_clone.sh.em',
-    workspace_path='catkin_workspace',
+    workspace_path='ws',
     scms=scms,
 ))@
 @[if os.environ.get('TRAVIS') == 'true']@
@@ -61,7 +61,8 @@ echo ""
 
 @(TEMPLATE(
     'devel/devel_script_test_results.sh.em',
-    workspace_path='catkin_workspace',
+    build_tool=build_tool,
+    workspace_path='ws',
 ))@
 @[if os.environ.get('TRAVIS') == 'true']@
 echo "travis_fold:end:devel-test-results"
