@@ -55,7 +55,7 @@ def main(argv=sys.argv[1:]):
         '--prerelease-overlay',
         action='store_true',
         help='Operate on two catkin workspaces')
-    add_argument_build_tool(parser, required=True)
+    add_argument_build_tool(parser)
     add_argument_ros_version(parser)
     add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)

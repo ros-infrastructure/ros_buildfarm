@@ -74,7 +74,7 @@ cmd = \
     ' --arch ' + arch + \
     ' --distribution-repository-urls ' + ' '.join(distribution_repository_urls) + \
     ' --distribution-repository-key-files ' + ' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))]) + \
-    ' --build-tool ' + build_tool + \
+    ' --build-tool ' + (build_tool if build_tool is not None else 'catkin_make_isolated') + \
     ' --ros-version ' + str(ros_version) + \
     ' --env-vars ' + ' ' .join(env_vars)
 cmds += [

@@ -50,7 +50,7 @@ def main(argv=sys.argv[1:]):
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
-    add_argument_build_tool(parser, required=True)
+    add_argument_build_tool(parser)
     add_argument_vcs_information(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)

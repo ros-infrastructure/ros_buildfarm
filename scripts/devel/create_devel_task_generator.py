@@ -64,7 +64,7 @@ def main(argv=sys.argv[1:]):
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
     add_argument_build_tool(parser, required=True)
-    add_argument_ros_version(parser)
+    add_argument_ros_version(parser, required=True)
     add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)
     parser.add_argument(

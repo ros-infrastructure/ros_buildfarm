@@ -292,7 +292,8 @@ def add_argument_build_tool(parser, required=False):
         help='The build tool to use' + default_help)
 
 
-def add_argument_ros_version(parser):
+def add_argument_ros_version(parser, required=False):
     parser.add_argument(
-        '--ros-version', type=int, required=True,
+        '--ros-version', type=int, required=required,
+        default=None if required else 1,
         help='The major ROS version')
