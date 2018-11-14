@@ -78,6 +78,7 @@ def main(argv=sys.argv[1:]):
             env['MAKEFLAGS'] = '-j1'
             rc = call_build_tool(
                 args.build_tool, args.rosdistro_name, args.workspace_root,
+                cmake_clean_cache=True,
                 cmake_args=cmake_args, args=additional_args,
                 parent_result_spaces=parent_result_spaces, env=env)
         if not rc:
