@@ -696,6 +696,13 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
         rosdistro_name = valid_rosdistro_names[-1]
     print('Checking packages for "%s" distribution' % rosdistro_name)
 
+    # skip distributions with a different type if the information is available
+    distro_type = index.distributions[rosdistro_name].get('distribution_type')
+    if distro_type is not None:
+        valid_rosdistro_names = [
+            n for n in valid_rosdistro_names
+            if distro_type == index.distributions[n].get('distribution_type')]
+
     # Find the previous distribution to the current one
     try:
         i = valid_rosdistro_names.index(rosdistro_name)
