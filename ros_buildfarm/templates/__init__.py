@@ -73,10 +73,6 @@ def expand_template(template_name, data, options=None):
 
     output = StringIO()
     try:
-        interpreter = CachingInterpreter(output=output, options=options)
-        for template_hook in template_hooks or []:
-            interpreter.addHook(template_hook)
-        template_path = get_template_path(template_name)
         # create copy before manipulating
         data = dict(data)
         # add some generic information to context
@@ -93,11 +89,16 @@ def expand_template(template_name, data, options=None):
 
         _add_helper_functions(data)
 
+        interpreter = CachingInterpreter(output=output, options=options, globals=data)
+        for template_hook in template_hooks or []:
+            interpreter.addHook(template_hook)
+        template_path = get_template_path(template_name)
+
         with open(template_path, 'r') as h:
             content = h.read()
             interpreter.invoke(
-                'beforeFile', name=template_name, file=h, locals=data)
-        interpreter.string(content, template_path, locals=data)
+                'beforeFile', name=template_name, file=h, locals=None)
+        interpreter.string(content, template_path)
         interpreter.invoke('afterFile')
 
         value = output.getvalue()
