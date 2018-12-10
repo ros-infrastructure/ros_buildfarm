@@ -39,7 +39,7 @@ def main(argv=sys.argv[1:]):
     add_argument_arch(parser)
     args = parser.parse_args(argv)
 
-    return configure_release_job(
+    configure_release_job(
         args.config_url, args.rosdistro_name, args.release_build_name,
         args.package_name, args.os_name, args.os_code_name)
 
