@@ -15,15 +15,15 @@
     <hudson.views.LastSuccessColumn/>
     <hudson.views.LastFailureColumn/>
     <hudson.views.LastDurationColumn/>
-    <jenkins.plugins.extracolumns.BuildDescriptionColumn plugin="extra-columns@@1.18">
+    <jenkins.plugins.extracolumns.BuildDescriptionColumn plugin="extra-columns@@1.20">
       <columnWidth>80</columnWidth>
       <forceWidth>true</forceWidth>
     </jenkins.plugins.extracolumns.BuildDescriptionColumn>
     <hudson.views.BuildButtonColumn/>
-    <jenkins.plugins.extracolumns.TestResultColumn plugin="extra-columns@@1.18">
+    <jenkins.plugins.extracolumns.TestResultColumn plugin="extra-columns@@1.20">
       <testResultFormat>1</testResultFormat>
     </jenkins.plugins.extracolumns.TestResultColumn>
-    <hudson.plugins.warnings.WarningsColumn plugin="warnings@@4.63"/>
+    <hudson.plugins.warnings.WarningsColumn plugin="warnings@@4.68"/>
   </columns>
 @[if include_regex]@
   <includeRegex>@include_regex</includeRegex>
