@@ -9,8 +9,7 @@ if [ -z "$WORKSPACE" ]; then
     echo ""
 fi
 
-PYTHONPATH=@ros_buildfarm_python_path:$PYTHONPATH @python_executable @prerelease_script_path/generate_prerelease_overlay_script.py @config_url @rosdistro_name @os_name @os_code_name @arch --pkg @(' '.join(pkg)) --exclude-pkg @(' '.join(exclude_pkg)) --level @level > prerelease_clone_overlay_impl.sh
+PYTHONPATH=@ros_buildfarm_python_path:$PYTHONPATH @python_executable @prerelease_script_path/generate_prerelease_overlay_script.py @config_url @rosdistro_name @os_name @os_code_name @arch --pkg @(' '.join(pkg)) --exclude-pkg @(' '.join(exclude_pkg)) --level @level --vcstool > overlay.repos
 echo ""
 
-chmod u+x prerelease_clone_overlay_impl.sh
-./prerelease_clone_overlay_impl.sh
+vcs import $WORKSPACE < overlay.repos

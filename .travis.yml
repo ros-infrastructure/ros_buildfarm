@@ -76,6 +76,7 @@ matrix:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install python3-vcstool -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -140,6 +141,9 @@ matrix:
         - docker
       env: JOB_TYPE=external_prerelease
       before_script:
+        - sudo apt-get update
+        - sudo apt-get install -y python3-pip
+        - sudo pip3 install vcstool
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -175,6 +179,7 @@ matrix:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install python3-vcstool -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -239,6 +244,9 @@ matrix:
         - docker
       env: JOB_TYPE=external_prerelease
       before_script:
+        - sudo apt-get update
+        - sudo apt-get install -y python3-pip
+        - sudo pip3 install vcstool
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -274,6 +282,7 @@ matrix:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install python3-vcstool -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -338,6 +347,9 @@ matrix:
         - docker
       env: JOB_TYPE=external_prerelease
       before_script:
+        - sudo apt-get update
+        - sudo apt-get install -y python3-pip
+        - sudo pip3 install vcstool
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -373,6 +385,7 @@ matrix:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install python-vcstool -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -442,7 +455,7 @@ matrix:
       before_script:
         - sudo apt-get update
         - sudo apt-get install -y python3-pip
-        - sudo pip3 install EmPy
+        - sudo pip3 install EmPy vcstool
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
