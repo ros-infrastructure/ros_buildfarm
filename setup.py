@@ -55,6 +55,7 @@ elif 'SKIP_PYTHON_SCRIPTS' in os.environ:
     kwargs['name'] += '_modules'
     kwargs['scripts'] = []
 else:
-    kwargs['install_requires'] += ['catkin_pkg >= 0.2.6', 'rosdistro >= 0.4.0']
+    kwargs['install_requires'] += [
+        'catkin_pkg >= 0.2.6', 'rosdistro >= 0.4.0', 'vcstool >= 0.1.37']
 
 setup(**kwargs)
