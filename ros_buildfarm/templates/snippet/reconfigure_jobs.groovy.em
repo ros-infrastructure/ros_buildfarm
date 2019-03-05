@@ -52,7 +52,7 @@ skipped_views = 0
 view_config_dir = build.getWorkspace().toString() + '/reconfigure_jobs/view_configs'
 
 def view_dir = new File(view_config_dir)
-def views = view_dir.listFiles()
+def views = view_dir.listFiles() ?: []
 views.sort()
 
 if (views.size() != @(expected_num_views)) {
@@ -119,7 +119,7 @@ skipped_jobs = 0
 job_config_dir = build.getWorkspace().toString() + '/reconfigure_jobs/job_configs'
 
 def job_dir = new File(job_config_dir)
-def jobs = job_dir.listFiles()
+def jobs = job_dir.listFiles() ?: []
 jobs.sort()
 
 if (jobs.size() != @(expected_num_jobs)) {
