@@ -28,7 +28,6 @@ from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.common import get_binary_package_versions
-from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
@@ -99,45 +98,55 @@ def main(argv=sys.argv[1:]):
 
     apt_cache = Cache()
 
-    debian_pkg_names = [
+    debian_pkg_names = set([
         'build-essential',
         'python3',
-    ]
+    ])
     if args.build_tool == 'colcon':
-        debian_pkg_names += [
+        debian_pkg_names.update([
             'python3-colcon-ros',
             'python3-colcon-test-result',
-        ]
+        ])
     elif 'catkin' not in pkg_names:
-        debian_pkg_names += resolve_names(['catkin'], **context)
+        debian_pkg_names |= resolve_names(['catkin'], **context)
     print('Always install the following generic dependencies:')
     for debian_pkg_name in sorted(debian_pkg_names):
         print('  -', debian_pkg_name)
 
-    debian_pkg_versions = {}
+    install_list = 'install_list.txt'
+    write_install_list(
+        os.path.join(args.dockerfile_dir, install_list),
+        debian_pkg_names, apt_cache)
+    install_lists = [install_list]
 
     # get build dependencies and map them to binary packages
     build_depends = get_dependencies(
         pkgs.values(), 'build', _get_build_and_recursive_run_dependencies)
     debian_pkg_names_building = resolve_names(build_depends, **context)
-    debian_pkg_names_building -= set(debian_pkg_names)
-    debian_pkg_names += order_dependencies(debian_pkg_names_building)
-    debian_pkg_versions.update(
-        get_binary_package_versions(apt_cache, debian_pkg_names))
+    debian_pkg_names_building -= debian_pkg_names
+
+    install_list_build = 'install_list_build.txt'
+    write_install_list(
+        os.path.join(args.dockerfile_dir, install_list_build),
+        debian_pkg_names_building, apt_cache)
+    if debian_pkg_names_building:
+        debian_pkg_names |= debian_pkg_names_building
+        install_lists += [install_list_build]
 
     # get run and test dependencies and map them to binary packages
     run_and_test_depends = get_dependencies(
         pkgs.values(), 'run and test', _get_run_and_test_dependencies)
     debian_pkg_names_testing = resolve_names(
         run_and_test_depends, **context)
-    # all additional run/test dependencies
-    # are added after the build dependencies
-    # in order to reuse existing images in the docker container
-    debian_pkg_names_testing -= set(debian_pkg_names)
-    debian_pkg_versions.update(
-        get_binary_package_versions(apt_cache, debian_pkg_names_testing))
-    if args.testing:
-        debian_pkg_names += order_dependencies(debian_pkg_names_testing)
+    debian_pkg_names_testing -= debian_pkg_names
+
+    install_list_test = 'install_list_test.txt'
+    write_install_list(
+        os.path.join(args.dockerfile_dir, install_list_test),
+        debian_pkg_names_testing, apt_cache)
+    if args.testing and debian_pkg_names_testing:
+        debian_pkg_names |= debian_pkg_names_testing
+        install_lists += [install_list_test]
 
     # generate Dockerfile
     data = {
@@ -159,8 +168,7 @@ def main(argv=sys.argv[1:]):
 
         'build_environment_variables': args.env_vars,
 
-        'dependencies': debian_pkg_names,
-        'dependency_versions': debian_pkg_versions,
+        'install_lists': install_lists,
 
         'testing': args.testing,
         'prerelease_overlay': len(args.workspace_root) > 1,
@@ -258,8 +266,11 @@ def resolve_names(rosdep_keys, os_name, os_code_name, view, installer):
     return debian_pkg_names
 
 
-def order_dependencies(binary_package_names):
-    return sorted(binary_package_names)
+def write_install_list(install_list_path, debian_pkg_names, apt_cache):
+    debian_pkg_versions = get_binary_package_versions(apt_cache, debian_pkg_names)
+    with open(install_list_path, 'w') as out_file:
+        for pkg, pkg_version in sorted(debian_pkg_versions.items()):
+            out_file.write('%s=%s\n' % (pkg, pkg_version))
 
 
 if __name__ == '__main__':
