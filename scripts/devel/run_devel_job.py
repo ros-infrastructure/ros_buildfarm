@@ -30,9 +30,9 @@ from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_repository_name
+from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile

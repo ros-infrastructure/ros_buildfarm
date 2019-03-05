@@ -42,6 +42,8 @@ def get_style_guide(argv=None):
     # this is a fork of flake8.api.legacy.get_style_guide
     # to allow passing command line argument
     application = Application()
+    application.parse_preliminary_options_and_args(argv)
+    application.make_config_finder()
     application.find_plugins()
     application.register_plugin_options()
     application.parse_configuration_and_cli(argv)
