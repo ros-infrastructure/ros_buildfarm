@@ -19,6 +19,7 @@ import os
 
 import yaml
 
+from .ci_build_file import CIBuildFile
 from .doc_build_file import DocBuildFile
 from .index import Index
 from .loader import load_url
@@ -44,6 +45,14 @@ def get_distribution_file(index, rosdistro_name, build_file):
         dist_files[0].merge(dist_files[1])
         del dist_files[1]
     return dist_files[0] if dist_files else []
+
+
+def get_ci_build_files(index, dist_name):
+    data = _get_build_file_data(index, dist_name, 'ci_builds')
+    build_files = {}
+    for k, v in data.items():
+        build_files[k] = CIBuildFile(k, v)
+    return build_files
 
 
 def get_release_build_files(index, dist_name):
