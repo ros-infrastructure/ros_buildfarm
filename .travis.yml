@@ -56,6 +56,24 @@ matrix:
       sudo: required
       services:
         - docker
+      env: JOB_TYPE=ci UNDERLAY_PACKAGES="ament_flake8 ament_pep257" OVERLAY_PACKAGES="ament_cmake_ros"
+      before_script:
+        # install colcon for test results
+        - pip install colcon-core colcon-test-result
+        - python setup.py install
+        - mkdir job job/underlay && cd job
+        - ln -s .. ros_buildfarm
+      script:
+        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME default $OS_NAME $OS_CODE_NAME2 $ARCH --packages-select $UNDERLAY_PACKAGES --build-up-to > job.sh
+        - (. job.sh -y; exit $test_result_RC)
+        - tar -xjf ros2-$ROS2_DISTRO_NAME-linux-$OS_CODE_NAME2-$ARCH-ci.tar.bz2 -C underlay
+        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME default $OS_NAME $OS_CODE_NAME2 $ARCH --packages-select $OVERLAY_PACKAGES --build-up-to --build-ignore $UNDERLAY_PACKAGES --underlay-source-path underlay/ros2-linux > job.sh
+        - (. job.sh -y; exit $test_result_RC)
+    - language: python
+      python: "3.6"
+      sudo: required
+      services:
+        - docker
       env: JOB_TYPE=devel BUILD_TOOL=colcon REPOSITORY_NAME=roscpp_core ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
       before_script:
         # install colcon for test results

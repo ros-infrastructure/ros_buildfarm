@@ -20,6 +20,7 @@ import os
 import sys
 
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.config import get_ci_build_files
 from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
@@ -108,6 +109,12 @@ def main(argv=sys.argv[1:]):
         for source_build_name in source_build_files.keys():
             generate_devel_maintenance_jobs(
                 args.config_url, ros_distro_name, source_build_name,
+                dry_run=not args.commit)
+
+        ci_build_files = get_ci_build_files(config, ros_distro_name)
+        for ci_build_name in ci_build_files.keys():
+            generate_ci_maintenance_jobs(
+                args.config_url, ros_distro_name, ci_build_name,
                 dry_run=not args.commit)
 
         doc_build_files = get_doc_build_files(config, ros_distro_name)
@@ -235,6 +242,19 @@ def generate_release_maintenance_jobs(
         config_url,
         ros_distro_name,
         release_build_name,
+    ]
+    if dry_run:
+        cmd.append('--dry-run')
+    _check_call(cmd)
+
+
+def generate_ci_maintenance_jobs(
+        config_url, ros_distro_name, ci_build_name, dry_run=False):
+    cmd = [
+        _resolve_script('ci', 'generate_ci_maintenance_jobs.py'),
+        config_url,
+        ros_distro_name,
+        ci_build_name,
     ]
     if dry_run:
         cmd.append('--dry-run')
