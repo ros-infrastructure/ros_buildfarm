@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
 import os
 
 
@@ -312,3 +313,84 @@ def add_argument_install_pip_packages(parser):
         nargs='*',
         default=[],
         help='The list of packages to install with pip')
+
+
+def add_argument_above_depth(parser):
+    parser.add_argument(
+        '--above-depth', type=int, metavar='DEPTH', default=0,
+        help='Number of reverse-dependent packages which ' +
+             'depend upon the targeted package(s).')
+
+
+def add_argument_build_ignore(parser):
+    parser.add_argument(
+        '--build-ignore', nargs='*', metavar='PKG_NAME',
+        help='Package name(s) which should be excluded from the build')
+
+
+def add_argument_build_up_to(parser):
+    parser.add_argument(
+        '--build-up-to', action='store_true',
+        help='Include all forward dependencies of the selected ' +
+             'package(s) which are present in the workspace.')
+
+
+def add_argument_install_packages(parser):
+    parser.add_argument(
+        '--install-packages', nargs='*',
+        help='The specified package(s) will be installed prior to any '
+             'packages detected for installation by rosdep.')
+
+
+def add_argument_packages_select(parser):
+    parser.add_argument(
+        '--packages-select', nargs='*', metavar='PKG_NAME',
+        help='Package(s) to be built')
+
+
+def add_argument_repos_file_urls(parser, required=False):
+    parser.add_argument(
+        '--repos-file-urls', nargs='*', metavar='URL',
+        required=required,
+        help='URLs of repos files to import with vcs.')
+
+
+def add_argument_skip_cleanup(parser):
+    parser.add_argument(
+        '--skip-cleanup', action='store_true',
+        help='Skip cleanup of build artifacts')
+
+
+def add_argument_skip_rosdep_keys(parser):
+    parser.add_argument(
+        '--skip-rosdep-keys', nargs='*',
+        help='The specified rosdep keys will be ignored, i.e. not resolved '
+             'and not installed.')
+
+
+def add_argument_test_branch(parser):
+    parser.add_argument(
+        '--test-branch', default=None,
+        help='Branch to attempt to checkout before doing batch job.')
+
+
+def add_argument_testing(parser):
+    parser.add_argument(
+        '--testing', action='store_true',
+        help='Generate a task for testing packages rather than installing '
+             'them.')
+
+
+def check_len_action(minargs, maxargs):
+    class CheckLength(argparse.Action):
+        def __call__(self, parser, args, values, option_string=None):
+            if len(values) < minargs:
+                raise argparse.ArgumentError(
+                    argument=self,
+                    message='expected at least %s arguments' % (minargs))
+            elif len(values) > maxargs:
+                raise argparse.ArgumentError(
+                    argument=self,
+                    message='expected at most %s arguments' % (minargs))
+            setattr(args, self.dest, values)
+    return CheckLength

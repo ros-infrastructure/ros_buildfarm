@@ -146,6 +146,17 @@ def get_binary_package_versions(apt_cache, debian_pkg_names):
     return versions
 
 
+def get_ci_job_name(rosdistro_name, os_name, os_code_name, arch, job_type):
+    view_name = get_ci_view_name(rosdistro_name)
+    job_name = '%s__%s_%s_%s_%s' % (view_name, job_type, os_name, os_code_name, arch)
+    return job_name
+
+
+def get_ci_view_name(rosdistro_name):
+    view_name = '%sci' % rosdistro_name[0].upper()
+    return view_name
+
+
 def get_debian_package_name_prefix(rosdistro_name):
     return 'ros-%s-' % rosdistro_name
 
