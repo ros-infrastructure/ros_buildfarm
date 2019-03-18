@@ -117,6 +117,14 @@ def call_build_tool(
         setup_file = os.path.join(parent_result_space, 'setup.sh')
         if os.path.exists(setup_file):
             cmd = '. %s && %s' % (setup_file, cmd)
+            if os.path.isfile(
+                os.path.join(parent_result_space, '.catkin')
+            ):
+                cmd = '_CATKIN_SETUP_DIR=%s %s' % (parent_result_space, cmd)
+            if os.path.isfile(
+                os.path.join(parent_result_space, '.colcon_install_layout')
+            ):
+                cmd = 'COLCON_CURRENT_PREFIX=%s %s' % (parent_result_space, cmd)
 
     print("Invoking '%s' in '%s'" % (cmd, workspace_root))
     return subprocess.call(
