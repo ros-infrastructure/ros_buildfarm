@@ -19,8 +19,8 @@ import sys
 
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_dry_run
-from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import get_release_job_prefix
+from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.jenkins import configure_job

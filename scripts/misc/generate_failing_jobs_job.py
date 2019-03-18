@@ -26,6 +26,7 @@ from ros_buildfarm.jenkins import configure_management_view
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.templates import expand_template
 
+
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
         description="Generate the 'failing_jobs' job on Jenkins")

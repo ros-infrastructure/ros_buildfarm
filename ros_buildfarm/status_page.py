@@ -155,7 +155,8 @@ def build_release_status_page(
     if not os.path.exists(yaml_folder):
         os.mkdir(yaml_folder)
 
-    yaml_filename = os.path.join(yaml_folder, 'ros_%s_%s.yaml' % (rosdistro_name, release_build_name))
+    yaml_filename = os.path.join(
+        yaml_folder, 'ros_%s_%s.yaml' % (rosdistro_name, release_build_name))
     write_yaml(yaml_filename, ordered_pkgs, repos_data)
 
 
@@ -1048,6 +1049,8 @@ def _compare_package_version(distros, pkg_name):
 
 
 REPOS_DATA_NAMES = ['build', 'test', 'main']
+
+
 def write_yaml(yaml_filename, ordered_pkgs, repos_data):
     print("Generating status yaml '%s':" % yaml_filename)
     summary = {}
