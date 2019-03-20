@@ -223,6 +223,9 @@ The following options are valid in version ``2`` (beside the generic options):
   * ``package_count``: the minimum number of *binary* packages which must be
     available.
   * ``packages``: a list of package names which must be available.
+  * ``package_percent``: The minimum percentage of enabled, *binary* packages
+    which must be available.  If both ``package_count`` and ``package_percent``
+    are specified, both numbers have to be met for a sync to happen.
 
 * ``target_queue``: the path where incoming changes to the target repository
   are being queued (default: ``/var/repos/ubuntu/building/queue``).
