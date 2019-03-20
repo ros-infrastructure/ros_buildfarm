@@ -8,7 +8,7 @@ from jenkinsapi.utils.requester import Requester
 class CrumbRequester(Requester):
     """Adapter for Requester inserting the crumb in every request."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # noqa: D107
         super(CrumbRequester, self).__init__(*args, **kwargs)
         self._baseurl = kwargs['baseurl']
         self._last_crumb_data = None

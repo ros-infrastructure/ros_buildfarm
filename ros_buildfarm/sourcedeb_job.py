@@ -14,6 +14,7 @@
 
 import os
 import subprocess
+from urllib.error import HTTPError
 from urllib.request import urlretrieve
 
 from ros_buildfarm.common import get_debian_package_name
@@ -76,7 +77,7 @@ def get_sources(
             print("Downloaded original tarball '%s' to '%s'" %
                   (url, output_file))
             break
-        except:
+        except HTTPError:
             print("No tarball found at '%s'" % url)
 
     # output package version for job description

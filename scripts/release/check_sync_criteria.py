@@ -30,7 +30,6 @@ from ros_buildfarm.common import Target
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.debian_repo import get_debian_repo_index
-
 from rosdistro import get_distribution_file
 from rosdistro import get_index
 

@@ -27,7 +27,7 @@ class DocBuildFile(BuildFile):
 
     _type = 'doc-build'
 
-    def __init__(self, name, data):
+    def __init__(self, name, data):  # noqa: D107
         assert 'type' in data, \
             "Expected file type is '%s'" % DocBuildFile._type
         assert data['type'] == DocBuildFile._type, \

@@ -20,10 +20,8 @@ import argparse
 import json
 import sys
 
-
 from catkin_pkg.packages import find_packages
 from em import BANGPATH_OPT
-
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
@@ -33,7 +31,6 @@ from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.prerelease import add_overlay_arguments
 from ros_buildfarm.prerelease import get_overlay_package_names
 from ros_buildfarm.templates import expand_template
-
 from rosdistro import get_distribution_cache
 from rosdistro import get_index
 from rosdistro.manifest_provider import get_release_tag

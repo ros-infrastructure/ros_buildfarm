@@ -21,7 +21,6 @@ import os
 import sys
 
 from apt import Cache
-
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_binarydeb_dir
 from ros_buildfarm.argument import \
@@ -39,7 +38,6 @@ from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
-
 from rosdistro import get_distribution_file
 from rosdistro import get_index
 

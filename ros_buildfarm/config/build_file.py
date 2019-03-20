@@ -15,7 +15,7 @@
 
 class BuildFile(object):
 
-    def __init__(self, name, data):
+    def __init__(self, name, data):  # noqa: D107
         self.name = name
 
         self.build_environment_variables = None

@@ -27,7 +27,6 @@ from ros_buildfarm.rosdoc_lite import get_generator_output_folders
 from ros_buildfarm.workspace import call_build_tool
 from ros_buildfarm.workspace import clean_workspace
 from ros_buildfarm.workspace import ensure_workspace_exists
-
 import yaml
 
 

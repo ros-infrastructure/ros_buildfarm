@@ -20,7 +20,7 @@ import yaml
 
 class RosdocIndex(object):
 
-    def __init__(self, rosdoc_index_paths):
+    def __init__(self, rosdoc_index_paths):  # noqa: D107
         self.forward_deps = self._read_folder(rosdoc_index_paths, 'deps')
         self.reverse_deps = {}
         self._build_reverse_deps()

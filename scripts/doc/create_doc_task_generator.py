@@ -26,7 +26,6 @@ import time
 
 from apt import Cache
 from catkin_pkg.packages import find_packages
-
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_config_url
@@ -59,7 +58,6 @@ from ros_buildfarm.rosdoc_index import RosdocIndex
 from ros_buildfarm.rosdoc_lite import get_generator_output_folders
 from ros_buildfarm.templates import create_dockerfile
 from ros_buildfarm.templates import expand_template
-
 from rosdep2 import create_default_installer_context
 from rosdep2.catkin_support import get_catkin_view
 from rosdep2.catkin_support import resolve_for_os
