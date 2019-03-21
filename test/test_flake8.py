@@ -14,6 +14,7 @@
 
 import os
 
+from flake8 import configure_logging
 from flake8.api.legacy import StyleGuide
 from flake8.main.application import Application
 
@@ -21,7 +22,7 @@ from flake8.main.application import Application
 def test_flake8_conformance():
     """Test source code for flake8 conformance."""
     argv = [
-        '--ignore=%s' % ','.join([
+        '--extend-ignore=%s' % ','.join([
             'D100', 'D101', 'D102', 'D103', 'D104', 'D105',
             'E501']),
         '--import-order-style=google',
@@ -43,12 +44,13 @@ def get_style_guide(argv=None):
     # to allow passing command line argument
     application = Application()
     application.parse_preliminary_options_and_args(argv)
+    configure_logging(
+        application.prelim_opts.verbose, application.prelim_opts.output_file)
     application.make_config_finder()
     application.find_plugins()
     application.register_plugin_options()
     application.parse_configuration_and_cli(argv)
     application.make_formatter()
-    application.make_notifier()
     application.make_guide()
     application.make_file_checker_manager()
     return StyleGuide(application)
