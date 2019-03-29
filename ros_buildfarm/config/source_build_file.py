@@ -19,7 +19,7 @@ class SourceBuildFile(BuildFile):
 
     _type = 'source-build'
 
-    def __init__(self, name, data):
+    def __init__(self, name, data):  # noqa: D107
         assert 'type' in data, "Expected file type is '%s'" % \
             SourceBuildFile._type
         assert data['type'] == SourceBuildFile._type, \
@@ -97,21 +97,21 @@ class SourceBuildFile(BuildFile):
         self.test_commits_force = None
         if 'test_commits' in data:
             if 'default' in data['test_commits']:
-                    self.test_commits_default = bool(
-                        data['test_commits']['default'])
+                self.test_commits_default = bool(
+                    data['test_commits']['default'])
             if 'force' in data['test_commits']:
-                    self.test_commits_force = bool(
-                        data['test_commits']['force'])
+                self.test_commits_force = bool(
+                    data['test_commits']['force'])
 
         self.test_pull_requests_default = False
         self.test_pull_requests_force = None
         if 'test_pull_requests' in data:
             if 'default' in data['test_pull_requests']:
-                    self.test_pull_requests_default = bool(
-                        data['test_pull_requests']['default'])
+                self.test_pull_requests_default = bool(
+                    data['test_pull_requests']['default'])
             if 'force' in data['test_pull_requests']:
-                    self.test_pull_requests_force = bool(
-                        data['test_pull_requests']['force'])
+                self.test_pull_requests_force = bool(
+                    data['test_pull_requests']['force'])
 
         self.collate_test_stats = bool(data.get('collate_test_stats', False))
 

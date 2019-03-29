@@ -35,7 +35,7 @@ JENKINS_MANAGEMENT_VIEW = 'Manage'
 class JenkinsProxy(Jenkins):
     """Proxy for Jenkins instance caching data for performance reasons."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # noqa: D107
         requester_kwargs = copy.copy(kwargs)
         requester_kwargs['baseurl'] = args[0]
         kwargs['requester'] = CrumbRequester(**requester_kwargs)

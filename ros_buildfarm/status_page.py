@@ -23,6 +23,7 @@ import re
 import shutil
 import sys
 import time
+
 import yaml
 
 from .common import get_debian_package_name
@@ -921,7 +922,7 @@ def build_release_compare_page(
 
 class CompareRow(object):
 
-    def __init__(self, pkg_name):
+    def __init__(self, pkg_name):  # noqa: D107
         self.pkg_name = pkg_name
         self.repo_name = ''
         self.repo_urls = []

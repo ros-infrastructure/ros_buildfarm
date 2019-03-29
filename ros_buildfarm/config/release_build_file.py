@@ -19,7 +19,7 @@ class ReleaseBuildFile(BuildFile):
 
     _type = 'release-build'
 
-    def __init__(self, name, data):
+    def __init__(self, name, data):  # noqa: D107
         assert 'type' in data, \
             "Expected file type is '%s'" % ReleaseBuildFile._type
         assert data['type'] == ReleaseBuildFile._type, \

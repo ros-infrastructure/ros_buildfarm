@@ -30,7 +30,7 @@ class JobValidationError(Exception):
     is not available in the specified index.yaml
     """
 
-    def __init__(self, message):
+    def __init__(self, message):  # noqa: D107
         super(JobValidationError, self).__init__(message)
 
 
@@ -39,7 +39,7 @@ next_scope_id = 1
 
 class Scope(object):
 
-    def __init__(self, scope_name, description):
+    def __init__(self, scope_name, description):  # noqa: D107
         global next_scope_id
         self.scope_name = scope_name
         self.description = description

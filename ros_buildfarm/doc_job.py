@@ -18,7 +18,6 @@ from collections import OrderedDict
 import sys
 
 from catkin_pkg.package import parse_package_string
-
 from ros_buildfarm.common import get_default_node_label
 from ros_buildfarm.common import get_doc_job_name
 from ros_buildfarm.common import get_doc_view_name
@@ -35,7 +34,6 @@ from ros_buildfarm.config import get_global_doc_build_files
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.git import get_repository
 from ros_buildfarm.templates import expand_template
-
 from rosdistro import get_distribution_cache
 from rosdistro import get_index
 

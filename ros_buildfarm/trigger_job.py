@@ -15,7 +15,6 @@
 
 from ros_buildfarm.jenkins import connect
 from ros_buildfarm.jenkins import invoke_job
-
 from rosdistro import get_cached_distribution
 from rosdistro import get_index
 

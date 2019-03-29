@@ -22,7 +22,7 @@ class Index(object):
 
     _type = 'buildfarm'
 
-    def __init__(self, data, base_url):
+    def __init__(self, data, base_url):  # noqa: D107
         assert 'type' in data, "Expected file type is '%s'" % Index._type
         assert data['type'] == Index._type, \
             "Expected file type is '%s', not '%s' loaded from '%s'" % \

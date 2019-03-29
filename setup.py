@@ -32,6 +32,11 @@ kwargs = {
     'install_requires': [
         'empy',
         'PyYAML'],
+    'tests_require': [
+        'flake8 >= 3.7',
+        'flake8_import_order',
+        'pep8',
+        'pyflakes'],
     'author': 'Dirk Thomas',
     'author_email': 'dthomas@osrfoundation.org',
     'maintainer': 'Dirk Thomas',

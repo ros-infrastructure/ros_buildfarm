@@ -33,7 +33,7 @@ class RosPackage(object):
         'maintainers',
     ]
 
-    def __init__(self, name):
+    def __init__(self, name):  # noqa: D107
         self.name = name
 
 
