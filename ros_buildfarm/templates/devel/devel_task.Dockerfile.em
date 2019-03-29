@@ -75,6 +75,11 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
     dependency_versions=dependency_versions,
 ))@
 
+@(TEMPLATE(
+    'snippet/install_dependencies_from_file.Dockerfile.em',
+    install_lists=install_lists,
+))@
+
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
