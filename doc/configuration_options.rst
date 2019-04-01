@@ -391,3 +391,45 @@ The following options are valid as keys in the ``_config`` dict under
   rosdistro by default.
   To override this, add an entry to this list corresponding to the
   20-default.list file from your forked rosdistro repository.
+
+Specific options in CI build files
+----------------------------------
+
+This yaml file defines the configuration for *CI* jobs.
+
+The file format is specified by the following information:
+
+* ``type: ci-build`` identifies the yaml file as a *CI build file*.
+* ``version: 1`` specifies the specification version of the file.
+
+The following options are valid in version ``1`` (beside the generic options):
+
+* ``build_ignore``: a list of package names which should not be built, taking
+  precedence over any package selection options given at runtime.
+
+* ``build_tool``: the build tool to use.
+  The following are valid values:
+
+  * ``catkin_make_isolated``
+  * ``colcon`` (default)
+
+* ``install_packages``: a list of packages which should be installed by default
+  before any of the dependencies necessary to build the packages in the
+  workspace.
+  Since not all packages in the workspace are necessarily ROS packages, rosdep
+  may be unable to detect and install the prerequisites for those packages, so
+  those prerequisite packages may need to be listed here.
+
+* ``jenkins_job_priority``: the job priority of *CI* jobs.
+
+* ``jenkins_job_schedule``: the schedule on which to run the nightly *CI* job.
+  For example, to run the nightly build at 11 PM each night, a value of
+  ``0 23 * * *`` may be used.
+
+* ``jenkins_job_timeout``: the job timeout for *CI* jobs.
+
+* ``repos_files``: the list of ``.repos`` files to use by default when creating
+  a workspace to build.
+
+* ``skip_rosdep_keys``: a list of rosdep keys which should be ignored when
+  rosdep is invoked to resolve package dependencies.
