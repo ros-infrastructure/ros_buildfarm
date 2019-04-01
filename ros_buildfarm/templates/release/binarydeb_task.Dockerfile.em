@@ -78,6 +78,11 @@ RUN echo "@today_str"
     dependency_versions=dependency_versions,
 ))@
 
+@(TEMPLATE(
+    'snippet/install_dependencies_from_file.Dockerfile.em',
+    install_lists=install_lists,
+))@
+
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{

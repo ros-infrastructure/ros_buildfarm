@@ -66,6 +66,11 @@ RUN pip3 install -U setuptools
     dependency_versions=dependency_versions,
 ))@
 
+@(TEMPLATE(
+    'snippet/install_dependencies_from_file.Dockerfile.em',
+    install_lists=install_lists,
+))@
+
 @[if os_name == 'ubuntu' and os_code_name[0] == 't']@
 # Doxygen version 1.8.6 seems to generate excessive tagfiles when cross referencing,
 # overriding with older package (1.7.6) from Precise

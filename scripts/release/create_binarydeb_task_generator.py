@@ -101,6 +101,7 @@ def main(argv=sys.argv[1:]):
 
         'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,
+        'install_lists': [],
 
         'rosdistro_name': args.rosdistro_name,
         'package_name': args.package_name,
