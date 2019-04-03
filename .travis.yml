@@ -24,7 +24,7 @@ matrix:
       sudo: required
       services:
         - docker
-      env: JOB_TYPE=devel REPOSITORY_NAME=rcl ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
+      env: JOB_TYPE=devel REPOSITORY_NAME=rcutils ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
       before_script:
         # install colcon for test results
         - pip install colcon-core colcon-test-result
