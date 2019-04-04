@@ -2,10 +2,10 @@ env:
   global:
     - CONFIG_URL=https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
     - CONFIG2_URL=https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
-    - ROS_DISTRO_NAME=kinetic
-    - ROS2_DISTRO_NAME=bouncy
+    - ROS_DISTRO_NAME=melodic
+    - ROS2_DISTRO_NAME=crystal
     - OS_NAME=ubuntu
-    - OS_CODE_NAME=xenial
+    - OS_CODE_NAME=bionic
     - OS_CODE_NAME2=bionic
     - ARCH=amd64
     - ROS_BUILDFARM_PULL_REQUEST_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
@@ -24,7 +24,7 @@ matrix:
       sudo: required
       services:
         - docker
-      env: JOB_TYPE=devel REPOSITORY_NAME=rcl ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
+      env: JOB_TYPE=devel REPOSITORY_NAME=rcutils ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
       before_script:
         # install colcon for test results
         - pip install colcon-core colcon-test-result
@@ -166,9 +166,9 @@ matrix:
         - mkdir status_pages && cd status_pages
       script:
         - build_blocked_releases_page.py $CONFIG_URL $ROS_DISTRO_NAME
-        - build_release_compare_page.py $CONFIG_URL lunar kinetic
+        - build_release_compare_page.py $CONFIG_URL kinetic melodic
         - build_release_status_page.py $CONFIG_URL $ROS_DISTRO_NAME default
-        - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples xenial:source xenial:amd64 xenial:arm64 xenial:armhf xenial:i386 --cache-dir ./debian_repo_cache --output-name kinetic_xenial
+        - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples bionic:source bionic:amd64 bionic:arm64 bionic:armhf bionic:i386 --cache-dir ./debian_repo_cache --output-name melodic_bionic
         - ls -al
     - language: python
       python: "3.5"
@@ -269,9 +269,9 @@ matrix:
         - mkdir status_pages && cd status_pages
       script:
         - build_blocked_releases_page.py $CONFIG_URL $ROS_DISTRO_NAME
-        - build_release_compare_page.py $CONFIG_URL lunar kinetic
+        - build_release_compare_page.py $CONFIG_URL kinetic melodic
         - build_release_status_page.py $CONFIG_URL $ROS_DISTRO_NAME default
-        - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples xenial:source xenial:amd64 xenial:arm64 xenial:armhf xenial:i386 --cache-dir ./debian_repo_cache --output-name kinetic_xenial
+        - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples bionic:source bionic:amd64 bionic:arm64 bionic:armhf bionic:i386 --cache-dir ./debian_repo_cache --output-name melodic_bionic
         - ls -al
     - language: python
       python: "3.4"
@@ -372,9 +372,9 @@ matrix:
         - mkdir status_pages && cd status_pages
       script:
         - build_blocked_releases_page.py $CONFIG_URL $ROS_DISTRO_NAME
-        - build_release_compare_page.py $CONFIG_URL lunar kinetic
+        - build_release_compare_page.py $CONFIG_URL kinetic melodic
         - build_release_status_page.py $CONFIG_URL $ROS_DISTRO_NAME default
-        - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples xenial:source xenial:amd64 xenial:arm64 xenial:armhf xenial:i386 --cache-dir ./debian_repo_cache --output-name kinetic_xenial
+        - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples bionic:source bionic:amd64 bionic:arm64 bionic:armhf bionic:i386 --cache-dir ./debian_repo_cache --output-name melodic_bionic
         - ls -al
     - language: python
       python: "2.7"
@@ -478,9 +478,9 @@ matrix:
         - mkdir status_pages && cd status_pages
       script:
         - build_blocked_releases_page.py $CONFIG_URL $ROS_DISTRO_NAME
-        - build_release_compare_page.py $CONFIG_URL lunar kinetic
+        - build_release_compare_page.py $CONFIG_URL kinetic melodic
         - build_release_status_page.py $CONFIG_URL $ROS_DISTRO_NAME default
-        - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples xenial:source xenial:amd64 xenial:arm64 xenial:armhf xenial:i386 --cache-dir ./debian_repo_cache --output-name kinetic_xenial
+        - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples bionic:source bionic:amd64 bionic:arm64 bionic:armhf bionic:i386 --cache-dir ./debian_repo_cache --output-name melodic_bionic
         - ls -al
 notifications:
   email: false
