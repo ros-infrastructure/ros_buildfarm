@@ -38,7 +38,7 @@ RUN echo "@today_str"
 
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y make python-catkin-pkg-modules python-dateutil python-pip python-wstool python-yaml
 # Pin sphinx at 1.8.5 re: https://github.com/ros-infrastructure/ros_buildfarm/issues/614
-RUN pip install -U catkin-sphinx sphinx==1.8.5
+RUN pip install -U catkin-sphinx sphinx==1.8.5 xmlschema
 
 USER buildfarm
 
