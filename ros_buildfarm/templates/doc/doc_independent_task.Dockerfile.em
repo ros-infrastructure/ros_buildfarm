@@ -36,9 +36,13 @@ RUN echo "@today_str"
     os_code_name='xenial',
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y make python-catkin-pkg-modules python-dateutil python-pip python-wstool python-yaml
-# Pin sphinx at 1.8.5 re: https://github.com/ros-infrastructure/ros_buildfarm/issues/614
-RUN pip install -U catkin-sphinx sphinx==1.8.5
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y make python-pip
+@[if install_apt_packages]@
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y @(' '.join(install_apt_packages))
+@[end if]@
+@[if install_pip_packages]@
+RUN pip install -U @(' '.join(install_pip_packages))
+@[end if]@
 
 USER buildfarm
 
