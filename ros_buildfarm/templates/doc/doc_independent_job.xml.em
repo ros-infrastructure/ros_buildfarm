@@ -96,6 +96,8 @@ repo_name = os.path.splitext(os.path.basename(repo_url))[0]
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/doc/run_doc_independent_job.py' +
         ' ' + config_url +
         ' ' + doc_build_name +
+        ' --install-apt-packages ' + ' '.join(install_apt_packages) +
+        ' --install-pip-packages ' + ' '.join(install_pip_packages) +
         ' ' + ' '.join(repository_args) +
         ' --dockerfile-dir $WORKSPACE/docker_doc_independent',
         'echo "# END SECTION"',

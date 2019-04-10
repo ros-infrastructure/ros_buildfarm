@@ -318,6 +318,10 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``doc_repositories``: a list of repository URLs (used when the
   ``documentation_type`` is set to ``make_target`` or ``docker_build``).
+* ``install_apt_packages``: a list of packages to be installed with apt (only
+  allowed when the ``documentation_type`` is set to ``make_target``).
+* ``install_pip_packages``: a list of packages to be installed with pip (only
+  allowed when the ``documentation_type`` is set to ``make_target``).
 * ``jenkins_job_priority``: the job priority of *doc* jobs.
 * ``jenkins_job_label``: the label expression for both *doc* jobs (default:
   ``buildagent || <ROSDISTRO_NAME>_doc_<BUILD_FILE_NAME>``).

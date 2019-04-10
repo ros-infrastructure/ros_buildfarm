@@ -432,6 +432,8 @@ def _get_doc_independent_job_config(
     if build_file.documentation_type == 'make_target':
         template_name = 'doc/doc_independent_job.xml.em'
         job_data.update({
+            'install_apt_packages': build_file.install_apt_packages,
+            'install_pip_packages': build_file.install_pip_packages,
             'upload_user': build_file.upload_user,
             'upload_host': build_file.upload_host,
             'upload_root': build_file.upload_root,

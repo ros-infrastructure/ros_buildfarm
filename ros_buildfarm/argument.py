@@ -296,3 +296,19 @@ def add_argument_ros_version(parser):
     parser.add_argument(
         '--ros-version', type=int, required=True,
         help='The major ROS version')
+
+
+def add_argument_install_apt_packages(parser):
+    parser.add_argument(
+        '--install-apt-packages',
+        nargs='*',
+        default=[],
+        help='The list of packages to install with apt')
+
+
+def add_argument_install_pip_packages(parser):
+    parser.add_argument(
+        '--install-pip-packages',
+        nargs='*',
+        default=[],
+        help='The list of packages to install with pip')

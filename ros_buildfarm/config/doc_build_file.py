@@ -84,6 +84,24 @@ class DocBuildFile(BuildFile):
         if self.documentation_type not in (DOC_TYPE_MAKE, DOC_TYPE_DOCKER):
             assert not self.doc_repositories
 
+        self.install_apt_packages = []
+        if 'install_apt_packages' in data:
+            self.install_apt_packages = data['install_apt_packages']
+            assert isinstance(self.install_apt_packages, list)
+
+        # install_apt_packages can only be used with make_target doc type
+        if self.documentation_type != DOC_TYPE_MAKE:
+            assert not self.install_apt_packages
+
+        self.install_pip_packages = []
+        if 'install_pip_packages' in data:
+            self.install_pip_packages = data['install_pip_packages']
+            assert isinstance(self.install_pip_packages, list)
+
+        # install_pip_packages can only be used with make_target doc type
+        if self.documentation_type != DOC_TYPE_MAKE:
+            assert not self.install_pip_packages
+
         self.jenkins_job_label = None
         if 'jenkins_job_label' in data:
             self.jenkins_job_label = data['jenkins_job_label']

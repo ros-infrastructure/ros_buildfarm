@@ -24,6 +24,8 @@ from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
+from ros_buildfarm.argument import add_argument_install_apt_packages
+from ros_buildfarm.argument import add_argument_install_pip_packages
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
@@ -34,6 +36,8 @@ def main(argv=sys.argv[1:]):
         description="Run the 'doc independent' job")
     add_argument_config_url(parser)
     add_argument_build_name(parser, 'doc')
+    add_argument_install_apt_packages(parser)
+    add_argument_install_pip_packages(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
     add_argument_dockerfile_dir(parser)
@@ -41,6 +45,8 @@ def main(argv=sys.argv[1:]):
 
     data = copy.deepcopy(args.__dict__)
     data.update({
+        'install_apt_packages': args.install_apt_packages,
+        'install_pip_packages': args.install_pip_packages,
         'distribution_repository_urls': args.distribution_repository_urls,
         'distribution_repository_keys': get_distribution_repository_keys(
             args.distribution_repository_urls,
