@@ -78,7 +78,13 @@ def main(argv=sys.argv[1:]):
     for workspace_root in args.workspace_root:
         source_space = os.path.join(workspace_root, 'src')
         print("Crawling for packages in workspace '%s'" % source_space)
-        pkgs.update(find_packages(source_space))
+        ws_pkgs = find_packages(source_space)
+        for pkg in ws_pkgs.values():
+            pkg.evaluate_conditions({
+                'ROS_DISTRO': args.rosdistro_name,
+                'ROS_VERSION': args.ros_version,
+            })
+        pkgs.update(ws_pkgs)
 
     pkg_names = [pkg.name for pkg in pkgs.values()]
     print("Found the following packages:")
@@ -191,7 +197,9 @@ def get_dependencies(pkgs, label, get_dependencies_callback):
 
 
 def _get_build_and_recursive_run_dependencies(pkg, pkgs):
-    depends = pkg.build_depends + pkg.buildtool_depends
+    depends = [
+        d for d in pkg.build_depends + pkg.buildtool_depends
+        if d.evaluated_condition is not False]
     # include recursive run dependencies on other pkgs in the workspace
     # if pkg A in the workspace build depends on pkg B in the workspace
     # then the recursive run dependencies of pkg B need to be installed
@@ -208,8 +216,11 @@ def _get_build_and_recursive_run_dependencies(pkg, pkgs):
         run_depends_in_pkgs.remove(pkg_name)
 
         # append run dependencies
-        run_depends = pkg.build_export_depends + \
-            pkg.buildtool_export_depends + pkg.exec_depends
+        run_depends = [
+            d for d in
+            pkg.build_export_depends + pkg.buildtool_export_depends +
+            pkg.exec_depends
+            if d.evaluated_condition is not False]
         depends += run_depends
 
         # consider recursive dependencies
@@ -220,8 +231,11 @@ def _get_build_and_recursive_run_dependencies(pkg, pkgs):
 
 
 def _get_run_and_test_dependencies(pkg, pkgs):
-    return pkg.build_export_depends + pkg.buildtool_export_depends + \
+    return [
+        d for d in
+        pkg.build_export_depends + pkg.buildtool_export_depends +
         pkg.exec_depends + pkg.test_depends
+        if d.evaluated_condition is not False]
 
 
 def initialize_resolver(rosdistro_name, os_name, os_code_name):
