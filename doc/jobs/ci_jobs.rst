@@ -108,7 +108,7 @@ from ROS *Crystal* for Ubuntu *Bionic* *amd64*:
 .. code:: sh
 
   mkdir /tmp/ci_job
-  generate_ci_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml crystal default ubuntu bionic amd64 --packages-select ament_cmake_ros --build-up-to > /tmp/ci_job/ci_job_crystal_ament_cmake_ros.sh
+  generate_ci_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml crystal default ubuntu bionic amd64 --package-selection-args --packages-up-to ament_cmake_ros > /tmp/ci_job/ci_job_crystal_ament_cmake_ros.sh
   cd /tmp/ci_job
   sh ci_job_crystal_ament_cmake_ros.sh
 
@@ -171,7 +171,7 @@ used:
     - mkdir -p $JOB_PATH/ws/src
     - cp -R $TRAVIS_BUILD_DIR $JOB_PATH/ws/src/
     # generate the script to run a CI job for that target and repo
-    - generate_ci_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --packages-select $PACKAGE_SELECT --build-up-to > $JOB_PATH/ci_job.sh
+    - generate_ci_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --package-selection-args --packages-up-to $PACKAGE_SELECT > $JOB_PATH/ci_job.sh
     - cd $JOB_PATH
     - cat ci_job.sh
     # run the actual job which involves Docker

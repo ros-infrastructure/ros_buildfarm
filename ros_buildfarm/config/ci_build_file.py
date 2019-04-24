@@ -62,6 +62,10 @@ class CIBuildFile(BuildFile):
         if 'jenkins_job_timeout' in data:
             self.jenkins_job_timeout = int(data['jenkins_job_timeout'])
 
+        self.package_selection_args = None
+        if 'package_selection_args' in data:
+            self.package_selection_args = data['package_selection_args']
+
         self.repos_files = []
         if 'repos_files' in data:
             self.repos_files = data['repos_files']
@@ -71,3 +75,7 @@ class CIBuildFile(BuildFile):
         if 'skip_rosdep_keys' in data:
             self.skip_rosdep_keys = data['skip_rosdep_keys']
             assert isinstance(self.skip_rosdep_keys, list)
+
+        self.test_branch = None
+        if 'test_branch' in data:
+            self.test_branch = data['test_branch']

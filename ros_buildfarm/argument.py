@@ -315,24 +315,10 @@ def add_argument_install_pip_packages(parser):
         help='The list of packages to install with pip')
 
 
-def add_argument_above_depth(parser):
-    parser.add_argument(
-        '--above-depth', type=int, metavar='DEPTH', default=0,
-        help='Number of reverse-dependent packages which ' +
-             'depend upon the targeted package(s).')
-
-
 def add_argument_build_ignore(parser):
     parser.add_argument(
         '--build-ignore', nargs='*', metavar='PKG_NAME',
         help='Package name(s) which should be excluded from the build')
-
-
-def add_argument_build_up_to(parser):
-    parser.add_argument(
-        '--build-up-to', action='store_true',
-        help='Include all forward dependencies of the selected ' +
-             'package(s) which are present in the workspace.')
 
 
 def add_argument_install_packages(parser):
@@ -342,10 +328,11 @@ def add_argument_install_packages(parser):
              'packages detected for installation by rosdep.')
 
 
-def add_argument_packages_select(parser):
+def add_argument_package_selection_args(parser):
     parser.add_argument(
-        '--packages-select', nargs='*', metavar='PKG_NAME',
-        help='Package(s) to be built')
+        '--package-selection-args', nargs=argparse.REMAINDER,
+        help='Package selection arguments passed to colcon '
+             'to specify which packages should be built and tested.')
 
 
 def add_argument_repos_file_urls(parser, required=False):
