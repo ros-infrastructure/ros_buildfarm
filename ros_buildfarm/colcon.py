@@ -17,7 +17,7 @@ import subprocess
 
 def locate_packages(
     source_space, packages_select=None, packages_up_to=None,
-    packages_above_depth=None
+    packages_above_depth=None, extra_args=None
 ):
     cmd = ['colcon', 'list', '--base-paths', source_space]
     if packages_select:
@@ -29,6 +29,8 @@ def locate_packages(
     if packages_above_depth:
         cmd.append('--packages-above-depth')
         cmd.extend(packages_above_depth)
+    if extra_args:
+        cmd.extend(extra_args)
 
     output = subprocess.check_output(cmd).decode()
 
