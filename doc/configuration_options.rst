@@ -445,3 +445,6 @@ The following options are valid in version ``1`` (beside the generic options):
 
 * ``test_branch``: branch to attempt to checkout and merge in each repository
   before running the job.
+
+* ``underlay_from_ci_jobs``: name(s) of other CI job(s) which should be used
+  as an underlay to this job.
