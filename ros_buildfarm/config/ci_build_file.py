@@ -79,3 +79,8 @@ class CIBuildFile(BuildFile):
         self.test_branch = None
         if 'test_branch' in data:
             self.test_branch = data['test_branch']
+
+        self.underlay_from_ci_jobs = []
+        if 'underlay_from_ci_jobs' in data:
+            self.underlay_from_ci_jobs = data['underlay_from_ci_jobs']
+            assert isinstance(self.underlay_from_ci_jobs, list)
