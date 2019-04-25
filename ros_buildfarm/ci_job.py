@@ -36,9 +36,7 @@ from rosdistro import get_index
 def configure_ci_jobs(
         config_url, rosdistro_name, ci_build_name,
         groovy_script=None, dry_run=False):
-    """
-    Configure all Jenkins CI jobs.
-    """
+    """Configure all Jenkins CI jobs."""
     config = get_config_index(config_url)
     build_files = get_ci_build_files(config, rosdistro_name)
     build_file = build_files[ci_build_name]
