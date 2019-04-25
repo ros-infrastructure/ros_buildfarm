@@ -18,7 +18,6 @@ import argparse
 import os
 import sys
 
-from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_dry_run
 from ros_buildfarm.argument import add_argument_rosdistro_name
@@ -42,31 +41,29 @@ def main(argv=sys.argv[1:]):
     # Positional
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
-    add_argument_build_name(parser, 'ci')
 
     add_argument_dry_run(parser)
     args = parser.parse_args(argv)
 
     config = get_index(args.config_url)
     build_files = get_ci_build_files(config, args.rosdistro_name)
-    build_file = build_files[args.ci_build_name]
 
     jenkins = connect(config.jenkins_url)
     configure_management_view(jenkins, dry_run=args.dry_run)
     group_name = get_ci_view_name(args.rosdistro_name)
 
     configure_reconfigure_jobs_job(
-        jenkins, group_name, args, config, build_file, dry_run=args.dry_run)
+        jenkins, group_name, args, config, build_files, dry_run=args.dry_run)
 
 
 def configure_reconfigure_jobs_job(
-        jenkins, group_name, args, config, build_file, dry_run=False):
-    job_config = get_reconfigure_jobs_job_config(args, config, build_file)
+        jenkins, group_name, args, config, build_files, dry_run=False):
+    job_config = get_reconfigure_jobs_job_config(args, config, build_files)
     job_name = '%s_%s' % (group_name, 'reconfigure-jobs')
     configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
 
-def get_reconfigure_jobs_job_config(args, config, build_file):
+def get_reconfigure_jobs_job_config(args, config, build_files):
     template_name = 'ci/ci_reconfigure-jobs_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -77,7 +74,7 @@ def get_reconfigure_jobs_job_config(args, config, build_file):
 
         'config_url': args.config_url,
         'rosdistro_name': args.rosdistro_name,
-        'ci_build_name': args.ci_build_name,
+        'ci_build_names': list(build_files.keys()),
         'repository_args': repository_args,
 
         'ros_buildfarm_repository': get_repository(),
@@ -88,7 +85,8 @@ def get_reconfigure_jobs_job_config(args, config, build_file):
             '/home/buildfarm',
             os.path.dirname(get_relative_credential_path())),
 
-        'recipients': build_file.notify_emails,
+        'recipients': list(
+            set(email for bf in build_files.values() for email in bf.notify_emails)),
     }
     job_config = expand_template(template_name, job_data)
     return job_config
