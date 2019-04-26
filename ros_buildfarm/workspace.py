@@ -45,7 +45,8 @@ def clean_workspace(workspace_root):
 def call_build_tool(
     build_tool, rosdistro_name, workspace_root, cmake_args=None,
     force_cmake=False, cmake_clean_cache=False, install=False, make_args=None,
-    args=None, parent_result_spaces=None, env=None, colcon_verb='build'
+    args=None, parent_result_spaces=None, env=None, colcon_verb='build',
+    ctest_args=None
 ):
     # command to run
     assert build_tool in ('catkin_make_isolated', 'colcon')
@@ -98,6 +99,9 @@ def call_build_tool(
 
     if cmake_args:
         cmd += ['--cmake-args'] + cmake_args
+
+    if ctest_args:
+        cmd += ['--ctest-args'] + ctest_args
 
     if make_args:
         if build_tool == 'catkin_make_isolated':

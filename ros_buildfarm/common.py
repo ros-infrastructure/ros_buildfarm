@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from collections import namedtuple
+import glob
 import os
 import platform
 try:
@@ -533,3 +534,11 @@ def get_system_architecture():
     if machine == 'aarch64':
         return 'armv8'
     raise RuntimeError('Unable to determine architecture')
+
+def has_gpu_support():
+    # It detects only nvidia support. The implementation is to check if
+    # /dev/nvidia* links are present. Further work could be to use a
+    # more robust method (i.e: https://github.com/ntpeters/pyvidia)
+    if glob.glob('/dev/nvidia*'):
+        return True
+    return False
