@@ -24,6 +24,11 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN useradd -u @uid -m buildfarm
 
+# Todo: check to only include this in the case of gpu jobs
+@(TEMPLATE(
+    'snippet/setup_nvidia_docker2.Dockerfile.em'
+))@
+
 @(TEMPLATE(
     'snippet/add_distribution_repositories.Dockerfile.em',
     distribution_repository_keys=distribution_repository_keys,
