@@ -535,6 +535,7 @@ def get_system_architecture():
         return 'armv8'
     raise RuntimeError('Unable to determine architecture')
 
+
 def has_gpu_support():
     # It detects only nvidia support. The implementation is to check if
     # /dev/nvidia* links are present. Further work could be to use a
