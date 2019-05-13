@@ -540,7 +540,5 @@ def has_gpu_support():
     # /dev/nvidia* links are present. Further work could be to use a
     # more robust method (i.e: https://github.com/ntpeters/pyvidia)
     if glob.glob('/dev/nvidia*'):
-        print("****** GPU SUPPORT FOUND ********")
         return True
-    print("****** NOOOOOOOOO GPU SUPPORT FOUND ********")
     return False
