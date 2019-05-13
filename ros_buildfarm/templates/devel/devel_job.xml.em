@@ -187,7 +187,7 @@ if pull_request:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
-        'docker run' +
+        'docker run --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw -env=XAUTHORITY= --volume=: --runtime=nvidia' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
@@ -215,7 +215,7 @@ if pull_request:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
-        'docker run' +
+        'docker run --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw -env=XAUTHORITY= --volume=: --runtime=nvidia' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
