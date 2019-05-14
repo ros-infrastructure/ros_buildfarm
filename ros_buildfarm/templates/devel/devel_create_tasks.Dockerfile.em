@@ -18,7 +18,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN useradd -u @uid -m buildfarm
 
-@[if build_name == "gpu"]@
+@[if source_build_name == "gpu"]@
 @(TEMPLATE(
     'snippet/setup_nvidia_docker2.Dockerfile.em'
 ))@
