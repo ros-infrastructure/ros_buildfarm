@@ -101,7 +101,11 @@ def call_build_tool(
         cmd += ['--cmake-args'] + cmake_args
 
     if ctest_args:
-        cmd += ['--ctest-args'] + ctest_args
+        if build_tool == 'colcon':
+            cmd += ['--ctest-args'] + ctest_args
+        # No ctest parameters are passed in catkin_make_isolated
+        # because in ROS 1 the test target of the makefile is being
+        # not ctest
 
     if make_args:
         if build_tool == 'catkin_make_isolated':
