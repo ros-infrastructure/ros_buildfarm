@@ -406,7 +406,7 @@ def _get_devel_job_config(
         'git_ssh_credential_id': config.git_ssh_credential_id,
 
         'collate_test_stats': build_file.collate_test_stats,
-        'use_nvidia_runtime' : has_gpu_support(),
+        'use_nvidia_runtime': has_gpu_support(),
     }
     job_config = expand_template(template_name, job_data)
     return job_config

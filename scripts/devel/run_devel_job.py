@@ -70,7 +70,7 @@ def main(argv=sys.argv[1:]):
             args.distribution_repository_key_files),
         'custom_rosdep_urls': args.custom_rosdep_urls,
         'uid': get_user_id(),
-        'use_nvidia_runtime' : has_gpu_support(),
+        'use_nvidia_runtime': has_gpu_support(),
     })
     create_dockerfile(
         'devel/devel_create_tasks.Dockerfile.em', data, args.dockerfile_dir)
