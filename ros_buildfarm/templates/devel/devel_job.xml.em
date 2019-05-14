@@ -43,7 +43,7 @@ if pull_request:
         },
     ]
 }@
-@[if source_build_name == "gpu"]@
+@[if use_nvidia_runtime ]@
 @{
 docker_run_cmd = 'docker run --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw -env=XAUTHORITY= --volume=: --runtime=nvidia'
 }@
