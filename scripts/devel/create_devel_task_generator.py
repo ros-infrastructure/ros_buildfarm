@@ -30,6 +30,7 @@ from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
+from ros_buildfarm.common import has_gpu_support
 from ros_buildfarm.templates import create_dockerfile
 from rosdep2 import create_default_installer_context
 from rosdep2.catkin_support import get_catkin_view
@@ -170,6 +171,7 @@ def main(argv=sys.argv[1:]):
 
         'testing': args.testing,
         'prerelease_overlay': len(args.workspace_root) > 1,
+        'use_nvidia_runtime': has_gpu_support(),
     }
     create_dockerfile(
         'devel/devel_task.Dockerfile.em', data, args.dockerfile_dir)
