@@ -108,5 +108,7 @@ else:
     cmd += \
         ' --workspace-root /tmp/ws_overlay' + \
         ' --parent-result-space %s' % ' '.join(parent_result_spaces)
+if vars().get('build_tool_args'):
+    cmd += ' --build-tool-args ' + ' '.join(build_tool_args)
 }@
 CMD ["@cmd"]

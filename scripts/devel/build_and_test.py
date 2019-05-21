@@ -19,6 +19,7 @@ import os
 import sys
 
 from ros_buildfarm.argument import add_argument_build_tool
+from ros_buildfarm.argument import add_argument_build_tool_args
 from ros_buildfarm.common import Scope
 from ros_buildfarm.workspace import call_build_tool
 from ros_buildfarm.workspace import clean_workspace
@@ -35,6 +36,7 @@ def main(argv=sys.argv[1:]):
         help='The name of the ROS distro to identify the setup file to be '
              'sourced (if available)')
     add_argument_build_tool(parser, required=True)
+    add_argument_build_tool_args(parser)
     parser.add_argument(
         '--workspace-root',
         required=True,
@@ -71,7 +73,7 @@ def main(argv=sys.argv[1:]):
                 '-DBUILD_TESTING=1',
                 '-DCATKIN_ENABLE_TESTING=1', '-DCATKIN_SKIP_TESTING=0',
                 '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir]
-            additional_args = None
+            additional_args = args.build_tool_args or []
             if args.build_tool == 'colcon':
                 additional_args = ['--test-result-base', test_results_dir]
             env = dict(os.environ)
@@ -83,7 +85,7 @@ def main(argv=sys.argv[1:]):
                 parent_result_spaces=parent_result_spaces, env=env)
         if not rc:
             with Scope('SUBSECTION', 'build tests'):
-                additional_args = None
+                additional_args = args.build_tool_args or []
                 if args.build_tool == 'colcon':
                     additional_args = ['--cmake-target-skip-unavailable']
                 rc = call_build_tool(
@@ -93,7 +95,7 @@ def main(argv=sys.argv[1:]):
                     parent_result_spaces=parent_result_spaces, env=env)
             if not rc:
                 make_args = ['run_tests']
-                additional_args = None
+                additional_args = args.build_tool_args or []
                 if args.build_tool == 'colcon':
                     cmake_args = None
                     make_args = None

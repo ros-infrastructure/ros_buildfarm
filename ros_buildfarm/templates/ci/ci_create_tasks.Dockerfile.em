@@ -63,7 +63,8 @@ args = \
 build_args = args + \
     ' --build-tool ' + build_tool + \
     ' --ros-version ' + str(ros_version) + \
-    ' --install-packages ' + ' '.join(install_packages)
+    ' --install-packages ' + ' '.join(install_packages) + \
+    ' --build-tool-args ' + ' '.join(build_tool_args)
 cmds = [
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/create_workspace_task_generator.py' + \
@@ -77,14 +78,14 @@ cmds = [
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/build_task_generator.py' + \
-    build_args + \
-    ' --dockerfile-dir /tmp/docker_build_and_install',
+    ' --dockerfile-dir /tmp/docker_build_and_install' + \
+    build_args,
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/build_task_generator.py' + \
-    build_args + \
     ' --testing' + \
-    ' --dockerfile-dir /tmp/docker_build_and_test',
+    ' --dockerfile-dir /tmp/docker_build_and_test' + \
+    build_args,
 ]
 cmd = ' && '.join(cmds).replace('\\', '\\\\').replace('"', '\\"')
 }@
