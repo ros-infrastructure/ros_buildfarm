@@ -403,5 +403,5 @@ def extract_multiple_remainders(argv, arguments):
         for index in sorted(indexes.keys(), reverse=True):
             argument = indexes[index]
             remainders[argument.dest] = argv[index + 1:]
-            argv = argv[:index]
+            del argv[index:]
     return remainders
