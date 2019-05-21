@@ -44,6 +44,10 @@ class CIBuildFile(BuildFile):
         self.build_tool = data.get('build_tool', 'colcon')
         assert self.build_tool in ('catkin_make_isolated', 'colcon')
 
+        self.build_tool_args = None
+        if 'build_tool_args' in data:
+            self.build_tool_args = data['build_tool_args']
+
         self.install_packages = []
         if 'install_packages' in data:
             self.install_packages = data['install_packages']

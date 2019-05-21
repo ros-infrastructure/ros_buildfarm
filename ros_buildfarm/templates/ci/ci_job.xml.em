@@ -58,6 +58,12 @@ parameters = [
         'default_value': package_selection_args or '',
         'description': 'Package selection arguments passed to colcon to specify which packages should be built and tested, or blank for ALL',
     },
+    {
+        'type': 'string',
+        'name': 'build_tool_args',
+        'default_value': build_tool_args or '',
+        'description': 'Arbitrary arguments passed to the build tool',
+    },
 ]
 }@
 @(SNIPPET(
@@ -163,7 +169,8 @@ parameters = [
         (' /tmp/ws' if not underlay_source_paths else \
          ''.join([' /tmp/ws%s' % (i or '') for i in range(len(underlay_source_paths))]) +
          ' /tmp/ws_overlay') +
-        ' --package-selection-args $package_selection_args',
+        ' --package-selection-args $package_selection_args' +
+        ' --build-tool-args $build_tool_args',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - generating CI tasks"',

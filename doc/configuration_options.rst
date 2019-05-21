@@ -417,6 +417,8 @@ The following options are valid in version ``1`` (beside the generic options):
   * ``catkin_make_isolated``
   * ``colcon`` (default)
 
+* ``build_tool_args``: arbitrary arguments passed to the build tool.
+
 * ``install_packages``: a list of packages which should be installed by default
   before any of the dependencies necessary to build the packages in the
   workspace.
