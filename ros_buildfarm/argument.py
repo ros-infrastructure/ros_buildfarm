@@ -329,10 +329,16 @@ def add_argument_install_packages(parser):
 
 
 def add_argument_package_selection_args(parser):
-    parser.add_argument(
+    return parser.add_argument(
         '--package-selection-args', nargs=argparse.REMAINDER,
         help='Package selection arguments passed to colcon '
              'to specify which packages should be built and tested.')
+
+
+def add_argument_build_tool_args(parser):
+    return parser.add_argument(
+        '--build-tool-args', nargs=argparse.REMAINDER,
+        help='Arbitrary arguments passed to the build tool.')
 
 
 def add_argument_repos_file_urls(parser, required=False):
@@ -381,3 +387,21 @@ def check_len_action(minargs, maxargs):
                     message='expected at most %s arguments' % (minargs))
             setattr(args, self.dest, values)
     return CheckLength
+
+
+def extract_multiple_remainders(argv, arguments):
+    # the following logic only works for arguments with a single option string
+    for a in arguments:
+        assert len(a.option_strings) == 1
+    indexes = {
+        argv.index(a.option_strings[0]): a
+        for a in arguments if a.option_strings[0] in argv}
+    remainders = {}
+    # only necessary if there is more than one remainder argument
+    # otherwise argparse can handle it just fine
+    if len(indexes) > 1:
+        for index in sorted(indexes.keys(), reverse=True):
+            argument = indexes[index]
+            remainders[argument.dest] = argv[index + 1:]
+            argv = argv[:index]
+    return remainders

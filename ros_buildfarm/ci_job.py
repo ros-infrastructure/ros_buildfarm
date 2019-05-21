@@ -268,6 +268,7 @@ def _get_ci_job_config(
         'skip_rosdep_keys': build_file.skip_rosdep_keys,
         'install_packages': build_file.install_packages,
         'package_selection_args': build_file.package_selection_args,
+        'build_tool_args': build_file.build_tool_args,
         'test_branch': build_file.test_branch,
 
         'underlay_source_job': underlay_source_job,

@@ -73,7 +73,8 @@ cmds = [
     ' --test-branch "%s"' % (test_branch) + \
     ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) + \
     ' --build-ignore ' + ' '.join(build_ignore) + \
-    ' --package-selection-args ' + ' '.join(package_selection_args),
+    ' --package-selection-args ' + ' '.join(package_selection_args) + \
+    ' --build-tool-args ' + ' '.join(build_tool_args),
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/build_task_generator.py' + \
