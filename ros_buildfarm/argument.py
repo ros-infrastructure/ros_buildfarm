@@ -57,9 +57,10 @@ def add_argument_older_rosdistro_names(parser):
         help='List of older rosdistro names to compare with')
 
 
-def add_argument_build_name(parser, build_file_type):
+def add_argument_build_name(parser, build_file_type, nargs=None):
     parser.add_argument(
         '%s_build_name' % build_file_type,
+        nargs=nargs,
         help="The name / key of the '%s-build' file from the index" %
              build_file_type)
 
