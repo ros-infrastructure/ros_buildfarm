@@ -34,11 +34,25 @@ from rosdistro import get_index
 
 
 def configure_ci_jobs(
-        config_url, rosdistro_name, ci_build_name,
+        config_url, rosdistro_name, ci_build_names=None,
         groovy_script=None, dry_run=False):
     """Configure all Jenkins CI jobs."""
     config = get_config_index(config_url)
     build_files = get_ci_build_files(config, rosdistro_name)
+
+    if not ci_build_names:
+        ci_build_names = build_files.keys()
+
+    for ci_build_name in ci_build_names:
+        _configure_ci_jobs(
+            config, build_files, config_url, rosdistro_name, ci_build_name,
+            groovy_script=groovy_script, dry_run=dry_run)
+
+
+def _configure_ci_jobs(
+        config, build_files, config_url, rosdistro_name, ci_build_name,
+        groovy_script=None, dry_run=False):
+    """Configure all Jenkins CI jobs for a specific CI build name."""
     build_file = build_files[ci_build_name]
 
     index = get_index(config.rosdistro_index_url)
@@ -49,7 +63,8 @@ def configure_ci_jobs(
         for os_code_name in build_file.targets[os_name].keys():
             for arch in build_file.targets[os_name][os_code_name]:
                 targets.append((os_name, os_code_name, arch))
-    print('The build file contains the following targets:')
+    print(
+        "The build file '%s' contains the following targets:" % ci_build_name)
     for os_name, os_code_name, arch in targets:
         print('  -', os_name, os_code_name, arch)
 
