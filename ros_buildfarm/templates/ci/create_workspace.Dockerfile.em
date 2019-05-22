@@ -87,7 +87,6 @@ cmds = [
     ' --workspace-root ' + workspace_root[-1] + \
     ' --repos-file-urls ' + ' '.join(repos_file_urls) + \
     ' --test-branch "%s"' % (test_branch) + \
-    ' --build-ignore ' + ' '.join(build_ignore) + \
     ' --package-selection-args ' + ' '.join(package_selection_args),
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \

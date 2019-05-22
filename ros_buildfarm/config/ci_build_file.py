@@ -36,11 +36,6 @@ class CIBuildFile(BuildFile):
 
         super(CIBuildFile, self).__init__(name, data)
 
-        self.build_ignore = []
-        if 'build_ignore' in data:
-            self.build_ignore = data['build_ignore']
-            assert isinstance(self.build_ignore, list)
-
         self.build_tool = data.get('build_tool', 'colcon')
         assert self.build_tool in ('catkin_make_isolated', 'colcon')
 

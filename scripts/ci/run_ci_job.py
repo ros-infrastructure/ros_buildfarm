@@ -19,7 +19,6 @@ import copy
 import sys
 
 from ros_buildfarm.argument import add_argument_arch
-from ros_buildfarm.argument import add_argument_build_ignore
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
 from ros_buildfarm.argument import \
@@ -52,7 +51,6 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
 
-    add_argument_build_ignore(parser)
     add_argument_build_tool(parser, required=True)
     add_argument_distribution_repository_key_files(parser)
     add_argument_distribution_repository_urls(parser)

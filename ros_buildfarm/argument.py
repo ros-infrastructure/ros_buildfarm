@@ -316,12 +316,6 @@ def add_argument_install_pip_packages(parser):
         help='The list of packages to install with pip')
 
 
-def add_argument_build_ignore(parser):
-    parser.add_argument(
-        '--build-ignore', nargs='*', metavar='PKG_NAME',
-        help='Package name(s) which should be excluded from the build')
-
-
 def add_argument_install_packages(parser):
     parser.add_argument(
         '--install-packages', nargs='*',
