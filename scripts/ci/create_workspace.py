@@ -73,7 +73,7 @@ def main(argv=sys.argv[1:]):
 
             to_ignore = packages.keys() - selected_packages.keys()
             print('Ignoring %d packages' % len(to_ignore))
-            for package in to_ignore:
+            for package in sorted(to_ignore):
                 print('-', package)
                 package_root = packages.pop(package)
                 Path(package_root, 'COLCON_IGNORE').touch()
