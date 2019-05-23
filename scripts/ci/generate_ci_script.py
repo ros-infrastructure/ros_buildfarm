@@ -21,7 +21,6 @@ import sys
 from em import BANGPATH_OPT
 from em import Hook
 from ros_buildfarm.argument import add_argument_arch
-from ros_buildfarm.argument import add_argument_build_ignore
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_config_url
@@ -51,7 +50,6 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
 
-    add_argument_build_ignore(parser)
     add_argument_build_tool(parser)
     add_argument_package_selection_args(parser)
     add_argument_repos_file_urls(parser)
@@ -77,8 +75,6 @@ def main(argv=sys.argv[1:]):
                 self.parameters['repos_file_urls'] = ' '.join(args.repos_file_urls)
             if args.test_branch is not None:
                 self.parameters['test_branch'] = args.test_branch
-            if args.build_ignore is not None:
-                self.parameters['build_ignore'] = ' '.join(args.build_ignore)
             if args.package_selection_args is not None:
                 self.parameters['package_selection_args'] = ' '.join(args.package_selection_args)
 

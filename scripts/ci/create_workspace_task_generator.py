@@ -19,7 +19,6 @@ import sys
 
 from apt import Cache
 from ros_buildfarm.argument import add_argument_arch
-from ros_buildfarm.argument import add_argument_build_ignore
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
@@ -48,7 +47,6 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
 
-    add_argument_build_ignore(parser)
     add_argument_distribution_repository_key_files(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_dockerfile_dir(parser)
@@ -102,7 +100,6 @@ def main(argv=sys.argv[1:]):
         'test_branch': args.test_branch,
 
         'skip_rosdep_keys': args.skip_rosdep_keys,
-        'build_ignore': args.build_ignore,
 
         'package_selection_args': args.package_selection_args,
 

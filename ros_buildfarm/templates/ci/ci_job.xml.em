@@ -48,12 +48,6 @@ parameters = [
     },
     {
         'type': 'string',
-        'name': 'build_ignore',
-        'default_value': ' '.join(build_ignore),
-        'description': 'Package name(s) which should be excluded from the build (space-separated)',
-    },
-    {
-        'type': 'string',
         'name': 'package_selection_args',
         'default_value': package_selection_args or '',
         'description': 'Package selection arguments passed to colcon to specify which packages should be built and tested, or blank for ALL',
@@ -163,7 +157,6 @@ parameters = [
         ' --repos-file-urls $repos_file_urls' +
         ' --test-branch "$test_branch"' +
         ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) +
-        ' --build-ignore $build_ignore' +
         ' --install-packages $install_packages' +
         ' --workspace-mount-point' +
         (' /tmp/ws' if not underlay_source_paths else \

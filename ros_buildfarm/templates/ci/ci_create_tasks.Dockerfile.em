@@ -73,7 +73,6 @@ cmds = [
     ' --repos-file-urls ' + ' '.join(repos_file_urls) + \
     ' --test-branch "%s"' % (test_branch) + \
     ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) + \
-    ' --build-ignore ' + ' '.join(build_ignore) + \
     ' --package-selection-args ' + ' '.join(package_selection_args),
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \

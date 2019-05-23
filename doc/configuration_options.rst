@@ -408,9 +408,6 @@ The file format is specified by the following information:
 
 The following options are valid in version ``1`` (beside the generic options):
 
-* ``build_ignore``: a list of package names which should not be built, taking
-  precedence over any package selection options given at runtime.
-
 * ``build_tool``: the build tool to use.
   The following are valid values:
 
