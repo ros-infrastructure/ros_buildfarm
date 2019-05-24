@@ -69,6 +69,16 @@ def call_build_tool(
             cmd += ['--install-base', 'install_isolated']
             cmd += ['--test-result-base', 'test_results']
 
+        # output cohesion per package to avoid interleaving
+        if colcon_verb == 'build':
+            cmd += [
+                '--event-handlers', 'console_cohesion+']
+        # process packages sequentially assuming tests from different packages
+        # can't be executed in parallel
+        if colcon_verb == 'test':
+            cmd += [
+                '--event-handlers', 'console_direct+', '--executor sequential']
+
     if force_cmake:
         if build_tool == 'catkin_make_isolated':
             cmd.append('--force-cmake')
