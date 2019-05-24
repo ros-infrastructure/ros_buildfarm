@@ -20,8 +20,8 @@ import sys
 
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
-from ros_buildfarm.common import Scope
 from ros_buildfarm.common import has_gpu_support
+from ros_buildfarm.common import Scope
 from ros_buildfarm.workspace import call_build_tool
 from ros_buildfarm.workspace import clean_workspace
 from ros_buildfarm.workspace import ensure_workspace_exists
