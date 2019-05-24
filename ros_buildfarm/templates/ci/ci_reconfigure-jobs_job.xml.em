@@ -65,6 +65,7 @@ if (repository_names) {
     'builder_shell_key-files',
     script_generating_key_files=script_generating_key_files,
 ))@
+@[for ci_build_name in ci_build_names]@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
@@ -120,6 +121,7 @@ if (repository_names) {
     command=None,
     script_file='$WORKSPACE/reconfigure_jobs/reconfigure_jobs.groovy',
 ))@
+@[end for]@
   </builders>
   <publishers>
 @(SNIPPET(

@@ -20,10 +20,7 @@ from pathlib import Path
 import sys
 from urllib.request import urlretrieve
 
-from ros_buildfarm.argument import add_argument_above_depth
-from ros_buildfarm.argument import add_argument_build_ignore
-from ros_buildfarm.argument import add_argument_build_up_to
-from ros_buildfarm.argument import add_argument_packages_select
+from ros_buildfarm.argument import add_argument_package_selection_args
 from ros_buildfarm.argument import add_argument_repos_file_urls
 from ros_buildfarm.argument import add_argument_test_branch
 from ros_buildfarm.colcon import locate_packages
@@ -35,10 +32,7 @@ from ros_buildfarm.workspace import ensure_workspace_exists
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
         description='Create a workspace from vcs repos files.')
-    add_argument_above_depth(parser)
-    add_argument_build_ignore(parser)
-    add_argument_build_up_to(parser)
-    add_argument_packages_select(parser)
+    add_argument_package_selection_args(parser)
     add_argument_repos_file_urls(parser, required=True)
     add_argument_test_branch(parser)
     parser.add_argument(
@@ -68,44 +62,19 @@ def main(argv=sys.argv[1:]):
     with Scope('SUBSECTION', 'vcs export --exact'):
         export_repositories(args.workspace_root)
 
-    with Scope('SUBSECTION', 'mark package(s) to ignore'):
-        if args.build_ignore:
-            source_space = os.path.join(args.workspace_root, 'src')
-            packages = locate_packages(source_space, args.build_ignore)
-            for package_name, package_root in packages.items():
-                print("Ignoring package '%s'" % (package_name,))
-                Path(package_root, 'COLCON_IGNORE').touch()
-
-    with Scope('SUBSECTION', 'select target package(s) in workspace'):
+    with Scope('SUBSECTION', 'mark packages with IGNORE files'):
         packages = locate_packages(source_space)
-        if args.packages_select:
-            selected_packages = set()
-            print('Selecting %d packages by name' % len(args.packages_select))
-            if args.above_depth:
-                packages_above_depth = [str(args.above_depth)] + \
-                    args.packages_select
-                after = locate_packages(
-                    source_space,
-                    packages_above_depth=packages_above_depth).keys()
-                print('Selecting %d packages after current selection' %
-                      (len(after) - len(args.packages_select)))
-                selected_packages |= after
-            if args.build_up_to:
-                packages_up_to = selected_packages or args.packages_select
-                up_to = locate_packages(
-                    source_space,
-                    packages_up_to=packages_up_to).keys()
-                print('Selecting %d dependencies of current selection' %
-                      (len(up_to) - len(packages_up_to)))
-                selected_packages |= up_to
-            if not selected_packages:
-                selected_packages = locate_packages(
-                    source_space,
-                    packages_select=args.packages_select).keys()
+        if args.package_selection_args:
+            print(
+                'Using package selection arguments:',
+                args.package_selection_args)
+            selected_packages = locate_packages(
+                source_space, extra_args=args.package_selection_args)
 
-            to_ignore = packages.keys() - selected_packages
-            print('Ignoring %d packages to scope workspace' % len(to_ignore))
+            to_ignore = packages.keys() - selected_packages.keys()
+            print('Ignoring %d packages' % len(to_ignore))
             for package in to_ignore:
+                print('-', package)
                 package_root = packages.pop(package)
                 Path(package_root, 'COLCON_IGNORE').touch()
 

@@ -36,13 +36,12 @@ class CIBuildFile(BuildFile):
 
         super(CIBuildFile, self).__init__(name, data)
 
-        self.build_ignore = []
-        if 'build_ignore' in data:
-            self.build_ignore = data['build_ignore']
-            assert isinstance(self.build_ignore, list)
-
         self.build_tool = data.get('build_tool', 'colcon')
         assert self.build_tool in ('catkin_make_isolated', 'colcon')
+
+        self.build_tool_args = None
+        if 'build_tool_args' in data:
+            self.build_tool_args = data['build_tool_args']
 
         self.install_packages = []
         if 'install_packages' in data:
@@ -62,6 +61,10 @@ class CIBuildFile(BuildFile):
         if 'jenkins_job_timeout' in data:
             self.jenkins_job_timeout = int(data['jenkins_job_timeout'])
 
+        self.package_selection_args = None
+        if 'package_selection_args' in data:
+            self.package_selection_args = data['package_selection_args']
+
         self.repos_files = []
         if 'repos_files' in data:
             self.repos_files = data['repos_files']
@@ -71,3 +74,12 @@ class CIBuildFile(BuildFile):
         if 'skip_rosdep_keys' in data:
             self.skip_rosdep_keys = data['skip_rosdep_keys']
             assert isinstance(self.skip_rosdep_keys, list)
+
+        self.test_branch = None
+        if 'test_branch' in data:
+            self.test_branch = data['test_branch']
+
+        self.underlay_from_ci_jobs = []
+        if 'underlay_from_ci_jobs' in data:
+            self.underlay_from_ci_jobs = data['underlay_from_ci_jobs']
+            assert isinstance(self.underlay_from_ci_jobs, list)

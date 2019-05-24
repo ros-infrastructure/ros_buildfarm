@@ -87,10 +87,7 @@ cmds = [
     ' --workspace-root ' + workspace_root[-1] + \
     ' --repos-file-urls ' + ' '.join(repos_file_urls) + \
     ' --test-branch "%s"' % (test_branch) + \
-    ' --build-ignore ' + ' '.join(build_ignore) + \
-    ' --above-depth %d' % above_depth + \
-    (' --build-up-to' if build_up_to else '') + \
-    ' --packages-select ' + ' '.join(packages_select),
+    ' --package-selection-args ' + ' '.join(package_selection_args),
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/generate_install_lists.py' + \

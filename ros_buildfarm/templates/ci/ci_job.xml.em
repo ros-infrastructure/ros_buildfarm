@@ -43,31 +43,20 @@ parameters = [
     {
         'type': 'string',
         'name': 'test_branch',
-        'default_value': '',
+        'default_value': test_branch or '',
         'description': 'Branch to attempt to checkout before doing batch job',
     },
     {
         'type': 'string',
-        'name': 'build_ignore',
-        'default_value': ' '.join(build_ignore),
-        'description': 'Package name(s) which should be excluded from the build (space-separated)',
+        'name': 'package_selection_args',
+        'default_value': package_selection_args or '',
+        'description': 'Package selection arguments passed to colcon to specify which packages should be built and tested, or blank for ALL',
     },
     {
         'type': 'string',
-        'name': 'packages_select',
-        'default_value': '',
-        'description': 'Package(s) to be built (space-separated), or blank for ALL',
-    },
-    {
-        'type': 'boolean',
-        'name': 'build_up_to',
-        'description': 'Include all forward dependencies of the selected package(s) which are present in the workspace',
-    },
-    {
-        'type': 'string',
-        'name': 'above_depth',
-        'default_value': '0',
-        'description': 'Number of reverse dependencies of selected packages to be include in scope',
+        'name': 'build_tool_args',
+        'default_value': build_tool_args or '',
+        'description': 'Arbitrary arguments passed to the build tool',
     },
 ]
 }@
@@ -155,7 +144,6 @@ parameters = [
         'echo "# BEGIN SECTION: Generate Dockerfile - CI tasks"',
         'export TZ="%s"' % timezone,
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'if [ "$build_up_to" = "true" ]; then BUILD_UP_TO_FLAG="--build-up-to"; fi',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/run_ci_job.py' +
         ' ' + rosdistro_name +
         ' ' + os_name +
@@ -169,15 +157,13 @@ parameters = [
         ' --repos-file-urls $repos_file_urls' +
         ' --test-branch "$test_branch"' +
         ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) +
-        ' --build-ignore $build_ignore' +
         ' --install-packages $install_packages' +
         ' --workspace-mount-point' +
         (' /tmp/ws' if not underlay_source_paths else \
          ''.join([' /tmp/ws%s' % (i or '') for i in range(len(underlay_source_paths))]) +
          ' /tmp/ws_overlay') +
-        ' --above-depth $above_depth' +
-        ' $BUILD_UP_TO_FLAG' +
-        ' --packages-select $packages_select',
+        ' --package-selection-args $package_selection_args' +
+        ' --build-tool-args $build_tool_args',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - generating CI tasks"',

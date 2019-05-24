@@ -18,10 +18,7 @@ import argparse
 import sys
 
 from apt import Cache
-from ros_buildfarm.argument import add_argument_above_depth
 from ros_buildfarm.argument import add_argument_arch
-from ros_buildfarm.argument import add_argument_build_ignore
-from ros_buildfarm.argument import add_argument_build_up_to
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
@@ -29,7 +26,7 @@ from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
-from ros_buildfarm.argument import add_argument_packages_select
+from ros_buildfarm.argument import add_argument_package_selection_args
 from ros_buildfarm.argument import add_argument_repos_file_urls
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_rosdep_keys
@@ -50,14 +47,11 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
 
-    add_argument_above_depth(parser)
-    add_argument_build_ignore(parser)
-    add_argument_build_up_to(parser)
     add_argument_distribution_repository_key_files(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_dockerfile_dir(parser)
     add_argument_env_vars(parser)
-    add_argument_packages_select(parser)
+    add_argument_package_selection_args(parser)
     add_argument_repos_file_urls(parser, required=True)
     add_argument_skip_rosdep_keys(parser)
     add_argument_test_branch(parser)
@@ -106,11 +100,8 @@ def main(argv=sys.argv[1:]):
         'test_branch': args.test_branch,
 
         'skip_rosdep_keys': args.skip_rosdep_keys,
-        'build_ignore': args.build_ignore,
 
-        'above_depth': args.above_depth,
-        'build_up_to': args.build_up_to,
-        'packages_select': args.packages_select,
+        'package_selection_args': args.package_selection_args,
 
         'workspace_root': args.workspace_root,
     }

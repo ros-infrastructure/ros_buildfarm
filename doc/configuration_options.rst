@@ -408,14 +408,13 @@ The file format is specified by the following information:
 
 The following options are valid in version ``1`` (beside the generic options):
 
-* ``build_ignore``: a list of package names which should not be built, taking
-  precedence over any package selection options given at runtime.
-
 * ``build_tool``: the build tool to use.
   The following are valid values:
 
   * ``catkin_make_isolated``
   * ``colcon`` (default)
+
+* ``build_tool_args``: arbitrary arguments passed to the build tool.
 
 * ``install_packages``: a list of packages which should be installed by default
   before any of the dependencies necessary to build the packages in the
@@ -432,8 +431,19 @@ The following options are valid in version ``1`` (beside the generic options):
 
 * ``jenkins_job_timeout``: the job timeout for *CI* jobs.
 
+* ``package_selection_args``: package selection arguments passed to ``colcon``
+  to specify which packages should be built and tested.
+  Note that ``colcon`` is always used to select packages even when
+  ``build_tool`` specifies something other else.
+
 * ``repos_files``: the list of ``.repos`` files to use by default when creating
   a workspace to build.
 
 * ``skip_rosdep_keys``: a list of rosdep keys which should be ignored when
   rosdep is invoked to resolve package dependencies.
+
+* ``test_branch``: branch to attempt to checkout and merge in each repository
+  before running the job.
+
+* ``underlay_from_ci_jobs``: name(s) of other CI job(s) which should be used
+  as an underlay to this job.

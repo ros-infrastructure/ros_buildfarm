@@ -57,9 +57,10 @@ def add_argument_older_rosdistro_names(parser):
         help='List of older rosdistro names to compare with')
 
 
-def add_argument_build_name(parser, build_file_type):
+def add_argument_build_name(parser, build_file_type, nargs=None):
     parser.add_argument(
         '%s_build_name' % build_file_type,
+        nargs=nargs,
         help="The name / key of the '%s-build' file from the index" %
              build_file_type)
 
@@ -315,26 +316,6 @@ def add_argument_install_pip_packages(parser):
         help='The list of packages to install with pip')
 
 
-def add_argument_above_depth(parser):
-    parser.add_argument(
-        '--above-depth', type=int, metavar='DEPTH', default=0,
-        help='Number of reverse-dependent packages which ' +
-             'depend upon the targeted package(s).')
-
-
-def add_argument_build_ignore(parser):
-    parser.add_argument(
-        '--build-ignore', nargs='*', metavar='PKG_NAME',
-        help='Package name(s) which should be excluded from the build')
-
-
-def add_argument_build_up_to(parser):
-    parser.add_argument(
-        '--build-up-to', action='store_true',
-        help='Include all forward dependencies of the selected ' +
-             'package(s) which are present in the workspace.')
-
-
 def add_argument_install_packages(parser):
     parser.add_argument(
         '--install-packages', nargs='*',
@@ -342,10 +323,17 @@ def add_argument_install_packages(parser):
              'packages detected for installation by rosdep.')
 
 
-def add_argument_packages_select(parser):
-    parser.add_argument(
-        '--packages-select', nargs='*', metavar='PKG_NAME',
-        help='Package(s) to be built')
+def add_argument_package_selection_args(parser):
+    return parser.add_argument(
+        '--package-selection-args', nargs=argparse.REMAINDER,
+        help='Package selection arguments passed to colcon '
+             'to specify which packages should be built and tested.')
+
+
+def add_argument_build_tool_args(parser):
+    return parser.add_argument(
+        '--build-tool-args', nargs=argparse.REMAINDER,
+        help='Arbitrary arguments passed to the build tool.')
 
 
 def add_argument_repos_file_urls(parser, required=False):
@@ -394,3 +382,21 @@ def check_len_action(minargs, maxargs):
                     message='expected at most %s arguments' % (minargs))
             setattr(args, self.dest, values)
     return CheckLength
+
+
+def extract_multiple_remainders(argv, arguments):
+    # the following logic only works for arguments with a single option string
+    for a in arguments:
+        assert len(a.option_strings) == 1
+    indexes = {
+        argv.index(a.option_strings[0]): a
+        for a in arguments if a.option_strings[0] in argv}
+    remainders = {}
+    # only necessary if there is more than one remainder argument
+    # otherwise argparse can handle it just fine
+    if len(indexes) > 1:
+        for index in sorted(indexes.keys(), reverse=True):
+            argument = indexes[index]
+            remainders[argument.dest] = argv[index + 1:]
+            del argv[index:]
+    return remainders

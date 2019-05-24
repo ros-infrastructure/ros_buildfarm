@@ -34,13 +34,25 @@ from rosdistro import get_index
 
 
 def configure_ci_jobs(
-        config_url, rosdistro_name, ci_build_name,
+        config_url, rosdistro_name, ci_build_names=None,
         groovy_script=None, dry_run=False):
-    """
-    Configure all Jenkins CI jobs.
-    """
+    """Configure all Jenkins CI jobs."""
     config = get_config_index(config_url)
     build_files = get_ci_build_files(config, rosdistro_name)
+
+    if not ci_build_names:
+        ci_build_names = build_files.keys()
+
+    for ci_build_name in ci_build_names:
+        _configure_ci_jobs(
+            config, build_files, config_url, rosdistro_name, ci_build_name,
+            groovy_script=groovy_script, dry_run=dry_run)
+
+
+def _configure_ci_jobs(
+        config, build_files, config_url, rosdistro_name, ci_build_name,
+        groovy_script=None, dry_run=False):
+    """Configure all Jenkins CI jobs for a specific CI build name."""
     build_file = build_files[ci_build_name]
 
     index = get_index(config.rosdistro_index_url)
@@ -51,7 +63,8 @@ def configure_ci_jobs(
         for os_code_name in build_file.targets[os_name].keys():
             for arch in build_file.targets[os_name][os_code_name]:
                 targets.append((os_name, os_code_name, arch))
-    print('The build file contains the following targets:')
+    print(
+        "The build file '%s' contains the following targets:" % ci_build_name)
     for os_name, os_code_name, arch in targets:
         print('  -', os_name, os_code_name, arch)
 
@@ -88,7 +101,7 @@ def configure_ci_jobs(
         try:
             job_name, job_config = configure_ci_job(
                 config_url, rosdistro_name, ci_build_name,
-                os_name, os_code_name, arch, 'nightly',
+                os_name, os_code_name, arch,
                 config=config, build_file=build_file,
                 index=index, dist_file=dist_file,
                 jenkins=jenkins, views=views,
@@ -96,28 +109,6 @@ def configure_ci_jobs(
                 groovy_script=groovy_script,
                 dry_run=dry_run,
                 trigger_timer=build_file.jenkins_job_schedule)
-            ci_job_names.append(job_name)
-            if groovy_script is not None:
-                print("Configuration for job '%s'" % job_name)
-                job_configs[job_name] = job_config
-        except JobValidationError as e:
-            print(e.message, file=sys.stderr)
-
-    for os_name, os_code_name, arch in targets:
-        try:
-            nightly_job_name = get_ci_job_name(
-                rosdistro_name, os_name, os_code_name, arch, 'nightly')
-            job_name, job_config = configure_ci_job(
-                config_url, rosdistro_name, ci_build_name,
-                os_name, os_code_name, arch, 'overlay',
-                config=config, build_file=build_file,
-                index=index, dist_file=dist_file,
-                jenkins=jenkins, views=views,
-                is_disabled=is_disabled,
-                groovy_script=groovy_script,
-                dry_run=dry_run,
-                underlay_source_job=nightly_job_name,
-                underlay_source_paths=['$UNDERLAY_JOB_SPACE'])
             ci_job_names.append(job_name)
             if groovy_script is not None:
                 print("Configuration for job '%s'" % job_name)
@@ -140,7 +131,7 @@ def configure_ci_jobs(
 
 def configure_ci_job(
         config_url, rosdistro_name, ci_build_name,
-        os_name, os_code_name, arch, job_type,
+        os_name, os_code_name, arch,
         config=None, build_file=None,
         index=None, dist_file=None,
         jenkins=None, views=None,
@@ -148,7 +139,6 @@ def configure_ci_job(
         groovy_script=None,
         build_targets=None,
         dry_run=False,
-        underlay_source_job=None,
         underlay_source_paths=None,
         trigger_timer=None):
     """
@@ -192,6 +182,19 @@ def configure_ci_job(
             'choose one of the following: %s' % ', '.join(sorted(
                 build_file.targets[os_name][os_code_name])))
 
+    if len(build_file.underlay_from_ci_jobs) > 1:
+        raise JobValidationError(
+            'Only a single underlay job is currently supported, but the ' +
+            'build file lists %d.' % len(build_file.underlay_from_ci_jobs))
+
+    underlay_source_job = None
+    if build_file.underlay_from_ci_jobs:
+        underlay_source_job = get_ci_job_name(
+            rosdistro_name, os_name, os_code_name, arch,
+            build_file.underlay_from_ci_jobs[0])
+        underlay_source_paths = (underlay_source_paths or []) + \
+            ['$UNDERLAY_JOB_SPACE']
+
     if jenkins is None:
         from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
@@ -200,7 +203,7 @@ def configure_ci_job(
         configure_ci_view(jenkins, view_name, dry_run=dry_run)
 
     job_name = get_ci_job_name(
-        rosdistro_name, os_name, os_code_name, arch, job_type)
+        rosdistro_name, os_name, os_code_name, arch, ci_build_name)
 
     job_config = _get_ci_job_config(
         index, rosdistro_name, build_file, os_name,
@@ -276,9 +279,11 @@ def _get_ci_job_config(
 
         'repos_file_urls': repos_files,
 
-        'build_ignore': build_file.build_ignore,
         'skip_rosdep_keys': build_file.skip_rosdep_keys,
         'install_packages': build_file.install_packages,
+        'package_selection_args': build_file.package_selection_args,
+        'build_tool_args': build_file.build_tool_args,
+        'test_branch': build_file.test_branch,
 
         'underlay_source_job': underlay_source_job,
         'underlay_source_paths': underlay_source_paths,

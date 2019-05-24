@@ -64,10 +64,10 @@ matrix:
         - mkdir job job/underlay && cd job
         - ln -s .. ros_buildfarm
       script:
-        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME default $OS_NAME $OS_CODE_NAME2 $ARCH --packages-select $UNDERLAY_PACKAGES --build-up-to > job.sh
+        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly $OS_NAME $OS_CODE_NAME2 $ARCH --package-selection-args --packages-up-to $UNDERLAY_PACKAGES > job.sh
         - (. job.sh -y; exit $test_result_RC)
         - tar -xjf ros2-$ROS2_DISTRO_NAME-linux-$OS_CODE_NAME2-$ARCH-ci.tar.bz2 -C underlay
-        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME default $OS_NAME $OS_CODE_NAME2 $ARCH --packages-select $OVERLAY_PACKAGES --build-up-to --build-ignore $UNDERLAY_PACKAGES --underlay-source-path underlay/ros2-linux > job.sh
+        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly $OS_NAME $OS_CODE_NAME2 $ARCH --underlay-source-path underlay/ros2-linux --package-selection-args --packages-skip-up-to $UNDERLAY_PACKAGES --packages-up-to $OVERLAY_PACKAGES > job.sh
         - (. job.sh -y; exit $test_result_RC)
     - language: python
       python: "3.6"

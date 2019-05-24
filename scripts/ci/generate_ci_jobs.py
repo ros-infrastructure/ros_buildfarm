@@ -32,14 +32,15 @@ def main(argv=sys.argv[1:]):
     # Positional
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
-    add_argument_build_name(parser, 'ci')
+    add_argument_build_name(parser, 'ci', nargs='*')
 
     add_argument_dry_run(parser)
     add_argument_groovy_script(parser)
     args = parser.parse_args(argv)
 
     return configure_ci_jobs(
-        args.config_url, args.rosdistro_name, args.ci_build_name,
+        args.config_url, args.rosdistro_name,
+        ci_build_names=args.ci_build_name,
         groovy_script=args.groovy_script, dry_run=args.dry_run)
 
 

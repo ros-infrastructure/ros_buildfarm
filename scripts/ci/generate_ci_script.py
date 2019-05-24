@@ -20,16 +20,13 @@ import sys
 
 from em import BANGPATH_OPT
 from em import Hook
-from ros_buildfarm.argument import add_argument_above_depth
 from ros_buildfarm.argument import add_argument_arch
-from ros_buildfarm.argument import add_argument_build_ignore
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
-from ros_buildfarm.argument import add_argument_build_up_to
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
-from ros_buildfarm.argument import add_argument_packages_select
+from ros_buildfarm.argument import add_argument_package_selection_args
 from ros_buildfarm.argument import add_argument_repos_file_urls
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_cleanup
@@ -53,11 +50,8 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
 
-    add_argument_above_depth(parser)
-    add_argument_build_ignore(parser)
     add_argument_build_tool(parser)
-    add_argument_build_up_to(parser)
-    add_argument_packages_select(parser)
+    add_argument_package_selection_args(parser)
     add_argument_repos_file_urls(parser)
     add_argument_skip_cleanup(parser)
     add_argument_test_branch(parser)
@@ -81,14 +75,8 @@ def main(argv=sys.argv[1:]):
                 self.parameters['repos_file_urls'] = ' '.join(args.repos_file_urls)
             if args.test_branch is not None:
                 self.parameters['test_branch'] = args.test_branch
-            if args.build_ignore is not None:
-                self.parameters['build_ignore'] = ' '.join(args.build_ignore)
-            if args.packages_select is not None:
-                self.parameters['packages_select'] = ' '.join(args.packages_select)
-            if args.above_depth is not None:
-                self.parameters['above_depth'] = str(args.above_depth)
-            if args.build_up_to is not None:
-                self.parameters['build_up_to'] = 'true' if args.build_up_to else 'false'
+            if args.package_selection_args is not None:
+                self.parameters['package_selection_args'] = ' '.join(args.package_selection_args)
 
         def beforeInclude(self, *_, **kwargs):
             template_path = kwargs['file'].name
@@ -140,7 +128,6 @@ def main(argv=sys.argv[1:]):
         args.config_url, args.rosdistro_name, args.ci_build_name,
         args.os_name, args.os_code_name, args.arch,
         config=config, build_file=build_file, jenkins=False, views=False,
-        job_type='script',
         underlay_source_paths=underlay_source_paths)
 
     templates.template_hooks = None
