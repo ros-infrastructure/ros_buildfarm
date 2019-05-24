@@ -71,9 +71,9 @@ def main(argv=sys.argv[1:]):
     debian_pkg_names.update(args.install_packages)
     if args.build_tool == 'colcon':
         debian_pkg_names.update([
+            'python3-catkin-pkg-modules',
             'python3-colcon-output',
             'python3-colcon-parallel-executor',
-            'python3-catkin-pkg-modules',
             'python3-colcon-ros',
             'python3-colcon-test-result',
             'python3-rosdistro-modules',
