@@ -73,6 +73,14 @@ def main(argv=sys.argv[1:]):
              'and instead of installing the tests are ran')
     args = parser.parse_args(argv)
 
+    condition_context = {}
+    for t in args.env_vars:
+        parts = t.split('=', 1)
+        assert len(parts) == 2, '--env-vars argument lacks equal sign: ' + t
+        condition_context[parts[0]] = parts[1]
+    condition_context['ROS_DISTRO'] = args.rosdistro_name
+    condition_context['ROS_VERSION'] = args.ros_version
+
     # get direct build dependencies
     pkgs = {}
     for workspace_root in args.workspace_root:
@@ -80,10 +88,7 @@ def main(argv=sys.argv[1:]):
         print("Crawling for packages in workspace '%s'" % source_space)
         ws_pkgs = find_packages(source_space)
         for pkg in ws_pkgs.values():
-            pkg.evaluate_conditions({
-                'ROS_DISTRO': args.rosdistro_name,
-                'ROS_VERSION': args.ros_version,
-            })
+            pkg.evaluate_conditions(condition_context)
         pkgs.update(ws_pkgs)
 
     pkg_names = [pkg.name for pkg in pkgs.values()]
