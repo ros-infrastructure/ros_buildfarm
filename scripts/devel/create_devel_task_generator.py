@@ -73,7 +73,11 @@ def main(argv=sys.argv[1:]):
              'and instead of installing the tests are ran')
     args = parser.parse_args(argv)
 
-    condition_context = dict(os.environ)
+    condition_context = {}
+    for t in args.env_vars:
+        parts = t.split('=', 1)
+        assert len(parts) == 2, '--env-vars argument lacks equal sign: ' + t
+        condition_context[parts[0]] = parts[1]
     condition_context['ROS_DISTRO'] = args.rosdistro_name
     condition_context['ROS_VERSION'] = args.ros_version
 
