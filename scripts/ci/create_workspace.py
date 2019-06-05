@@ -16,14 +16,11 @@
 
 import argparse
 import os
-from pathlib import Path
 import sys
 from urllib.request import urlretrieve
 
-from ros_buildfarm.argument import add_argument_package_selection_args
 from ros_buildfarm.argument import add_argument_repos_file_urls
 from ros_buildfarm.argument import add_argument_test_branch
-from ros_buildfarm.colcon import locate_packages
 from ros_buildfarm.common import Scope
 from ros_buildfarm.vcs import export_repositories, import_repositories
 from ros_buildfarm.workspace import ensure_workspace_exists
@@ -32,7 +29,6 @@ from ros_buildfarm.workspace import ensure_workspace_exists
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
         description='Create a workspace from vcs repos files.')
-    add_argument_package_selection_args(parser)
     add_argument_repos_file_urls(parser, required=True)
     add_argument_test_branch(parser)
     parser.add_argument(
@@ -42,8 +38,6 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
 
     ensure_workspace_exists(args.workspace_root)
-
-    os.chdir(args.workspace_root)
 
     with Scope('SUBSECTION', 'fetch repos files(s)'):
         repos_files = []
@@ -61,25 +55,6 @@ def main(argv=sys.argv[1:]):
 
     with Scope('SUBSECTION', 'vcs export --exact'):
         export_repositories(args.workspace_root)
-
-    with Scope('SUBSECTION', 'mark packages with IGNORE files'):
-        packages = locate_packages(source_space)
-        if args.package_selection_args:
-            print(
-                'Using package selection arguments:',
-                args.package_selection_args)
-            selected_packages = locate_packages(
-                source_space, extra_args=args.package_selection_args)
-
-            to_ignore = packages.keys() - selected_packages.keys()
-            print('Ignoring %d packages' % len(to_ignore))
-            for package in sorted(to_ignore):
-                print('-', package)
-                package_root = packages.pop(package)
-                Path(package_root, 'COLCON_IGNORE').touch()
-
-        print('There are %d packages which meet selection criteria' %
-              len(packages))
 
 
 if __name__ == '__main__':

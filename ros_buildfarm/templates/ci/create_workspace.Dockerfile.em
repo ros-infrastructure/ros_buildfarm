@@ -86,8 +86,7 @@ cmds = [
     ' /tmp/ros_buildfarm/scripts/ci/create_workspace.py' + \
     ' --workspace-root ' + workspace_root[-1] + \
     ' --repos-file-urls ' + ' '.join(repos_file_urls) + \
-    ' --test-branch "%s"' % (test_branch) + \
-    ' --package-selection-args ' + ' '.join(package_selection_args),
+    ' --test-branch "%s"' % (test_branch),
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/generate_install_lists.py' + \
@@ -96,7 +95,8 @@ cmds = [
     ' ' + os_code_name + \
     ' --package-root ' + ' '.join(base_paths) + \
     ' --output-dir ' + workspace_root[-1] + \
-    ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys),
+    ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) + \
+    ' --package-selection-args ' + ' '.join(package_selection_args),
 ]
 cmd = ' && '.join(cmds).replace('\\', '\\\\').replace('"', '\\"')
 }@
