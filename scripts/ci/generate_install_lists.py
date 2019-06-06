@@ -16,6 +16,7 @@
 
 import argparse
 import os
+from pathlib import Path
 import sys
 
 from apt import Cache
@@ -23,8 +24,10 @@ from catkin_pkg.packages import find_packages
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_output_dir
+from ros_buildfarm.argument import add_argument_package_selection_args
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_rosdep_keys
+from ros_buildfarm.colcon import locate_packages
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import Scope
 from rosdep2 import create_default_installer_context
@@ -43,12 +46,35 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
 
     add_argument_output_dir(parser)
+    add_argument_package_selection_args(parser)
     add_argument_skip_rosdep_keys(parser)
     parser.add_argument(
         '--package-root',
         nargs='+',
         help='The path to the directory containing packages')
     args = parser.parse_args(argv)
+
+    workspace_root = args.package_root[-1]
+    os.chdir(workspace_root)
+
+    with Scope('SUBSECTION', 'mark packages with IGNORE files'):
+        packages = locate_packages(workspace_root)
+        if args.package_selection_args:
+            print(
+                'Using package selection arguments:',
+                args.package_selection_args)
+            selected_packages = locate_packages(
+                workspace_root, extra_args=args.package_selection_args)
+
+            to_ignore = packages.keys() - selected_packages.keys()
+            print('Ignoring %d packages' % len(to_ignore))
+            for package in sorted(to_ignore):
+                print('-', package)
+                package_root = packages.pop(package)
+                Path(package_root, 'COLCON_IGNORE').touch()
+
+        print('There are %d packages which meet selection criteria' %
+              len(packages))
 
     with Scope('SUBSECTION', 'Enumerating packages needed to build'):
         # find all of the underlay packages
@@ -93,6 +119,9 @@ def main(argv=sys.argv[1:]):
         if args.skip_rosdep_keys:
             dependency_keys_build.difference_update(args.skip_rosdep_keys)
             dependency_keys_test.difference_update(args.skip_rosdep_keys)
+        if args.package_selection_args:
+            dependency_keys_build.difference_update(to_ignore)
+            dependency_keys_test.difference_update(to_ignore)
 
         context = initialize_resolver(
             args.rosdistro_name, args.os_name, args.os_code_name)
