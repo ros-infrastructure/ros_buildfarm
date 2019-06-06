@@ -43,16 +43,6 @@ if pull_request:
         },
     ]
 }@
-@[if use_nvidia_runtime ]@
-@{
-docker_run_cmd = 'docker run --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw --runtime=nvidia'
-}@
-@[else]@
-@{
-docker_run_cmd = 'docker run'
-}@
-@[end if]@
-
 @(SNIPPET(
     'property_parameters-definition',
     parameters=parameters,
@@ -197,7 +187,13 @@ docker_run_cmd = 'docker run'
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
-        docker_run_cmd +
+        'if $(ls /dev/nvidia* > /dev/null); then',
+        '  docker_run_cmd="docker run --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw --runtime=nvidia"',
+        'else',
+        '  docker_run_cmd="docker run"',
+        'fi',
+        '',
+        '${docker_run_cmd}' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
@@ -225,7 +221,13 @@ docker_run_cmd = 'docker run'
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
-        docker_run_cmd +
+        'if $(ls /dev/nvidia* > /dev/null); then',
+        '  docker_run_cmd="docker run --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw --runtime=nvidia"',
+        'else',
+        '  docker_run_cmd="docker run"',
+        'fi',
+        '',
+        '${docker_run_cmd}' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
