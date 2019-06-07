@@ -24,6 +24,7 @@ This new major version requires a post-JEP-200 Jenkins version (see `#587 <https
   * add devel job test statistics collation (`#541 <https://github.com/ros-infrastructure/ros_buildfarm/pull/541>`_)
 
 * Changes
+
   * add all Ubuntu EOL distros back to boxturtle to old release template (`#637 <https://github.com/ros-infrastructure/ros_buildfarm/pull/637>`_)
   * fetch artful from old-releases (`#569 <https://github.com/ros-infrastructure/ros_buildfarm/pull/569>`_)
   * bump tests to use latest ROS releases (`#613 <https://github.com/ros-infrastructure/ros_buildfarm/pull/613>`_)
