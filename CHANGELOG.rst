@@ -2,6 +2,51 @@
 Changelog for package ros_buildfarm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.0 (2019-06-07)
+------------------
+This new major version requires a post-JEP-200 Jenkins version (see `#587 <https://github.com/ros-infrastructure/ros_buildfarm/pull/587>`_) and therefore the provisioned machine to be updated (`buildfarm_deployment#207 <https://github.com/ros-infrastructure/buildfarm_deployment/pull/207>`_).
+
+* New features
+
+  * support colcon build tool using a configuration option (`#585 <https://github.com/ros-infrastructure/ros_buildfarm/pull/585>`_, `#589 <https://github.com/ros-infrastructure/ros_buildfarm/pull/589>`_, `#591 <https://github.com/ros-infrastructure/ros_buildfarm/pull/591>`_)
+  * add CI jobs for building and testing workspaces defined in a .repos file (`#590 <https://github.com/ros-infrastructure/ros_buildfarm/pull/590>`_, `#607 <https://github.com/ros-infrastructure/ros_buildfarm/pull/607>`_, `#610 <https://github.com/ros-infrastructure/ros_buildfarm/pull/610>`_, `#623 <https://github.com/ros-infrastructure/ros_buildfarm/pull/623>`_, `#628 <https://github.com/ros-infrastructure/ros_buildfarm/pull/628>`_, `#629 <https://github.com/ros-infrastructure/ros_buildfarm/pull/629>`_, `#630 <https://github.com/ros-infrastructure/ros_buildfarm/pull/630>`_, `#632 <https://github.com/ros-infrastructure/ros_buildfarm/pull/632>`_, `#633 <https://github.com/ros-infrastructure/ros_buildfarm/pull/633>`_, `#636 <https://github.com/ros-infrastructure/ros_buildfarm/pull/636>`_)
+
+* Improvements
+
+  * evaluate conditions in manifests (`#621 <https://github.com/ros-infrastructure/ros_buildfarm/pull/621>`_, `#634 <https://github.com/ros-infrastructure/ros_buildfarm/pull/634>`_)
+  * support for a docker_build type of doc_independent build (`#576 <https://github.com/ros-infrastructure/ros_buildfarm/pull/576>`_, `#619 <https://github.com/ros-infrastructure/ros_buildfarm/pull/619>`_)
+  * add options to configure apt/pip package dependencies for the independent doc job in the build file (`#618 <https://github.com/ros-infrastructure/ros_buildfarm/pull/618>`_)
+  * [prerelease] add ability to generate repos files for faster cloning (rebased) (`#600 <https://github.com/ros-infrastructure/ros_buildfarm/pull/600>`_)
+  * only consider same type distros when looking for previous distro (`#593 <https://github.com/ros-infrastructure/ros_buildfarm/pull/593>`_)
+  * share ccache between docker builds (`#580 <https://github.com/ros-infrastructure/ros_buildfarm/pull/580>`_)
+  * allow searching by email on status pages (`#561 <https://github.com/ros-infrastructure/ros_buildfarm/pull/561>`_)
+  * set build environment variables from build files (`#554 <https://github.com/ros-infrastructure/ros_buildfarm/pull/554>`_, `#558 <https://github.com/ros-infrastructure/ros_buildfarm/pull/558>`_)
+  * add devel job test statistics collation (`#541 <https://github.com/ros-infrastructure/ros_buildfarm/pull/541>`_)
+
+* Changes
+
+  * add all Ubuntu EOL distros back to boxturtle to old release template (`#637 <https://github.com/ros-infrastructure/ros_buildfarm/pull/637>`_)
+  * fetch artful from old-releases (`#569 <https://github.com/ros-infrastructure/ros_buildfarm/pull/569>`_)
+  * bump tests to use latest ROS releases (`#613 <https://github.com/ros-infrastructure/ros_buildfarm/pull/613>`_)
+  * support expression of dependencies via install list file (`#612 <https://github.com/ros-infrastructure/ros_buildfarm/pull/612>`_)
+  * also test with Python 3.5 and 3.6 (`#570 <https://github.com/ros-infrastructure/ros_buildfarm/pull/570>`_)
+
+* Fixes
+
+  * pin sphinx version due to issue with latest release 2.0.0 (`#615 <https://github.com/ros-infrastructure/ros_buildfarm/pull/615>`_)
+  * fix remaining flake8 violations (`#611 <https://github.com/ros-infrastructure/ros_buildfarm/pull/611>`_)
+  * handle scenario where no views or jobs are reconfigured (`#606 <https://github.com/ros-infrastructure/ros_buildfarm/pull/606>`_)
+  * support flake8 3.5.0 and fix various linter violations (`#608 <https://github.com/ros-infrastructure/ros_buildfarm/pull/608>`_)
+  * use version number on -modules dependency (`#562 <https://github.com/ros-infrastructure/ros_buildfarm/pull/562>`_, `#599 <https://github.com/ros-infrastructure/ros_buildfarm/pull/599>`_)
+  * use Bourne shell / dash compatible shell condition (`#592 <https://github.com/ros-infrastructure/ros_buildfarm/pull/592>`_)
+  * fix return codes from some job generation scripts (`#595 <https://github.com/ros-infrastructure/ros_buildfarm/pull/595>`_)
+  * install updated version of dpkg on Trusty (`#564 <https://github.com/ros-infrastructure/ros_buildfarm/pull/564>`_, `#566 <https://github.com/ros-infrastructure/ros_buildfarm/pull/566>`_)
+  * fix regex to not match jobs from other build files (`#563 <https://github.com/ros-infrastructure/ros_buildfarm/pull/563>`_)
+  * install dh-python explicitly on Bionic and Buster as it's not included with Python 3 (`#553 <https://github.com/ros-infrastructure/ros_buildfarm/pull/553>`_, `#556 <https://github.com/ros-infrastructure/ros_buildfarm/pull/556>`_)
+  * use single pipe to avoid problems with Jenkins reading them concurrently (`#552 <https://github.com/ros-infrastructure/ros_buildfarm/pull/552>`_)
+  * install apt transport https (`#551 <https://github.com/ros-infrastructure/ros_buildfarm/pull/551>`_)
+  * add ddebs to published binarydeb files (`#545 <https://github.com/ros-infrastructure/ros_buildfarm/pull/545>`_)
+
 2.0.1 (2018-04-30)
 ------------------
 
