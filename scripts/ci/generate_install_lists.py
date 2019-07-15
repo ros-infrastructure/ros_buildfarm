@@ -58,7 +58,7 @@ def main(argv=sys.argv[1:]):
     os.chdir(workspace_root)
 
     with Scope('SUBSECTION', 'mark packages with IGNORE files'):
-        packages = locate_packages(workspace_root)
+        all_packages = locate_packages(workspace_root)
         if args.package_selection_args:
             print(
                 'Using package selection arguments:',
@@ -66,25 +66,27 @@ def main(argv=sys.argv[1:]):
             selected_packages = locate_packages(
                 workspace_root, extra_args=args.package_selection_args)
 
-            to_ignore = packages.keys() - selected_packages.keys()
+            to_ignore = all_packages.keys() - selected_packages.keys()
             print('Ignoring %d packages' % len(to_ignore))
             for package in sorted(to_ignore):
                 print('-', package)
-                package_root = packages.pop(package)
+                package_root = all_packages[package]
                 Path(package_root, 'COLCON_IGNORE').touch()
 
         print('There are %d packages which meet selection criteria' %
-              len(packages))
+              len(selected_packages))
 
     with Scope('SUBSECTION', 'Enumerating packages needed to build'):
         # find all of the underlay packages
         underlay_pkgs = {}
+        all_underlay_pkg_names = set()
         for package_root in args.package_root[0:-1]:
             print("Crawling for packages in '%s'" % package_root)
             underlay_pkgs.update(find_packages(package_root))
+            all_underlay_pkg_names |= locate_packages(package_root).keys()
 
         underlay_pkg_names = [pkg.name for pkg in underlay_pkgs.values()]
-        print('Found the following underlay packages:')
+        print('Found the following ROS underlay packages:')
         for pkg_name in sorted(underlay_pkg_names):
             print('  -', pkg_name)
 
@@ -94,7 +96,7 @@ def main(argv=sys.argv[1:]):
         pkgs = find_packages(package_root)
 
         pkg_names = [pkg.name for pkg in pkgs.values()]
-        print('Found the following packages:')
+        print('Found the following ROS packages:')
         for pkg_name in sorted(pkg_names):
             print('  -', pkg_name)
 
@@ -119,9 +121,12 @@ def main(argv=sys.argv[1:]):
         if args.skip_rosdep_keys:
             dependency_keys_build.difference_update(args.skip_rosdep_keys)
             dependency_keys_test.difference_update(args.skip_rosdep_keys)
-        if args.package_selection_args:
-            dependency_keys_build.difference_update(to_ignore)
-            dependency_keys_test.difference_update(to_ignore)
+
+        # remove all non-ROS packages and packages which are present but
+        # specifically ignored
+        every_package_name = all_packages.keys() | all_underlay_pkg_names
+        dependency_keys_build -= every_package_name
+        dependency_keys_test -= every_package_name
 
         context = initialize_resolver(
             args.rosdistro_name, args.os_name, args.os_code_name)
