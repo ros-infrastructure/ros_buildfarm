@@ -66,7 +66,7 @@ def main(argv=sys.argv[1:]):
             if args.parent_result_space:
                 parent_result_spaces = args.parent_result_space
             env = dict(os.environ)
-            env['MAKEFLAGS'] = '-j1'
+            env.setdefault('MAKEFLAGS', '-j1')
             rc = call_build_tool(
                 args.build_tool, args.rosdistro_name, args.workspace_root,
                 cmake_args=['-DBUILD_TESTING=0', '-DCATKIN_SKIP_TESTING=1'],
