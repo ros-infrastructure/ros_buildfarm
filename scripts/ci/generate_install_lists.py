@@ -59,6 +59,7 @@ def main(argv=sys.argv[1:]):
 
     with Scope('SUBSECTION', 'mark packages with IGNORE files'):
         all_packages = locate_packages(workspace_root)
+        selected_packages = all_packages
         if args.package_selection_args:
             print(
                 'Using package selection arguments:',
