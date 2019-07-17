@@ -84,7 +84,13 @@ def main(argv=sys.argv[1:]):
         for package_root in args.package_root[0:-1]:
             print("Crawling for packages in '%s'" % package_root)
             underlay_pkgs.update(find_packages(package_root))
-            all_underlay_pkg_names |= locate_packages(package_root).keys()
+
+            # Check for a colcon index for non-ROS package detection
+            colcon_index = os.path.join(package_root, 'colcon-core', 'packages')
+            try:
+                all_underlay_pkg_names.update(os.listdir(colcon_index))
+            except FileNotFoundError:
+                pass
 
         underlay_pkg_names = [pkg.name for pkg in underlay_pkgs.values()]
         print('Found the following ROS underlay packages:')
