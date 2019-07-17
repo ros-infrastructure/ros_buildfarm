@@ -69,6 +69,10 @@ RUN echo "@today_str"
     dependency_versions=dependency_versions,
 ))@
 
+# needed for 'vcs custom --git --args merge' invocation
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q --no-install-recommends sudo
+RUN sudo -H -u buildfarm -- git config --global user.email "jenkins@@ros.invalid" && sudo -H -u buildfarm -- git config --global user.name "Jenkins ROS"
+
 @(TEMPLATE(
     'snippet/rosdep_init.Dockerfile.em',
     custom_rosdep_urls=custom_rosdep_urls,
