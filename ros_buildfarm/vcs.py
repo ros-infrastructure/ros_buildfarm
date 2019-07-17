@@ -31,6 +31,6 @@ def import_repositories(source_space, repository_file, target_branch):
         subprocess.check_call(cmd)
 
 
-def export_repositories(source_space):
+def export_repositories(source_space, check=True):
     cmd = ['vcs', 'export', '--exact', source_space]
-    subprocess.check_call(cmd)
+    subprocess.run(cmd, check=check)

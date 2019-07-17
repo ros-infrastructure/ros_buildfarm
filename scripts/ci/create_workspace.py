@@ -54,7 +54,8 @@ def main(argv=sys.argv[1:]):
             import_repositories(source_space, repos_file, args.test_branch)
 
     with Scope('SUBSECTION', 'vcs export --exact'):
-        export_repositories(args.workspace_root)
+        # if a repo has been rebased against the default branch vcs can't detect the remote
+        export_repositories(args.workspace_root, check=not args.test_branch)
 
 
 if __name__ == '__main__':
