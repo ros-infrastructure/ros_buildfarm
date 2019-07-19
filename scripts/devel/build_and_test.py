@@ -75,7 +75,7 @@ def main(argv=sys.argv[1:]):
                 '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir]
             additional_args = args.build_tool_args or []
             if args.build_tool == 'colcon':
-                additional_args = ['--test-result-base', test_results_dir]
+                additional_args += ['--test-result-base', test_results_dir]
             env = dict(os.environ)
             env.setdefault('MAKEFLAGS', '-j1')
             rc = call_build_tool(
@@ -87,7 +87,7 @@ def main(argv=sys.argv[1:]):
             with Scope('SUBSECTION', 'build tests'):
                 additional_args = args.build_tool_args or []
                 if args.build_tool == 'colcon':
-                    additional_args = ['--cmake-target-skip-unavailable']
+                    additional_args += ['--cmake-target-skip-unavailable']
                 rc = call_build_tool(
                     args.build_tool, args.rosdistro_name, args.workspace_root,
                     cmake_args=cmake_args,
