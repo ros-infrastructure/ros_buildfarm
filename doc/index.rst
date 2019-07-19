@@ -111,3 +111,9 @@ Optimization
 If you are going to be running one or more jobs on any machine we recommend `using squid-in-a-can <https://github.com/jpetazzo/squid-in-a-can>`_ to cache downloads.
 It can greatly speed up download times and saves a lot of bandwidth.
 It's used by all our developers as well as on all the build machines.
+
+*CI* Jobs
+-------
+
+`*CI* jobs <jobs/ci_jobs.rst>`_ is used for continuous integration across repositories. It builds the code and runs the tests to check for regressions. The document includes Entry points for CI jobs, Run the *CI* job locally and Run the *CI* job on Travis.
+
