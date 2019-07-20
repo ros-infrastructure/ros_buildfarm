@@ -124,7 +124,7 @@ matrix:
             h+sLkzGf+my2IbsMCuc+3aeNMJ5Ej/vlXefCH/MpPWAHCqpQhe2DET/jRSaM53US
             AHNx8kw4MPUkxExgI7Sd
             =4Ofr
-            -----END PGP PUBLIC KEY BLOCK-----' | apt-key add -
+            -----END PGP PUBLIC KEY BLOCK-----' | sudo apt-key add -
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
