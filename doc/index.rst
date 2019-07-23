@@ -14,7 +14,9 @@ they work.
 
 * `release jobs <jobs/release_jobs.rst>`_ generate binary packages
 
-* `devel jobs <jobs/devel_jobs.rst>`_ build and test ROS repositories
+* `devel jobs <jobs/devel_jobs.rst>`_ build and test ROS packages within a single repository
+
+* `CI jobs <jobs/ci_jobs.rst>`_ build and test ROS packages across repositories with the option of using artifacts from other CI jobs to speed up the build
 
 * `doc jobs <jobs/doc_jobs.rst>`_ generate the API documentation of packages
   and extract information from the manifests
