@@ -212,7 +212,7 @@ parameters = [
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - create workspace"',
         'export UNDERLAY_JOB_SPACE=$WORKSPACE/underlay/ros%d-linux' % (ros_version),
-        'rm -fr $WORKSPACE/ws/src',
+        'rm -fr $WORKSPACE/ws',
         'mkdir -p $WORKSPACE/ws/src',
         '\n'.join(['mkdir -p %s' % (dir) for dir in underlay_source_paths or []]),
         'docker run' +
