@@ -254,7 +254,6 @@ def generate_ci_maintenance_jobs(
         _resolve_script('ci', 'generate_ci_maintenance_jobs.py'),
         config_url,
         ros_distro_name,
-        ci_build_name,
     ]
     if dry_run:
         cmd.append('--dry-run')
