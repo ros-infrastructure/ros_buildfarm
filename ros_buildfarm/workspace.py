@@ -136,6 +136,20 @@ def call_build_tool(
             ):
                 cmd = 'COLCON_CURRENT_PREFIX=%s %s' % (parent_result_space, cmd)
 
+    # prevent colcon from crawling the catkin results
+    if build_tool != 'colcon':
+        build_isolated = os.path.join(workspace_root, 'build_isolated')
+        os.makedirs(build_isolated, exist_ok=True)
+        open(os.path.join(build_isolated, 'COLCON_IGNORE'), 'a').close()
+
+        devel_isolated = os.path.join(workspace_root, 'devel_isolated')
+        os.makedirs(devel_isolated, exist_ok=True)
+        open(os.path.join(devel_isolated, 'COLCON_IGNORE'), 'a').close()
+
+        install_isolated = os.path.join(workspace_root, 'install_isolated')
+        os.makedirs(install_isolated, exist_ok=True)
+        open(os.path.join(install_isolated, 'COLCON_IGNORE'), 'a').close()
+
     print("Invoking '%s' in '%s'" % (cmd, workspace_root))
     return subprocess.call(
         cmd, cwd=workspace_root, shell=True, stderr=subprocess.STDOUT, env=env)
