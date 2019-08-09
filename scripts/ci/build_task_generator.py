@@ -72,6 +72,7 @@ def main(argv=sys.argv[1:]):
     if args.build_tool == 'colcon':
         debian_pkg_names.update([
             'python3-catkin-pkg-modules',
+            'python3-colcon-metadata',
             'python3-colcon-output',
             'python3-colcon-parallel-executor',
             'python3-colcon-ros',

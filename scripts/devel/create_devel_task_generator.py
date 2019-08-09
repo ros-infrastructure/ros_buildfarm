@@ -115,6 +115,7 @@ def main(argv=sys.argv[1:]):
     ]
     if args.build_tool == 'colcon':
         debian_pkg_names += [
+            'python3-colcon-metadata',
             'python3-colcon-output',
             'python3-colcon-parallel-executor',
             'python3-colcon-ros',
