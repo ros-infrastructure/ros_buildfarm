@@ -439,6 +439,10 @@ The following options are valid in version ``1`` (beside the generic options):
 * ``repos_files``: the list of ``.repos`` files to use by default when creating
   a workspace to build.
 
+* ``repository_names``: the names of repositories in the rosdistro to be
+  checkout into the workspace with their branch specified in the ``source``
+  entry.
+
 * ``skip_rosdep_keys``: a list of rosdep keys which should be ignored when
   rosdep is invoked to resolve package dependencies.
 

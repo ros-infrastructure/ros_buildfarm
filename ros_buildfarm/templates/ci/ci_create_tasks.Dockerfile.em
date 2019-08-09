@@ -71,6 +71,7 @@ cmds = [
     args + \
     ' --dockerfile-dir /tmp/docker_create_workspace' + \
     ' --repos-file-urls ' + ' '.join(repos_file_urls) + \
+    ' --repository-names ' + ' '.join(repository_names) + \
     ' --test-branch "%s"' % (test_branch) + \
     ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) + \
     ' --package-selection-args ' + ' '.join(package_selection_args),

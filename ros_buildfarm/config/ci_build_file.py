@@ -70,6 +70,11 @@ class CIBuildFile(BuildFile):
             self.repos_files = data['repos_files']
             assert isinstance(self.repos_files, list)
 
+        self.repository_names = []
+        if 'repository_names' in data:
+            self.repository_names = data['repository_names']
+            assert isinstance(self.repository_names, list)
+
         self.skip_rosdep_keys = []
         if 'skip_rosdep_keys' in data:
             self.skip_rosdep_keys = data['skip_rosdep_keys']
