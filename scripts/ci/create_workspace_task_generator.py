@@ -64,6 +64,7 @@ def main(argv=sys.argv[1:]):
     debian_pkg_names = [
         'git',
         'python3-apt',
+        'python3-colcon-metadata',
         'python3-colcon-package-information',
         'python3-colcon-package-selection',
         'python3-colcon-recursive-crawl',
