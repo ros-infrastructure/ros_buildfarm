@@ -114,7 +114,7 @@ def main(argv=sys.argv[1:]):
             pkg.evaluate_conditions(os.environ)
         for pkg in all_pkgs:
             for group_depend in pkg.group_depends:
-                if group_depend.evaluated_condition:
+                if group_depend.evaluated_condition is not False:
                     group_depend.extract_group_members(all_pkgs)
 
         dependency_keys_build = get_dependencies(
@@ -172,7 +172,9 @@ def get_dependencies(pkgs, label, get_dependencies_callback, target_pkgs):
 
 
 def _get_build_and_recursive_run_dependencies(pkg, pkgs):
-    depends = [d.name for d in pkg.build_depends + pkg.buildtool_depends]
+    depends = [
+        d.name for d in pkg.build_depends + pkg.buildtool_depends
+        if d.evaluated_condition is not False]
     # include recursive run dependencies on other pkgs in the workspace
     # if pkg A in the workspace build depends on pkg B in the workspace
     # then the recursive run dependencies of pkg B need to be installed
@@ -189,11 +191,15 @@ def _get_build_and_recursive_run_dependencies(pkg, pkgs):
         run_depends_in_pkgs.remove(pkg_name)
 
         # append run dependencies
-        run_depends = [d.name for d in pkg.build_export_depends +
-                       pkg.buildtool_export_depends + pkg.exec_depends]
+        run_depends = [
+            d.name for d in pkg.build_export_depends +
+            pkg.buildtool_export_depends + pkg.exec_depends
+            if d.evaluated_condition is not False]
 
         # append group dependencies
-        run_depends += [member for group in pkg.group_depends for member in group.members]
+        run_depends += [
+            member for group in pkg.group_depends for member in group.members
+            if group.evaluated_condition is not False]
 
         depends += run_depends
 
@@ -205,9 +211,10 @@ def _get_build_and_recursive_run_dependencies(pkg, pkgs):
 
 
 def _get_test_and_recursive_run_dependencies(pkg, pkgs):
-    depends = [d.name for d in pkg.build_export_depends +
-               pkg.buildtool_export_depends + pkg.exec_depends +
-               pkg.test_depends]
+    depends = [
+        d.name for d in pkg.build_export_depends +
+        pkg.buildtool_export_depends + pkg.exec_depends + pkg.test_depends
+        if d.evaluated_condition is not False]
     # include recursive run dependencies on other pkgs in the workspace
     # if pkg A in the workspace test depends on pkg B in the workspace
     # then the recursive run dependencies of pkg B need to be installed
@@ -224,11 +231,15 @@ def _get_test_and_recursive_run_dependencies(pkg, pkgs):
         run_depends_in_pkgs.remove(pkg_name)
 
         # append run dependencies
-        run_depends = [d.name for d in pkg.build_export_depends +
-                       pkg.buildtool_export_depends + pkg.exec_depends]
+        run_depends = [
+            d.name for d in pkg.build_export_depends +
+            pkg.buildtool_export_depends + pkg.exec_depends
+            if d.evaluated_condition is not False]
 
         # append group dependencies
-        run_depends += [member for group in pkg.group_depends for member in group.members]
+        run_depends += [
+            member for group in pkg.group_depends for member in group.members
+            if group.evaluated_condition is not False]
 
         depends += run_depends
 
@@ -237,11 +248,6 @@ def _get_test_and_recursive_run_dependencies(pkg, pkgs):
             [d for d in run_depends if d in other_pkgs_by_names])
 
     return depends
-
-
-def _get_run_and_test_dependencies(pkg, pkgs):
-    return pkg.build_export_depends + pkg.buildtool_export_depends + \
-        pkg.exec_depends + pkg.test_depends
 
 
 def initialize_resolver(rosdistro_name, os_name, os_code_name):
