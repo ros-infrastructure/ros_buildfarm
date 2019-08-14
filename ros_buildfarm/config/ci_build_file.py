@@ -60,6 +60,10 @@ class CIBuildFile(BuildFile):
         self.jenkins_job_timeout = None
         if 'jenkins_job_timeout' in data:
             self.jenkins_job_timeout = int(data['jenkins_job_timeout'])
+        self.jenkins_job_upstream_triggers = []
+        if 'jenkins_job_upstream_triggers' in data:
+            self.jenkins_job_upstream_triggers = data['jenkins_job_upstream_triggers']
+            assert isinstance(self.jenkins_job_upstream_triggers, list)
 
         self.package_selection_args = None
         if 'package_selection_args' in data:

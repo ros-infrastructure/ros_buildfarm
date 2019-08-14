@@ -195,6 +195,11 @@ def configure_ci_job(
         underlay_source_paths = (underlay_source_paths or []) + \
             ['$UNDERLAY_JOB_SPACE']
 
+    trigger_jobs = [
+        get_ci_job_name(
+            rosdistro_name, os_name, os_code_name, arch, trigger_job)
+        for trigger_job in build_file.jenkins_job_upstream_triggers]
+
     if jenkins is None:
         from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
@@ -211,7 +216,7 @@ def configure_ci_job(
         build_file.repos_files,
         underlay_source_job,
         underlay_source_paths,
-        trigger_timer,
+        trigger_timer, trigger_jobs,
         is_disabled=is_disabled)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
@@ -233,7 +238,7 @@ def _get_ci_job_config(
         os_code_name, arch,
         repos_files, underlay_source_job,
         underlay_source_paths, trigger_timer,
-        is_disabled=False):
+        trigger_jobs, is_disabled=False):
     template_name = 'ci/ci_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -288,6 +293,7 @@ def _get_ci_job_config(
         'underlay_source_job': underlay_source_job,
         'underlay_source_paths': underlay_source_paths,
         'trigger_timer': trigger_timer,
+        'trigger_jobs': trigger_jobs,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

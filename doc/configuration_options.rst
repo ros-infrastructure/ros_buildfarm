@@ -431,6 +431,9 @@ The following options are valid in version ``1`` (beside the generic options):
 
 * ``jenkins_job_timeout``: the job timeout for *CI* jobs.
 
+* ``jenkins_job_upstream_triggers``: name(s) of other CI job(s) which, when
+  built with a stable or unstable result, should trigger this job to be built.
+
 * ``package_selection_args``: package selection arguments passed to ``colcon``
   to specify which packages should be built and tested.
   Note that ``colcon`` is always used to select packages even when
