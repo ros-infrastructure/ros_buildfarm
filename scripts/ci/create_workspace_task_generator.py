@@ -54,7 +54,7 @@ def main(argv=sys.argv[1:]):
     add_argument_env_vars(parser)
     add_argument_package_selection_args(parser)
     add_argument_repos_file_urls(parser)
-    add_argument_repository_names(parser)
+    add_argument_repository_names(parser, optional=True)
     add_argument_skip_rosdep_keys(parser)
     add_argument_test_branch(parser)
     parser.add_argument(

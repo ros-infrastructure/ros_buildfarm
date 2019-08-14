@@ -278,10 +278,10 @@ def add_argument_package_names(parser):
         help='A space separated list of package names')
 
 
-def add_argument_repository_names(parser):
+def add_argument_repository_names(parser, optional=False):
     parser.add_argument(
         '--repository-names',
-        nargs='*',
+        nargs='*' if optional else '+',
         help='A space separated list of repository names')
 
 
