@@ -114,27 +114,30 @@ parameters = [
     'builder_shell_key-files',
     script_generating_key_files=script_generating_key_files,
 ))@
-@[if underlay_source_job is not None]@
+@[if underlay_source_jobs]@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Prepare package underlay"',
     ]),
 ))@
+@[for index, underlay_source_job in enumerate(underlay_source_jobs, 1)]@
 @(SNIPPET(
     'copy_artifacts',
     artifacts=[
       '*.tar.bz2',
     ],
     project=underlay_source_job,
-    target_directory='$WORKSPACE/underlay',
+    target_directory='$WORKSPACE/underlay%d' % (index),
 ))@
+@[end for]@
 @(SNIPPET(
     'builder_shell',
-    script='\n'.join([
-        'tar -xjf $WORKSPACE/underlay/*.tar.bz2 -C $WORKSPACE/underlay',
-        'echo "# END SECTION"',
-    ]),
+    script='\n'.join(
+        ['tar -xjf $WORKSPACE/underlay%d/*.tar.bz2 -C $WORKSPACE/underlay --overwrite' % (index + 1)
+         for index in range(len(underlay_source_jobs))] +
+        ['echo "# END SECTION"']
+    ),
 ))@
 @[end if]@
 @(SNIPPET(
