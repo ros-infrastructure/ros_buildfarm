@@ -20,6 +20,7 @@ import sys
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.argument import add_argument_dry_run
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
@@ -37,11 +38,13 @@ def main(argv=sys.argv[1:]):
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
+
+    add_argument_dry_run(parser)
     args = parser.parse_args(argv)
 
     configure_ci_job(
         args.config_url, args.rosdistro_name, args.ci_build_name,
-        args.os_name, args.os_code_name, args.arch)
+        args.os_name, args.os_code_name, args.arch, dry_run=args.dry_run)
 
 
 if __name__ == '__main__':
