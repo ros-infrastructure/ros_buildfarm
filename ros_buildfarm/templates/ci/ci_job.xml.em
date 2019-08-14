@@ -72,6 +72,12 @@ parameters = [
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
+@[if trigger_jobs]@
+@(SNIPPET(
+    'trigger_reverse-build',
+    upstream_projects=trigger_jobs,
+))@
+@[end if]@
 @[if trigger_timer is not None]@
 @(SNIPPET(
     'trigger_timer',

@@ -431,6 +431,9 @@ The following options are valid in version ``1`` (beside the generic options):
 
 * ``jenkins_job_timeout``: the job timeout for *CI* jobs.
 
+* ``jenkins_job_upstream_triggers``: names of other CI jobs which, when
+  built with a stable or unstable result, should trigger this job to be built.
+
 * ``package_selection_args``: package selection arguments passed to ``colcon``
   to specify which packages should be built and tested.
   Note that ``colcon`` is always used to select packages even when
@@ -445,5 +448,5 @@ The following options are valid in version ``1`` (beside the generic options):
 * ``test_branch``: branch to attempt to checkout and merge in each repository
   before running the job.
 
-* ``underlay_from_ci_jobs``: name(s) of other CI job(s) which should be used
+* ``underlay_from_ci_jobs``: names of other CI jobs which should be used
   as an underlay to this job.
