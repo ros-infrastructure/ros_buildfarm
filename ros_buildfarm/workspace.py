@@ -51,6 +51,8 @@ def call_build_tool(
     assert build_tool in ('catkin_make_isolated', 'colcon')
     script_name = build_tool
 
+    cmd = ['PYTHONIOENCODING=utf_8', 'PYTHONUNBUFFERED=1']
+
     # use script from source space if available
     if build_tool == 'catkin_make_isolated':
         source_space = os.path.join(workspace_root, 'src')
@@ -58,8 +60,11 @@ def call_build_tool(
             source_space, 'catkin', 'bin', script_name)
         if os.path.exists(script_from_source):
             script_name = script_from_source
-
-    cmd = ['PYTHONIOENCODING=utf_8', 'PYTHONUNBUFFERED=1', script_name]
+            ros_python_version = (env or os.environ).get('ROS_PYTHON_VERSION')
+            # override shebang line if necessary
+            if ros_python_version == '3':
+                cmd.append('python3')
+    cmd.append(script_name)
 
     if build_tool == 'colcon':
         cmd.append(colcon_verb)
