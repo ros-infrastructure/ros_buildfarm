@@ -17,4 +17,4 @@
 # same version as in:
 # - setup.py
 # - stdeb.cfg
-__version__ = '3.0.1-master'
+__version__ = '3.0.1-dirk-thomas/ci-jobs-by-repo-names'

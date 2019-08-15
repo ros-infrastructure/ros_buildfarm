@@ -42,6 +42,12 @@ parameters = [
     },
     {
         'type': 'string',
+        'name': 'repository_names',
+        'default_value': ' '.join(repository_names),
+        'description': 'Repositories names from the rosdistro to be built (space-separated)',
+    },
+    {
+        'type': 'string',
         'name': 'test_branch',
         'default_value': test_branch or '',
         'description': 'Branch to attempt to checkout before doing batch job',
@@ -161,6 +167,7 @@ parameters = [
         ' --env-vars ' + ' '.join([v.replace('$', '\\$',) for v in build_environment_variables]) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers' +
         ' --repos-file-urls $repos_file_urls' +
+        ' --repository-names $repository_names' +
         ' --test-branch "$test_branch"' +
         ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) +
         ' --install-packages $install_packages' +
