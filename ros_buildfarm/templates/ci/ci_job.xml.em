@@ -345,6 +345,11 @@ parameters = [
         ' "ccache -s"',
         'echo "# END SECTION"',
         '',
+    ] + ([
+        'echo "# BEGIN SECTION: Rewriting shebang lines in source files to use Python 3"',
+        'find $WORKSPACE/ws/src -not -path "*.git*" -type f -exec sed -i "1 s/^#![ ]*\/usr\/bin\/env python$/#!\/usr\/bin\/env python3/" "{}" ";"',
+        'echo "# END SECTION"',
+    ] if build_tool == 'catkin_make_isolated' and 'ROS_PYTHON_VERSION=3' in build_environment_variables else []) + [
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
         'export UNDERLAY_JOB_SPACE=$WORKSPACE/underlay/ros%d-linux' % (ros_version),
         'rm -fr $WORKSPACE/ws/test_results',
