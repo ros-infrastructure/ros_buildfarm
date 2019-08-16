@@ -92,6 +92,10 @@ def main(argv=sys.argv[1:]):
     if args.testing:
         install_lists.append('install_list_test.txt')
 
+    mapped_workspaces = [
+        (workspace_root, '/tmp/ws%s' % (index if index > 1 else ''))
+        for index, workspace_root in enumerate(args.workspace_root, 1)]
+
     # generate Dockerfile
     data = {
         'os_name': args.os_name,
@@ -118,7 +122,8 @@ def main(argv=sys.argv[1:]):
         'dependency_versions': [],
 
         'testing': args.testing,
-        'prerelease_overlay': len(args.workspace_root) > 1,
+        'workspace_root': mapped_workspaces[-1][1],
+        'parent_result_space': [mapping[1] for mapping in mapped_workspaces[:-1]],
     }
     create_dockerfile(
         'devel/devel_task.Dockerfile.em', data, args.dockerfile_dir)
@@ -128,12 +133,8 @@ def main(argv=sys.argv[1:]):
         os.path.join(os.path.dirname(__file__), '..', '..'))
     print('Mount the following volumes when running the container:')
     print('  -v %s:/tmp/ros_buildfarm:ro' % ros_buildfarm_basepath)
-    if len(args.workspace_root) == 1:
-        print('  -v %s:/tmp/ws' % args.workspace_root[0])
-    else:
-        for i, workspace_root in enumerate(args.workspace_root[0:-1]):
-            print('  -v %s:/tmp/ws%s' % (workspace_root, i or ''))
-        print('  -v %s:/tmp/ws_overlay' % args.workspace_root[-1])
+    for mapping in mapped_workspaces:
+        print('  -v %s:%s' % mapping)
 
 
 def write_install_list(install_list_path, debian_pkg_names, apt_cache):
