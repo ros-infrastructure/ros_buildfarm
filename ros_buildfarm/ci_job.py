@@ -249,7 +249,7 @@ def _get_ci_job_config(
     if build_file.build_environment_variables:
         build_environment_variables = [
             '%s=%s' % (var, value)
-            for var, value in build_file.build_environment_variables.items()]
+            for var, value in sorted(build_file.build_environment_variables.items())]
 
     distribution_type = index.distributions[rosdistro_name] \
         .get('distribution_type', 'ros1')
