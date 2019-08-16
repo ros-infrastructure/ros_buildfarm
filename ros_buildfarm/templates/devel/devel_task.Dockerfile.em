@@ -80,6 +80,13 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
     install_lists=install_lists,
 ))@
 
+# After all dependencies are installed, update ccache symlinks.
+# This command is supposed to be invoked whenever a new compiler is installed
+# but that isn't happening. So we invoke it here to make sure all compilers are
+# picked up.
+# TODO(nuclearsandwich) add link to Debian bug report when one is opened.
+RUN which update-ccache-symlinks >/dev/null 2>&1 && update-ccache-symlinks
+
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
