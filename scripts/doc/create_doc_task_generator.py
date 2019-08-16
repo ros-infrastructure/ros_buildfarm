@@ -116,11 +116,20 @@ def main(argv=sys.argv[1:]):
 
     config = get_config_index(args.config_url)
 
+    condition_context = {
+        'ROS_DISTRO': args.rosdistro_name,
+        'ROS_PYTHON_VERSION': 2,
+        'ROS_VERSION': 1,
+    }
+
     with Scope('SUBSECTION', 'packages'):
         # find packages in workspace
         source_space = os.path.join(args.workspace_root, 'src')
         print("Crawling for packages in workspace '%s'" % source_space)
         pkgs = find_packages(source_space)
+
+        for pkg in pkgs.values():
+            pkg.evaluate_conditions(condition_context)
 
         pkg_names = [pkg.name for pkg in pkgs.values()]
         print('Found the following packages:')
@@ -633,14 +642,19 @@ def get_dependencies(pkgs, label, get_dependencies_callback):
 
 
 def _get_build_run_doc_dependencies(pkg):
-    return pkg.build_depends + pkg.buildtool_depends + \
-        pkg.build_export_depends + pkg.buildtool_export_depends + \
-        pkg.exec_depends + pkg.doc_depends
+    return [
+        d for d in
+        pkg.build_depends + pkg.buildtool_depends + pkg.build_export_depends +
+        pkg.buildtool_export_depends + pkg.exec_depends + pkg.doc_depends
+        if d.evaluated_condition is not False]
 
 
 def _get_run_dependencies(pkg):
-    return pkg.build_export_depends + pkg.buildtool_export_depends + \
+    return [
+        d for d in
+        pkg.build_export_depends + pkg.buildtool_export_depends +
         pkg.exec_depends
+        if d.evaluated_condition is not False]
 
 
 def initialize_resolver(rosdistro_name, os_name, os_code_name):
