@@ -332,7 +332,7 @@ def _get_devel_job_config(
     if build_file.build_environment_variables:
         build_environment_variables = [
             '%s=%s' % (var, value)
-            for var, value in build_file.build_environment_variables.items()]
+            for var, value in sorted(build_file.build_environment_variables.items())]
 
     maintainer_emails = set([])
     if build_file.notify_maintainers and dist_cache and repo_name and \
