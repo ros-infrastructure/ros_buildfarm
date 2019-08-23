@@ -128,13 +128,13 @@ parameters = [
       '*.tar.bz2',
     ],
     project=underlay_source_job,
-    target_directory='$WORKSPACE/underlay%s' % (i),
+    target_directory='$WORKSPACE/underlay%d' % (i),
 ))@
 @[end for]@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'tar -xjf $WORKSPACE/underlay%s/*.tar.bz2 -C $WORKSPACE/underlay%s' %
+        'tar -xjf $WORKSPACE/underlay%d/*.tar.bz2 -C $WORKSPACE/underlay%d' %
         (i + 1, i + 1) for i in range(len(underlay_source_jobs))
     ] + [
         'echo "# END SECTION"',
@@ -176,7 +176,7 @@ parameters = [
         ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) +
         ' --install-packages $install_packages' +
         ' --workspace-mount-point /tmp/ws' + ''.join([
-            ' /tmp/ws%s' % (i + 2) for i in range(len(underlay_source_paths))
+            ' /tmp/ws%d' % (i + 2) for i in range(len(underlay_source_paths))
         ]) +
         ' --package-selection-args $package_selection_args' +
         ' --build-tool-args $build_tool_args',
