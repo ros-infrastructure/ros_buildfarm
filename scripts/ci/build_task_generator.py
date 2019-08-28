@@ -60,8 +60,7 @@ def main(argv=sys.argv[1:]):
     add_argument_ros_version(parser)
     add_argument_testing(parser)
     parser.add_argument(
-        '--workspace-root', nargs='*',
-        action=check_len_action(1, 2),
+        '--workspace-root', nargs='+',
         help='The root path of the workspace to compile')
     args = parser.parse_args(argv)
 
