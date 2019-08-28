@@ -33,7 +33,6 @@ from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_testing
-from ros_buildfarm.argument import check_len_action
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
