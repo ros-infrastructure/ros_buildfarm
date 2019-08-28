@@ -57,7 +57,7 @@ matrix:
       sudo: required
       services:
         - docker
-      env: JOB_TYPE=ci UNDERLAY1_PACKAGES="ament_flake8"  UNDERLAY2_PACKAGES="ament_pep257" OVERLAY_PACKAGES="ament_cmake_ros"
+      env: JOB_TYPE=ci UNDERLAY1_PACKAGES="ament_flake8" UNDERLAY2_PACKAGES="ament_pep257" OVERLAY_PACKAGES="ament_cmake_ros"
       before_script:
         # install colcon for test results
         - pip install colcon-core colcon-test-result
