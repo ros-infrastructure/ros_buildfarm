@@ -33,7 +33,7 @@ env:
     - CONFIG_URL=https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
     - CONFIG2_URL=https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
     - ROS_DISTRO_NAME=melodic
-    - ROS2_DISTRO_NAME=crystal
+    - ROS2_DISTRO_NAME=dashing
     - OS_NAME=ubuntu
     - OS_CODE_NAME=bionic
     - OS_CODE_NAME2=bionic
