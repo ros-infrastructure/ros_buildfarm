@@ -101,20 +101,10 @@ else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
         ' --rosdistro-name %s' % rosdistro_name
-cmd += ' --build-tool ' + build_tool
-if not prerelease_overlay:
-    cmd += \
-        ' --workspace-root /tmp/ws'
-else:
-    parent_result_spaces = [
-        # also specify /opt/ros in case the install location has no setup files
-        # e.g. if the workspace contains no packages
-        '/opt/ros/%s' % rosdistro_name,
-        '/tmp/ws/install_isolated',
-    ]
-    cmd += \
-        ' --workspace-root /tmp/ws_overlay' + \
-        ' --parent-result-space %s' % ' '.join(parent_result_spaces)
+cmd += \
+    ' --build-tool ' + build_tool + \
+    ' --workspace-root ' + workspace_root + \
+    ' --parent-result-space' + ''.join([' %s/install_isolated' % (space) for space in parent_result_space])
 if vars().get('build_tool_args'):
     cmd += ' --build-tool-args ' + ' '.join(build_tool_args)
 }@

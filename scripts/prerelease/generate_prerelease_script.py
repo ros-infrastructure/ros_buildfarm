@@ -253,7 +253,7 @@ def main(argv=sys.argv[1:]):
         if mount_volume in script:
             script = script.replace(
                 mount_volume, mount_volume + ':ro ' + '-v $WORKSPACE/' +
-                'ws_overlay:/tmp/ws_overlay')
+                'ws_overlay:/tmp/ws2')
 
         # relocate all docker files
         docker_path = '$WORKSPACE/docker_'

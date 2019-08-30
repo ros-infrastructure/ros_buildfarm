@@ -152,6 +152,15 @@ def main(argv=sys.argv[1:]):
     if args.testing:
         debian_pkg_names += order_dependencies(debian_pkg_names_testing)
 
+    mapped_workspaces = [
+        (workspace_root, '/tmp/ws%s' % (index if index > 1 else ''))
+        for index, workspace_root in enumerate(args.workspace_root, 1)]
+
+    parent_result_space = []
+    if len(args.workspace_root) > 1:
+        parent_result_space = ['/opt/ros/%s' % args.rosdistro_name] + \
+            [mapping[1] for mapping in mapped_workspaces[:-1]]
+
     # generate Dockerfile
     data = {
         'os_name': args.os_name,
@@ -177,7 +186,8 @@ def main(argv=sys.argv[1:]):
         'install_lists': [],
 
         'testing': args.testing,
-        'prerelease_overlay': len(args.workspace_root) > 1,
+        'workspace_root': mapped_workspaces[-1][1],
+        'parent_result_space': parent_result_space,
     }
     create_dockerfile(
         'devel/devel_task.Dockerfile.em', data, args.dockerfile_dir)
@@ -187,7 +197,8 @@ def main(argv=sys.argv[1:]):
         os.path.join(os.path.dirname(__file__), '..', '..'))
     print('Mount the following volumes when running the container:')
     print('  -v %s:/tmp/ros_buildfarm:ro' % ros_buildfarm_basepath)
-    print('  -v %s:/tmp/ws' % args.workspace_root[-1])
+    for mapping in mapped_workspaces:
+        print('  -v %s:%s' % mapping)
 
 
 def get_dependencies(pkgs, label, get_dependencies_callback):

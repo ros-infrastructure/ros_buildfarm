@@ -87,18 +87,21 @@ matrix:
       sudo: required
       services:
         - docker
-      env: JOB_TYPE=ci UNDERLAY_PACKAGES="ament_flake8 ament_pep257" OVERLAY_PACKAGES="ament_cmake_ros"
+      env: JOB_TYPE=ci UNDERLAY1_PACKAGES="ament_flake8" UNDERLAY2_PACKAGES="ament_pep257" OVERLAY_PACKAGES="ament_cmake_ros"
       before_script:
         # install colcon for test results
         - pip install colcon-core colcon-test-result
         - python setup.py install
-        - mkdir job job/underlay && cd job
+        - mkdir job job/underlay1 job/underlay2 && cd job
         - ln -s .. ros_buildfarm
       script:
-        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly $OS_NAME $OS_CODE_NAME2 $ARCH --package-selection-args --packages-up-to $UNDERLAY_PACKAGES > job.sh
+        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly $OS_NAME $OS_CODE_NAME2 $ARCH --package-selection-args --packages-up-to $UNDERLAY1_PACKAGES > job.sh
         - (. job.sh -y; exit $test_result_RC)
-        - tar -xjf ros2-$ROS2_DISTRO_NAME-linux-$OS_CODE_NAME2-$ARCH-ci.tar.bz2 -C underlay
-        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly $OS_NAME $OS_CODE_NAME2 $ARCH --underlay-source-path underlay/ros2-linux --package-selection-args --packages-skip-up-to $UNDERLAY_PACKAGES --packages-up-to $OVERLAY_PACKAGES > job.sh
+        - tar -xjf ros2-$ROS2_DISTRO_NAME-linux-$OS_CODE_NAME2-$ARCH-ci.tar.bz2 -C underlay1
+        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly $OS_NAME $OS_CODE_NAME2 $ARCH --underlay-source-path underlay1/ros2-linux --package-selection-args --packages-skip-up-to $UNDERLAY1_PACKAGES --packages-up-to $UNDERLAY2_PACKAGES > job.sh
+        - (. job.sh -y; exit $test_result_RC)
+        - tar -xjf ros2-$ROS2_DISTRO_NAME-linux-$OS_CODE_NAME2-$ARCH-ci.tar.bz2 -C underlay2
+        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly $OS_NAME $OS_CODE_NAME2 $ARCH --underlay-source-path underlay1/ros2-linux underlay2/ros2-linux --package-selection-args --packages-skip-up-to $UNDERLAY1_PACKAGES $UNDERLAY2_PACKAGES --packages-up-to $OVERLAY_PACKAGES > job.sh
         - (. job.sh -y; exit $test_result_RC)
     - language: python
       python: "3.6"
