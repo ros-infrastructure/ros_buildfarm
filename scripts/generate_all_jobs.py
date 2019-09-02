@@ -58,6 +58,13 @@ def main(argv=sys.argv[1:]):
     print('')
 
     config = get_index(args.config_url)
+    if args.config_url.startswith("file:"):
+        print('!WARNING!')
+        print('! Local file system path used for configuration.')
+        print('! Configuration will not be accessible to jobs during execution.')
+        print('! Consider using a web(http) hosted configuration repository.')
+        print('')
+
     ros_distro_names = sorted(config.distributions.keys())
 
     invalid_ros_distro_name = [
