@@ -76,7 +76,7 @@ Change the ``rosdistro_index_url`` in the `ros-infrastructure/ros_buildfarm_conf
 (which points to the files that define which packages are included in the distro and respective caches),
 and **not** the ``index.yaml`` in ``ros_buildfarm_config`` which you are editing.
 
-This will usually be on the provisioned ``repo`` host, but can be the official `ros/rosdistro <https://github.com/ros/rosdistro>`_'s ``index.yaml`` if you intend to build the default set of packages.
+This will usually be on the provisioned ``repo`` host, but can be the official `ros/rosdistro <https://github.com/ros/rosdistro>`_'s ``index.yaml`` if you intend to build the default set of packages::
 
   rosdistro_index_url: http://repo_hostname.example.com/rosdistro/index.yaml
 
@@ -127,9 +127,7 @@ Update URLs to point to required build tool repositories
 --------------------------------------------------------
 
 During job execution, access to repositories which contain the necessary tools to run the ROS build farm is required.
-These can be main ROS repository or mirrors of it.
-Note that the number of ``debian_repositories`` and ``debian_repository_keys`` must match, as well as the order in which they're specified.
-The keys can usually be found on the repository (for example: http://packages.ros.org/ros.asc )
+These can be main ROS repository or mirrors of it::
 
   prerequisites:
     debian_repositories:
@@ -167,3 +165,6 @@ The keys can usually be found on the repository (for example: http://packages.ro
       =4Ofr
       -----END PGP PUBLIC KEY BLOCK-----
 
+
+Note that the number of ``debian_repositories`` and ``debian_repository_keys`` must match, as well as the order in which they're specified.
+The keys can usually be found on the repository (for example: http://packages.ros.org/ros.asc )
