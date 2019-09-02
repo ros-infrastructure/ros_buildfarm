@@ -23,7 +23,7 @@ repository or create a repository containing the same configuration files.
 
 **Important:**
 Since ``ros_buildfarm_config`` files need to be accessed from within docker images,
-you **can not** use a local file system path (``file:/``) to reference them.
+you **can not** use a local file system path (`file://`) to reference them.
 You have to provide an http server where the configuration files can be accessed.
 (Note that on the build farm master, Jenkins usually occupies the standard port 80).
 
