@@ -17,15 +17,14 @@ configuration to generate the necessary Jobs on the Jenkins master.
 Create / fork configuration repository
 --------------------------------------
 
-First you need to either fork or clone the
+First you need to either fork, clone, or copy the
 `ros_buildfarm_config <https://github.com/ros-infrastructure/ros_buildfarm_config>`_
 repository or create a repository containing the same configuration files.
 
 **Important:**
 Since ``ros_buildfarm_config`` files need to be accessed from within docker images,
-you **can not** use a local file system path (`file://`) to reference them.
-You have to provide an http server where the configuration files can be accessed.
-(Note that on the build farm master, Jenkins usually occupies the standard port 80).
+you **can not** use a local file system path (``file://``) to reference them.
+The configuration files must be accessible via http.
 
 
 Then you must update the configuration files:
@@ -50,7 +49,7 @@ Update administrator notification
 
 Change the email address which gets notified about any administrative jobs.
 
-In `ros-infrastructure/ros_buildfarm_config <https://github.com/ros-infrastructure/ros_buildfarm_config>`_'s `index.yaml`::
+In your ``ros_buildfarm_config``'s ``index.yaml``::
 
   notification_emails:
   - your_email@example.com
@@ -61,31 +60,33 @@ In *all* build files::
     emails:
     - your_email@example.com
 
-Note that you need to have a local smtp service configured for email notifications.
-
-If you do not require email notifications, remove the configuration line entries.
+You need to have a `local smtp service configured <https://github.com/ros-infrastructure/buildfarm_deployment#setup-master-for-email-delivery>`_ for email notifications.
+Note that even when you remove these global email notification settings
+some jobs will still send notification emails to package specific email addresses.
 
 
 Update URLs to point to custom build farm
 -----------------------------------------
 
-Change the ``rosdistro_index_url`` in the `ros-infrastructure/ros_buildfarm_config <https://github.com/ros-infrastructure/ros_buildfarm_config>`_'s 
+Change the ``rosdistro_index_url`` in your ``ros_buildfarm_config``'s 
 ``index.yaml`` to point to the ``rosdistro`` repository that defines the distro(s) that your buildfarm should build.
 
-**Important:** Note that this the `rosdistro <https://github.com/ros/rosdistro>`_'s ``index.yaml``
+**Important:** Note that this is the `rosdistro <https://github.com/ros/rosdistro>`_'s ``index.yaml``
 (which points to the files that define which packages are included in the distro and respective caches),
 and **not** the ``index.yaml`` in ``ros_buildfarm_config`` which you are editing.
 
-This will usually be on the provisioned ``repo`` host, but can be the official `ros/rosdistro <https://github.com/ros/rosdistro>`_'s ``index.yaml`` if you intend to build the default set of packages::
+This can be the official `ros/rosdistro <https://github.com/ros/rosdistro>`_'s ``index.yaml`` 
+if you intend to build the default set of packages, or your personal configuration where you intend to host
+``rosdistro`` (for example your ``repo`` host) ::
 
-  rosdistro_index_url: http://repo_hostname.example.com/rosdistro/index.yaml
+  rosdistro_index_url: https://raw.githubusercontent.com/ros/rosdistro/master/index.yaml
 
-Change the Jenkins URL in the `ros-infrastructure/ros_buildfarm_config <https://github.com/ros-infrastructure/ros_buildfarm_config>`_'s 
+Change the Jenkins URL in your ``ros_buildfarm_config``'s 
 ``index.yaml`` to point to your earlier provisioned Jenkins master::
 
   jenkins_url: http://jenkins_hostname.example.com:8080
 
-Change the repository URLs in the `ros-infrastructure/ros_buildfarm_config <https://github.com/ros-infrastructure/ros_buildfarm_config>`_'s
+Change the repository URLs in your ``ros_buildfarm_config``_'s
 ``index.yaml`` to point to your earlier provisioned ``repo`` host::
 
   status_page_repositories:
@@ -123,8 +124,8 @@ You can extract the repository PGP key from the ``buildfarm_deployment``
 configuration.
 
 
-Update URLs to point to required build tool repositories
---------------------------------------------------------
+Update URLs to point to required repositories
+---------------------------------------------
 
 During job execution, access to repositories which contain the necessary tools to run the ROS build farm is required.
 These can be main ROS repository or mirrors of it::
