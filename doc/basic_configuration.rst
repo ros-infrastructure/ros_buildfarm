@@ -76,7 +76,7 @@ and **not** the ``index.yaml`` in ``ros_buildfarm_config`` which you are editing
 
 This can be the official `ros/rosdistro <https://github.com/ros/rosdistro>`_'s ``index.yaml`` 
 if you intend to build the default set of packages, or your personal configuration where you intend to host
-``rosdistro`` (for example a GitHub fork of ``ros/rosdistro`` or your ``repo`` host) ::
+``rosdistro`` (for example a GitHub fork of ``ros/rosdistro`` or your ``repo`` host)::
 
   rosdistro_index_url: https://raw.githubusercontent.com/ros/rosdistro/master/index.yaml
 
