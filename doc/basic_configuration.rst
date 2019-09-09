@@ -26,7 +26,6 @@ Since ``ros_buildfarm_config`` files need to be accessed from within Docker imag
 you **can not** use a local file system path (``file://``) to reference them.
 The configuration files must be accessible via HTTP.
 
-
 Then you must update the configuration files:
 
 
