@@ -59,20 +59,19 @@ In *all* build files::
     emails:
     - your_email@example.com
 
-You need to have a `local smtp service configured <https://github.com/ros-infrastructure/buildfarm_deployment#setup-master-for-email-delivery>`_ for email notifications.
+You need to have a `local smtp service configured <https://github.com/ros-infrastructure/buildfarm_deployment#setup-master-for-email-delivery>`_ on your ``master`` host for email notifications.
 Note that even when you remove these global email notification settings
-some jobs will still send notification emails to package specific email addresses.
+some jobs will still send notification emails to package specific email addresses
+by default unless this is disabled by configuration.
+
 
 
 Update URLs to point to custom build farm
 -----------------------------------------
 
-Change the ``rosdistro_index_url`` in your ``ros_buildfarm_config``'s 
-``index.yaml`` to point to the ``rosdistro`` repository that defines the distro(s) that your buildfarm should build.
-
-**Important:** Note that this is the `rosdistro <https://github.com/ros/rosdistro>`_'s ``index.yaml``
-(which points to the files that define which packages are included in the distro and respective caches),
-and **not** the ``index.yaml`` in ``ros_buildfarm_config`` which you are editing.
+Change the ``rosdistro_index_url`` in your ``ros_buildfarm_config``'s ``index.yaml`` 
+to point to the ``rosdistro``'s ``index.yaml``
+that defines the distro(s) that your buildfarm should build and respective caches.
 
 This can be the official `ros/rosdistro <https://github.com/ros/rosdistro>`_'s ``index.yaml`` 
 if you intend to build the default set of packages, or your personal configuration where you intend to host
@@ -129,4 +128,4 @@ Update URLs to point to required repositories
 During job execution, access to repositories which contain the necessary tools to run the ROS build farm is required.
 These must be specified in your ``ros_buildfarm_config``'s ``index.yaml`` as ``prerequisites``.
 You can use the official ROS repository or mirrors of it.
-See the `Configuration Options <https://github.com/max-krichenbauer/ros_buildfarm/blob/documentation-improvements/doc/configuration_options.rst#entry-point-yaml>`_ documentation page for details.
+See the `Configuration Options <https://github.com/ros-infrastructure/ros_buildfarm/blob/master/doc/configuration_options.rst#entry-point-yaml>`_ documentation page for details.

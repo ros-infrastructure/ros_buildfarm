@@ -59,11 +59,13 @@ def main(argv=sys.argv[1:]):
 
     config = get_index(args.config_url)
     if args.config_url.startswith('file:'):
-        print('WARNING: Local file system path used for ',
-              'configuration. Configuration will not be ',
-              'accessible to jobs during execution. Consider ',
-              'using a web(http) hosted configuration repository.',
-              file=sys.stderr)
+        print(
+            'WARNING: Local file system path used for ',
+            'configuration. Configuration will not be ',
+            'accessible to jobs during execution. Consider ',
+            'using a web(http) hosted configuration repository.',
+            file=sys.stderr
+        )
 
     ros_distro_names = sorted(config.distributions.keys())
 
