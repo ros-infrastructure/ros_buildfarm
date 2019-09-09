@@ -77,7 +77,7 @@ and **not** the ``index.yaml`` in ``ros_buildfarm_config`` which you are editing
 
 This can be the official `ros/rosdistro <https://github.com/ros/rosdistro>`_'s ``index.yaml`` 
 if you intend to build the default set of packages, or your personal configuration where you intend to host
-``rosdistro`` (for example your ``repo`` host) ::
+``rosdistro`` (for example a github fork of ``ros/rosdistro`` or your ``repo`` host) ::
 
   rosdistro_index_url: https://raw.githubusercontent.com/ros/rosdistro/master/index.yaml
 
@@ -128,44 +128,6 @@ Update URLs to point to required repositories
 ---------------------------------------------
 
 During job execution, access to repositories which contain the necessary tools to run the ROS build farm is required.
-These can be main ROS repository or mirrors of it::
-
-  prerequisites:
-    debian_repositories:
-    - http://packages.ros.org/ros/ubuntu
-    debian_repository_keys:
-    - |
-      -----BEGIN PGP PUBLIC KEY BLOCK-----
-      Version: GnuPG v1
-      
-      mQINBFzvJpYBEADY8l1YvO7iYW5gUESyzsTGnMvVUmlV3XarBaJz9bGRmgPXh7jc
-      VFrQhE0L/HV7LOfoLI9H2GWYyHBqN5ERBlcA8XxG3ZvX7t9nAZPQT2Xxe3GT3tro
-      u5oCR+SyHN9xPnUwDuqUSvJ2eqMYb9B/Hph3OmtjG30jSNq9kOF5bBTk1hOTGPH4
-      K/AY0jzT6OpHfXU6ytlFsI47ZKsnTUhipGsKucQ1CXlyirndZ3V3k70YaooZ55rG
-      aIoAWlx2H0J7sAHmqS29N9jV9mo135d+d+TdLBXI0PXtiHzE9IPaX+ctdSUrPnp+
-      TwR99lxglpIG6hLuvOMAaxiqFBB/Jf3XJ8OBakfS6nHrWH2WqQxRbiITl0irkQoz
-      pwNEF2Bv0+Jvs1UFEdVGz5a8xexQHst/RmKrtHLct3iOCvBNqoAQRbvWvBhPjO/p
-      V5cYeUljZ5wpHyFkaEViClaVWqa6PIsyLqmyjsruPCWlURLsQoQxABcL8bwxX7UT
-      hM6CtH6tGlYZ85RIzRifIm2oudzV5l+8oRgFr9yVcwyOFT6JCioqkwldW52P1pk/
-      /SnuexC6LYqqDuHUs5NnokzzpfS6QaWfTY5P5tz4KHJfsjDIktly3mKVfY0fSPVV
-      okdGpcUzvz2hq1fqjxB6MlB/1vtk0bImfcsoxBmF7H+4E9ZN1sX/tSb0KQARAQAB
-      tCZPcGVuIFJvYm90aWNzIDxpbmZvQG9zcmZvdW5kYXRpb24ub3JnPokCVAQTAQoA
-      PhYhBMHPbjHmut6IaLFytPQu1vurF8ZUBQJc7yaWAhsDBQkDwmcABQsJCAcCBhUK
-      CQgLAgQWAgMBAh4BAheAAAoJEPQu1vurF8ZUkhIP/RbZY1ErvCEUy8iLJm9aSpLQ
-      nDZl5xILOxyZlzpg+Ml5bb0EkQDr92foCgcvLeANKARNCaGLyNIWkuyDovPV0xZJ
-      rEy0kgBrDNb3++NmdI/+GA92pkedMXXioQvqdsxUagXAIB/sNGByJEhs37F05AnF
-      vZbjUhceq3xTlvAMcrBWrgB4NwBivZY6IgLvl/CRQpVYwANShIQdbvHvZSxRonWh
-      NXr6v/Wcf8rsp7g2VqJ2N2AcWT84aa9BLQ3Oe/SgrNx4QEhA1y7rc3oaqPVu5ZXO
-      K+4O14JrpbEZ3Xs9YEjrcOuEDEpYktA8qqUDTdFyZrxb9S6BquUKrA6jZgT913kj
-      J4e7YAZobC4rH0w4u0PrqDgYOkXA9Mo7L601/7ZaDJob80UcK+Z12ZSw73IgBix6
-      DiJVfXuWkk5PM2zsFn6UOQXUNlZlDAOj5NC01V0fJ8P0v6GO9YOSSQx0j5UtkUbR
-      fp/4W7uCPFvwAatWEHJhlM3sQNiMNStJFegr56xQu1a/cbJH7GdbseMhG/f0BaKQ
-      qXCI3ffB5y5AOLc9Hw7PYiTFQsuY1ePRhE+J9mejgWRZxkjAH/FlAubqXkDgterC
-      h+sLkzGf+my2IbsMCuc+3aeNMJ5Ej/vlXefCH/MpPWAHCqpQhe2DET/jRSaM53US
-      AHNx8kw4MPUkxExgI7Sd
-      =4Ofr
-      -----END PGP PUBLIC KEY BLOCK-----
-
-
-Note that the number of ``debian_repositories`` and ``debian_repository_keys`` must match, as well as the order in which they're specified.
-The keys can usually be found on the repository (for example: http://packages.ros.org/ros.asc )
+These must be specified in your ``ros_buildfarm_config``'s ``index.yaml`` as ``prerequisites``.
+You can use the official ROS repository or mirrors of it.
+See the `Configuration Options <https://github.com/max-krichenbauer/ros_buildfarm/blob/documentation-improvements/doc/configuration_options.rst#entry-point-yaml>`_ documentation page for details.
