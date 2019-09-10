@@ -228,8 +228,8 @@ parameters = [
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - create workspace"',
     ] + [
-        'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, ros_version)
-        for i in range(len(underlay_source_jobs))
+        'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, local_ros_version)
+        for i, local_ros_version in zip(range(len(underlay_source_jobs)), [ros_version] * len(underlay_source_jobs))
     ] + [
         'rm -fr $WORKSPACE/ws/src',
         'mkdir -p $WORKSPACE/ws/src',
@@ -291,8 +291,8 @@ parameters = [
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
     ] + [
-        'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, ros_version)
-        for i in range(len(underlay_source_jobs))
+        'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, local_ros_version)
+        for i, local_ros_version in zip(range(len(underlay_source_jobs)), [ros_version] * len(underlay_source_jobs))
     ] + [
         'docker run' +
         ' --rm ' +
@@ -367,8 +367,8 @@ parameters = [
     ] if build_tool == 'catkin_make_isolated' and 'ROS_PYTHON_VERSION=3' in build_environment_variables else []) + [
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
     ] + [
-        'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, ros_version)
-        for i in range(len(underlay_source_jobs))
+        'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, local_ros_version)
+        for i, local_ros_version in zip(range(len(underlay_source_jobs)), [ros_version] * len(underlay_source_jobs))
     ] + [
         'rm -fr $WORKSPACE/ws/test_results',
         'mkdir -p $WORKSPACE/ws/test_results',
