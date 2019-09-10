@@ -128,4 +128,4 @@ Update URLs to point to required repositories
 During job execution, access to repositories which contain the necessary tools to run the ROS build farm is required.
 These must be specified in your ``ros_buildfarm_config``'s ``index.yaml`` as ``prerequisites``.
 You can use the official ROS repository or mirrors of it.
-See the `Configuration Options <https://github.com/ros-infrastructure/ros_buildfarm/blob/master/doc/configuration_options.rst#entry-point-yaml>`_ documentation page for details.
+See the `Configuration Options <configuration_options.rst#entry-point-yaml>`_ documentation page for details.
