@@ -59,7 +59,7 @@ In *all* build files::
     emails:
     - your_email@example.com
 
-You need to have a `local smtp service configured <https://github.com/ros-infrastructure/buildfarm_deployment#setup-master-for-email-delivery>`_ on your ``master`` host for email notifications.
+You need to have a `local SMTP service configured <https://github.com/ros-infrastructure/buildfarm_deployment#setup-master-for-email-delivery>`_ on your ``master`` host for email notifications.
 Note that even when you remove these global email notification settings
 some jobs will still send notification emails to package specific email addresses
 by default unless this is disabled by configuration.
