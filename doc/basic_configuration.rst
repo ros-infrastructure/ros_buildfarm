@@ -65,7 +65,6 @@ some jobs will still send notification emails to package specific email addresse
 by default unless this is disabled by configuration.
 
 
-
 Update URLs to point to custom build farm
 -----------------------------------------
 
