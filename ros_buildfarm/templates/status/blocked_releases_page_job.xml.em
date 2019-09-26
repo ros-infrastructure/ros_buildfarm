@@ -18,8 +18,8 @@
   </properties>
 @(SNIPPET(
     'scm_git',
-    url='https://github.com/ros-infrastructure/ros_buildfarm',
-    branch_name='master',
+    url=ros_buildfarm_repository.url,
+    branch_name=ros_buildfarm_repository.version or 'master',
     relative_target_dir='ros_buildfarm',
     refspec=None,
 ))@
