@@ -92,3 +92,8 @@ class CIBuildFile(BuildFile):
         if 'underlay_from_ci_jobs' in data:
             self.underlay_from_ci_jobs = data['underlay_from_ci_jobs']
             assert isinstance(self.underlay_from_ci_jobs, list)
+
+        self.show_results_images = []
+        if 'show_results_images' in data:
+            self.show_results_images = data['show_results_images']
+            assert isinstance(self.show_results_images, list)
