@@ -47,42 +47,42 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'rm -fr $WORKSPACE/docker_generate_blocked_releases_page',
-        'mkdir -p $WORKSPACE/docker_generate_blocked_releases_page',
+        'rm -fr $WORKSPACE/docker_generate_blocked_source_entries_page',
+        'mkdir -p $WORKSPACE/docker_generate_blocked_source_entries_page',
         '',
         '# monitor all subprocesses and enforce termination',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ --cid-file $WORKSPACE/docker_generate_blocked_releases_page/docker.cid > $WORKSPACE/docker_generate_blocked_releases_page/subprocess_reaper.log 2>&1 &',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ --cid-file $WORKSPACE/docker_generate_blocked_source_entries_page/docker.cid > $WORKSPACE/docker_generate_blocked_source_entries_page/subprocess_reaper.log 2>&1 &',
         '# sleep to give python time to startup',
         'sleep 1',
         '',
         '# generate Dockerfile, build and run it',
-        '# generating the blocked_releases page',
-        'echo "# BEGIN SECTION: Generate Dockerfile - blocked_releases page"',
+        '# generating the blocked_source_entries page',
+        'echo "# BEGIN SECTION: Generate Dockerfile - blocked_source_entries page"',
         'export TZ="%s"' % timezone,
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/status/run_blocked_releases_page_job.py' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/status/run_blocked_source_entries_page_job.py' +
         ' ' + config_url +
         ' ' + rosdistro_name +
         ' ' + ' '.join(repository_args) +
-        ' --dockerfile-dir $WORKSPACE/docker_generate_blocked_releases_page',
+        ' --dockerfile-dir $WORKSPACE/docker_generate_blocked_source_entries_page',
         'echo "# END SECTION"',
         '',
-        'echo "# BEGIN SECTION: Build Dockerfile - blocked_releases page"',
-        'cd $WORKSPACE/docker_generate_blocked_releases_page',
+        'echo "# BEGIN SECTION: Build Dockerfile - blocked_source_entries page"',
+        'cd $WORKSPACE/docker_generate_blocked_source_entries_page',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build -t blocked_releases_page_generation .',
+        'docker build -t blocked_source_entries_page_generation .',
         'echo "# END SECTION"',
         '',
-        'echo "# BEGIN SECTION: Run Dockerfile - blocked_releases page"',
-        'rm -fr $WORKSPACE/blocked_releases_page',
-        'mkdir -p $WORKSPACE/blocked_releases_page',
+        'echo "# BEGIN SECTION: Run Dockerfile - blocked_source_entries page"',
+        'rm -fr $WORKSPACE/blocked_source_entries_page',
+        'mkdir -p $WORKSPACE/blocked_source_entries_page',
         'docker run' +
         ' --rm ' +
-        ' --cidfile=$WORKSPACE/docker_generate_blocked_releases_page/docker.cid' +
+        ' --cidfile=$WORKSPACE/docker_generate_blocked_source_entries_page/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/blocked_releases_page:/tmp/blocked_releases_page' +
-        ' blocked_releases_page_generation',
+        ' -v $WORKSPACE/blocked_source_entries_page:/tmp/blocked_source_entries_page' +
+        ' blocked_source_entries_page_generation',
         'echo "# END SECTION"',
     ]),
 ))@
@@ -92,8 +92,8 @@
     'publisher_publish-over-ssh',
     config_name='status_page',
     remote_directory='',
-    source_files=['blocked_releases_page/**'],
-    remove_prefix='blocked_releases_page',
+    source_files=['blocked_source_entries_page/**'],
+    remove_prefix='blocked_source_entries_page',
 ))@
 @(SNIPPET(
     'publisher_mailer',
