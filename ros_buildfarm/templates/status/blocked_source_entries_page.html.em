@@ -41,12 +41,12 @@ import time
       <input type="text" name="q" id="q" title="A query string can contain multiple '+' separated parts which must all be satisfied. Each part can also be a RegExp (e.g. to combine two parts with 'OR': 'foo|bar'), but can't contain '+'." />
       <p>
         <a href="?q=" title="Show all repos">all</a>,
-        <script language="JavaScript">encoded_query_a_tag('label="RELEASED"', "Repositories that have already been released", "released")</script>,
-        <script language="JavaScript">encoded_query_a_tag('label="UNRELEASED"', "Repositories that have not been released", "unreleased")</script>,
-        <script language="JavaScript">encoded_query_a_tag('label="BLOCKED"', "Repositories that are blocked from being released because of unreleased dependencies", "blocked")</script>,
-        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED"', "Repositories that can be released", "releasable")</script>,
-        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED_BLOCKING"', "Repositories that can be released and are preventing others from being released", "releasable and blocking")</script>,
-        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED_UNBLOCKING"', "Repositories that can be released and are not preventing others from being released", "releasable and not blocking")</script>,
+        <script language="JavaScript">encoded_query_a_tag('label="RELEASED"', "Repositories that have a source entry", "released")</script>,
+        <script language="JavaScript">encoded_query_a_tag('label="UNRELEASED"', "Repositories that do not have a source entry", "unreleased")</script>,
+        <script language="JavaScript">encoded_query_a_tag('label="BLOCKED"', "Repositories that are do not have a source entry because their dependencies do not have a source entry", "blocked")</script>,
+        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED"', "Repositories for which a source entry can be added", "releasable")</script>,
+        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED_BLOCKING"', "Repositories that could have a source entry and are blocking others from having a source entry", "releasable and blocking")</script>,
+        <script language="JavaScript">encoded_query_a_tag('label="UNBLOCKED_UNBLOCKING"', "Repositories that could have a source entry and are not preventing others from having one", "releasable and not blocking")</script>,
         <script language="JavaScript">encoded_query_a_tag('id="metapackages"', "Repositories that are dependencies of the metapackages repository", "metapackages")</script>
       </p>
       <p id="search-count"></p>
@@ -63,24 +63,24 @@ import time
         <tr>
           <!-- warning: if titles run onto two lines, first row of table data may be affected -->
           <th class="sortable"><div>Repository</div></th>
-          <th class="sortable"><div>Version</div></th>
+          <th class="sortable"><div>Has Source Entry?</div></th>
           <th class="sortable">
-            <div title="Number of unreleased repositories that are directly blocking this one">
-              # blocking release
+            <div title="Number of repositories without source entries that are directly blocking this one">
+              # blocking source entry
             </div>
           </th>
           <th class="sortable">
-            <div title="Unreleased repositories that are directly blocking this one">
+            <div title="Repositories that are directly blocking this one">
               Blocking repos
             </div>
           </th>
           <th class="sortable">
-            <div title="Maintainers of the unreleased repositories that are directly blocking this one">
+            <div title="Maintainers of the repositories that are directly blocking this one">
               Maintainers of blocks
             </div>
           </th>
           <th class="sortable">
-            <div title="Number of unreleased repositories that are directly or indirectly blocking this one">
+            <div title="Number of repositories that are directly or indirectly blocking this one">
               # recursively blocked
             </div>
           </th>

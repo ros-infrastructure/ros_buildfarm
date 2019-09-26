@@ -17,7 +17,7 @@ from ros_buildfarm.templates import create_dockerfile
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
-        description="Run the 'blocked_releases_page' job")
+        description="Run the 'blocked_source_entries_page' job")
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_distribution_repository_urls(parser)
@@ -35,7 +35,7 @@ def main(argv=sys.argv[1:]):
         'uid': get_user_id(),
     })
     create_dockerfile(
-        'status/blocked_releases_page_task.Dockerfile.em',
+        'status/blocked_source_entries_page_task.Dockerfile.em',
         data, args.dockerfile_dir)
 
 

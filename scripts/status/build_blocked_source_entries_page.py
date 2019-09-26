@@ -20,12 +20,12 @@ import sys
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.status_page import build_blocked_releases_page
+from ros_buildfarm.status_page import build_blocked_source_entries_page
 
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
-        description='Generate the blocked releases page')
+        description='Generate the blocked source entries page')
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_output_dir(parser)
@@ -35,7 +35,7 @@ def main(argv=sys.argv[1:]):
         help='Copy the resources instead of using symlinks')
     args = parser.parse_args(argv)
 
-    return build_blocked_releases_page(
+    return build_blocked_source_entries_page(
         args.config_url, args.rosdistro_name,
         args.output_dir, copy_resources=args.copy_resources)
 

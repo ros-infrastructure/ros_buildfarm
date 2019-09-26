@@ -589,6 +589,32 @@ def build_blocked_releases_page(
     additional_resources(output_dir, copy_resources=copy_resources)
 
 
+def build_blocked_source_entries_page(
+        config_url, rosdistro_name,
+        output_dir, copy_resources=False
+):
+    start_time = time.localtime()
+
+    repos_info = _get_blocked_source_entries_info(config_url, rosdistro_name)
+
+    # Expand a template for the webpage
+    repos_data = [_format_repo_table_row(name, data) for name, data in sorted(repos_info.items())]
+    template_name = 'status/blocked_source_entries_page.html.em'
+    data = {
+        'title': 'ROS %s - blocked source entries' % rosdistro_name,
+        'start_time': time.strftime('%Y-%m-%d %H:%M:%S %z', start_time),
+        'resource_hashes': get_resource_hashes(),
+        'rosdistro_name': rosdistro_name.capitalize(),
+        'repos_data': repos_data,
+    }
+    output_filename = os.path.join(
+        output_dir, 'blocked_source_entries_%s.html' % rosdistro_name)
+    print("Generating blocked source entries page '%s':" % output_filename)
+    with open(output_filename, 'w') as h:
+        h.write(expand_template(template_name, data))
+    additional_resources(output_dir, copy_resources=copy_resources)
+
+
 def _div_wrap(data, name=None):
     if_attr = ' id="%s"' % name if name is not None else ''
     return '<div{0}>{1}</div>'.format(if_attr, data)
@@ -816,6 +842,90 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
     return repos_info
 
 
+def _get_blocked_source_entries_info(config_url, rosdistro_name):
+    from rosdistro import get_cached_distribution
+    from rosdistro import get_index
+    from rosdistro.dependency_walker import DependencyWalker
+
+    config = get_config_index(config_url)
+    index = get_index(config.rosdistro_index_url)
+
+    print('Getting blocked source entries for', rosdistro_name)
+
+    try:
+        prev_rosdistro_name = _prev_rosdistro(index, rosdistro_name)
+    except ValueError as e:
+        print(e.args[0], file=sys.stderr)
+        exit(-1)
+
+    print('Comparing', rosdistro_name, 'with', prev_rosdistro_name)
+
+    dist = get_cached_distribution(index, rosdistro_name)
+    prev_dist = get_cached_distribution(index, prev_rosdistro_name)
+
+    prev_walker = DependencyWalker(prev_dist)
+
+    prev_released_repos = set(_released_repos(prev_dist))
+    source_entry_repos = set(_source_entry_repos(dist))
+    missing_repos = prev_released_repos.difference(source_entry_repos)
+
+    # Assume repos will provide the same packages as previous distro
+    missing_packages = set(_released_packages(prev_dist, missing_repos))
+
+    repos_info = defaultdict(dict)
+
+    # Give all repos some basic info
+    for repo_name in prev_released_repos.union(source_entry_repos).union(missing_repos):
+        repos_info[repo_name]['url'] = ''
+        repos_info[repo_name]['repos_blocking'] = set()
+        repos_info[repo_name]['recursive_repos_blocking'] = set()
+        repos_info[repo_name]['released'] = False
+        repos_info[repo_name]['version'] = 'no'
+        repos_info[repo_name]['repos_blocked_by'] = {}
+        repos_info[repo_name]['maintainers'] = defaultdict(dict)
+
+    for repo_name in prev_released_repos:
+        repos_info[repo_name]['url'] = _repo_url(prev_dist, repo_name)
+
+    # has a source entry? Call that 'released' with a 'version' to reuse _format_repo_table_row
+    for repo_name in source_entry_repos:
+        repos_info[repo_name]['released'] = True
+        repos_info[repo_name]['version'] = 'yes'
+
+    # Determine which repos directly block the missing ones
+    for repo_name in missing_repos:
+        package_dependencies = set()
+        for pkg in _released_packages(prev_dist, (repo_name,)):
+            package_dependencies.update(_package_dependencies(prev_walker, pkg))
+
+        for dep in package_dependencies:
+            if dep in missing_packages:
+                blocking_repo = prev_dist.release_packages[dep].repository_name
+                if blocking_repo == repo_name:
+                    # ignore packages in the same repo
+                    continue
+                repos_info[repo_name]['repos_blocked_by'][blocking_repo] = \
+                    _repo_url(prev_dist, repo_name)
+                repos_info[repo_name]['maintainers'][blocking_repo].update(
+                    dict(_maintainers(prev_dist, dep)))
+
+                # Mark blocking relationship in other direction
+                repos_info[blocking_repo]['repos_blocking'].add(repo_name)
+
+    # Compute which repos block another recursively
+    for repo_name in repos_info.keys():
+        checked_repos = set()
+        repos_to_check = set([repo_name])
+        while repos_to_check:
+            next_repo = repos_to_check.pop()
+            new_repos_blocking = repos_info[next_repo]['repos_blocking']
+            repos_info[repo_name]['recursive_repos_blocking'].update(new_repos_blocking)
+            checked_repos.add(next_repo)
+            repos_to_check.update(repos_info[next_repo]['repos_blocking'].difference(checked_repos))
+
+    return repos_info
+
+
 def _prev_rosdistro(index, rosdistro_name):
     """Given current rosdistro name, return the previous."""
     valid_rosdistro_names = list(index.distributions.keys())
@@ -849,6 +959,18 @@ def _is_released(repo, dist_file):
     return repo in dist_file.repositories and \
         dist_file.repositories[repo].release_repository is not None and \
         dist_file.repositories[repo].release_repository.version is not None
+
+
+def _source_entry_repos(distro):
+    for repo_name in distro.repositories.keys():
+        if _has_source_entry(repo_name, distro):
+            yield repo_name
+
+
+def _has_source_entry(repo_name, dist_file):
+    return repo_name in dist_file.repositories and \
+        dist_file.repositories[repo_name].source_repository is not None and \
+        dist_file.repositories[repo_name].source_repository.url is not None
 
 
 def _package_dependencies(walker, package):

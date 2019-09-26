@@ -43,10 +43,10 @@ ENTRYPOINT ["sh", "-c"]
 @{
 cmd = \
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
-    ' /tmp/ros_buildfarm/scripts/status/build_blocked_releases_page.py' + \
+    ' /tmp/ros_buildfarm/scripts/status/build_blocked_source_entries_page.py' + \
     ' ' + config_url + \
     ' ' + rosdistro_name + \
-    ' --output-dir /tmp/blocked_releases_page' + \
+    ' --output-dir /tmp/blocked_source_entries_page' + \
     ' --copy-resources'
 }@
 CMD ["@cmd"]

@@ -20,7 +20,7 @@ from ros_buildfarm.templates import expand_template
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
-        description="Generate the 'blocked_releases_page' job on Jenkins")
+        description="Generate the 'blocked_source_entries_page' job on Jenkins")
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_dry_run(parser)
@@ -34,12 +34,12 @@ def main(argv=sys.argv[1:]):
     configure_management_view(jenkins, dry_run=args.dry_run)
 
     prefix = get_release_job_prefix(args.rosdistro_name)
-    job_name = '%s_blocked-releases-page' % prefix
+    job_name = '%s_blocked-source-entries-page' % prefix
     configure_job(jenkins, job_name, job_config, dry_run=args.dry_run)
 
 
 def get_job_config(args, config):
-    template_name = 'status/blocked_releases_page_job.xml.em'
+    template_name = 'status/blocked_source_entries_page_job.xml.em'
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(config=config)
