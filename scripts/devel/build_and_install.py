@@ -21,7 +21,7 @@ import sys
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
 from ros_buildfarm.common import Scope
-from ros_buildfarm.workspace import call_build_tool
+from ros_buildfarm.workspace import call_build_tool, call_abi_checker
 from ros_buildfarm.workspace import clean_workspace
 from ros_buildfarm.workspace import ensure_workspace_exists
 
@@ -53,6 +53,11 @@ def main(argv=sys.argv[1:]):
         action='store_true',
         help='The flag if the workspace should be cleaned after the '
              'invocation')
+    parser.add_argument(
+        '--run-abichecker',
+        dest='abichecking',
+        action='store_true',
+        help='The flag if the abi checking tool should be run')
     args = parser.parse_args(argv)
 
     ensure_workspace_exists(args.workspace_root)
@@ -60,13 +65,14 @@ def main(argv=sys.argv[1:]):
     if args.clean_before:
         clean_workspace(args.workspace_root)
 
+    env = dict(os.environ)
+    env.setdefault('MAKEFLAGS', '-j1')
+
     try:
         with Scope('SUBSECTION', 'build workspace in isolation and install'):
             parent_result_spaces = None
             if args.parent_result_space:
                 parent_result_spaces = args.parent_result_space
-            env = dict(os.environ)
-            env.setdefault('MAKEFLAGS', '-j1')
             rc = call_build_tool(
                 args.build_tool, args.rosdistro_name, args.workspace_root,
                 cmake_args=['-DBUILD_TESTING=0', '-DCATKIN_SKIP_TESTING=1'],
@@ -77,7 +83,16 @@ def main(argv=sys.argv[1:]):
         if args.clean_after:
             clean_workspace(args.workspace_root)
 
-    return rc
+    if not args.abichecking:
+        return rc
+
+    with Scope('SUBSECTION', 'use abi checker'):
+        rc = call_abi_checker(args.workspace_root, args.rosdistro_name, env=env)
+
+    if rc != 0:
+        print("Failure during the execution of abi-checking")
+        return rc
+
 
 
 if __name__ == '__main__':

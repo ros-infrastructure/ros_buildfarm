@@ -16,6 +16,7 @@ import os
 import shutil
 import subprocess
 
+from catkin_pkg.packages import find_packages
 
 def ensure_workspace_exists(workspace_root):
     # ensure that workspace exists
@@ -41,6 +42,16 @@ def clean_workspace(workspace_root):
     if os.path.exists(test_results_dir):
         shutil.rmtree(test_results_dir)
 
+def call_abi_checker(workspace_root, rosdistro_name, env):
+    # TODO: improve the approach of parsing ghprbGhRepository variable in Jenkins
+    ros_repo = env['ghprbGhRepository'].rpartition('/')[2]
+    install_space = os.path.join(workspace_root, 'install_isolated')
+    cmd = ['/tmp/auto-abi-checker/auto-abi.py ' +
+            '--orig-type ros-pkg --orig ' + ros_repo + ' ' +
+            '--new-type local-dir --new ' + install_space]
+    print("Invoking '%s'" % (cmd))
+    return subprocess.call(
+        cmd, shell=True, stderr=subprocess.STDOUT, env=env)
 
 def call_build_tool(
     build_tool, rosdistro_name, workspace_root, cmake_args=None,

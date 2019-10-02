@@ -80,6 +80,11 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
     install_lists=install_lists,
 ))@
 
+@[if abichecking]@
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-rosdistro python3-rosdep python3
+RUN git clone https://github.com/osrf/auto-abi-checker /tmp/auto-abi-checker
+@[end if]@
+
 # After all dependencies are installed, update ccache symlinks.
 # This command is supposed to be invoked whenever a new compiler is installed
 # but that isn't happening. So we invoke it here to make sure all compilers are
@@ -96,7 +101,7 @@ cmd = \
 if not testing:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_install.py' + \
-        ' --rosdistro-name %s --clean-before' % rosdistro_name
+        ' --rosdistro-name %s --clean-before --abi-checker' % rosdistro_name
 else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \

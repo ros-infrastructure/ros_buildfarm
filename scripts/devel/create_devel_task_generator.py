@@ -71,6 +71,11 @@ def main(argv=sys.argv[1:]):
         action='store_true',
         help='The flag if the workspace should be built with tests enabled '
              'and instead of installing the tests are ran')
+    parser.add_argument(
+        '--run-abichecker',
+        dest='abichecking',
+        action='store_true',
+        help='The flag if the abi checking tool should be run')
     args = parser.parse_args(argv)
 
     condition_context = {}
@@ -186,6 +191,7 @@ def main(argv=sys.argv[1:]):
         'install_lists': [],
 
         'testing': args.testing,
+        'abichecking': args.abichecking,
         'workspace_root': mapped_workspaces[-1][1],
         'parent_result_space': parent_result_space,
     }
