@@ -83,6 +83,7 @@ cmds += [
     cmd +
     ' --dockerfile-dir /tmp/docker_build_and_test' +
     ' --testing',
+    ' --abi-checking',
 ]
 }@
 CMD ["@(' && '.join(cmds))"]
