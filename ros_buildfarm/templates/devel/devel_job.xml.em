@@ -356,6 +356,17 @@ if pull_request:
     remove_prefix='collated_test_stats',
 ))@
 @[end if]@
+@[if (not pull_request) and publish_test_reports]@
+@(SNIPPET(
+    'publisher_publish-over-ssh',
+    config_name='docs',
+    remote_directory='%s/devel_jobs/%s/reports' % (rosdistro_name, source_repo_spec.name),
+    source_files=[
+        'test_results/**'
+    ],
+    remove_prefix='test_results',
+))@
+@[end if]@
 @[if not pull_request or notify_pull_requests]@
 @[ if notify_maintainers]@
 @(SNIPPET(

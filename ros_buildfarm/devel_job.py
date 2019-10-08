@@ -405,6 +405,7 @@ def _get_devel_job_config(
         'git_ssh_credential_id': config.git_ssh_credential_id,
 
         'collate_test_stats': build_file.collate_test_stats,
+        'publish_test_reports': build_file.publish_test_reports,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
