@@ -362,9 +362,9 @@ if pull_request:
     config_name='docs',
     remote_directory='%s/devel_jobs/%s/reports' % (rosdistro_name, source_repo_spec.name),
     source_files=[
-        'test_results/**'
+        'ws/test_results/**'
     ],
-    remove_prefix='test_results',
+    remove_prefix='ws/test_results',
 ))@
 @[end if]@
 @[if not pull_request or notify_pull_requests]@
