@@ -74,7 +74,7 @@ def main(argv=sys.argv[1:]):
     parser.add_argument(
         '--run-abichecker',
         dest='abichecking',
-        action='store_true',
+        action='store_false',
         help='The flag if the abi checking tool should be run')
     args = parser.parse_args(argv)
 
