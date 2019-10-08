@@ -59,7 +59,8 @@ def call_abi_checker(workspace_root, rosdistro_name, env):
     # TODO: workspace_root[0] to be compatible with a code in
     # create_devel_task_generator for a future refactor. To fix
     # it, implement the support for multiple local-dir in auto-abi tool
-    cmd = ['/tmp/auto-abi-checker/auto-abi.py ' +
+    cmd = ['ROS_DISTRO=' + rosdistro_name + ' ' +
+           '/tmp/auto-abi-checker/auto-abi.py ' +
            '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
            '--new-type local-dir --new ' + workspace_root[0]]
     print("Invoking '%s'" % (cmd))
