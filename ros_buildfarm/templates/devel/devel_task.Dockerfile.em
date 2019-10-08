@@ -81,6 +81,7 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 ))@
 
 @[if abichecking]@
+ADD https://api.github.com/repos/osrf/auto-abi-checker/git/refs/heads/master version.json[remote "upstream"]
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-rosdistro python3-rosdep python3 python3-docopt abi-compliance-checker
 RUN git clone https://github.com/osrf/auto-abi-checker /tmp/auto-abi-checker
 @[end if]@
