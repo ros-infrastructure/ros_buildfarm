@@ -43,15 +43,26 @@ def clean_workspace(workspace_root):
         shutil.rmtree(test_results_dir)
 
 def call_abi_checker(workspace_root, rosdistro_name, env):
-    # TODO: improve the approach of parsing ghprbGhRepository variable in Jenkins
-    ros_repo = env['ghprbGhRepository'].rpartition('/')[2]
-    install_space = os.path.join(workspace_root, 'install_isolated')
-    cmd = ['/tmp/auto-abi-checker/auto-abi.py ' +
-            '--orig-type ros-pkg --orig ' + ros_repo + ' ' +
-            '--new-type local-dir --new ' + install_space]
+    # TODO: pkgs detection, code based on create_devel_task_generator.py
+    condition_context = {}
+    condition_context['ROS_DISTRO'] = rosdistro_name
+
+    pkgs = {}
+    for ws_root in workspace_root:
+        source_space = os.path.join(ws_root, 'src')
+        print("Crawling for packages in workspace '%s'" % source_space)
+        ws_pkgs = find_packages(source_space)
+        for pkg in ws_pkgs.values():
+            pkg.evaluate_conditions(condition_context)
+        pkgs.update(ws_pkgs)
+
+    cmd = ['/tmp/auto-abi-checker/auto-abi.py',
+           '--orig-type', 'osrf-pkg', '--orig', ",".join(pkgs),
+           '--new-type', 'local-dir', '--new', workspace_root]
     print("Invoking '%s'" % (cmd))
     return subprocess.call(
         cmd, shell=True, stderr=subprocess.STDOUT, env=env)
+
 
 def call_build_tool(
     build_tool, rosdistro_name, workspace_root, cmake_args=None,
