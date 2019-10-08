@@ -50,15 +50,18 @@ def call_abi_checker(workspace_root, rosdistro_name, env):
     pkgs = {}
     for ws_root in workspace_root:
         source_space = os.path.join(ws_root, 'src')
-        print("Crawling for packages in workspace '%s'" % source_space)
         ws_pkgs = find_packages(source_space)
         for pkg in ws_pkgs.values():
             pkg.evaluate_conditions(condition_context)
         pkgs.update(ws_pkgs)
+    pkg_names = [pkg.name for pkg in pkgs.values()]
 
-    cmd = ['/tmp/auto-abi-checker/auto-abi.py',
-           '--orig-type', 'osrf-pkg', '--orig', ",".join(pkgs),
-           '--new-type', 'local-dir', '--new', workspace_root]
+    # TODO: workspace_root[0] to be compatible with a code in
+    # create_devel_task_generator for a future refactor. To fix
+    # it, implement the support for multiple local-dir in auto-abi tool
+    cmd = ['/tmp/auto-abi-checker/auto-abi.py ' +
+           '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
+           '--new-type local-dir --new ' + workspace_root[0]]
     print("Invoking '%s'" % (cmd))
     return subprocess.call(
         cmd, shell=True, stderr=subprocess.STDOUT, env=env)

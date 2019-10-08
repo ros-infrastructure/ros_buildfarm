@@ -87,7 +87,7 @@ def main(argv=sys.argv[1:]):
         return rc
 
     with Scope('SUBSECTION', 'use abi checker'):
-        rc = call_abi_checker(args.workspace_root, args.rosdistro_name, env=env)
+        rc = call_abi_checker([args.workspace_root], args.rosdistro_name, env=env)
 
     if rc != 0:
         print("Failure during the execution of abi-checking")

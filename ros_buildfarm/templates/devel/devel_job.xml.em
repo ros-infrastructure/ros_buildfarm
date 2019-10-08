@@ -138,6 +138,7 @@ if pull_request:
         ' ' + ' '.join(repository_args) +
         ' --build-tool ' + build_tool +
         ' --ros-version ' + str(ros_version) +
+        ' --run-abichecker ' +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',
