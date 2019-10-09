@@ -360,7 +360,7 @@ if pull_request:
 @(SNIPPET(
     'publisher_publish-over-ssh',
     config_name='docs',
-    remote_directory='%s/devel_jobs/%s/reports' % (rosdistro_name, source_repo_spec.name),
+    remote_directory='%s/devel_jobs/%s/test_results' % (rosdistro_name, source_repo_spec.name),
     source_files=[
         'ws/test_results/**'
     ],
