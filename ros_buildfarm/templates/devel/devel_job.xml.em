@@ -370,6 +370,9 @@ if pull_request:
     send_to_individuals=notify_committers,
 ))@
 @[end if]@
+@(SNIPPET(
+    'publisher_abi_report',
+))@
   </publishers>
   <buildWrappers>
 @[if timeout_minutes is not None]@
