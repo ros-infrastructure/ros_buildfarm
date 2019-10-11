@@ -63,7 +63,10 @@ def call_abi_checker(workspace_root, rosdistro_name, env):
            '/tmp/auto-abi-checker/auto-abi.py ' +
            '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
            '--new-type local-dir --new ' + workspace_root[0] + ' ' +
-           '--report-dir ' + workspace_root[0]]
+           '--report-dir ' + workspace_root[0] + ' ' +
+           '--no-fail-if-empty ' +
+           '--display-exec-time'
+           ]
     print("Invoking '%s'" % (cmd))
     return subprocess.call(
         cmd, shell=True, stderr=subprocess.STDOUT, env=env)
