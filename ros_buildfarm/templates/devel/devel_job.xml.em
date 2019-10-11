@@ -111,6 +111,7 @@ if pull_request:
     'builder_shell_key-files',
     script_generating_key_files=script_generating_key_files,
 ))@
+# TODO: remove the --no-cache param
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
@@ -145,7 +146,7 @@ if pull_request:
         'echo "# BEGIN SECTION: Build Dockerfile - generating devel tasks"',
         'cd $WORKSPACE/docker_generating_dockers',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t devel_task_generation.%s_%s .' % (rosdistro_name, source_repo_spec.name.lower()),
+        'docker build --no-cache --force-rm -t devel_task_generation.%s_%s .' % (rosdistro_name, source_repo_spec.name.lower()),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generating devel tasks"',
