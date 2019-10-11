@@ -62,7 +62,7 @@ def call_abi_checker(workspace_root, rosdistro_name, env):
     cmd = ['ROS_DISTRO=' + rosdistro_name + ' ' +
            'auto-abi.py ' +
            '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
-           '--new-type local-dir --new ' + workspace_root[0] + ' ' +
+           '--new-type local-dir --new ' + os.path.join(workspace_root[0], 'install_isolated') + ' ' +
            '--report-dir ' + workspace_root[0] + ' ' +
            '--no-fail-if-empty ' +
            '--display-exec-time'
