@@ -80,9 +80,9 @@ def main(argv=sys.argv[1:]):
                 ctest_args = ['-LE "gpu_test"']
             additional_args = args.build_tool_args or []
             if args.build_tool == 'colcon':
-                additional_args = ['--test-result-base', test_results_dir]
+                additional_args += ['--test-result-base', test_results_dir]
             env = dict(os.environ)
-            env['MAKEFLAGS'] = '-j1'
+            env.setdefault('MAKEFLAGS', '-j1')
             rc = call_build_tool(
                 args.build_tool, args.rosdistro_name, args.workspace_root,
                 cmake_clean_cache=True,
@@ -93,7 +93,7 @@ def main(argv=sys.argv[1:]):
             with Scope('SUBSECTION', 'build tests'):
                 additional_args = args.build_tool_args or []
                 if args.build_tool == 'colcon':
-                    additional_args = ['--cmake-target-skip-unavailable']
+                    additional_args += ['--cmake-target-skip-unavailable']
                 rc = call_build_tool(
                     args.build_tool, args.rosdistro_name, args.workspace_root,
                     cmake_args=cmake_args,

@@ -52,6 +52,8 @@ def call_build_tool(
     assert build_tool in ('catkin_make_isolated', 'colcon')
     script_name = build_tool
 
+    cmd = ['PYTHONIOENCODING=utf_8', 'PYTHONUNBUFFERED=1']
+
     # use script from source space if available
     if build_tool == 'catkin_make_isolated':
         source_space = os.path.join(workspace_root, 'src')
@@ -59,8 +61,11 @@ def call_build_tool(
             source_space, 'catkin', 'bin', script_name)
         if os.path.exists(script_from_source):
             script_name = script_from_source
-
-    cmd = ['PYTHONIOENCODING=utf_8', 'PYTHONUNBUFFERED=1', script_name]
+            ros_python_version = (env or os.environ).get('ROS_PYTHON_VERSION')
+            # override shebang line if necessary
+            if ros_python_version == '3':
+                cmd.append('python3')
+    cmd.append(script_name)
 
     if build_tool == 'colcon':
         cmd.append(colcon_verb)
@@ -69,6 +74,16 @@ def call_build_tool(
             cmd += ['--build-base', 'build_isolated']
             cmd += ['--install-base', 'install_isolated']
             cmd += ['--test-result-base', 'test_results']
+
+        # output cohesion per package to avoid interleaving
+        if colcon_verb == 'build':
+            cmd += [
+                '--event-handlers', 'console_cohesion+']
+        # process packages sequentially assuming tests from different packages
+        # can't be executed in parallel
+        if colcon_verb == 'test':
+            cmd += [
+                '--event-handlers', 'console_direct+', '--executor sequential']
 
     if force_cmake:
         if build_tool == 'catkin_make_isolated':
@@ -133,6 +148,20 @@ def call_build_tool(
                 os.path.join(parent_result_space, '.colcon_install_layout')
             ):
                 cmd = 'COLCON_CURRENT_PREFIX=%s %s' % (parent_result_space, cmd)
+
+    # prevent colcon from crawling the catkin results
+    if build_tool != 'colcon':
+        build_isolated = os.path.join(workspace_root, 'build_isolated')
+        os.makedirs(build_isolated, exist_ok=True)
+        open(os.path.join(build_isolated, 'COLCON_IGNORE'), 'a').close()
+
+        devel_isolated = os.path.join(workspace_root, 'devel_isolated')
+        os.makedirs(devel_isolated, exist_ok=True)
+        open(os.path.join(devel_isolated, 'COLCON_IGNORE'), 'a').close()
+
+        install_isolated = os.path.join(workspace_root, 'install_isolated')
+        os.makedirs(install_isolated, exist_ok=True)
+        open(os.path.join(install_isolated, 'COLCON_IGNORE'), 'a').close()
 
     print("Invoking '%s' in '%s'" % (cmd, workspace_root))
     return subprocess.call(

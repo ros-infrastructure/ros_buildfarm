@@ -1,14 +1,45 @@
+ros_gpg_key_add_string: &rosgpgkeyadd |
+  echo '-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+  mQINBFzvJpYBEADY8l1YvO7iYW5gUESyzsTGnMvVUmlV3XarBaJz9bGRmgPXh7jc
+  VFrQhE0L/HV7LOfoLI9H2GWYyHBqN5ERBlcA8XxG3ZvX7t9nAZPQT2Xxe3GT3tro
+  u5oCR+SyHN9xPnUwDuqUSvJ2eqMYb9B/Hph3OmtjG30jSNq9kOF5bBTk1hOTGPH4
+  K/AY0jzT6OpHfXU6ytlFsI47ZKsnTUhipGsKucQ1CXlyirndZ3V3k70YaooZ55rG
+  aIoAWlx2H0J7sAHmqS29N9jV9mo135d+d+TdLBXI0PXtiHzE9IPaX+ctdSUrPnp+
+  TwR99lxglpIG6hLuvOMAaxiqFBB/Jf3XJ8OBakfS6nHrWH2WqQxRbiITl0irkQoz
+  pwNEF2Bv0+Jvs1UFEdVGz5a8xexQHst/RmKrtHLct3iOCvBNqoAQRbvWvBhPjO/p
+  V5cYeUljZ5wpHyFkaEViClaVWqa6PIsyLqmyjsruPCWlURLsQoQxABcL8bwxX7UT
+  hM6CtH6tGlYZ85RIzRifIm2oudzV5l+8oRgFr9yVcwyOFT6JCioqkwldW52P1pk/
+  /SnuexC6LYqqDuHUs5NnokzzpfS6QaWfTY5P5tz4KHJfsjDIktly3mKVfY0fSPVV
+  okdGpcUzvz2hq1fqjxB6MlB/1vtk0bImfcsoxBmF7H+4E9ZN1sX/tSb0KQARAQAB
+  tCZPcGVuIFJvYm90aWNzIDxpbmZvQG9zcmZvdW5kYXRpb24ub3JnPokCVAQTAQoA
+  PhYhBMHPbjHmut6IaLFytPQu1vurF8ZUBQJc7yaWAhsDBQkDwmcABQsJCAcCBhUK
+  CQgLAgQWAgMBAh4BAheAAAoJEPQu1vurF8ZUkhIP/RbZY1ErvCEUy8iLJm9aSpLQ
+  nDZl5xILOxyZlzpg+Ml5bb0EkQDr92foCgcvLeANKARNCaGLyNIWkuyDovPV0xZJ
+  rEy0kgBrDNb3++NmdI/+GA92pkedMXXioQvqdsxUagXAIB/sNGByJEhs37F05AnF
+  vZbjUhceq3xTlvAMcrBWrgB4NwBivZY6IgLvl/CRQpVYwANShIQdbvHvZSxRonWh
+  NXr6v/Wcf8rsp7g2VqJ2N2AcWT84aa9BLQ3Oe/SgrNx4QEhA1y7rc3oaqPVu5ZXO
+  K+4O14JrpbEZ3Xs9YEjrcOuEDEpYktA8qqUDTdFyZrxb9S6BquUKrA6jZgT913kj
+  J4e7YAZobC4rH0w4u0PrqDgYOkXA9Mo7L601/7ZaDJob80UcK+Z12ZSw73IgBix6
+  DiJVfXuWkk5PM2zsFn6UOQXUNlZlDAOj5NC01V0fJ8P0v6GO9YOSSQx0j5UtkUbR
+  fp/4W7uCPFvwAatWEHJhlM3sQNiMNStJFegr56xQu1a/cbJH7GdbseMhG/f0BaKQ
+  qXCI3ffB5y5AOLc9Hw7PYiTFQsuY1ePRhE+J9mejgWRZxkjAH/FlAubqXkDgterC
+  h+sLkzGf+my2IbsMCuc+3aeNMJ5Ej/vlXefCH/MpPWAHCqpQhe2DET/jRSaM53US
+  AHNx8kw4MPUkxExgI7Sd
+  =4Ofr
+  -----END PGP PUBLIC KEY BLOCK-----' | sudo apt-key add -
 env:
   global:
     - CONFIG_URL=https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
     - CONFIG2_URL=https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
     - ROS_DISTRO_NAME=melodic
-    - ROS2_DISTRO_NAME=crystal
+    - ROS2_DISTRO_NAME=dashing
     - OS_NAME=ubuntu
     - OS_CODE_NAME=bionic
     - OS_CODE_NAME2=bionic
     - ARCH=amd64
     - ROS_BUILDFARM_PULL_REQUEST_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
+dist: xenial
 matrix:
   include:
     - language: python
@@ -56,18 +87,21 @@ matrix:
       sudo: required
       services:
         - docker
-      env: JOB_TYPE=ci UNDERLAY_PACKAGES="ament_flake8 ament_pep257" OVERLAY_PACKAGES="ament_cmake_ros"
+      env: JOB_TYPE=ci UNDERLAY1_PACKAGES="ament_flake8" UNDERLAY2_PACKAGES="ament_pep257" OVERLAY_PACKAGES="ament_cmake_ros"
       before_script:
         # install colcon for test results
         - pip install colcon-core colcon-test-result
         - python setup.py install
-        - mkdir job job/underlay && cd job
+        - mkdir job job/underlay1 job/underlay2 && cd job
         - ln -s .. ros_buildfarm
       script:
-        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly $OS_NAME $OS_CODE_NAME2 $ARCH --package-selection-args --packages-up-to $UNDERLAY_PACKAGES > job.sh
+        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly-release $OS_NAME $OS_CODE_NAME2 $ARCH --package-selection-args --packages-up-to $UNDERLAY1_PACKAGES > job.sh
         - (. job.sh -y; exit $test_result_RC)
-        - tar -xjf ros2-$ROS2_DISTRO_NAME-linux-$OS_CODE_NAME2-$ARCH-ci.tar.bz2 -C underlay
-        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly $OS_NAME $OS_CODE_NAME2 $ARCH --underlay-source-path underlay/ros2-linux --package-selection-args --packages-skip-up-to $UNDERLAY_PACKAGES --packages-up-to $OVERLAY_PACKAGES > job.sh
+        - tar -xjf ros2-$ROS2_DISTRO_NAME-linux-$OS_CODE_NAME2-$ARCH-ci.tar.bz2 -C underlay1
+        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly-release $OS_NAME $OS_CODE_NAME2 $ARCH --underlay-source-path underlay1/ros2-linux --package-selection-args --packages-skip-up-to $UNDERLAY1_PACKAGES --packages-up-to $UNDERLAY2_PACKAGES > job.sh
+        - (. job.sh -y; exit $test_result_RC)
+        - tar -xjf ros2-$ROS2_DISTRO_NAME-linux-$OS_CODE_NAME2-$ARCH-ci.tar.bz2 -C underlay2
+        - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly-release $OS_NAME $OS_CODE_NAME2 $ARCH --underlay-source-path underlay1/ros2-linux underlay2/ros2-linux --package-selection-args --packages-skip-up-to $UNDERLAY1_PACKAGES $UNDERLAY2_PACKAGES --packages-up-to $OVERLAY_PACKAGES > job.sh
         - (. job.sh -y; exit $test_result_RC)
     - language: python
       python: "3.6"
@@ -94,17 +128,17 @@ matrix:
       before_script:
         # install catkin for test results
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
-        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+        - *rosgpgkeyadd
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
-        - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python3-vcstool -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
-        - . /opt/ros/indigo/setup.sh
+        - . /opt/ros/kinetic/setup.sh
         - . job.sh -y
         - (exit $test_result_RC)
     - language: python
@@ -144,16 +178,16 @@ matrix:
       before_script:
         # install catkin for test results
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
-        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+        - *rosgpgkeyadd
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
-        - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install ros-kinetic-catkin -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
-        - . /opt/ros/indigo/setup.sh
+        - . /opt/ros/kinetic/setup.sh
         - . prerelease.sh -y
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
@@ -164,7 +198,7 @@ matrix:
       env: JOB_TYPE=external_prerelease
       before_script:
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip
+        - sudo apt-get install -y python3-pip python3-setuptools
         - sudo pip3 install vcstool
         - python setup.py install
         - mkdir job && cd job
@@ -197,17 +231,17 @@ matrix:
       before_script:
         # install catkin for test results
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
-        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+        - *rosgpgkeyadd
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
-        - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python3-vcstool -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
-        - . /opt/ros/indigo/setup.sh
+        - . /opt/ros/kinetic/setup.sh
         - . job.sh -y
         - (exit $test_result_RC)
     - language: python
@@ -247,16 +281,16 @@ matrix:
       before_script:
         # install catkin for test results
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
-        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+        - *rosgpgkeyadd
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
-        - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install ros-kinetic-catkin -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
-        - . /opt/ros/indigo/setup.sh
+        - . /opt/ros/kinetic/setup.sh
         - . prerelease.sh -y
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
@@ -267,7 +301,7 @@ matrix:
       env: JOB_TYPE=external_prerelease
       before_script:
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip
+        - sudo apt-get install -y python3-pip python3-setuptools
         - sudo pip3 install vcstool
         - python setup.py install
         - mkdir job && cd job
@@ -300,17 +334,17 @@ matrix:
       before_script:
         # install catkin for test results
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
-        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+        - *rosgpgkeyadd
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
-        - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python3-vcstool -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
-        - . /opt/ros/indigo/setup.sh
+        - . /opt/ros/kinetic/setup.sh
         - . job.sh -y
         - (exit $test_result_RC)
     - language: python
@@ -350,16 +384,16 @@ matrix:
       before_script:
         # install catkin for test results
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
-        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+        - *rosgpgkeyadd
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
-        - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install ros-kinetic-catkin -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
-        - . /opt/ros/indigo/setup.sh
+        - . /opt/ros/kinetic/setup.sh
         - . prerelease.sh -y
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
@@ -370,7 +404,7 @@ matrix:
       env: JOB_TYPE=external_prerelease
       before_script:
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip
+        - sudo apt-get install -y python3-pip  python3-setuptools
         - sudo pip3 install vcstool
         - python setup.py install
         - mkdir job && cd job
@@ -403,17 +437,17 @@ matrix:
       before_script:
         # install catkin for test results
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
-        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+        - *rosgpgkeyadd
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
-        - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python-vcstool -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
-        - . /opt/ros/indigo/setup.sh
+        - . /opt/ros/kinetic/setup.sh
         - . job.sh -y
         - (exit $test_result_RC)
     - language: python
@@ -452,20 +486,20 @@ matrix:
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
       before_script:
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip
+        - sudo apt-get install -y python3-pip python3-setuptools
         - sudo pip3 install EmPy
         # install catkin for test results
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
-        - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+        - *rosgpgkeyadd
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
-        - sudo apt-get install ros-indigo-catkin -y
+        - sudo apt-get install ros-kinetic-catkin -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
       script:
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
-        - . /opt/ros/indigo/setup.sh
+        - . /opt/ros/kinetic/setup.sh
         - . prerelease.sh -y
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
@@ -476,7 +510,7 @@ matrix:
       env: JOB_TYPE=external_prerelease
       before_script:
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip
+        - sudo apt-get install -y python3-pip python3-setuptools
         - sudo pip3 install EmPy vcstool
         - python setup.py install
         - mkdir job && cd job

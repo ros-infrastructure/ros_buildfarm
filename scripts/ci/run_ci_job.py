@@ -31,6 +31,7 @@ from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_selection_args
 from ros_buildfarm.argument import add_argument_repos_file_urls
+from ros_buildfarm.argument import add_argument_repository_names
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_rosdep_keys
@@ -59,7 +60,8 @@ def main(argv=sys.argv[1:]):
     add_argument_install_packages(parser)
     a1 = add_argument_package_selection_args(parser)
     a2 = add_argument_build_tool_args(parser)
-    add_argument_repos_file_urls(parser, required=True)
+    add_argument_repos_file_urls(parser)
+    add_argument_repository_names(parser, optional=True)
     add_argument_ros_version(parser)
     add_argument_skip_rosdep_keys(parser)
     add_argument_test_branch(parser)
@@ -72,6 +74,8 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
     for k, v in remainder_args.items():
         setattr(args, k, v)
+
+    assert args.repos_file_urls or args.repository_names
 
     data = copy.deepcopy(args.__dict__)
     data.update({

@@ -278,10 +278,10 @@ def add_argument_package_names(parser):
         help='A space separated list of package names')
 
 
-def add_argument_repository_names(parser):
+def add_argument_repository_names(parser, optional=False):
     parser.add_argument(
         '--repository-names',
-        nargs='+',
+        nargs='*' if optional else '+',
         help='A space separated list of repository names')
 
 
@@ -336,10 +336,9 @@ def add_argument_build_tool_args(parser):
         help='Arbitrary arguments passed to the build tool.')
 
 
-def add_argument_repos_file_urls(parser, required=False):
+def add_argument_repos_file_urls(parser):
     parser.add_argument(
         '--repos-file-urls', nargs='*', metavar='URL',
-        required=required,
         help='URLs of repos files to import with vcs.')
 
 

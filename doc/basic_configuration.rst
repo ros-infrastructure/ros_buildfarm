@@ -17,9 +17,14 @@ configuration to generate the necessary Jobs on the Jenkins master.
 Create / fork configuration repository
 --------------------------------------
 
-First you need to either fork the
+First you need to either fork, clone, or copy the
 `ros_buildfarm_config <https://github.com/ros-infrastructure/ros_buildfarm_config>`_
 repository or create a repository containing the same configuration files.
+
+**Important:**
+Since ``ros_buildfarm_config`` files need to be accessed from within Docker images,
+you **can not** use a local file system path (``file://``) to reference them.
+The configuration files must be accessible via HTTP.
 
 Then you must update the configuration files:
 
@@ -35,8 +40,7 @@ The following options must be set in *all* build files::
 
     notifications:
       committers: false
-    maintainers
-      committers: false
+      maintainers: false
 
 
 Update administrator notification
@@ -44,7 +48,7 @@ Update administrator notification
 
 Change the email address which gets notified about any administrative jobs.
 
-In the entry point yaml::
+In your ``ros_buildfarm_config``'s ``index.yaml``::
 
   notification_emails:
   - your_email@example.com
@@ -55,17 +59,32 @@ In *all* build files::
     emails:
     - your_email@example.com
 
+You need to have a `local SMTP service configured <https://github.com/ros-infrastructure/buildfarm_deployment#setup-master-for-email-delivery>`_ on your ``master`` host for email notifications.
+Note that even when you remove these global email notification settings
+some jobs will still send notification emails to package specific email addresses
+by default unless this is disabled by configuration.
+
 
 Update URLs to point to custom build farm
 -----------------------------------------
 
-Change the Jenkins URL in the entry point yaml to point to your earlier
-provisioned Jenkins master::
+Change the ``rosdistro_index_url`` in your ``ros_buildfarm_config``'s ``index.yaml`` 
+to point to the ``rosdistro``'s ``index.yaml``
+that defines the distro(s) that your buildfarm should build and respective caches.
+
+This can be the official `ros/rosdistro <https://github.com/ros/rosdistro>`_'s ``index.yaml`` 
+if you intend to build the default set of packages, or your personal configuration where you intend to host
+``rosdistro`` (for example a GitHub fork of ``ros/rosdistro`` or your ``repo`` host)::
+
+  rosdistro_index_url: https://raw.githubusercontent.com/ros/rosdistro/master/index.yaml
+
+Change the Jenkins URL in your ``ros_buildfarm_config``'s 
+``index.yaml`` to point to your earlier provisioned Jenkins master::
 
   jenkins_url: http://jenkins_hostname.example.com:8080
 
-Change the repository URLs in the entry point yaml to point to your earlier
-provisioned ``repo`` host::
+Change the repository URLs in your ``ros_buildfarm_config``_'s
+``index.yaml`` to point to your earlier provisioned ``repo`` host::
 
   status_page_repositories:
     CUSTOM_NAME:
@@ -100,3 +119,12 @@ repository::
 
 You can extract the repository PGP key from the ``buildfarm_deployment``
 configuration.
+
+
+Update URLs to point to required repositories
+---------------------------------------------
+
+During job execution, access to repositories which contain the necessary tools to run the ROS build farm is required.
+These must be specified in your ``ros_buildfarm_config``'s ``index.yaml`` as ``prerequisites``.
+You can use the official ROS repository or mirrors of it.
+See the `Configuration Options <configuration_options.rst#entry-point-yaml>`_ documentation page for details.

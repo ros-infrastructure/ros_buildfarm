@@ -589,6 +589,32 @@ def build_blocked_releases_page(
     additional_resources(output_dir, copy_resources=copy_resources)
 
 
+def build_blocked_source_entries_page(
+        config_url, rosdistro_name,
+        output_dir, copy_resources=False
+):
+    start_time = time.localtime()
+
+    repos_info = _get_blocked_source_entries_info(config_url, rosdistro_name)
+
+    # Expand a template for the webpage
+    repos_data = [_format_repo_table_row(name, data) for name, data in sorted(repos_info.items())]
+    template_name = 'status/blocked_source_entries_page.html.em'
+    data = {
+        'title': 'ROS %s - blocked source entries' % rosdistro_name,
+        'start_time': time.strftime('%Y-%m-%d %H:%M:%S %z', start_time),
+        'resource_hashes': get_resource_hashes(),
+        'rosdistro_name': rosdistro_name.capitalize(),
+        'repos_data': repos_data,
+    }
+    output_filename = os.path.join(
+        output_dir, 'blocked_source_entries_%s.html' % rosdistro_name)
+    print("Generating blocked source entries page '%s':" % output_filename)
+    with open(output_filename, 'w') as h:
+        h.write(expand_template(template_name, data))
+    additional_resources(output_dir, copy_resources=copy_resources)
+
+
 def _div_wrap(data, name=None):
     if_attr = ' id="%s"' % name if name is not None else ''
     return '<div{0}>{1}</div>'.format(if_attr, data)
@@ -676,45 +702,22 @@ def _format_repo_table_row(name, data):
     return row
 
 
-def _is_released(repo, dist_file):
-    return repo in dist_file.repositories and \
-        dist_file.repositories[repo].release_repository is not None and \
-        dist_file.repositories[repo].release_repository.version is not None
-
-
 def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
     import rosdistro
     from rosdistro.dependency_walker import DependencyWalker
-    from catkin_pkg.package import InvalidPackage, parse_package_string
-
-    prev_rosdistro_name = None
 
     config = get_config_index(config_url)
 
     index = rosdistro.get_index(config.rosdistro_index_url)
-    valid_rosdistro_names = list(index.distributions.keys())
-    valid_rosdistro_names.sort()
-    if rosdistro_name is None:
-        rosdistro_name = valid_rosdistro_names[-1]
-    print('Checking packages for "%s" distribution' % rosdistro_name)
 
-    # skip distributions with a different type if the information is available
-    distro_type = index.distributions[rosdistro_name].get('distribution_type')
-    if distro_type is not None:
-        valid_rosdistro_names = [
-            n for n in valid_rosdistro_names
-            if distro_type == index.distributions[n].get('distribution_type')]
+    print('Checking packages for "%s" distribution' % rosdistro_name)
 
     # Find the previous distribution to the current one
     try:
-        i = valid_rosdistro_names.index(rosdistro_name)
-    except ValueError:
-        print('Distribution key not found in list of valid distributions.', file=sys.stderr)
+        prev_rosdistro_name = _prev_rosdistro(index, rosdistro_name)
+    except ValueError as e:
+        print(e.args[0], file=sys.stderr)
         exit(-1)
-    if i == 0:
-        print('No previous distribution found.', file=sys.stderr)
-        exit(-1)
-    prev_rosdistro_name = valid_rosdistro_names[i - 1]
 
     cache = rosdistro.get_distribution_cache(index, rosdistro_name)
     distro_file = cache.distribution_file
@@ -727,19 +730,16 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
 
     dependency_walker = DependencyWalker(prev_distribution)
 
-    if repo_names is None:
-        # Check missing dependencies for packages that were in the previous
-        # distribution that have not yet been released in the current distribution
-        # Filter repos without a version or a release repository
-        keys = prev_distro_file.repositories.keys()
-        prev_repo_names = set(
-            repo for repo in keys if _is_released(repo, prev_distro_file))
+    # Check missing dependencies for packages that were in the previous
+    # distribution that have not yet been released in the current distribution
+    # Filter repos without a version or a release repository
+    prev_repo_names = set(_released_repos(prev_distro_file))
+
+    if repo_names is not None:
+        ignored_inputs = prev_repo_names.difference(repo_names)
+        prev_repo_names.intersection_update(repo_names)
         repo_names = prev_repo_names
-        ignored_inputs = []
-    else:
-        prev_repo_names = set(
-            repo for repo in repo_names if _is_released(repo, prev_distro_file))
-        ignored_inputs = list(set(repo_names).difference(prev_repo_names))
+
         if len(ignored_inputs) > 0:
             print(
                 'Ignoring inputs for which repository info not found in previous distribution '
@@ -747,24 +747,16 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
             print('\n'.join(
                 sorted('\t{0}'.format(repo) for repo in ignored_inputs)))
 
-    keys = distro_file.repositories.keys()
-    current_repo_names = set(
-        repo for repo in keys if _is_released(repo, distro_file))
+    current_repo_names = set(_released_repos(distro_file))
 
     # Get a list of currently released packages
-    current_package_names = set(
-        pkg for repo in current_repo_names
-        for pkg in distro_file.repositories[repo].release_repository.package_names)
+    current_package_names = set(_released_packages(distro_file, current_repo_names))
 
     released_repos = prev_repo_names.intersection(
         current_repo_names)
 
-    unreleased_repos = list(prev_repo_names.difference(
-        current_repo_names))
-
-    if len(unreleased_repos) == 0:
-        print('All inputs already released in {0}.'.format(
-            rosdistro_name))
+    if prev_repo_names.issubset(current_repo_names):
+        print('All inputs already released in {0}.'.format(rosdistro_name))
 
     repos_info = defaultdict(dict)
     unprocessed_repos = prev_repo_names
@@ -791,12 +783,7 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
                 packages = release_repo.package_names
                 # Accumulate all dependencies for those packages
                 for package in packages:
-                    try:
-                        package_dependencies |= dependency_walker.get_recursive_depends(
-                            package, ['build', 'buildtool', 'run', 'test'], ros_packages_only=True,
-                            limit_depth=1)
-                    except AssertionError as e:
-                        print(e, file=sys.stderr)
+                    package_dependencies.update(_package_dependencies(dependency_walker, package))
 
                 # For all package dependencies, check if they are released yet
                 unreleased_pkgs = package_dependencies.difference(
@@ -805,35 +792,21 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
                 unreleased_pkgs = unreleased_pkgs.difference(packages)
 
                 # Get maintainer info and repo of unreleased packages
-                maintainers = {}
+                maintainers = defaultdict(dict)
                 repos_blocked_by = set()
                 for pkg_name in unreleased_pkgs:
                     unreleased_repo_name = \
                         prev_distro_file.release_packages[pkg_name].repository_name
                     repos_blocked_by.add(unreleased_repo_name)
-                    pkg_xml = prev_distribution.get_release_package_xml(pkg_name)
-                    if pkg_xml is not None:
-                        try:
-                            pkg = parse_package_string(pkg_xml)
-                        except InvalidPackage:
-                            pass
-                        else:
-                            pkg_maintainers = {m.name: m.email for m in pkg.maintainers}
-                            if unreleased_repo_name not in maintainers:
-                                maintainers[unreleased_repo_name] = {}
-                            maintainers[unreleased_repo_name].update(pkg_maintainers)
+                    maintainers[unreleased_repo_name].update(
+                        dict(_maintainers(prev_distribution, pkg_name)))
                 if maintainers:
                     repos_info[repo_name]['maintainers'] = maintainers
 
                 repos_info[repo_name]['repos_blocked_by'] = {}
                 for blocking_repo_name in repos_blocked_by:
                     # Get url of blocking repos
-                    repo_url = None
-                    blocking_repo = prev_distro_file.repositories[blocking_repo_name]
-                    if blocking_repo.source_repository:
-                        repo_url = blocking_repo.source_repository.url
-                    elif blocking_repo.doc_repository:
-                        repo_url = blocking_repo.doc_repository.url
+                    repo_url = _repo_url(prev_distribution, blocking_repo_name)
                     repos_info[repo_name]['repos_blocked_by'].update(
                         {blocking_repo_name: repo_url})
 
@@ -846,11 +819,7 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
                     repos_info[blocking_repo_name]['repos_blocking'].add(repo_name)
 
             # Get url of repo
-            repo_url = None
-            if repo.source_repository:
-                repo_url = repo.source_repository.url
-            elif repo.doc_repository:
-                repo_url = repo.doc_repository.url
+            repo_url = _repo_url(prev_distribution, repo_name)
             if repo_url:
                 repos_info[repo_name]['url'] = repo_url
 
@@ -871,6 +840,177 @@ def _get_blocked_releases_info(config_url, rosdistro_name, repo_names=None):
         unprocessed_repos = new_repos_to_process
 
     return repos_info
+
+
+def _get_blocked_source_entries_info(config_url, rosdistro_name):
+    from rosdistro import get_cached_distribution
+    from rosdistro import get_index
+    from rosdistro.dependency_walker import DependencyWalker
+
+    config = get_config_index(config_url)
+    index = get_index(config.rosdistro_index_url)
+
+    print('Getting blocked source entries for', rosdistro_name)
+
+    try:
+        prev_rosdistro_name = _prev_rosdistro(index, rosdistro_name)
+    except ValueError as e:
+        print(e.args[0], file=sys.stderr)
+        exit(-1)
+
+    print('Comparing', rosdistro_name, 'with', prev_rosdistro_name)
+
+    dist = get_cached_distribution(index, rosdistro_name)
+    prev_dist = get_cached_distribution(index, prev_rosdistro_name)
+
+    prev_walker = DependencyWalker(prev_dist)
+
+    prev_released_repos = set(_released_repos(prev_dist))
+    source_entry_repos = set(_source_entry_repos(dist))
+    missing_repos = prev_released_repos.difference(source_entry_repos)
+
+    # Assume repos will provide the same packages as previous distro
+    missing_packages = set(_released_packages(prev_dist, missing_repos))
+
+    repos_info = defaultdict(dict)
+
+    # Give all repos some basic info
+    for repo_name in prev_released_repos.union(source_entry_repos).union(missing_repos):
+        repos_info[repo_name]['url'] = ''
+        repos_info[repo_name]['repos_blocking'] = set()
+        repos_info[repo_name]['recursive_repos_blocking'] = set()
+        repos_info[repo_name]['released'] = False
+        repos_info[repo_name]['version'] = 'no'
+        repos_info[repo_name]['repos_blocked_by'] = {}
+        repos_info[repo_name]['maintainers'] = defaultdict(dict)
+
+    for repo_name in prev_released_repos:
+        repos_info[repo_name]['url'] = _repo_url(prev_dist, repo_name)
+
+    # has a source entry? Call that 'released' with a 'version' to reuse _format_repo_table_row
+    for repo_name in source_entry_repos:
+        repos_info[repo_name]['released'] = True
+        repos_info[repo_name]['version'] = 'yes'
+
+    # Determine which repos directly block the missing ones
+    for repo_name in missing_repos:
+        package_dependencies = set()
+        for pkg in _released_packages(prev_dist, (repo_name,)):
+            package_dependencies.update(_package_dependencies(prev_walker, pkg))
+
+        for dep in package_dependencies:
+            if dep in missing_packages:
+                blocking_repo = prev_dist.release_packages[dep].repository_name
+                if blocking_repo == repo_name:
+                    # ignore packages in the same repo
+                    continue
+                repos_info[repo_name]['repos_blocked_by'][blocking_repo] = \
+                    _repo_url(prev_dist, repo_name)
+                repos_info[repo_name]['maintainers'][blocking_repo].update(
+                    dict(_maintainers(prev_dist, dep)))
+
+                # Mark blocking relationship in other direction
+                repos_info[blocking_repo]['repos_blocking'].add(repo_name)
+
+    # Compute which repos block another recursively
+    for repo_name in repos_info.keys():
+        checked_repos = set()
+        repos_to_check = set([repo_name])
+        while repos_to_check:
+            next_repo = repos_to_check.pop()
+            new_repos_blocking = repos_info[next_repo]['repos_blocking']
+            repos_info[repo_name]['recursive_repos_blocking'].update(new_repos_blocking)
+            checked_repos.add(next_repo)
+            repos_to_check.update(repos_info[next_repo]['repos_blocking'].difference(checked_repos))
+
+    return repos_info
+
+
+def _prev_rosdistro(index, rosdistro_name):
+    """Given current rosdistro name, return the previous."""
+    valid_rosdistro_names = list(index.distributions.keys())
+    valid_rosdistro_names.sort()
+
+    # skip distributions with a different type if the information is available
+    distro_type = index.distributions[rosdistro_name].get('distribution_type')
+    if distro_type is not None:
+        valid_rosdistro_names = [
+            n for n in valid_rosdistro_names
+            if distro_type == index.distributions[n].get('distribution_type')]
+
+    try:
+        i = valid_rosdistro_names.index(rosdistro_name)
+    except ValueError:
+        raise ValueError('Distribution key not found in list of valid distributions.')
+
+    if i == 0:
+        raise ValueError('No previous distribution found.')
+
+    return valid_rosdistro_names[i - 1]
+
+
+def _released_repos(distro):
+    for repo_name in distro.repositories.keys():
+        if _is_released(repo_name, distro):
+            yield repo_name
+
+
+def _is_released(repo, dist_file):
+    return repo in dist_file.repositories and \
+        dist_file.repositories[repo].release_repository is not None and \
+        dist_file.repositories[repo].release_repository.version is not None
+
+
+def _source_entry_repos(distro):
+    for repo_name in distro.repositories.keys():
+        if _has_source_entry(repo_name, distro):
+            yield repo_name
+
+
+def _has_source_entry(repo_name, dist_file):
+    return repo_name in dist_file.repositories and \
+        dist_file.repositories[repo_name].source_repository is not None and \
+        dist_file.repositories[repo_name].source_repository.url is not None
+
+
+def _package_dependencies(walker, package):
+    try:
+        for dep in walker.get_recursive_depends(
+                package, ['build', 'buildtool', 'run', 'test'], ros_packages_only=True,
+                limit_depth=1):
+            yield dep
+    except AssertionError as e:
+        print(e, file=sys.stderr)
+
+
+def _released_packages(distro, repo_names):
+    for repo in repo_names:
+        for package_name in distro.repositories[repo].release_repository.package_names:
+            yield package_name
+
+
+def _repo_url(distro, repo_name):
+    repo_url = None
+    if repo_name in distro.repositories:
+        repo = distro.repositories[repo_name]
+        if repo.source_repository:
+            repo_url = repo.source_repository.url
+        elif repo.doc_repository:
+            repo_url = repo.doc_repository.url
+    return repo_url
+
+
+def _maintainers(distro, pkg_name):
+    from catkin_pkg.package import InvalidPackage, parse_package_string
+    pkg_xml = distro.get_release_package_xml(pkg_name)
+    if pkg_xml is not None:
+        try:
+            pkg = parse_package_string(pkg_xml)
+        except InvalidPackage:
+            pass
+        else:
+            for m in pkg.maintainers:
+                yield m.name, m.email
 
 
 def build_release_compare_page(

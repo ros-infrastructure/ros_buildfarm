@@ -23,7 +23,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ))@
 
 
-RUN useradd -u @uid -m buildfarm
+RUN useradd -u @uid -l -m buildfarm
 
 @(TEMPLATE(
     'snippet/add_distribution_repositories.Dockerfile.em',

@@ -16,6 +16,7 @@
 
 import argparse
 import os
+from pathlib import Path
 import sys
 
 from apt import Cache
@@ -23,8 +24,10 @@ from catkin_pkg.packages import find_packages
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_output_dir
+from ros_buildfarm.argument import add_argument_package_selection_args
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_rosdep_keys
+from ros_buildfarm.colcon import locate_packages
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import Scope
 from rosdep2 import create_default_installer_context
@@ -43,6 +46,7 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
 
     add_argument_output_dir(parser)
+    add_argument_package_selection_args(parser)
     add_argument_skip_rosdep_keys(parser)
     parser.add_argument(
         '--package-root',
@@ -50,15 +54,46 @@ def main(argv=sys.argv[1:]):
         help='The path to the directory containing packages')
     args = parser.parse_args(argv)
 
+    workspace_root = args.package_root[-1]
+    os.chdir(workspace_root)
+
+    with Scope('SUBSECTION', 'mark packages with IGNORE files'):
+        all_packages = locate_packages(workspace_root)
+        selected_packages = all_packages
+        if args.package_selection_args:
+            print(
+                'Using package selection arguments:',
+                args.package_selection_args)
+            selected_packages = locate_packages(
+                workspace_root, extra_args=args.package_selection_args)
+
+            to_ignore = all_packages.keys() - selected_packages.keys()
+            print('Ignoring %d packages' % len(to_ignore))
+            for package in sorted(to_ignore):
+                print('-', package)
+                package_root = all_packages[package]
+                Path(package_root, 'COLCON_IGNORE').touch()
+
+        print('There are %d packages which meet selection criteria' %
+              len(selected_packages))
+
     with Scope('SUBSECTION', 'Enumerating packages needed to build'):
         # find all of the underlay packages
         underlay_pkgs = {}
+        all_underlay_pkg_names = set()
         for package_root in args.package_root[0:-1]:
             print("Crawling for packages in '%s'" % package_root)
             underlay_pkgs.update(find_packages(package_root))
 
+            # Check for a colcon index for non-ROS package detection
+            colcon_index = os.path.join(package_root, 'colcon-core', 'packages')
+            try:
+                all_underlay_pkg_names.update(os.listdir(colcon_index))
+            except FileNotFoundError:
+                pass
+
         underlay_pkg_names = [pkg.name for pkg in underlay_pkgs.values()]
-        print('Found the following underlay packages:')
+        print('Found the following ROS underlay packages:')
         for pkg_name in sorted(underlay_pkg_names):
             print('  -', pkg_name)
 
@@ -68,7 +103,7 @@ def main(argv=sys.argv[1:]):
         pkgs = find_packages(package_root)
 
         pkg_names = [pkg.name for pkg in pkgs.values()]
-        print('Found the following packages:')
+        print('Found the following ROS packages:')
         for pkg_name in sorted(pkg_names):
             print('  -', pkg_name)
 
@@ -79,7 +114,7 @@ def main(argv=sys.argv[1:]):
             pkg.evaluate_conditions(os.environ)
         for pkg in all_pkgs:
             for group_depend in pkg.group_depends:
-                if group_depend.evaluated_condition:
+                if group_depend.evaluated_condition is not False:
                     group_depend.extract_group_members(all_pkgs)
 
         dependency_keys_build = get_dependencies(
@@ -93,6 +128,12 @@ def main(argv=sys.argv[1:]):
         if args.skip_rosdep_keys:
             dependency_keys_build.difference_update(args.skip_rosdep_keys)
             dependency_keys_test.difference_update(args.skip_rosdep_keys)
+
+        # remove all non-ROS packages and packages which are present but
+        # specifically ignored
+        every_package_name = all_packages.keys() | all_underlay_pkg_names
+        dependency_keys_build -= every_package_name
+        dependency_keys_test -= every_package_name
 
         context = initialize_resolver(
             args.rosdistro_name, args.os_name, args.os_code_name)
@@ -131,7 +172,9 @@ def get_dependencies(pkgs, label, get_dependencies_callback, target_pkgs):
 
 
 def _get_build_and_recursive_run_dependencies(pkg, pkgs):
-    depends = [d.name for d in pkg.build_depends + pkg.buildtool_depends]
+    depends = [
+        d.name for d in pkg.build_depends + pkg.buildtool_depends
+        if d.evaluated_condition is not False]
     # include recursive run dependencies on other pkgs in the workspace
     # if pkg A in the workspace build depends on pkg B in the workspace
     # then the recursive run dependencies of pkg B need to be installed
@@ -148,11 +191,15 @@ def _get_build_and_recursive_run_dependencies(pkg, pkgs):
         run_depends_in_pkgs.remove(pkg_name)
 
         # append run dependencies
-        run_depends = [d.name for d in pkg.build_export_depends +
-                       pkg.buildtool_export_depends + pkg.exec_depends]
+        run_depends = [
+            d.name for d in pkg.build_export_depends +
+            pkg.buildtool_export_depends + pkg.exec_depends
+            if d.evaluated_condition is not False]
 
         # append group dependencies
-        run_depends += [member for group in pkg.group_depends for member in group.members]
+        run_depends += [
+            member for group in pkg.group_depends for member in group.members
+            if group.evaluated_condition is not False]
 
         depends += run_depends
 
@@ -164,9 +211,10 @@ def _get_build_and_recursive_run_dependencies(pkg, pkgs):
 
 
 def _get_test_and_recursive_run_dependencies(pkg, pkgs):
-    depends = [d.name for d in pkg.build_export_depends +
-               pkg.buildtool_export_depends + pkg.exec_depends +
-               pkg.test_depends]
+    depends = [
+        d.name for d in pkg.build_export_depends +
+        pkg.buildtool_export_depends + pkg.exec_depends + pkg.test_depends
+        if d.evaluated_condition is not False]
     # include recursive run dependencies on other pkgs in the workspace
     # if pkg A in the workspace test depends on pkg B in the workspace
     # then the recursive run dependencies of pkg B need to be installed
@@ -183,11 +231,15 @@ def _get_test_and_recursive_run_dependencies(pkg, pkgs):
         run_depends_in_pkgs.remove(pkg_name)
 
         # append run dependencies
-        run_depends = [d.name for d in pkg.build_export_depends +
-                       pkg.buildtool_export_depends + pkg.exec_depends]
+        run_depends = [
+            d.name for d in pkg.build_export_depends +
+            pkg.buildtool_export_depends + pkg.exec_depends
+            if d.evaluated_condition is not False]
 
         # append group dependencies
-        run_depends += [member for group in pkg.group_depends for member in group.members]
+        run_depends += [
+            member for group in pkg.group_depends for member in group.members
+            if group.evaluated_condition is not False]
 
         depends += run_depends
 
@@ -196,11 +248,6 @@ def _get_test_and_recursive_run_dependencies(pkg, pkgs):
             [d for d in run_depends if d in other_pkgs_by_names])
 
     return depends
-
-
-def _get_run_and_test_dependencies(pkg, pkgs):
-    return pkg.build_export_depends + pkg.buildtool_export_depends + \
-        pkg.exec_depends + pkg.test_depends
 
 
 def initialize_resolver(rosdistro_name, os_name, os_code_name):

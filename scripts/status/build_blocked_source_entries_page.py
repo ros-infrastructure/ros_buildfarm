@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2019 Open Source Robotics Foundation, Inc.
+# Copyright 2016 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,35 +17,28 @@
 import argparse
 import sys
 
-from ros_buildfarm.argument import add_argument_arch
-from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
-from ros_buildfarm.argument import add_argument_dry_run
-from ros_buildfarm.argument import add_argument_os_code_name
-from ros_buildfarm.argument import add_argument_os_name
+from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.ci_job import configure_ci_job
+from ros_buildfarm.status_page import build_blocked_source_entries_page
 
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
-        description="Generate a 'CI' job on Jenkins")
-
-    # Positional
+        description='Generate the blocked source entries page')
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
-    add_argument_build_name(parser, 'ci')
-    add_argument_os_name(parser)
-    add_argument_os_code_name(parser)
-    add_argument_arch(parser)
-
-    add_argument_dry_run(parser)
+    add_argument_output_dir(parser)
+    parser.add_argument(
+        '--copy-resources',
+        action='store_true',
+        help='Copy the resources instead of using symlinks')
     args = parser.parse_args(argv)
 
-    configure_ci_job(
-        args.config_url, args.rosdistro_name, args.ci_build_name,
-        args.os_name, args.os_code_name, args.arch, dry_run=args.dry_run)
+    return build_blocked_source_entries_page(
+        args.config_url, args.rosdistro_name,
+        args.output_dir, copy_resources=args.copy_resources)
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()

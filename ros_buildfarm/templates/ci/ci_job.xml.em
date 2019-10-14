@@ -42,6 +42,12 @@ parameters = [
     },
     {
         'type': 'string',
+        'name': 'repository_names',
+        'default_value': ' '.join(repository_names),
+        'description': 'Repositories names from the rosdistro to be built (space-separated)',
+    },
+    {
+        'type': 'string',
         'name': 'test_branch',
         'default_value': test_branch or '',
         'description': 'Branch to attempt to checkout before doing batch job',
@@ -72,6 +78,12 @@ parameters = [
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
+@[if trigger_jobs]@
+@(SNIPPET(
+    'trigger_reverse-build',
+    upstream_projects=trigger_jobs,
+))@
+@[end if]@
 @[if trigger_timer is not None]@
 @(SNIPPET(
     'trigger_timer',
@@ -102,25 +114,29 @@ parameters = [
     'builder_shell_key-files',
     script_generating_key_files=script_generating_key_files,
 ))@
-@[if underlay_source_job is not None]@
+@[if underlay_source_jobs]@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Prepare package underlay"',
     ]),
 ))@
+@[for i, underlay_source_job in enumerate(underlay_source_jobs, 1)]@
 @(SNIPPET(
     'copy_artifacts',
     artifacts=[
       '*.tar.bz2',
     ],
     project=underlay_source_job,
-    target_directory='$WORKSPACE/underlay',
+    target_directory='$WORKSPACE/underlay%d' % (i),
 ))@
+@[end for]@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'tar -xjf $WORKSPACE/underlay/*.tar.bz2 -C $WORKSPACE/underlay',
+        'tar -xjf $WORKSPACE/underlay%d/*.tar.bz2 -C $WORKSPACE/underlay%d' %
+        (i + 1, i + 1) for i in range(len(underlay_source_jobs))
+    ] + [
         'echo "# END SECTION"',
     ]),
 ))@
@@ -155,13 +171,13 @@ parameters = [
         ' --env-vars ' + ' '.join([v.replace('$', '\\$',) for v in build_environment_variables]) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers' +
         ' --repos-file-urls $repos_file_urls' +
+        ' --repository-names $repository_names' +
         ' --test-branch "$test_branch"' +
         ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) +
         ' --install-packages $install_packages' +
-        ' --workspace-mount-point' +
-        (' /tmp/ws' if not underlay_source_paths else \
-         ''.join([' /tmp/ws%s' % (i or '') for i in range(len(underlay_source_paths))]) +
-         ' /tmp/ws_overlay') +
+        ' --workspace-mount-point /tmp/ws' + ''.join([
+            ' /tmp/ws%d' % (i + 2) for i in range(len(underlay_source_paths))
+        ]) +
         ' --package-selection-args $package_selection_args' +
         ' --build-tool-args $build_tool_args',
         'echo "# END SECTION"',
@@ -211,17 +227,24 @@ parameters = [
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - create workspace"',
-        'export UNDERLAY_JOB_SPACE=$WORKSPACE/underlay/ros%d-linux' % (ros_version),
+    ] + [
+        'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, local_ros_version)
+        for i, local_ros_version in zip(range(len(underlay_source_jobs)), [ros_version] * len(underlay_source_jobs))
+    ] + [
         'rm -fr $WORKSPACE/ws/src',
         'mkdir -p $WORKSPACE/ws/src',
-        '\n'.join(['mkdir -p %s' % (dir) for dir in underlay_source_paths or []]),
+    ] + [
+        'mkdir -p %s' % (dir) for dir in underlay_source_paths
+    ] + [
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_create_workspace/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        (' -v $WORKSPACE/ws:/tmp/ws' if not underlay_source_paths else \
-         ''.join([' -v %s:/tmp/ws%s/install_isolated' % (space, i or '') for i, space in enumerate(underlay_source_paths)]) +
-         ' -v $WORKSPACE/ws:/tmp/ws_overlay') +
+        ''.join([
+            ' -v %s:/tmp/ws%s/install_isolated:ro' % (space, i if i > 1 else '')
+            for i, space in enumerate(underlay_source_paths, 1)
+        ]) +
+        ' -v $WORKSPACE/ws:/tmp/ws%s' % (len(underlay_source_paths) + 1 if len(underlay_source_paths) else '') +
         ' $DOCKER_IMAGE_PREFIX.ci_create_workspace.%s' % (rosdistro_name),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
@@ -267,16 +290,21 @@ parameters = [
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
-        'export UNDERLAY_JOB_SPACE=$WORKSPACE/underlay/ros%d-linux' % (ros_version),
+    ] + [
+        'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, local_ros_version)
+        for i, local_ros_version in zip(range(len(underlay_source_jobs)), [ros_version] * len(underlay_source_jobs))
+    ] + [
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
         ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
         ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        (' -v $WORKSPACE/ws:/tmp/ws' if not underlay_source_paths else \
-         ''.join([' -v %s:/tmp/ws%s/install_isolated' % (space, i or '') for i, space in enumerate(underlay_source_paths)]) +
-         ' -v $WORKSPACE/ws:/tmp/ws_overlay') +
+        ''.join([
+            ' -v %s:/tmp/ws%s/install_isolated:ro' % (space, i if i > 1 else '')
+            for i, space in enumerate(underlay_source_paths, 1)
+        ]) +
+        ' -v $WORKSPACE/ws:/tmp/ws%s' % (len(underlay_source_paths) + 1 if len(underlay_source_paths) else '') +
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
@@ -332,8 +360,16 @@ parameters = [
         ' "ccache -s"',
         'echo "# END SECTION"',
         '',
+    ] + ([
+        'echo "# BEGIN SECTION: Rewriting shebang lines in source files to use Python 3"',
+        'find $WORKSPACE/ws/src -not -path "*.git*" -type f -exec sed -i "1 s/^#![ ]*\/usr\/bin\/env python$/#!\/usr\/bin\/env python3/" "{}" ";"',
+        'echo "# END SECTION"',
+    ] if build_tool == 'catkin_make_isolated' and 'ROS_PYTHON_VERSION=3' in build_environment_variables else []) + [
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
-        'export UNDERLAY_JOB_SPACE=$WORKSPACE/underlay/ros%d-linux' % (ros_version),
+    ] + [
+        'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, local_ros_version)
+        for i, local_ros_version in zip(range(len(underlay_source_jobs)), [ros_version] * len(underlay_source_jobs))
+    ] + [
         'rm -fr $WORKSPACE/ws/test_results',
         'mkdir -p $WORKSPACE/ws/test_results',
         'docker run' +
@@ -342,9 +378,11 @@ parameters = [
         ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
         ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        (' -v $WORKSPACE/ws:/tmp/ws' if not underlay_source_paths else \
-         ''.join([' -v %s:/tmp/ws%s/install_isolated' % (space, i or '') for i, space in enumerate(underlay_source_paths)]) +
-         ' -v $WORKSPACE/ws:/tmp/ws_overlay') +
+        ''.join([
+            ' -v %s:/tmp/ws%s/install_isolated:ro' % (space, i if i > 1 else '')
+            for i, space in enumerate(underlay_source_paths, 1)
+        ]) +
+        ' -v $WORKSPACE/ws:/tmp/ws%s' % (len(underlay_source_paths) + 1 if len(underlay_source_paths) else '') +
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s' % (rosdistro_name),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',

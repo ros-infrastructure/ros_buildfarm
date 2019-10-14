@@ -60,6 +60,10 @@ class CIBuildFile(BuildFile):
         self.jenkins_job_timeout = None
         if 'jenkins_job_timeout' in data:
             self.jenkins_job_timeout = int(data['jenkins_job_timeout'])
+        self.jenkins_job_upstream_triggers = []
+        if 'jenkins_job_upstream_triggers' in data:
+            self.jenkins_job_upstream_triggers = data['jenkins_job_upstream_triggers']
+            assert isinstance(self.jenkins_job_upstream_triggers, list)
 
         self.package_selection_args = None
         if 'package_selection_args' in data:
@@ -69,6 +73,11 @@ class CIBuildFile(BuildFile):
         if 'repos_files' in data:
             self.repos_files = data['repos_files']
             assert isinstance(self.repos_files, list)
+
+        self.repository_names = []
+        if 'repository_names' in data:
+            self.repository_names = data['repository_names']
+            assert isinstance(self.repository_names, list)
 
         self.skip_rosdep_keys = []
         if 'skip_rosdep_keys' in data:

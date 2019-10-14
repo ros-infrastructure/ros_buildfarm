@@ -22,7 +22,7 @@ ENV DEBIAN_FRONTEND noninteractive
     timezone=timezone,
 ))@
 
-RUN useradd -u @uid -m buildfarm
+RUN useradd -u @uid -l -m buildfarm
 
 @(TEMPLATE(
     'snippet/setup_nvidia_docker2.Dockerfile.em'
@@ -84,6 +84,13 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
     install_lists=install_lists,
 ))@
 
+# After all dependencies are installed, update ccache symlinks.
+# This command is supposed to be invoked whenever a new compiler is installed
+# but that isn't happening. So we invoke it here to make sure all compilers are
+# picked up.
+# TODO(nuclearsandwich) add link to Debian bug report when one is opened.
+RUN which update-ccache-symlinks >/dev/null 2>&1 && update-ccache-symlinks
+
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
@@ -98,20 +105,10 @@ else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
         ' --rosdistro-name %s' % rosdistro_name
-cmd += ' --build-tool ' + build_tool
-if not prerelease_overlay:
-    cmd += \
-        ' --workspace-root /tmp/ws'
-else:
-    parent_result_spaces = [
-        # also specify /opt/ros in case the install location has no setup files
-        # e.g. if the workspace contains no packages
-        '/opt/ros/%s' % rosdistro_name,
-        '/tmp/ws/install_isolated',
-    ]
-    cmd += \
-        ' --workspace-root /tmp/ws_overlay' + \
-        ' --parent-result-space %s' % ' '.join(parent_result_spaces)
+cmd += \
+    ' --build-tool ' + build_tool + \
+    ' --workspace-root ' + workspace_root + \
+    ' --parent-result-space' + ''.join([' %s/install_isolated' % (space) for space in parent_result_space])
 if vars().get('build_tool_args'):
     cmd += ' --build-tool-args ' + ' '.join(build_tool_args)
 }@

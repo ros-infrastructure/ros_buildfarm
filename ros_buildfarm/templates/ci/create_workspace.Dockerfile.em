@@ -26,7 +26,7 @@ ENV DEBIAN_FRONTEND noninteractive
     timezone=timezone,
 ))@
 
-RUN useradd -u @uid -m buildfarm
+RUN useradd -u @uid -l -m buildfarm
 
 @(TEMPLATE(
     'snippet/add_distribution_repositories.Dockerfile.em',
@@ -69,6 +69,10 @@ RUN echo "@today_str"
     dependency_versions=dependency_versions,
 ))@
 
+# needed for 'vcs custom --git --args merge' invocation
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q --no-install-recommends sudo
+RUN sudo -H -u buildfarm -- git config --global user.email "jenkins@@ros.invalid" && sudo -H -u buildfarm -- git config --global user.name "Jenkins ROS"
+
 @(TEMPLATE(
     'snippet/rosdep_init.Dockerfile.em',
     custom_rosdep_urls=custom_rosdep_urls,
@@ -84,10 +88,11 @@ cmds = [
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/create_workspace.py' + \
+    ' ' + rosdistro_name + \
     ' --workspace-root ' + workspace_root[-1] + \
     ' --repos-file-urls ' + ' '.join(repos_file_urls) + \
-    ' --test-branch "%s"' % (test_branch) + \
-    ' --package-selection-args ' + ' '.join(package_selection_args),
+    ' --repository-names ' + ' '.join(repository_names) + \
+    ' --test-branch "%s"' % (test_branch),
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/generate_install_lists.py' + \
@@ -96,7 +101,8 @@ cmds = [
     ' ' + os_code_name + \
     ' --package-root ' + ' '.join(base_paths) + \
     ' --output-dir ' + workspace_root[-1] + \
-    ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys),
+    ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) + \
+    ' --package-selection-args ' + ' '.join(package_selection_args),
 ]
 cmd = ' && '.join(cmds).replace('\\', '\\\\').replace('"', '\\"')
 }@

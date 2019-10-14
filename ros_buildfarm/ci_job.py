@@ -182,18 +182,17 @@ def configure_ci_job(
             'choose one of the following: %s' % ', '.join(sorted(
                 build_file.targets[os_name][os_code_name])))
 
-    if len(build_file.underlay_from_ci_jobs) > 1:
-        raise JobValidationError(
-            'Only a single underlay job is currently supported, but the ' +
-            'build file lists %d.' % len(build_file.underlay_from_ci_jobs))
+    underlay_source_jobs = [
+        get_ci_job_name(
+            rosdistro_name, os_name, os_code_name, arch, underlay_job)
+        for underlay_job in build_file.underlay_from_ci_jobs]
+    underlay_source_paths = (underlay_source_paths or []) + \
+        ['$UNDERLAY%d_JOB_SPACE' % (index + 1) for index in range(len(underlay_source_jobs))]
 
-    underlay_source_job = None
-    if build_file.underlay_from_ci_jobs:
-        underlay_source_job = get_ci_job_name(
-            rosdistro_name, os_name, os_code_name, arch,
-            build_file.underlay_from_ci_jobs[0])
-        underlay_source_paths = (underlay_source_paths or []) + \
-            ['$UNDERLAY_JOB_SPACE']
+    trigger_jobs = [
+        get_ci_job_name(
+            rosdistro_name, os_name, os_code_name, arch, trigger_job)
+        for trigger_job in build_file.jenkins_job_upstream_triggers]
 
     if jenkins is None:
         from ros_buildfarm.jenkins import connect
@@ -209,9 +208,10 @@ def configure_ci_job(
         index, rosdistro_name, build_file, os_name,
         os_code_name, arch,
         build_file.repos_files,
-        underlay_source_job,
+        build_file.repository_names,
+        underlay_source_jobs,
         underlay_source_paths,
-        trigger_timer,
+        trigger_timer, trigger_jobs,
         is_disabled=is_disabled)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
@@ -231,9 +231,9 @@ def configure_ci_view(jenkins, view_name, dry_run=False):
 def _get_ci_job_config(
         index, rosdistro_name, build_file, os_name,
         os_code_name, arch,
-        repos_files, underlay_source_job,
+        repos_files, repository_names, underlay_source_jobs,
         underlay_source_paths, trigger_timer,
-        is_disabled=False):
+        trigger_jobs, is_disabled=False):
     template_name = 'ci/ci_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -243,15 +243,15 @@ def _get_ci_job_config(
     if build_file.build_environment_variables:
         build_environment_variables = [
             '%s=%s' % (var, value)
-            for var, value in build_file.build_environment_variables.items()]
+            for var, value in sorted(build_file.build_environment_variables.items())]
 
     distribution_type = index.distributions[rosdistro_name] \
         .get('distribution_type', 'ros1')
     assert distribution_type in ('ros1', 'ros2')
     ros_version = 1 if distribution_type == 'ros1' else 2
 
-    if underlay_source_job is not None:
-        assert '$UNDERLAY_JOB_SPACE' in underlay_source_paths
+    for index in range(len(underlay_source_jobs)):
+        assert '$UNDERLAY%d_JOB_SPACE' % (index + 1) in underlay_source_paths
 
     job_data = {
         'job_priority': build_file.jenkins_job_priority,
@@ -278,6 +278,7 @@ def _get_ci_job_config(
         'timeout_minutes': build_file.jenkins_job_timeout,
 
         'repos_file_urls': repos_files,
+        'repository_names': repository_names,
 
         'skip_rosdep_keys': build_file.skip_rosdep_keys,
         'install_packages': build_file.install_packages,
@@ -285,9 +286,10 @@ def _get_ci_job_config(
         'build_tool_args': build_file.build_tool_args,
         'test_branch': build_file.test_branch,
 
-        'underlay_source_job': underlay_source_job,
+        'underlay_source_jobs': underlay_source_jobs,
         'underlay_source_paths': underlay_source_paths,
         'trigger_timer': trigger_timer,
+        'trigger_jobs': trigger_jobs,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

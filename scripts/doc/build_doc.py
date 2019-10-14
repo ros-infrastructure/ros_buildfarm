@@ -80,7 +80,7 @@ def main(argv=sys.argv[1:]):
 
     with Scope('SUBSECTION', 'build workspace in isolation and install'):
         env = dict(os.environ)
-        env['MAKEFLAGS'] = '-j1'
+        env.setdefault('MAKEFLAGS', '-j1')
         rc = call_build_tool(
             args.build_tool, args.rosdistro_name, args.workspace_root,
             cmake_args=['-DCATKIN_SKIP_TESTING=1'], install=True, env=env)

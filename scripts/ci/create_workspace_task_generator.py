@@ -28,6 +28,7 @@ from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_selection_args
 from ros_buildfarm.argument import add_argument_repos_file_urls
+from ros_buildfarm.argument import add_argument_repository_names
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_rosdep_keys
 from ros_buildfarm.argument import add_argument_test_branch
@@ -52,7 +53,8 @@ def main(argv=sys.argv[1:]):
     add_argument_dockerfile_dir(parser)
     add_argument_env_vars(parser)
     add_argument_package_selection_args(parser)
-    add_argument_repos_file_urls(parser, required=True)
+    add_argument_repos_file_urls(parser)
+    add_argument_repository_names(parser, optional=True)
     add_argument_skip_rosdep_keys(parser)
     add_argument_test_branch(parser)
     parser.add_argument(
@@ -61,10 +63,16 @@ def main(argv=sys.argv[1:]):
         help='The root path of the workspace to compile')
     args = parser.parse_args(argv)
 
+    assert args.repos_file_urls or args.repository_names
+
     debian_pkg_names = [
         'git',
         'python3-apt',
-        'python3-colcon-common-extensions',
+        'python3-colcon-metadata',
+        'python3-colcon-package-information',
+        'python3-colcon-package-selection',
+        'python3-colcon-recursive-crawl',
+        'python3-colcon-ros',
         'python3-rosdep',
         'python3-vcstool',
     ]
@@ -97,6 +105,7 @@ def main(argv=sys.argv[1:]):
         'dependency_versions': debian_pkg_versions,
 
         'repos_file_urls': args.repos_file_urls,
+        'repository_names': args.repository_names,
         'test_branch': args.test_branch,
 
         'skip_rosdep_keys': args.skip_rosdep_keys,

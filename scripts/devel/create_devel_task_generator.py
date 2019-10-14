@@ -74,6 +74,14 @@ def main(argv=sys.argv[1:]):
              'and instead of installing the tests are ran')
     args = parser.parse_args(argv)
 
+    condition_context = {}
+    for t in args.env_vars:
+        parts = t.split('=', 1)
+        assert len(parts) == 2, '--env-vars argument lacks equal sign: ' + t
+        condition_context[parts[0]] = parts[1]
+    condition_context['ROS_DISTRO'] = args.rosdistro_name
+    condition_context['ROS_VERSION'] = args.ros_version
+
     # get direct build dependencies
     pkgs = {}
     for workspace_root in args.workspace_root:
@@ -81,10 +89,7 @@ def main(argv=sys.argv[1:]):
         print("Crawling for packages in workspace '%s'" % source_space)
         ws_pkgs = find_packages(source_space)
         for pkg in ws_pkgs.values():
-            pkg.evaluate_conditions({
-                'ROS_DISTRO': args.rosdistro_name,
-                'ROS_VERSION': args.ros_version,
-            })
+            pkg.evaluate_conditions(condition_context)
         pkgs.update(ws_pkgs)
 
     pkg_names = [pkg.name for pkg in pkgs.values()]
@@ -111,6 +116,9 @@ def main(argv=sys.argv[1:]):
     ]
     if args.build_tool == 'colcon':
         debian_pkg_names += [
+            'python3-colcon-metadata',
+            'python3-colcon-output',
+            'python3-colcon-parallel-executor',
             'python3-colcon-ros',
             'python3-colcon-test-result',
         ]
@@ -145,6 +153,15 @@ def main(argv=sys.argv[1:]):
     if args.testing:
         debian_pkg_names += order_dependencies(debian_pkg_names_testing)
 
+    mapped_workspaces = [
+        (workspace_root, '/tmp/ws%s' % (index if index > 1 else ''))
+        for index, workspace_root in enumerate(args.workspace_root, 1)]
+
+    parent_result_space = []
+    if len(args.workspace_root) > 1:
+        parent_result_space = ['/opt/ros/%s' % args.rosdistro_name] + \
+            [mapping[1] for mapping in mapped_workspaces[:-1]]
+
     # generate Dockerfile
     data = {
         'os_name': args.os_name,
@@ -170,7 +187,8 @@ def main(argv=sys.argv[1:]):
         'install_lists': [],
 
         'testing': args.testing,
-        'prerelease_overlay': len(args.workspace_root) > 1,
+        'workspace_root': mapped_workspaces[-1][1],
+        'parent_result_space': parent_result_space,
         'use_nvidia_runtime': has_gpu_support(),
     }
     create_dockerfile(
@@ -181,7 +199,8 @@ def main(argv=sys.argv[1:]):
         os.path.join(os.path.dirname(__file__), '..', '..'))
     print('Mount the following volumes when running the container:')
     print('  -v %s:/tmp/ros_buildfarm:ro' % ros_buildfarm_basepath)
-    print('  -v %s:/tmp/ws' % args.workspace_root[-1])
+    for mapping in mapped_workspaces:
+        print('  -v %s:%s' % mapping)
 
 
 def get_dependencies(pkgs, label, get_dependencies_callback):

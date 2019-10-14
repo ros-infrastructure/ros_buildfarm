@@ -36,23 +36,17 @@ RUN echo "@today_str"
     os_code_name='xenial',
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-catkin-pkg-modules python3-empy python3-pip python3-rosdistro-modules python3-yaml
-RUN pip3 install jenkinsapi
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-catkin-pkg-modules python3-empy python3-rosdistro-modules python3-yaml
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
 cmd = \
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
-    ' /tmp/ros_buildfarm/scripts/doc/generate_doc_jobs.py' + \
+    ' /tmp/ros_buildfarm/scripts/status/build_blocked_source_entries_page.py' + \
     ' ' + config_url + \
     ' ' + rosdistro_name + \
-    ' ' + doc_build_name
-if groovy_script:
-    cmd += ' --groovy-script ' + groovy_script
-if dry_run:
-    cmd += ' --dry-run'
-if repository_names:
-    cmd += ' --repository-names ' + ' '.join(repository_names)
+    ' --output-dir /tmp/blocked_source_entries_page' + \
+    ' --copy-resources'
 }@
 CMD ["@cmd"]

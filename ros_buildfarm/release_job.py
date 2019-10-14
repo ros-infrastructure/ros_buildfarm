@@ -666,7 +666,7 @@ def _get_binarydeb_job_config(
     if build_file.build_environment_variables:
         build_environment_variables = [
             '%s=%s' % (var, value)
-            for var, value in build_file.build_environment_variables.items()]
+            for var, value in sorted(build_file.build_environment_variables.items())]
 
     sync_to_testing_job_name = [get_sync_packages_to_testing_job_name(
         rosdistro_name, os_code_name, arch)]

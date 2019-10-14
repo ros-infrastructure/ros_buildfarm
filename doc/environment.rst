@@ -19,21 +19,16 @@ The easiest way is to use a Python virtual environment.
 This avoids collisions between the required Python 3 packages and already
 installed Python 2 packages used by ROS.
 
-The following commands can be used on Ubuntu Trusty::
+The following commands can be used on Ubuntu Xenial and newer::
 
-  sudo apt update && sudo apt install python3 python3-all python3-pip
+  sudo apt update && sudo apt install python3 python3-all python3-pip python3-venv
 
   mkdir /tmp/deploy_ros_buildfarm
   cd /tmp/deploy_ros_buildfarm
 
-  # the option '--without-pip' is used to work around a Python bug:
-  # https://bugs.launchpad.net/ubuntu/+source/python3.4/+bug/1290847
-  pyvenv-3.4 --without-pip venv
+  python3 -m venv venv
 
   . venv/bin/activate
-
-  # necessary because of '--without-pip'
-  curl https://bootstrap.pypa.io/get-pip.py | python3
 
   pip3 install empy
   pip3 install jenkinsapi

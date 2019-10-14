@@ -16,7 +16,7 @@ ENV DEBIAN_FRONTEND noninteractive
     timezone=timezone,
 ))@
 
-RUN useradd -u @uid -m buildfarm
+RUN useradd -u @uid -l -m buildfarm
 
 @[if use_nvidia_runtime ]@
 @(TEMPLATE(
@@ -69,7 +69,7 @@ cmds = [
 ]
 workspace_root = '/tmp/ws'
 if prerelease_overlay:
-    workspace_root += ' /tmp/ws_overlay'
+    workspace_root += ' /tmp/ws2'
 cmd = \
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/devel/create_devel_task_generator.py' + \
