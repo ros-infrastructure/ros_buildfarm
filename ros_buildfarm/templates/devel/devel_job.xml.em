@@ -363,14 +363,7 @@ if pull_request:
     remote_directory='%s/devel_jobs/%s/test_results' % (rosdistro_name, source_repo_spec.name),
     source_files=[
         'ws/test_results/**'
-    ],
-    excludes=[
-        'ws/test_results/rosclean/**',
-        'ws/test_results/roscreate/**',
-        'ws/test_results/roslib/**',
-        'ws/test_results/rosmake/**',
-        'ws/test_results/rosmake/rosunit/**',
-    ],
+    ]
     remove_prefix='ws/test_results',
 ))@
 @[end if]@
