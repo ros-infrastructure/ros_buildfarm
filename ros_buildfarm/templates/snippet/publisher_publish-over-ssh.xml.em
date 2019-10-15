@@ -9,7 +9,7 @@
               <jenkins.plugins.publish__over__ssh.BapSshTransfer>
                 <remoteDirectory>@remote_directory</remoteDirectory>
                 <sourceFiles>@(' '.join(source_files))</sourceFiles>
-                <excludes/>
+                <excludes>@(' '.join(excludes) if 'excludes' in globals() else '')</excludes>
                 <removePrefix>@remove_prefix</removePrefix>
                 <remoteDirectorySDF>false</remoteDirectorySDF>
                 <flatten>false</flatten>

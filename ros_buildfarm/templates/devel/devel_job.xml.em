@@ -364,6 +364,13 @@ if pull_request:
     source_files=[
         'ws/test_results/**'
     ],
+    excludes=[
+        'ws/test_results/rosclean/**',
+        'ws/test_results/roscreate/**',
+        'ws/test_results/roslib/**',
+        'ws/test_results/rosmake/**',
+        'ws/test_results/rosmake/rosunit/**',
+    ],
     remove_prefix='ws/test_results',
 ))@
 @[end if]@
