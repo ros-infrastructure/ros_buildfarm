@@ -26,7 +26,6 @@ from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
 from ros_buildfarm.common import git_github_orgunit
-from ros_buildfarm.common import has_gpu_support
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_distribution_file
@@ -406,7 +405,6 @@ def _get_devel_job_config(
         'git_ssh_credential_id': config.git_ssh_credential_id,
 
         'collate_test_stats': build_file.collate_test_stats,
-        'use_nvidia_runtime': has_gpu_support(),
     }
     job_config = expand_template(template_name, job_data)
     return job_config
