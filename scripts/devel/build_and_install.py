@@ -57,7 +57,6 @@ def main(argv=sys.argv[1:]):
              'invocation')
     parser.add_argument(
         '--run-abichecker',
-        dest='abichecking',
         action='store_true',
         help='The flag if the abi checking tool should be run')
 
@@ -88,7 +87,7 @@ def main(argv=sys.argv[1:]):
         if args.clean_after:
             clean_workspace(args.workspace_root)
 
-    if not args.abichecking:
+    if not args.run_abichecker:
         return rc
 
     with Scope('SUBSECTION', 'use abi checker'):
