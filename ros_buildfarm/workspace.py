@@ -42,6 +42,7 @@ def clean_workspace(workspace_root):
     if os.path.exists(test_results_dir):
         shutil.rmtree(test_results_dir)
 
+
 def call_abi_checker(workspace_root, ros_version, rosdistro_name, env):
     # TODO: pkgs detection, code based on create_devel_task_generator.py
     condition_context = {}
