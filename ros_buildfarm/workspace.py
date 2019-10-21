@@ -56,13 +56,20 @@ def call_abi_checker(workspace_root, rosdistro_name, env):
         pkgs.update(ws_pkgs)
     pkg_names = [pkg.name for pkg in pkgs.values()]
 
+    abi_new_type = "ros-ws"
+    if not pkg_names:
+        # If there are no ROS packages in the workspace, assume that
+        # it is a vendor package with for a non ROS software
+        abi_new_type = "local-ws"
+
     # TODO: workspace_root[0] to be compatible with a code in
     # create_devel_task_generator for a future refactor. To fix
     # it, implement the support for multiple local-dir in auto-abi tool
     cmd = ['ROS_DISTRO=' + rosdistro_name + ' ' +
            'auto-abi.py ' +
            '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
-           '--new-type ros-ws --new ' + os.path.join(workspace_root[0], 'install_isolated') + ' ' +
+           '--new-type ' + abi_new_type + ' ' +
+           '--new ' + os.path.join(workspace_root[0], 'install_isolated') + ' ' +
            '--report-dir ' + workspace_root[0] + ' ' +
            '--no-fail-if-empty ' +
            '--display-exec-time'
