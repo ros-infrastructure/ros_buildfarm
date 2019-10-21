@@ -97,9 +97,8 @@ def main(argv=sys.argv[1:]):
             args.rosdistro_name,
             env)
     if rc != 0:
-        print("Failure during the execution of abi-checking")
+        print('Failure during the execution of abi-checking')
         return rc
-
 
 
 if __name__ == '__main__':
