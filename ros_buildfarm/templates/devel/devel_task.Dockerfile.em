@@ -81,9 +81,8 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 ))@
 
 @[if abichecking]@
-ADD https://api.github.com/repos/osrf/auto-abi-checker/git/refs/heads/master version.json[remote "upstream"]
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-rosdistro python3-rosdep python3 python3-docopt abi-compliance-checker
-RUN git clone https://github.com/osrf/auto-abi-checker /tmp/auto-abi-checker
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3 abi-compliance-checker
+RUN pip3 install -U auto_abi_checker
 @[end if]@
 
 # After all dependencies are installed, update ccache symlinks.
@@ -102,7 +101,9 @@ cmd = \
 if not testing:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_install.py' + \
-        ' --rosdistro-name %s --clean-before --run-abichecker' % rosdistro_name
+        ' --rosdistro-name ' + rosdistro_name + \
+        ' --ros-version ' + str(ros_version) + \
+        ' --clean-before --run-abichecker'
 else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \

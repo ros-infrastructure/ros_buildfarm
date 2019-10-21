@@ -138,7 +138,6 @@ if pull_request:
         ' ' + ' '.join(repository_args) +
         ' --build-tool ' + build_tool +
         ' --ros-version ' + str(ros_version) +
-        ' --run-abichecker ' +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',
@@ -370,6 +369,9 @@ if pull_request:
     send_to_individuals=notify_committers,
 ))@
 @[end if]@
+@(SNIPPET(
+    'publisher_abi_report',
+))@
   </publishers>
   <buildWrappers>
 @[if timeout_minutes is not None]@

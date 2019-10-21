@@ -42,11 +42,14 @@ def clean_workspace(workspace_root):
     if os.path.exists(test_results_dir):
         shutil.rmtree(test_results_dir)
 
-def call_abi_checker(workspace_root, rosdistro_name, env):
+
+def call_abi_checker(workspace_root, ros_version, rosdistro_name, env):
     # TODO: pkgs detection, code based on create_devel_task_generator.py
     condition_context = {}
     condition_context['ROS_DISTRO'] = rosdistro_name
-
+    condition_context['ROS_VERSION'] = ros_version
+    condition_context['ROS_PYTHON_VERSION'] = \
+        (env or os.environ).get('ROS_PYTHON_VERSION')
     pkgs = {}
     for ws_root in workspace_root:
         source_space = os.path.join(ws_root, 'src')
@@ -55,15 +58,17 @@ def call_abi_checker(workspace_root, rosdistro_name, env):
             pkg.evaluate_conditions(condition_context)
         pkgs.update(ws_pkgs)
     pkg_names = [pkg.name for pkg in pkgs.values()]
+    assert(pkg_names), 'No packages found in the workspace'
 
-    # TODO: workspace_root[0] to be compatible with a code in
-    # create_devel_task_generator for a future refactor. To fix
-    # it, implement the support for multiple local-dir in auto-abi tool
+    assert(len(workspace_root) == 1), 'auto-abi tool needs the implementation of multiple local-dir'
     cmd = ['ROS_DISTRO=' + rosdistro_name + ' ' +
-           '/tmp/auto-abi-checker/auto-abi.py ' +
+           'auto-abi.py ' +
            '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
-           '--new-type local-dir --new ' + workspace_root[0] + ' ' +
-           '--report-dir ' + workspace_root[0]]
+           '--new-type ros-ws --new ' + os.path.join(workspace_root[0], 'install_isolated') + ' ' +
+           '--report-dir ' + workspace_root[0] + ' ' +
+           '--no-fail-if-empty ' +
+           '--display-exec-time'
+           ]
     print("Invoking '%s'" % (cmd))
     return subprocess.call(
         cmd, shell=True, stderr=subprocess.STDOUT, env=env)
