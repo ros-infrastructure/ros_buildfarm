@@ -106,7 +106,7 @@ if not testing:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_install.py' + \
         ' --rosdistro-name ' + rosdistro_name + \
-        ' --ros-version ' + ros_version + \
+        ' --ros-version ' + str(ros_version) + \
         ' --clean-before --run-abichecker'
 else:
     cmd += \
