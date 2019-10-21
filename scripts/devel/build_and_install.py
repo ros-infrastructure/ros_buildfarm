@@ -20,6 +20,7 @@ import sys
 
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
+from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.common import Scope
 from ros_buildfarm.workspace import call_build_tool, call_abi_checker
 from ros_buildfarm.workspace import clean_workspace
@@ -58,6 +59,9 @@ def main(argv=sys.argv[1:]):
         dest='abichecking',
         action='store_true',
         help='The flag if the abi checking tool should be run')
+
+    add_argument_ros_version(parser)
+
     args = parser.parse_args(argv)
 
     ensure_workspace_exists(args.workspace_root)
@@ -87,8 +91,11 @@ def main(argv=sys.argv[1:]):
         return rc
 
     with Scope('SUBSECTION', 'use abi checker'):
-        rc = call_abi_checker([args.workspace_root], args.rosdistro_name, env=env)
-
+        rc = call_abi_checker(
+            [args.workspace_root],
+            args.ros_version,
+            args.rosdistro_name,
+            env)
     if rc != 0:
         print("Failure during the execution of abi-checking")
         return rc
