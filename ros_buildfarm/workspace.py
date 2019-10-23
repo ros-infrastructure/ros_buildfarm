@@ -67,8 +67,7 @@ def call_abi_checker(workspace_root, ros_version, rosdistro_name, env):
            '--new-type ros-ws --new ' + os.path.join(workspace_root[0], 'install_isolated') + ' ' +
            '--report-dir ' + workspace_root[0] + ' ' +
            '--no-fail-if-empty ' +
-           '--display-exec-time ' +
-           '--never-fail'
+           '--display-exec-time'
            ]
     print("Invoking '%s'" % (cmd))
     return subprocess.call(

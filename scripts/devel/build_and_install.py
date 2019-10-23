@@ -96,10 +96,13 @@ def main(argv=sys.argv[1:]):
             args.ros_version,
             args.rosdistro_name,
             env)
+    # Never fail a build because of abi errors but make them
+    # unstable by printing MAKE_BUILD_UNSTABLE. Jenkins will
+    # use a`plugin to make it
     if rc != 0:
-        print('Failure during the execution of abi-checking')
         print('MAKE_BUILD_UNSTABLE')
-        return rc
+
+    return 0
 
 
 if __name__ == '__main__':
