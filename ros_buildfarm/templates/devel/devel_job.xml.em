@@ -372,6 +372,9 @@ if pull_request:
 @(SNIPPET(
     'publisher_abi_report',
 ))@
+@(SNIPPET(
+    'publisher_parser_unstable',
+))@
   </publishers>
   <buildWrappers>
 @[if timeout_minutes is not None]@

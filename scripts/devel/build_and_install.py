@@ -98,6 +98,7 @@ def main(argv=sys.argv[1:]):
             env)
     if rc != 0:
         print('Failure during the execution of abi-checking')
+        print('MAKE_BUILD_UNSTABLE')
         return rc
 
 
