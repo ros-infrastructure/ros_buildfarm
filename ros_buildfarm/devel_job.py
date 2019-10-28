@@ -158,6 +158,21 @@ def configure_devel_jobs(
                 print("Pull request job for repository '%s'" % repo_name)
                 job_types.append('pull_request')
 
+        # check for abi support
+        enable_abi = False
+        if build_file.test_abi_force is False:
+            pass
+        elif hasattr(repo.source_repository, 'test_abi') and \
+                repo.source_repository.test_abi is False:
+            pass
+        elif hasattr(repo.source_repository, 'test_abi') and \
+                repo.source_repository.test_abi is None and \
+                not build_file.test_abi_default:
+            pass
+        else:
+            print("ABI checking enabled for repository '%s'" % repo_name)
+            enable_abi = True
+
         for job_type in job_types:
             pull_request = job_type == 'pull_request'
             for os_name, os_code_name, arch in targets:
@@ -170,7 +185,8 @@ def configure_devel_jobs(
                         dist_cache=dist_cache, jenkins=jenkins, views=views,
                         is_disabled=is_disabled,
                         groovy_script=groovy_script,
-                        dry_run=dry_run)
+                        dry_run=dry_run,
+                        abi_checking=enable_abi)
                     if not pull_request:
                         devel_job_names.append(job_name)
                     else:
@@ -223,7 +239,8 @@ def configure_devel_job(
         groovy_script=None,
         source_repository=None,
         build_targets=None,
-        dry_run=False):
+        dry_run=False,
+        abi_checking=None):
     """
     Configure a single Jenkins devel job.
 
@@ -302,7 +319,7 @@ def configure_devel_job(
         index, config, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, source_repository,
         repo_name, pull_request, job_name, dist_cache=dist_cache,
-        is_disabled=is_disabled)
+        is_disabled=is_disabled, abi_checking=abi_checking)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
@@ -322,7 +339,7 @@ def _get_devel_job_config(
         index, config, rosdistro_name, source_build_name,
         build_file, os_name, os_code_name, arch, source_repo_spec,
         repo_name, pull_request, job_name, dist_cache=None,
-        is_disabled=False):
+        is_disabled=False, abi_checking=None):
     template_name = 'devel/devel_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -392,7 +409,7 @@ def _get_devel_job_config(
         'build_tool': build_file.build_tool,
         'ros_version': ros_version,
         'build_environment_variables': build_environment_variables,
-
+        'run_abichecker': abi_checking,
         'notify_compiler_warnings': build_file.notify_compiler_warnings,
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,

@@ -27,6 +27,7 @@ from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_ros_version
+from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
@@ -66,15 +67,12 @@ def main(argv=sys.argv[1:]):
     add_argument_ros_version(parser)
     add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)
+    add_argument_run_abichecker(parser)
     parser.add_argument(
         '--testing',
         action='store_true',
         help='The flag if the workspace should be built with tests enabled '
              'and instead of installing the tests are ran')
-    parser.add_argument(
-        '--run-abichecker',
-        action='store_false',
-        help='The flag if the abi checking tool should be run')
     args = parser.parse_args(argv)
 
     condition_context = {}
@@ -190,7 +188,7 @@ def main(argv=sys.argv[1:]):
         'install_lists': [],
 
         'testing': args.testing,
-        'abichecking': args.run_abichecker,
+        'run_abichecker': args.run_abichecker,
         'workspace_root': mapped_workspaces[-1][1],
         'parent_result_space': parent_result_space,
     }

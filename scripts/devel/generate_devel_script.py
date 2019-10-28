@@ -27,6 +27,7 @@ from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.common import get_devel_job_name
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_source_build_files
@@ -45,6 +46,7 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
     add_argument_build_tool(parser)
+    add_argument_run_abichecker(parser)
     args = parser.parse_args(argv)
 
     # collect all template snippets of specific types
@@ -89,7 +91,8 @@ def main(argv=sys.argv[1:]):
     configure_devel_job(
         args.config_url, args.rosdistro_name, args.source_build_name,
         args.repository_name, args.os_name, args.os_code_name, args.arch,
-        config=config, build_file=build_file, jenkins=False, views=False)
+        config=config, build_file=build_file, jenkins=False, views=False,
+        abi_checking=args.run_abichecker)
 
     templates.template_hooks = None
 

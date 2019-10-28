@@ -21,6 +21,7 @@ import sys
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
 from ros_buildfarm.argument import add_argument_ros_version
+from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.common import Scope
 from ros_buildfarm.workspace import call_abi_checker
 from ros_buildfarm.workspace import call_build_tool
@@ -38,6 +39,7 @@ def main(argv=sys.argv[1:]):
              'sourced (if available)')
     add_argument_build_tool(parser, required=True)
     add_argument_build_tool_args(parser)
+    add_argument_run_abichecker(parser)
     parser.add_argument(
         '--workspace-root',
         required=True,
@@ -55,10 +57,6 @@ def main(argv=sys.argv[1:]):
         action='store_true',
         help='The flag if the workspace should be cleaned after the '
              'invocation')
-    parser.add_argument(
-        '--run-abichecker',
-        action='store_true',
-        help='The flag if the abi checking tool should be run')
 
     add_argument_ros_version(parser)
 

@@ -80,7 +80,7 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
     install_lists=install_lists,
 ))@
 
-@[if abichecking]@
+@[if run_abichecker]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3 abi-compliance-checker
 RUN pip3 install -U auto_abi_checker
 @[end if]@
@@ -99,11 +99,14 @@ cmd = \
     'PATH=/usr/lib/ccache:$PATH' + \
     ' PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u'
 if not testing:
+    str_run_abi = ''
+    if run_abichecker:
+        str_run_abi = ' --run-abichecker'
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_install.py' + \
         ' --rosdistro-name ' + rosdistro_name + \
         ' --ros-version ' + str(ros_version) + \
-        ' --clean-before --run-abichecker'
+        ' --clean-before' + str_run_abi
 else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \

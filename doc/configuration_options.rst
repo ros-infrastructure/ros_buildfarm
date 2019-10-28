@@ -265,6 +265,11 @@ The following options are valid in version ``2`` (beside the generic options):
   * ``default``: a boolean flag as described for *test_commits*.
   * ``force``: a boolean flag as described for *test_commits*.
 
+* ``test_abi``: a dictionary to decide if *abi checker* is going to be run in
+  PR and devel jobs
+  * ``default``: a boolean flag as described for *test_commits*.
+  * ``force``: a boolean flag as described for *test_commits*.
+
 * ``collate_test_stats``: a boolean flag (default: ``False``) controlling
   whether test statistics collation should be enabled for devel jobs.
   Enabling this will add post-build steps to jobs that collate test statistics

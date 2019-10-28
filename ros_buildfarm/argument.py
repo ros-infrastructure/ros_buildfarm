@@ -342,6 +342,12 @@ def add_argument_repos_file_urls(parser):
         help='URLs of repos files to import with vcs.')
 
 
+def add_argument_run_abichecker(parser):
+    parser.add_argument(
+        '--run-abichecker', action='store_true',
+        help='Run the ABI checker when compiling packages')
+
+
 def add_argument_skip_cleanup(parser):
     parser.add_argument(
         '--skip-cleanup', action='store_true',
