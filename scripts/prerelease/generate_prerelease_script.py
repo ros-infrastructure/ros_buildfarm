@@ -27,6 +27,7 @@ from em import Hook
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
+from ros_buildfarm.argument import add_argument_custom_rosdep_update_options
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
@@ -53,6 +54,7 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
     add_argument_build_tool(parser)
+    add_argument_custom_rosdep_update_options(parser)
     add_argument_output_dir(parser, required=True)
 
     group = parser.add_argument_group(
@@ -275,6 +277,7 @@ def main(argv=sys.argv[1:]):
         'scms': scms,
         'scripts': hook.scripts,
         'overlay_scripts': overlay_scripts,
+        'rosdep_update_options': args.custom_rosdep_update_options,
         'ros_buildfarm_python_path': os.path.dirname(
             os.path.dirname(os.path.abspath(ros_buildfarm_file))),
         'python_executable': sys.executable,

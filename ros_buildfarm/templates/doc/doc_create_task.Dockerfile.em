@@ -54,7 +54,7 @@ USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
 cmds = [
-    'rosdep update',
+    'rosdep update ' + ' '.join(rosdep_update_options),
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/doc/create_doc_task_generator.py' + \
