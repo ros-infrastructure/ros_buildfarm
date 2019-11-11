@@ -59,7 +59,7 @@ USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
 cmds = [
-'rosdep update ' + ' '.join(rosdep_update_options),
+    ' '.join(['rosdep', 'update'] + rosdep_update_options),
 ]
 workspace_root = '/tmp/ws'
 if prerelease_overlay:
