@@ -189,7 +189,7 @@ def add_argument_custom_rosdep_update_options(parser):
         '--custom-rosdep-update-options',
         nargs='*',
         default=[],
-        help='A list of custom rosdep update options.')
+        help='A list of custom rosdep update options')
 
 def add_argument_custom_rosdep_urls(parser):
     parser.add_argument(
