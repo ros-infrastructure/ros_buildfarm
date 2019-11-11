@@ -27,8 +27,8 @@ from em import Hook
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
-from ros_buildfarm.argument import add_argument_custom_rosdep_update_options
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.argument import add_argument_custom_rosdep_update_options
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_output_dir
