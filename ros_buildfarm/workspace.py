@@ -18,6 +18,7 @@ import subprocess
 
 from catkin_pkg.packages import find_packages
 
+
 def ensure_workspace_exists(workspace_root):
     # ensure that workspace exists
     assert os.path.exists(workspace_root), \
