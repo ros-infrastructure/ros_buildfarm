@@ -22,6 +22,7 @@ from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_custom_rosdep_urls
+from ros_buildfarm.argument import add_argument_custom_rosdep_update_options
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
@@ -56,6 +57,7 @@ def main(argv=sys.argv[1:]):
         action='store_true',
         help='Operate on two catkin workspaces')
     add_argument_build_tool(parser, required=True)
+    add_argument_custom_rosdep_update_options(parser)
     add_argument_ros_version(parser)
     add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)
@@ -68,6 +70,7 @@ def main(argv=sys.argv[1:]):
             args.distribution_repository_urls,
             args.distribution_repository_key_files),
         'custom_rosdep_urls': args.custom_rosdep_urls,
+        'rosdep_update_options': args.custom_rosdep_update_options,
         'uid': get_user_id(),
     })
     create_dockerfile(
