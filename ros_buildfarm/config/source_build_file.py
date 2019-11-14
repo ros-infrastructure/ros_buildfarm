@@ -116,7 +116,6 @@ class SourceBuildFile(BuildFile):
         self.collate_test_stats = bool(data.get('collate_test_stats', False))
         self.publish_test_reports = bool(data.get('publish_test_reports', False))
 
-
     def filter_repositories(self, repository_names):
         res = set(repository_names)
         if self.repository_whitelist:

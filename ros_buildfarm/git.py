@@ -25,6 +25,7 @@ from ros_buildfarm.common import find_executable
 FALLBACK_REPOSITORY_URL = \
     'https://github.com/ros-infrastructure/ros_buildfarm.git'
 
+
 def get_repository():
     msg1 = 'The git repository %s is different than the %s'
     msg2 = 'You might want to update the %s to ensure that your forked ' + \
