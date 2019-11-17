@@ -16,17 +16,49 @@
 
 import argparse
 import os
+import subprocess
 import sys
 
+from catkin_pkg.packages import find_packages
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.common import Scope
-from ros_buildfarm.workspace import call_abi_checker
 from ros_buildfarm.workspace import call_build_tool
 from ros_buildfarm.workspace import clean_workspace
 from ros_buildfarm.workspace import ensure_workspace_exists
+
+
+def call_abi_checker(workspace_root, ros_version, rosdistro_name, env):
+    # TODO: pkgs detection, code based on create_devel_task_generator.py
+    condition_context = {}
+    condition_context['ROS_DISTRO'] = rosdistro_name
+    condition_context['ROS_VERSION'] = ros_version
+    condition_context['ROS_PYTHON_VERSION'] = \
+        (env or os.environ).get('ROS_PYTHON_VERSION')
+    pkgs = {}
+    for ws_root in workspace_root:
+        source_space = os.path.join(ws_root, 'src')
+        ws_pkgs = find_packages(source_space)
+        for pkg in ws_pkgs.values():
+            pkg.evaluate_conditions(condition_context)
+        pkgs.update(ws_pkgs)
+    pkg_names = [pkg.name for pkg in pkgs.values()]
+    assert(pkg_names), 'No packages found in the workspace'
+
+    assert(len(workspace_root) == 1), 'auto-abi tool needs the implementation of multiple local-dir'
+    cmd = ['ROS_DISTRO=' + rosdistro_name + ' ' +
+           'auto-abi.py ' +
+           '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
+           '--new-type ros-ws --new ' + os.path.join(workspace_root[0], 'install_isolated') + ' ' +
+           '--report-dir ' + workspace_root[0] + ' ' +
+           '--no-fail-if-empty ' +
+           '--display-exec-time'
+           ]
+    print("Invoking '%s'" % (cmd))
+    return subprocess.call(
+        cmd, shell=True, stderr=subprocess.STDOUT, env=env)
 
 
 def main(argv=sys.argv[1:]):
