@@ -16,8 +16,6 @@ import os
 import shutil
 import subprocess
 
-from catkin_pkg.packages import find_packages
-
 
 def ensure_workspace_exists(workspace_root):
     # ensure that workspace exists
@@ -42,37 +40,6 @@ def clean_workspace(workspace_root):
     test_results_dir = os.path.join(workspace_root, 'test_results')
     if os.path.exists(test_results_dir):
         shutil.rmtree(test_results_dir)
-
-
-def call_abi_checker(workspace_root, ros_version, rosdistro_name, env):
-    # TODO: pkgs detection, code based on create_devel_task_generator.py
-    condition_context = {}
-    condition_context['ROS_DISTRO'] = rosdistro_name
-    condition_context['ROS_VERSION'] = ros_version
-    condition_context['ROS_PYTHON_VERSION'] = \
-        (env or os.environ).get('ROS_PYTHON_VERSION')
-    pkgs = {}
-    for ws_root in workspace_root:
-        source_space = os.path.join(ws_root, 'src')
-        ws_pkgs = find_packages(source_space)
-        for pkg in ws_pkgs.values():
-            pkg.evaluate_conditions(condition_context)
-        pkgs.update(ws_pkgs)
-    pkg_names = [pkg.name for pkg in pkgs.values()]
-    assert(pkg_names), 'No packages found in the workspace'
-
-    assert(len(workspace_root) == 1), 'auto-abi tool needs the implementation of multiple local-dir'
-    cmd = ['ROS_DISTRO=' + rosdistro_name + ' ' +
-           'auto-abi.py ' +
-           '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
-           '--new-type ros-ws --new ' + os.path.join(workspace_root[0], 'install_isolated') + ' ' +
-           '--report-dir ' + workspace_root[0] + ' ' +
-           '--no-fail-if-empty ' +
-           '--display-exec-time'
-           ]
-    print("Invoking '%s'" % (cmd))
-    return subprocess.call(
-        cmd, shell=True, stderr=subprocess.STDOUT, env=env)
 
 
 def call_build_tool(
