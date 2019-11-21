@@ -367,7 +367,7 @@ if pull_request:
 @(SNIPPET(
     'publisher_groovy-postbuild_maintainer-notification',
 ))@
-@[end if]@
+@[ end if]@
 @(SNIPPET(
     'publisher_mailer',
     recipients=notify_emails,
