@@ -30,10 +30,10 @@ from ros_buildfarm.workspace import clean_workspace
 from ros_buildfarm.workspace import ensure_workspace_exists
 
 
-def call_abi_checker(workspace_root, ros_version, rosdistro_name, env):
+def call_abi_checker(workspace_root, ros_version, env):
     # TODO: pkgs detection, code based on create_devel_task_generator.py
     condition_context = {}
-    condition_context['ROS_DISTRO'] = rosdistro_name
+    condition_context['ROS_DISTRO'] = env['ROS_DISTRO']
     condition_context['ROS_VERSION'] = ros_version
     condition_context['ROS_PYTHON_VERSION'] = \
         (env or os.environ).get('ROS_PYTHON_VERSION')
@@ -48,14 +48,13 @@ def call_abi_checker(workspace_root, ros_version, rosdistro_name, env):
     assert(pkg_names), 'No packages found in the workspace'
 
     assert(len(workspace_root) == 1), 'auto-abi tool needs the implementation of multiple local-dir'
-    cmd = ['ROS_DISTRO=' + rosdistro_name + ' ' +
-           'auto-abi.py ' +
+    # ROS_DISTRO is set in the env object
+    cmd = ['auto-abi.py ' +
            '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
            '--new-type ros-ws --new ' + os.path.join(workspace_root[0], 'install_isolated') + ' ' +
            '--report-dir ' + workspace_root[0] + ' ' +
            '--no-fail-if-empty ' +
-           '--display-exec-time'
-           ]
+           '--display-exec-time']
     print("Invoking '%s'" % (cmd))
     return subprocess.call(
         cmd, shell=True, stderr=subprocess.STDOUT, env=env)
@@ -101,6 +100,7 @@ def main(argv=sys.argv[1:]):
 
     env = dict(os.environ)
     env.setdefault('MAKEFLAGS', '-j1')
+    env.setdefault('ROS_DISTRO', args.rosdistro_name)
 
     try:
         with Scope('SUBSECTION', 'build workspace in isolation and install'):
@@ -124,7 +124,6 @@ def main(argv=sys.argv[1:]):
         rc = call_abi_checker(
             [args.workspace_root],
             args.ros_version,
-            args.rosdistro_name,
             env)
     # Never fail a build because of abi errors but make them
     # unstable by printing MAKE_BUILD_UNSTABLE. Jenkins will
