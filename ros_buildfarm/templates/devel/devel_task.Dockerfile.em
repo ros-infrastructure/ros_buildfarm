@@ -62,7 +62,7 @@ RUN pip3 install -U setuptools
 @[if ros_version == 2]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ros-@(rosdistro_name)-ros-workspace
 @[end if]@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache python3-catkin-pkg-modules
 
 @(TEMPLATE(
     'snippet/set_environment_variables.Dockerfile.em',
@@ -81,7 +81,7 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 ))@
 
 @[if run_abichecker]@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3 abi-compliance-checker python3-catkin-pkg-modules
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3 abi-compliance-checker
 RUN pip3 install -U auto_abi_checker
 @[end if]@
 
