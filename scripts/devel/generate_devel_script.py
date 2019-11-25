@@ -92,7 +92,7 @@ def main(argv=sys.argv[1:]):
         args.config_url, args.rosdistro_name, args.source_build_name,
         args.repository_name, args.os_name, args.os_code_name, args.arch,
         config=config, build_file=build_file, jenkins=False, views=False,
-        abi_checking=args.run_abichecker)
+        run_abichecker=args.run_abichecker)
 
     templates.template_hooks = None
 
