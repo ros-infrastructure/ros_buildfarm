@@ -92,3 +92,10 @@ class CIBuildFile(BuildFile):
         if 'underlay_from_ci_jobs' in data:
             self.underlay_from_ci_jobs = data['underlay_from_ci_jobs']
             assert isinstance(self.underlay_from_ci_jobs, list)
+
+        self.show_images = {}
+        if 'show_images' in data:
+            self.show_images = data['show_images']
+            assert isinstance(self.show_images, dict)
+            for image_paths in self.show_images.values():
+                assert isinstance(image_paths, list)
