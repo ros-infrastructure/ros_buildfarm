@@ -71,8 +71,8 @@ def main(argv=sys.argv[1:]):
             repos_files.append(repos_file)
 
     with Scope('SUBSECTION', 'fetch repos files(s)'):
-        for repos_file_url in args.repos_file_urls:
-            repos_file = os.path.join(args.workspace_root, os.path.basename(repos_file_url))
+        for index, repos_file_url in enumerate(args.repos_file_urls):
+            repos_file = os.path.join(args.workspace_root, '%d.repos' % index)
             print('Fetching \'%s\' to \'%s\'' % (repos_file_url, repos_file))
             urlretrieve(repos_file_url, repos_file)
             repos_files += [repos_file]
