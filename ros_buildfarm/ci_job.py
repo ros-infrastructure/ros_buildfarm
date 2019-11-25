@@ -291,7 +291,7 @@ def _get_ci_job_config(
         'trigger_timer': trigger_timer,
         'trigger_jobs': trigger_jobs,
 
-        'show_results_images': build_file.show_results_images,
+        'show_images': build_file.show_images or {},
     }
     job_config = expand_template(template_name, job_data)
     return job_config
