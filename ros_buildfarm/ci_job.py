@@ -292,6 +292,7 @@ def _get_ci_job_config(
         'trigger_jobs': trigger_jobs,
 
         'show_images': build_file.show_images,
+        'show_plots': build_file.show_plots,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
