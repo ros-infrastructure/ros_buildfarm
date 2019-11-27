@@ -20,6 +20,10 @@ class PlotConfig:
     def __init__(self, name, data):
         self.name = name
 
+        assert 'master_csv_name' in data, \
+            "Plot configuration for '%s' lacks required master CSV file name" % \
+            self.name
+
         assert 'style' in data, \
             "Plot configuration for '%s' lacks required style selection" % \
             self.name
@@ -31,6 +35,8 @@ class PlotConfig:
         self.y_axis_label = None
         if 'y_axis_label' in data:
             self.y_axis_label = data['y_axis_label']
+
+        self.master_csv_name = data['master_csv_name']
 
         self.style = data['style']
         assert self.style in ('line',)

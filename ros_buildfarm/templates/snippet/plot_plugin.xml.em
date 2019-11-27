@@ -28,6 +28,7 @@
           </series>
           <group>@(plot_group)</group>
           <numBuilds />
+          <csvFileName>@(plot.master_csv_name)</csvFileName>
           <csvLastModification>0</csvLastModification>
           <style>@(plot.style)</style>
           <useDescr>false</useDescr>
