@@ -19,11 +19,11 @@ class PlotConfig:
         self.name = name
 
         assert 'master_csv_name' in data, \
-            "Plot configuration for '%s' lacks required master CSV file name" % \
+            "Plot config for '%s' lacks required master CSV file name" % \
             self.name
 
         assert 'style' in data, \
-            "Plot configuration for '%s' lacks required style selection" % \
+            "Plot config for '%s' lacks required style selection" % \
             self.name
 
         self.title = None
@@ -55,15 +55,15 @@ class PlotDataSeries:
         self.name = name
 
         assert 'data_file' in data, \
-            "Plot data series configuration for '%s' lacks required data_file path" % \
+            "Plot data series for '%s' lacks required data_file path" % \
             self.name
 
         assert 'data_type' in data, \
-            "Plot data series configuration for '%s' lacks required data_type selection" % \
+            "Plot data series for '%s' lacks required data_type selection" % \
             self.name
 
         assert 'selection_flag' in data, \
-            "Plot data series configuration for '%s' lacks required selection_flag value" % \
+            "Plot data series for '%s' lacks required selection_flag value" % \
             self.name
 
         self.data_file = data['data_file']
