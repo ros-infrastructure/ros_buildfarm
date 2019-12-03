@@ -305,7 +305,7 @@ matrix:
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
         - *rosgpgkeyadd
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip python3-setuptools python3-catkin-pkg-modules
+        - sudo apt-get install -y python3-pip python3-setuptools
         - sudo pip3 install vcstool
         - python setup.py install
         - mkdir job && cd job
@@ -392,7 +392,6 @@ matrix:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
-        - sudo apt-get install python3-catkin-pkg-modules -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -411,7 +410,7 @@ matrix:
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
         - *rosgpgkeyadd
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip  python3-setuptools python3-catkin-pkg-modules
+        - sudo apt-get install -y python3-pip  python3-setuptools
         - sudo pip3 install vcstool
         - python setup.py install
         - mkdir job && cd job
@@ -503,7 +502,6 @@ matrix:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
-        - sudo apt-get install python3-catkin-pkg-modules -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -522,7 +520,7 @@ matrix:
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
         - *rosgpgkeyadd
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip python3-setuptools python3-catkin-pkg-modules
+        - sudo apt-get install -y python3-pip python3-setuptools
         - sudo pip3 install EmPy vcstool
         - python setup.py install
         - mkdir job && cd job
