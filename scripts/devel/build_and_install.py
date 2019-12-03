@@ -120,7 +120,9 @@ def main(argv=sys.argv[1:]):
         if args.clean_after:
             clean_workspace(args.workspace_root)
 
-    if not args.run_abichecker:
+    # if something went bad with call_build_tool or the abi-checker is not not
+    # in use, return the rc code
+    if rc != 0 or not args.run_abichecker:
         return rc
 
     with Scope('SUBSECTION', 'use abi checker'):
