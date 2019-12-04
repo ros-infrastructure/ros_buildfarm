@@ -487,6 +487,15 @@ def configure_release_job(
             print(("Skipping binary jobs for package '%s' because it is not " +
                    "yet in the rosdistro cache") % pkg_name, file=sys.stderr)
             return source_job_names, binary_job_names, job_configs
+        # for ROS 2 distributions bloom injects a dependency on ros_workspace
+        # into almost all packages (except its dependencies)
+        # therefore the same dependency needs to to be injected here
+        distribution_type = index.distributions[rosdistro_name].get(
+            'distribution_type')
+        if distribution_type == 'ros2' and pkg_name not in (
+            'ament_cmake_core', 'ament_package', 'ros_workspace',
+        ):
+            dependency_names.add('ros_workspace')
 
     # binarydeb jobs
     for arch in build_file.targets[os_name][os_code_name]:
