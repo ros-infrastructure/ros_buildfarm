@@ -19,7 +19,6 @@ import os
 import subprocess
 import sys
 
-from catkin_pkg.packages import find_packages
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
 from ros_buildfarm.argument import add_argument_ros_version
@@ -31,6 +30,10 @@ from ros_buildfarm.workspace import ensure_workspace_exists
 
 
 def call_abi_checker(workspace_root, ros_version, env):
+    # import the module only if the function is being called to reduce the
+    # number of mandatory dependencies
+    from catkin_pkg.packages import find_packages
+
     # TODO: pkgs detection, code based on create_devel_task_generator.py
     condition_context = {}
     condition_context['ROS_DISTRO'] = env['ROS_DISTRO']
@@ -117,7 +120,9 @@ def main(argv=sys.argv[1:]):
         if args.clean_after:
             clean_workspace(args.workspace_root)
 
-    if not args.run_abichecker:
+    # if something went bad with call_build_tool or the abi-checker is not not
+    # in use, return the rc code
+    if rc != 0 or not args.run_abichecker:
         return rc
 
     with Scope('SUBSECTION', 'use abi checker'):
