@@ -540,6 +540,4 @@ def has_gpu_support():
     # It detects only nvidia support. The implementation is to check if
     # /dev/nvidia* links are present. Further work could be to use a
     # more robust method (i.e: https://github.com/ntpeters/pyvidia)
-    if glob.glob('/dev/nvidia*'):
-        return True
-    return False
+    return bool(glob.glob('/dev/nvidia*'))
