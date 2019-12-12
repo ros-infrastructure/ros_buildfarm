@@ -111,7 +111,7 @@ def main(argv=sys.argv[1:]):
             clean_workspace(args.workspace_root)
 
     # only run abi-checker after successful builds and when requested
-    if not rc and args.run_abichecker
+    if not rc and args.run_abichecker:
         with Scope('SUBSECTION', 'use abi checker'):
             abi_rc = call_abi_checker(
                 [args.workspace_root],
