@@ -458,8 +458,8 @@ The following options are valid in version ``1`` (beside the generic options):
   * ``title``: the title of the plot.
   * ``y_axis_label``: (optional) a label for the y-axis.
   * ``master_csv_name``: the name of the CSV file in which to aggregate the
-    results on the Jenkins master. It must be unique among all plot instances
-    on the same Jenkins master.
+    results on the Jenkins master.
+    It must be unique among all plot instances on the same Jenkins master.
   * ``style``: the type of plot used to display the data.
   * ``y_axis_exclude_zero``: if True, the plot may not include a zero value
     on the y-axis.
