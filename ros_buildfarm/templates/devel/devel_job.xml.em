@@ -111,11 +111,6 @@ if pull_request:
     'builder_shell_key-files',
     script_generating_key_files=script_generating_key_files,
 ))@
-@[if run_abichecker]
-@{ str_abichecker = ' --run-abichecker' }
-@[else]
-@{ str_abichecker = '' }
-@[end if]
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
@@ -143,7 +138,7 @@ if pull_request:
         ' ' + ' '.join(repository_args) +
         ' --build-tool ' + build_tool +
         ' --ros-version ' + str(ros_version) +
-        str_abichecker +
+        (' --run-abichecker' if run_abichecker else '') +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',
