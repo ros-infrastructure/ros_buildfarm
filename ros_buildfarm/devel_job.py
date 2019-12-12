@@ -407,6 +407,7 @@ def _get_devel_job_config(
         'build_tool': build_file.build_tool,
         'ros_version': ros_version,
         'build_environment_variables': build_environment_variables,
+
         'run_abichecker': run_abichecker,
         'notify_compiler_warnings': build_file.notify_compiler_warnings,
         'notify_emails': build_file.notify_emails,
