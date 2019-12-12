@@ -184,6 +184,14 @@ def add_argument_target_repository(parser):
         help='The target repository where generated packages are pushed to')
 
 
+def add_argument_custom_rosdep_update_options(parser):
+    parser.add_argument(
+        '--custom-rosdep-update-options',
+        nargs='*',
+        default=[],
+        help='A list of custom rosdep update options')
+
+
 def add_argument_custom_rosdep_urls(parser):
     parser.add_argument(
         '--custom-rosdep-urls',
