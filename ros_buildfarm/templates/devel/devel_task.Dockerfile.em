@@ -99,14 +99,13 @@ cmd = \
     'PATH=/usr/lib/ccache:$PATH' + \
     ' PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u'
 if not testing:
-    str_run_abi = ''
-    if run_abichecker:
-        str_run_abi = ' --run-abichecker'
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_install.py' + \
         ' --rosdistro-name ' + rosdistro_name + \
         ' --ros-version ' + str(ros_version) + \
-        ' --clean-before' + str_run_abi
+        ' --clean-before'
+    if run_abichecker:
+        cmd += ' --run-abichecker'
 else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
