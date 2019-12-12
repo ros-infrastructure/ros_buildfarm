@@ -162,11 +162,9 @@ def configure_devel_jobs(
         run_abichecker = False
         if build_file.test_abi_force is False:
             pass
-        elif hasattr(repo.source_repository, 'test_abi') and \
-                repo.source_repository.test_abi is False:
+        elif getattr(repo.source_repository, 'test_abi', None) is False:
             pass
-        elif hasattr(repo.source_repository, 'test_abi') and \
-                repo.source_repository.test_abi is None and \
+        elif getattr(repo.source_repository, 'test_abi', None) is None and \
                 not build_file.test_abi_default:
             pass
         else:
