@@ -19,7 +19,6 @@ import os
 import sys
 
 from apt import Cache
-from catkin_pkg.packages import find_packages
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
@@ -30,6 +29,7 @@ from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
+from ros_buildfarm.common import get_pkgs_in_workspace
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
 from rosdep2 import create_default_installer_context
@@ -84,15 +84,7 @@ def main(argv=sys.argv[1:]):
     condition_context['ROS_VERSION'] = args.ros_version
 
     # get direct build dependencies
-    pkgs = {}
-    for workspace_root in args.workspace_root:
-        source_space = os.path.join(workspace_root, 'src')
-        print("Crawling for packages in workspace '%s'" % source_space)
-        ws_pkgs = find_packages(source_space)
-        for pkg in ws_pkgs.values():
-            pkg.evaluate_conditions(condition_context)
-        pkgs.update(ws_pkgs)
-
+    pkgs = get_pkgs_in_workspace(args.workspace_root, condition_context)
     pkg_names = [pkg.name for pkg in pkgs.values()]
     print("Found the following packages:")
     for pkg_name in sorted(pkg_names):

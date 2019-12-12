@@ -533,3 +533,26 @@ def get_system_architecture():
     if machine == 'aarch64':
         return 'armv8'
     raise RuntimeError('Unable to determine architecture')
+
+
+def get_pkgs_in_workspace(ws_path, condition_context):
+    """
+    Return packages present in the workspaces in ws_path
+
+    Given a catkin workspace get the ROS packages inside it
+
+    :param ws_path: A list of filysystem full paths pointing to catkin workspaces
+    :param condition_context: A dict mapping ROS enviroment variables affecting package names
+    :returns: A list of ``Package`` objects
+    """
+    from catkin_pkg.packages import find_packages
+
+    pkgs = {}
+    for workspace_root in ws_path:
+        source_space = os.path.join(workspace_root, 'src')
+        print("Crawling for packages in workspace '%s'" % source_space)
+        ws_pkgs = find_packages(source_space)
+        for pkg in ws_pkgs.values():
+            pkg.evaluate_conditions(condition_context)
+        pkgs.update(ws_pkgs)
+    return pkgs
