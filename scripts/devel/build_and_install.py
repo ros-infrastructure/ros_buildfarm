@@ -48,9 +48,9 @@ def call_abi_checker(workspace_root, ros_version, env):
             pkg.evaluate_conditions(condition_context)
         pkgs.update(ws_pkgs)
     pkg_names = [pkg.name for pkg in pkgs.values()]
-    assert(pkg_names), 'No packages found in the workspace'
+    assert pkg_names, 'No packages found in the workspace'
 
-    assert(len(workspace_root) == 1), 'auto-abi tool needs the implementation of multiple local-dir'
+    assert len(workspace_root) == 1, 'auto-abi tool needs the implementation of multiple local-dir'
     # ROS_DISTRO is set in the env object
     cmd = ['auto-abi.py ' +
            '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
