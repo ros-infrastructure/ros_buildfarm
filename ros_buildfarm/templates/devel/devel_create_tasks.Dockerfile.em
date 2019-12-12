@@ -18,7 +18,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN useradd -u @uid -l -m buildfarm
 
-@[if use_nvidia_runtime ]@
+@[if use_nvidia_runtime]@
 @(TEMPLATE(
     'snippet/setup_nvidia_docker2.Dockerfile.em'
 ))@
