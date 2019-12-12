@@ -120,23 +120,20 @@ def main(argv=sys.argv[1:]):
         if args.clean_after:
             clean_workspace(args.workspace_root)
 
-    # if something went bad with call_build_tool or the abi-checker is not not
-    # in use, return the rc code
-    if rc != 0 or not args.run_abichecker:
-        return rc
+    # only run abi-checker after successful builds and when requested
+    if not rc and args.run_abichecker
+        with Scope('SUBSECTION', 'use abi checker'):
+            abi_rc = call_abi_checker(
+                [args.workspace_root],
+                args.ros_version,
+                env)
+        # Never fail a build because of abi errors but make them
+        # unstable by printing MAKE_BUILD_UNSTABLE. Jenkins will
+        # use a plugin to make it
+        if abi_rc:
+            print('MAKE_BUILD_UNSTABLE')
 
-    with Scope('SUBSECTION', 'use abi checker'):
-        rc = call_abi_checker(
-            [args.workspace_root],
-            args.ros_version,
-            env)
-    # Never fail a build because of abi errors but make them
-    # unstable by printing MAKE_BUILD_UNSTABLE. Jenkins will
-    # use a`plugin to make it
-    if rc != 0:
-        print('MAKE_BUILD_UNSTABLE')
-
-    return 0
+    return rc
 
 
 if __name__ == '__main__':
