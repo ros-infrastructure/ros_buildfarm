@@ -29,7 +29,7 @@ from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
-from ros_buildfarm.common import get_pkgs_in_workspace
+from ros_buildfarm.common import get_packages_in_workspaces
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
 from rosdep2 import create_default_installer_context
