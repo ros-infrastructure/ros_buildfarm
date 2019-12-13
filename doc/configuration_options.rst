@@ -461,8 +461,9 @@ The following options are valid in version ``1`` (beside the generic options):
     results on the Jenkins master.
     It must be unique among all plot instances on the same Jenkins master.
   * ``style``: the type of plot used to display the data.
-  * ``y_axis_exclude_zero``: if True, the plot may not include a zero value
-    on the y-axis.
+    Supported values: line
+  * ``y_axis_exclude_zero``: a boolean flag which indicates when to exclude an
+    implicit zero value from the y-axis.
   * ``data_series``: a list of data series definitions comprised of:
 
     * ``data_file``: a path pattern relative to the workspace root to a file
@@ -470,6 +471,7 @@ The following options are valid in version ``1`` (beside the generic options):
     * ``data_type``: the type of file to which ``data_file`` refers.
     * ``selection_flag``: strategy used to identify which data from the
       ``data_file`` should be extracted and plotted.
+      Supported values: INCLUDE_BY_COLUMN
     * ``selection_value``: specific criteria used for selection.
       The meaning of this value differs based on ``selection_flag``.
     * ``url``: Hyperlink URL to redirect when a point is clicked.
