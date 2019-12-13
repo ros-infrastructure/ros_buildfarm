@@ -356,7 +356,7 @@ if pull_request:
     remove_prefix='collated_test_stats',
 ))@
 @[end if]@
-@[if (not pull_request) and publish_test_reports]@
+@[if (not pull_request) and publish_test_results]@
 @(SNIPPET(
     'publisher_publish-over-ssh',
     config_name='docs',
