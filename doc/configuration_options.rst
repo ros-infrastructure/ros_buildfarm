@@ -478,10 +478,10 @@ The following options are valid in version ``1`` (beside the generic options):
     * ``selection_value``: specific criteria used for selection.
       The meaning of this value differs based on ``selection_flag``.
       For example, when INCLUDE_BY_COLUMN is used, this value should specify
-      which column number to include (1-indexed). For \*_BY_STRING, the, this
-      value should specify the column name. For EXCLUDE\_\*, the logic is
-      inverted and all discovered columns EXCEPT those matching this value
-      are included.
+      which column number to include (1-indexed).
+      For \*_BY_STRING, the, this value should specify the column name.
+      For EXCLUDE\_\*, the logic is inverted and all discovered columns EXCEPT
+      those matching this value are included.
     * ``url``: Hyperlink URL to redirect when a point is clicked.
 
 * ``skip_rosdep_keys``: a list of rosdep keys which should be ignored when
