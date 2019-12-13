@@ -36,7 +36,7 @@ def call_abi_checker(workspace_root, ros_version, env):
     condition_context['ROS_VERSION'] = ros_version
     condition_context['ROS_PYTHON_VERSION'] = \
         (env or os.environ).get('ROS_PYTHON_VERSION')
-    pkgs = get_pkgs_in_workspace(workspace_root, condition_context)
+    pkgs = get_packages_in_workspaces(workspace_root, condition_context)
     pkg_names = [pkg.name for pkg in pkgs.values()]
     assert pkg_names, 'No packages found in the workspace'
 

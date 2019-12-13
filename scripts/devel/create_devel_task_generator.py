@@ -84,7 +84,7 @@ def main(argv=sys.argv[1:]):
     condition_context['ROS_VERSION'] = args.ros_version
 
     # get direct build dependencies
-    pkgs = get_pkgs_in_workspace(args.workspace_root, condition_context)
+    pkgs = get_packages_in_workspaces(args.workspace_root, condition_context)
     pkg_names = [pkg.name for pkg in pkgs.values()]
     print("Found the following packages:")
     for pkg_name in sorted(pkg_names):

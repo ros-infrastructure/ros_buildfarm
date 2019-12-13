@@ -535,20 +535,19 @@ def get_system_architecture():
     raise RuntimeError('Unable to determine architecture')
 
 
-def get_pkgs_in_workspace(ws_path, condition_context):
+def get_packages_in_workspaces(workspace_roots, condition_context):
     """
-    Return packages present in the workspaces in ws_path
+    Return packages found in the passed workspaces.
 
-    Given a catkin workspace get the ROS packages inside it
-
-    :param ws_path: A list of filysystem full paths pointing to catkin workspaces
-    :param condition_context: A dict mapping ROS enviroment variables affecting package names
+    :param workspace_roots: A list of absolute paths to workspaces
+    :param condition_context: A dict containing environment variables for the
+      conditions in the package manifests
     :returns: A list of ``Package`` objects
     """
     from catkin_pkg.packages import find_packages
 
     pkgs = {}
-    for workspace_root in ws_path:
+    for workspace_root in workspace_roots:
         source_space = os.path.join(workspace_root, 'src')
         print("Crawling for packages in workspace '%s'" % source_space)
         ws_pkgs = find_packages(source_space)
