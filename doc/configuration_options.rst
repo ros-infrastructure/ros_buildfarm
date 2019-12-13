@@ -469,6 +469,7 @@ The following options are valid in version ``1`` (beside the generic options):
     * ``data_file``: a path pattern relative to the workspace root to a file
       containing the data.
     * ``data_type``: the type of file to which ``data_file`` refers.
+      Supported values: csv
     * ``selection_flag``: strategy used to identify which data from the
       ``data_file`` should be extracted and plotted.
       Supported values: INCLUDE_BY_COLUMN
