@@ -37,7 +37,9 @@ class PlotConfig:
         self.master_csv_name = data['master_csv_name']
 
         self.style = data['style']
-        assert self.style in ('line',)
+        assert self.style in (
+            'area', 'bar', 'bar3d', 'line', 'lineSimple', 'line3d', 'stackedArea',
+            'stackedBar', 'stackedBar3d', 'waterfall')
 
         self.y_axis_exclude_zero = bool(data.get('y_axis_exclude_zero', False))
 
@@ -69,10 +71,12 @@ class PlotDataSeries:
         self.data_file = data['data_file']
 
         self.data_type = data['data_type']
-        assert self.data_type in ('csv',)
+        assert self.data_type in ('csv', 'xml', 'properties')
 
         self.selection_flag = data['selection_flag']
-        assert self.selection_flag in ('INCLUDE_BY_COLUMN',)
+        assert self.selection_flag in (
+            'OFF', 'INCLUDE_BY_STRING', 'EXCLUDE_BY_STRING',
+            'INCLUDE_BY_COLUMN', 'EXCLUDE_BY_COLUMN')
 
         self.selection_value = None
         if 'selection_value' in data:
