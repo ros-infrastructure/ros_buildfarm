@@ -77,6 +77,7 @@ os_code_name_and_arch_tuples = status_page['os_code_name_and_arch_tuples']
     remote_directory='',
     source_files=['status_page/**'],
     remove_prefix='status_page',
+    clean_remote='false',
 ))@
 @(SNIPPET(
     'publisher_mailer',

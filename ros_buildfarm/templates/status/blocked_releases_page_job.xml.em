@@ -94,6 +94,7 @@
     remote_directory='',
     source_files=['blocked_releases_page/**'],
     remove_prefix='blocked_releases_page',
+    clean_remote='false',
 ))@
 @(SNIPPET(
     'publisher_mailer',

@@ -13,7 +13,7 @@
                 <removePrefix>@remove_prefix</removePrefix>
                 <remoteDirectorySDF>false</remoteDirectorySDF>
                 <flatten>false</flatten>
-                <cleanRemote>false</cleanRemote>
+                <cleanRemote>@clean_remote</cleanRemote>
                 <noDefaultExcludes>false</noDefaultExcludes>
                 <makeEmptyDirs>false</makeEmptyDirs>
                 <patternSeparator>[, ]+</patternSeparator>

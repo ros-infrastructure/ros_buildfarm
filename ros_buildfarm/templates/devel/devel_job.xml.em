@@ -354,6 +354,7 @@ if pull_request:
         'collated_test_stats/results.yaml'
     ],
     remove_prefix='collated_test_stats',
+    clean_remote='false',
 ))@
 @[end if]@
 @[if (not pull_request) and publish_test_results]@
@@ -365,6 +366,7 @@ if pull_request:
         'ws/test_results/**'
     ]
     remove_prefix='ws/test_results',
+    clean_remote='true',
 ))@
 @[end if]@
 @[if not pull_request or notify_pull_requests]@
