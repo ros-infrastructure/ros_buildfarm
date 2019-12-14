@@ -452,6 +452,38 @@ The following options are valid in version ``1`` (beside the generic options):
   summary page.
   These images will automatically be added to the artifacts for each build.
 
+* ``show_plots``: a dictionary of lists, where the key is the title of the
+  plot group and the list contains plot definitions comprised of:
+
+  * ``title``: the title of the plot.
+  * ``y_axis_label``: (optional) a label for the y-axis.
+  * ``master_csv_name``: the name of the CSV file in which to aggregate the
+    results on the Jenkins master.
+    It must be unique among all plot instances on the same Jenkins master.
+  * ``style``: the type of plot used to display the data.
+    Supported values: area, bar, bar3d, line, lineSimple, line3d, stackedArea,
+    stackedBar, stackedBar3d, waterfall
+  * ``y_axis_exclude_zero``: a boolean flag which indicates when to exclude an
+    implicit zero value from the y-axis.
+  * ``data_series``: a list of data series definitions comprised of:
+
+    * ``data_file``: a path pattern relative to the workspace root to a file
+      containing the data.
+    * ``data_type``: the type of file to which ``data_file`` refers.
+      Supported values: csv, xml, properties
+    * ``selection_flag``: strategy used to identify which data from the
+      ``data_file`` should be extracted and plotted.
+      Supported values: OFF, INCLUDE_BY_STRING, EXCLUDE_BY_STRING,
+      INCLUDE_BY_COLUMN, EXCLUDE_BY_COLUMN
+    * ``selection_value``: specific criteria used for selection.
+      The meaning of this value differs based on ``selection_flag``.
+      For example, when INCLUDE_BY_COLUMN is used, this value should specify
+      which column number to include (1-indexed).
+      For \*_BY_STRING, the, this value should specify the column name.
+      For EXCLUDE\_\*, the logic is inverted and all discovered columns EXCEPT
+      those matching this value are included.
+    * ``url``: Hyperlink URL to redirect when a point is clicked.
+
 * ``skip_rosdep_keys``: a list of rosdep keys which should be ignored when
   rosdep is invoked to resolve package dependencies.
 

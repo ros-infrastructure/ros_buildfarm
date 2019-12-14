@@ -430,6 +430,12 @@ parameters = [
     artifacts=artifacts,
 ))@
 @[end for]@
+@[if show_plots]@
+@(SNIPPET(
+    'plot_plugin',
+    plots=show_plots,
+))@
+@[end if]@
 @(SNIPPET(
     'publisher_xunit',
     pattern='ws/test_results/**/*.xml',
