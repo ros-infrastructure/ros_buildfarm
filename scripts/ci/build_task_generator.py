@@ -32,6 +32,7 @@ from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.argument import add_argument_testing
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
@@ -57,6 +58,7 @@ def main(argv=sys.argv[1:]):
     add_argument_env_vars(parser)
     add_argument_install_packages(parser)
     add_argument_ros_version(parser)
+    add_argument_run_abichecker(parser)
     add_argument_testing(parser)
     parser.add_argument(
         '--workspace-root', nargs='+',
@@ -120,6 +122,7 @@ def main(argv=sys.argv[1:]):
         'dependency_versions': [],
 
         'testing': args.testing,
+        'run_abichecker': args.run_abichecker,
         'workspace_root': mapped_workspaces[-1][1],
         'parent_result_space': [mapping[1] for mapping in mapped_workspaces[:-1]],
     }

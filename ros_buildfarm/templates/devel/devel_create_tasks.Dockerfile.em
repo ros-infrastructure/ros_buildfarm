@@ -77,6 +77,8 @@ cmd = \
     ' --build-tool ' + build_tool + \
     ' --ros-version ' + str(ros_version) + \
     ' --env-vars ' + ' ' .join(env_vars)
+if run_abichecker:
+    cmd += ' --run-abichecker'
 cmds += [
     cmd +
     ' --dockerfile-dir /tmp/docker_build_and_install',
