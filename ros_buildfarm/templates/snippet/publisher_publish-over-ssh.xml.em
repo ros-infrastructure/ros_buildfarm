@@ -13,7 +13,7 @@
                 <removePrefix>@remove_prefix</removePrefix>
                 <remoteDirectorySDF>false</remoteDirectorySDF>
                 <flatten>false</flatten>
-                <cleanRemote>@clean_remote</cleanRemote>
+                <cleanRemote>@(vars().get('clean_remote', 'false'))</cleanRemote>
                 <noDefaultExcludes>false</noDefaultExcludes>
                 <makeEmptyDirs>false</makeEmptyDirs>
                 <patternSeparator>[, ]+</patternSeparator>

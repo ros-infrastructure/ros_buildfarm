@@ -95,7 +95,6 @@
     remote_directory='',
     source_files=['rosdistro_cache/*.gz'],
     remove_prefix='rosdistro_cache',
-    clean_remote='false',
 ))@
 @(SNIPPET(
     'publisher_groovy-postbuild_reconfigure-updated-packages',

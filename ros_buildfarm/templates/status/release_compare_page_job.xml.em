@@ -95,7 +95,6 @@
     remote_directory='',
     source_files=['compare_page/**'],
     remove_prefix='compare_page',
-    clean_remote='false',
 ))@
 @(SNIPPET(
     'publisher_mailer',
