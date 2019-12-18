@@ -31,6 +31,8 @@ from ros_buildfarm.workspace import ensure_workspace_exists
 
 
 def call_abi_checker(workspace_root, ros_version, env):
+    import rosdistro
+
     condition_context = {}
     condition_context['ROS_DISTRO'] = env['ROS_DISTRO']
     condition_context['ROS_VERSION'] = ros_version
@@ -39,6 +41,21 @@ def call_abi_checker(workspace_root, ros_version, env):
     pkgs = get_packages_in_workspaces(workspace_root, condition_context)
     pkg_names = [pkg.name for pkg in pkgs.values()]
     assert pkg_names, 'No packages found in the workspace'
+
+    # Filter packages in source space that has been released
+    index_file = rosdistro.get_index(rosdistro.get_index_url())
+    distro_file = rosdistro.get_cached_distribution(index_file, env['ROS_DISTRO'])
+    pkg_names_released = []
+    for pkg_name in pkg_names:
+        try:
+            if distro_file.get_release_package_xml(pkg_name):
+                pkg_names_released.append(pkg_name)
+        except KeyError:
+            # skip unreleased packages, nothing to do with ABI checking
+            pass
+    if not pkg_names_released:
+        print("No released packages found in the workspace. Skipping abi-checker run")
+        return True
 
     assert len(workspace_root) == 1, 'auto-abi tool needs the implementation of multiple local-dir'
     # ROS_DISTRO is set in the env object
