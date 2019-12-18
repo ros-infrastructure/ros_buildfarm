@@ -60,7 +60,7 @@ def call_abi_checker(workspace_root, ros_version, env):
     assert len(workspace_root) == 1, 'auto-abi tool needs the implementation of multiple local-dir'
     # ROS_DISTRO is set in the env object
     cmd = ['auto-abi.py ' +
-           '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
+           '--orig-type ros-pkg --orig ' + ",".join(pkg_names_released) + ' ' +
            '--new-type ros-ws --new ' + os.path.join(workspace_root[0], 'install_isolated') + ' ' +
            '--report-dir ' + workspace_root[0] + ' ' +
            '--no-fail-if-empty ' +
