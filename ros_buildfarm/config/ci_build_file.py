@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from .build_file import BuildFile
+from .plot_config import PlotConfig
 
 
 class CIBuildFile(BuildFile):
@@ -92,3 +93,23 @@ class CIBuildFile(BuildFile):
         if 'underlay_from_ci_jobs' in data:
             self.underlay_from_ci_jobs = data['underlay_from_ci_jobs']
             assert isinstance(self.underlay_from_ci_jobs, list)
+
+        self.show_images = {}
+        if 'show_images' in data:
+            self.show_images = data['show_images']
+            assert isinstance(self.show_images, dict)
+            for image_paths in self.show_images.values():
+                assert isinstance(image_paths, list)
+
+        self.show_plots = {}
+        if 'show_plots' in data:
+            show_plots = data['show_plots']
+            assert isinstance(show_plots, dict)
+            for plot_group in show_plots.keys():
+                self.show_plots[plot_group] = []
+            for plot_group, plot_config_data_list in show_plots.items():
+                assert isinstance(plot_config_data_list, list)
+                for plot_config_data in plot_config_data_list:
+                    assert isinstance(plot_config_data, dict)
+                    self.show_plots[plot_group].append(
+                        PlotConfig(name, plot_config_data))

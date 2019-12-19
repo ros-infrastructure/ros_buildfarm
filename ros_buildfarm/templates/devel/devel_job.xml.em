@@ -138,6 +138,7 @@ if pull_request:
         ' ' + ' '.join(repository_args) +
         ' --build-tool ' + build_tool +
         ' --ros-version ' + str(ros_version) +
+        (' --run-abichecker' if run_abichecker else '') +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',
@@ -377,6 +378,14 @@ if pull_request:
     recipients=notify_emails,
     dynamic_recipients=maintainer_emails,
     send_to_individuals=notify_committers,
+))@
+@[end if]@
+@[if run_abichecker]
+@(SNIPPET(
+    'publisher_abi_report',
+))@
+@(SNIPPET(
+    'publisher_parser_unstable',
 ))@
 @[end if]@
   </publishers>

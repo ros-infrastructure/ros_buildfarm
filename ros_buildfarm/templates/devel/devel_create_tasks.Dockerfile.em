@@ -65,7 +65,7 @@ USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
 cmds = [
-'rosdep update',
+    ' '.join(['rosdep', 'update'] + rosdep_update_options),
 ]
 workspace_root = '/tmp/ws'
 if prerelease_overlay:
@@ -83,6 +83,8 @@ cmd = \
     ' --build-tool ' + build_tool + \
     ' --ros-version ' + str(ros_version) + \
     ' --env-vars ' + ' ' .join(env_vars)
+if run_abichecker:
+    cmd += ' --run-abichecker'
 cmds += [
     cmd +
     ' --dockerfile-dir /tmp/docker_build_and_install',

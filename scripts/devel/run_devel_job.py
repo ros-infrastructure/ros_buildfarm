@@ -21,6 +21,7 @@ import sys
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
+from ros_buildfarm.argument import add_argument_custom_rosdep_update_options
 from ros_buildfarm.argument import add_argument_custom_rosdep_urls
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
@@ -33,6 +34,7 @@ from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.common import has_gpu_support
@@ -57,9 +59,11 @@ def main(argv=sys.argv[1:]):
         action='store_true',
         help='Operate on two catkin workspaces')
     add_argument_build_tool(parser, required=True)
+    add_argument_custom_rosdep_update_options(parser)
     add_argument_ros_version(parser)
     add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)
+    add_argument_run_abichecker(parser)
     args = parser.parse_args(argv)
 
     data = copy.deepcopy(args.__dict__)
@@ -69,6 +73,7 @@ def main(argv=sys.argv[1:]):
             args.distribution_repository_urls,
             args.distribution_repository_key_files),
         'custom_rosdep_urls': args.custom_rosdep_urls,
+        'rosdep_update_options': args.custom_rosdep_update_options,
         'uid': get_user_id(),
         'use_nvidia_runtime': has_gpu_support(),
     })

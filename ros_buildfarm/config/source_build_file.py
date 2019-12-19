@@ -113,6 +113,16 @@ class SourceBuildFile(BuildFile):
                 self.test_pull_requests_force = bool(
                     data['test_pull_requests']['force'])
 
+        self.test_abi_default = False
+        self.test_abi_force = None
+        if 'test_abi' in data:
+            if 'default' in data['test_abi']:
+                self.test_abi_default = bool(
+                    data['test_abi']['default'])
+            if 'force' in data['test_abi']:
+                self.test_abi_force = bool(
+                    data['test_abi']['force'])
+
         self.collate_test_stats = bool(data.get('collate_test_stats', False))
 
     def filter_repositories(self, repository_names):

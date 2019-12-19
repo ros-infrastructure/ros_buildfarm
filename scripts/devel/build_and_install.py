@@ -16,14 +16,41 @@
 
 import argparse
 import os
+import subprocess
 import sys
 
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
+from ros_buildfarm.argument import add_argument_ros_version
+from ros_buildfarm.argument import add_argument_run_abichecker
+from ros_buildfarm.common import get_packages_in_workspaces
 from ros_buildfarm.common import Scope
 from ros_buildfarm.workspace import call_build_tool
 from ros_buildfarm.workspace import clean_workspace
 from ros_buildfarm.workspace import ensure_workspace_exists
+
+
+def call_abi_checker(workspace_root, ros_version, env):
+    condition_context = {}
+    condition_context['ROS_DISTRO'] = env['ROS_DISTRO']
+    condition_context['ROS_VERSION'] = ros_version
+    condition_context['ROS_PYTHON_VERSION'] = \
+        (env or os.environ).get('ROS_PYTHON_VERSION')
+    pkgs = get_packages_in_workspaces(workspace_root, condition_context)
+    pkg_names = [pkg.name for pkg in pkgs.values()]
+    assert pkg_names, 'No packages found in the workspace'
+
+    assert len(workspace_root) == 1, 'auto-abi tool needs the implementation of multiple local-dir'
+    # ROS_DISTRO is set in the env object
+    cmd = ['auto-abi.py ' +
+           '--orig-type ros-pkg --orig ' + ",".join(pkg_names) + ' ' +
+           '--new-type ros-ws --new ' + os.path.join(workspace_root[0], 'install_isolated') + ' ' +
+           '--report-dir ' + workspace_root[0] + ' ' +
+           '--no-fail-if-empty ' +
+           '--display-exec-time']
+    print("Invoking '%s'" % (cmd))
+    return subprocess.call(
+        cmd, shell=True, stderr=subprocess.STDOUT, env=env)
 
 
 def main(argv=sys.argv[1:]):
@@ -36,6 +63,7 @@ def main(argv=sys.argv[1:]):
              'sourced (if available)')
     add_argument_build_tool(parser, required=True)
     add_argument_build_tool_args(parser)
+    add_argument_run_abichecker(parser)
     parser.add_argument(
         '--workspace-root',
         required=True,
@@ -53,6 +81,9 @@ def main(argv=sys.argv[1:]):
         action='store_true',
         help='The flag if the workspace should be cleaned after the '
              'invocation')
+
+    add_argument_ros_version(parser)
+
     args = parser.parse_args(argv)
 
     ensure_workspace_exists(args.workspace_root)
@@ -60,13 +91,15 @@ def main(argv=sys.argv[1:]):
     if args.clean_before:
         clean_workspace(args.workspace_root)
 
+    env = dict(os.environ)
+    env.setdefault('MAKEFLAGS', '-j1')
+    env.setdefault('ROS_DISTRO', args.rosdistro_name)
+
     try:
         with Scope('SUBSECTION', 'build workspace in isolation and install'):
             parent_result_spaces = None
             if args.parent_result_space:
                 parent_result_spaces = args.parent_result_space
-            env = dict(os.environ)
-            env.setdefault('MAKEFLAGS', '-j1')
             rc = call_build_tool(
                 args.build_tool, args.rosdistro_name, args.workspace_root,
                 cmake_args=['-DBUILD_TESTING=0', '-DCATKIN_SKIP_TESTING=1'],
@@ -76,6 +109,19 @@ def main(argv=sys.argv[1:]):
     finally:
         if args.clean_after:
             clean_workspace(args.workspace_root)
+
+    # only run abi-checker after successful builds and when requested
+    if not rc and args.run_abichecker:
+        with Scope('SUBSECTION', 'use abi checker'):
+            abi_rc = call_abi_checker(
+                [args.workspace_root],
+                args.ros_version,
+                env)
+        # Never fail a build because of abi errors but make them
+        # unstable by printing MAKE_BUILD_UNSTABLE. Jenkins will
+        # use a plugin to make it
+        if abi_rc:
+            print('MAKE_BUILD_UNSTABLE')
 
     return rc
 

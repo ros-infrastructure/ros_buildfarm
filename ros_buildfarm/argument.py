@@ -184,6 +184,14 @@ def add_argument_target_repository(parser):
         help='The target repository where generated packages are pushed to')
 
 
+def add_argument_custom_rosdep_update_options(parser):
+    parser.add_argument(
+        '--custom-rosdep-update-options',
+        nargs='*',
+        default=[],
+        help='A list of custom rosdep update options')
+
+
 def add_argument_custom_rosdep_urls(parser):
     parser.add_argument(
         '--custom-rosdep-urls',
@@ -340,6 +348,12 @@ def add_argument_repos_file_urls(parser):
     parser.add_argument(
         '--repos-file-urls', nargs='*', metavar='URL',
         help='URLs of repos files to import with vcs.')
+
+
+def add_argument_run_abichecker(parser):
+    parser.add_argument(
+        '--run-abichecker', action='store_true',
+        help='Run the ABI checker when compiling packages')
 
 
 def add_argument_skip_cleanup(parser):

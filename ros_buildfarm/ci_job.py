@@ -290,6 +290,9 @@ def _get_ci_job_config(
         'underlay_source_paths': underlay_source_paths,
         'trigger_timer': trigger_timer,
         'trigger_jobs': trigger_jobs,
+
+        'show_images': build_file.show_images,
+        'show_plots': build_file.show_plots,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

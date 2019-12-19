@@ -536,6 +536,27 @@ def get_system_architecture():
     raise RuntimeError('Unable to determine architecture')
 
 
+def get_packages_in_workspaces(workspace_roots, condition_context):
+    """
+    Return packages found in the passed workspaces.
+
+    :param workspace_roots: A list of absolute paths to workspaces
+    :param condition_context: A dict containing environment variables for the
+      conditions in the package manifests
+    :returns: A list of ``Package`` objects
+    """
+    from catkin_pkg.packages import find_packages
+
+    pkgs = {}
+    for workspace_root in workspace_roots:
+        source_space = os.path.join(workspace_root, 'src')
+        print("Crawling for packages in workspace '%s'" % source_space)
+        ws_pkgs = find_packages(source_space)
+        for pkg in ws_pkgs.values():
+            pkg.evaluate_conditions(condition_context)
+        pkgs.update(ws_pkgs)
+    return pkgs
+
 def has_gpu_support():
     # It detects only nvidia support. The implementation is to check if
     # /dev/nvidia* links are present. Further work could be to use a

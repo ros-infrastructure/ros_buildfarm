@@ -420,8 +420,22 @@ parameters = [
     'archive_artifacts',
     artifacts=[
       'ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name, os_code_name, arch),
-    ],
+    ] + [image for images in show_images.values() for image in images],
 ))@
+@[for title, artifacts in show_images.items()]@
+@(SNIPPET(
+    'image_gallery',
+    title=title,
+    image_width='',
+    artifacts=artifacts,
+))@
+@[end for]@
+@[if show_plots]@
+@(SNIPPET(
+    'plot_plugin',
+    plots=show_plots,
+))@
+@[end if]@
 @(SNIPPET(
     'publisher_xunit',
     pattern='ws/test_results/**/*.xml',
