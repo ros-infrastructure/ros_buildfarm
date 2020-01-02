@@ -188,13 +188,14 @@ if pull_request:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
+        'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/ws:/tmp/ws' +
-        ' -v ~/.ccache:/home/buildfarm/.ccache' +
+        ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
         ' devel_build_and_install.%s_%s' % (rosdistro_name, source_repo_spec.name.lower()),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
@@ -216,13 +217,15 @@ if pull_request:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
+        ''
+        'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/ws:/tmp/ws' +
-        ' -v ~/.ccache:/home/buildfarm/.ccache' +
+        ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
         ' devel_build_and_test.%s_%s' % (rosdistro_name, source_repo_spec.name.lower()),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',

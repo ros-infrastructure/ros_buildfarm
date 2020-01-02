@@ -121,6 +121,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'rm -fr $WORKSPACE/docker_build_binarydeb',
         'mkdir -p $WORKSPACE/binarydeb',
         'mkdir -p $WORKSPACE/docker_build_binarydeb',
+        'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
@@ -129,7 +130,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' -v $WORKSPACE/docker_build_binarydeb:/tmp/docker_build_binarydeb' +
-        ' -v ~/.ccache:/home/buildfarm/.ccache' + \
+        ' -v $HOME/.ccache:/home/buildfarm/.ccache' + \
         ' binarydeb_task_generation.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),
@@ -152,6 +153,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'echo "# BEGIN SECTION: Run Dockerfile - build binarydeb"',
         '# -e=HOME= is required to set a reasonable HOME for the user (not /)',
         '# otherwise apt-src will fail',
+        'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_binarydeb/docker.cid' +
@@ -160,7 +162,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
-        ' -v ~/.ccache:/home/buildfarm/.ccache' +
+        ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
         ' binarydeb_build.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),
