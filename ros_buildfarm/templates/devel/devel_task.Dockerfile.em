@@ -114,6 +114,10 @@ else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
         ' --rosdistro-name %s' % rosdistro_name
+    if require_gpu_support:
+        cmd += ' --require-gpu-support'
+        if run_only_gpu_tests:
+            cmd += ' --run-only-gpu-tests'
 cmd += \
     ' --build-tool ' + build_tool + \
     ' --workspace-root ' + workspace_root + \

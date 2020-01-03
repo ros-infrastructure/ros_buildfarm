@@ -25,13 +25,13 @@ from ros_buildfarm.argument import \
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
+from ros_buildfarm.argument import add_argument_require_gpu_support
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_packages_in_workspaces
 from ros_buildfarm.common import get_user_id
-from ros_buildfarm.common import has_gpu_support
 from ros_buildfarm.templates import create_dockerfile
 from rosdep2 import create_default_installer_context
 from rosdep2.catkin_support import get_catkin_view
@@ -69,6 +69,7 @@ def main(argv=sys.argv[1:]):
     add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)
     add_argument_run_abichecker(parser)
+    add_argument_require_gpu_support(parser)
     parser.add_argument(
         '--testing',
         action='store_true',
@@ -182,9 +183,10 @@ def main(argv=sys.argv[1:]):
 
         'testing': args.testing,
         'run_abichecker': args.run_abichecker,
+        'require_gpu_support': args.require_gpu_support,
+        'run_only_gpu_tests': args.run_only_gpu_tests,
         'workspace_root': mapped_workspaces[-1][1],
         'parent_result_space': parent_result_space,
-        'use_nvidia_runtime': has_gpu_support(),
     }
     create_dockerfile(
         'devel/devel_task.Dockerfile.em', data, args.dockerfile_dir)

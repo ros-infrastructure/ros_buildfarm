@@ -18,7 +18,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN useradd -u @uid -l -m buildfarm
 
-@[if use_nvidia_runtime]@
+@[if require_gpu_support]@
 @(TEMPLATE(
     'snippet/setup_nvidia_docker2.Dockerfile.em'
 ))@
@@ -85,6 +85,10 @@ cmd = \
     ' --env-vars ' + ' ' .join(env_vars)
 if run_abichecker:
     cmd += ' --run-abichecker'
+if require_gpu_support:
+    cmd += ' --require-gpu-support'
+    if run_only_gpu_tests:
+        cmd += ' --run-only-gpu-tests'
 cmds += [
     cmd +
     ' --dockerfile-dir /tmp/docker_build_and_install',

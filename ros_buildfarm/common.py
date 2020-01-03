@@ -557,6 +557,7 @@ def get_packages_in_workspaces(workspace_roots, condition_context):
         pkgs.update(ws_pkgs)
     return pkgs
 
+
 def has_gpu_support():
     # It detects only nvidia support. The implementation is to check if
     # /dev/nvidia* links are present. Further work could be to use a

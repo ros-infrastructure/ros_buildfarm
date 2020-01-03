@@ -139,6 +139,8 @@ if pull_request:
         ' --build-tool ' + build_tool +
         ' --ros-version ' + str(ros_version) +
         (' --run-abichecker' if run_abichecker else '') +
+        (' --require-gpu-support' if require_gpu_support else '') +
+        (' --run-only-gpu-tests' if run_only_gpu_tests else '') +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',
@@ -188,12 +190,8 @@ if pull_request:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
-        'docker_run_cmd="docker run"',
-        'if $(ls /dev/nvidia* > /dev/null); then',
-        '  docker_run_cmd="${docker_run_cmd} --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw --runtime=nvidia"',
-        'fi',
-        '',
-        '${docker_run_cmd}' +
+        'docker run' +
+        (' --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw --gpus all' if require_gpu_support else '') +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
@@ -223,7 +221,7 @@ if pull_request:
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
         'docker_run_cmd="docker run"',
         'if $(ls /dev/nvidia* > /dev/null); then',
-        '  docker_run_cmd="${docker_run_cmd} --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw --runtime=nvidia"',
+        '  docker_run_cmd="${docker_run_cmd} --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw  --gpus all"',
         'fi',
         '',
         '${docker_run_cmd}' +
