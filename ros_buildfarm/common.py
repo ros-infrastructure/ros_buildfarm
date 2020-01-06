@@ -280,7 +280,7 @@ def get_short_os_code_name(os_code_name):
     os_code_name_mappings = {
         'artful': 'A',
         'bionic': 'B',
-        'buster': 'DB',
+        'buster': 'B',
         'focal': 'F',
         'jessie': 'J',
         'saucy': 'S',
