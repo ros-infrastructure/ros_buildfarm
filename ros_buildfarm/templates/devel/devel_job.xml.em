@@ -365,7 +365,7 @@ if pull_request:
         'ws/test_results/**'
     ]
     remove_prefix='ws/test_results',
-    clean_remote='true',
+    clean_remote=True,
 ))@
 @[end if]@
 @[if not pull_request or notify_pull_requests]@
