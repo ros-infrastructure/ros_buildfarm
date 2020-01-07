@@ -42,7 +42,6 @@ class PlotConfig:
             'stackedBar', 'stackedBar3d', 'waterfall')
 
         self.y_axis_exclude_zero = bool(data.get('y_axis_exclude_zero', False))
-        
         self.y_axis_minimum = int(data.get('y_axis_minimum', 0))
         self.y_axis_maximum = int(data.get('y_axis_maximum', 100))
 
