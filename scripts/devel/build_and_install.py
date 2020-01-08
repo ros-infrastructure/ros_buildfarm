@@ -54,7 +54,7 @@ def call_abi_checker(workspace_root, ros_version, env):
             # skip unreleased packages, nothing to do with ABI checking
             pass
     if not pkg_names_released:
-        print("No released packages found in the workspace. Skipping abi-checker run")
+        print('No released packages found in the workspace. Skipping abi-checker run')
         return True
 
     assert len(workspace_root) == 1, 'auto-abi tool needs the implementation of multiple local-dir'
