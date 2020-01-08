@@ -273,9 +273,10 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``tests_require_gpu``: a dictionary to indicate if software tests needs gpu
   support to run correctly.
   * ``default``: a boolean flag as described for *test_commits*.
-  * ``run_only_gpu_tests:``` a dictionary flag to indicate if only gpu tagged
-  tests will be run.
-    * ``default``: a boolean flag as described for *test_commits*.
+
+* ``run_only_gpu_tests``: a dictionary flag to indicate if only gpu tagged
+tests will be run when test_require_gpu is enabled.
+  * ``default``: a boolean flag as described for *test_commits*.
 
 * ``collate_test_stats``: a boolean flag (default: ``False``) controlling
   whether test statistics collation should be enabled for devel jobs.
