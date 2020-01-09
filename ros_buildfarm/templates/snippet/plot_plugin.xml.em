@@ -38,12 +38,12 @@
 @[if plot.y_axis_minimum is not None]@
           <yaxisMinimum>@(plot.y_axis_minimum)</yaxisMinimum>
 @[else]@
-          <yaxisMinimum/>
+          <yaxisMinimum />
 @[end if]@
 @[if plot.y_axis_maximum is not None]@
           <yaxisMaximum>@(plot.y_axis_maximum)</yaxisMaximum>
 @[else]@
-          <yaxisMaximum/>
+          <yaxisMaximum />
 @[end if]@
         </hudson.plugins.plot.Plot>
 @[end for]@
