@@ -43,6 +43,9 @@ class PlotConfig:
 
         self.y_axis_exclude_zero = bool(data.get('y_axis_exclude_zero', False))
 
+        self.y_axis_minimum = data.get('y_axis_minimum', None)
+        self.y_axis_maximum = data.get('y_axis_maximum', None)
+
         self.data_series = []
         if 'data_series' in data:
             data_series_data = data['data_series']
