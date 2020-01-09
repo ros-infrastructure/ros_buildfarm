@@ -35,8 +35,16 @@
           <keepRecords>false</keepRecords>
           <exclZero>@('true' if plot.y_axis_exclude_zero else 'false')</exclZero>
           <logarithmic>false</logarithmic>
+@[if plot.y_axis_minimum_exists]@
           <yaxisMinimum>@(plot.y_axis_minimum)</yaxisMinimum>
+@[else]@
+          <yaxisMinimum/>
+@[end if]@
+@[if plot.y_axis_maximum_exists]@
           <yaxisMaximum>@(plot.y_axis_maximum)</yaxisMaximum>
+@[else]@
+          <yaxisMaximum/>
+@[end if]@
         </hudson.plugins.plot.Plot>
 @[end for]@
 @[end for]@

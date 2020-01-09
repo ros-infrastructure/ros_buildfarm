@@ -42,9 +42,15 @@ class PlotConfig:
             'stackedBar', 'stackedBar3d', 'waterfall')
 
         self.y_axis_exclude_zero = bool(data.get('y_axis_exclude_zero', False))
-        
-        self.y_axis_minimum = int(data.get('y_axis_minimum', 0))
-        self.y_axis_maximum = int(data.get('y_axis_maximum', 100))
+
+        self.y_axis_minimum_exists = 'y_axis_minimum' in data.keys()
+        self.y_axis_maximum_exists = 'y_axis_maximum' in data.keys()
+
+        if(self.y_axis_minimum_exists):
+            self.y_axis_minimum = int(data.get('y_axis_minimum', 0))
+
+        if(self.y_axis_maximum_exists):
+            self.y_axis_maximum = int(data.get('y_axis_maximum', 100))
 
         self.data_series = []
         if 'data_series' in data:
