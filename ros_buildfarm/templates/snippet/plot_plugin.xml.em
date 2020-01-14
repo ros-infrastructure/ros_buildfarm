@@ -27,7 +27,7 @@
 @[end for]@
           </series>
           <group>@(plot_group)</group>
-          <numBuilds />
+          <numBuilds>@(plot.num_build)</numBuilds>
           <csvFileName>@(plot.master_csv_name)</csvFileName>
           <csvLastModification>0</csvLastModification>
           <style>@(plot.style)</style>
