@@ -44,11 +44,11 @@ def call_abi_checker(workspace_root, ros_version, env):
 
     # Filter packages in source space that has been released
     index_file = rosdistro.get_index(rosdistro.get_index_url())
-    distro_file = rosdistro.get_cached_distribution(index_file, env['ROS_DISTRO'])
+    dist = rosdistro.get_cached_distribution(index_file, env['ROS_DISTRO'])
     pkg_names_released = []
     for pkg_name in pkg_names:
         try:
-            if distro_file.get_release_package_xml(pkg_name):
+            if dist.get_release_package_xml(pkg_name):
                 pkg_names_released.append(pkg_name)
         except KeyError:
             # skip unreleased packages, nothing to do with ABI checking
