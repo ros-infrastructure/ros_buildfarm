@@ -43,13 +43,15 @@ def call_abi_checker(workspace_root, ros_version, env):
     assert pkg_names, 'No packages found in the workspace'
 
     # Filter packages in source space that has been released
-    index_file = rosdistro.get_index(rosdistro.get_index_url())
-    dist = rosdistro.get_cached_distribution(index_file, env['ROS_DISTRO'])
+    index = rosdistro.get_index(rosdistro.get_index_url())
+    dist_file = rosdistro.get_distribution_file(index, env['ROS_DISTRO'])
+
     pkg_names_released = []
     for pkg_name in pkg_names:
         try:
-            if dist.get_release_package_xml(pkg_name):
-                pkg_names_released.append(pkg_name)
+            # Check in released packages for pkg_name (KeyError if unreleased)
+            dist_file.release_packages[pkg_name]
+            pkg_names_released.append(pkg_name)
         except KeyError:
             # skip unreleased packages, nothing to do with ABI checking
             pass
