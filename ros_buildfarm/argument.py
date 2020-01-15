@@ -114,14 +114,14 @@ def add_argument_sourcepkg_dir(parser):
     parser.add_argument(
         '--sourcepkg-dir', '--sourcedeb-dir',
         required=True,
-        help='The path to the package source')
+        help='The path to the source package')
 
 
 def add_argument_binarypkg_dir(parser):
     parser.add_argument(
         '--binarypkg-dir', '--binarydeb-dir',
         required=True,
-        help='The path to the package binary package')
+        help='The path to the binary package')
 
 
 def add_argument_skip_download_sourcepkg(parser):
