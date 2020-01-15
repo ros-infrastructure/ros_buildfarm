@@ -49,6 +49,7 @@ class PlotConfig:
         self.num_build = 10
         if 'num_build' in data:
             self.num_build = data['num_build']
+            assert isinstance(self.num_build, int)
 
         self.data_series = []
         if 'data_series' in data:
