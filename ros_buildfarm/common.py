@@ -271,6 +271,8 @@ def get_short_build_name(build_name):
 def get_short_os_name(os_name):
     os_name_mappings = {
         'debian': 'd',
+        'fedora': 'fc',
+        'rhel': 'el',
         'ubuntu': 'u',
     }
     return os_name_mappings.get(os_name, os_name)
@@ -298,10 +300,13 @@ def get_short_os_code_name(os_code_name):
 
 def get_short_arch(arch):
     arch_mappings = {
+        'aarch64': 'v8',
         'amd64': '64',
         'arm64': 'v8',
         'armhf': 'hf',
+        'armhfp': 'hf',
         'i386': '32',
+        'x86_64': '64',
     }
     return arch_mappings.get(arch, arch)
 
