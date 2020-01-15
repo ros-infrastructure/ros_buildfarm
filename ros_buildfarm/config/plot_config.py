@@ -46,10 +46,9 @@ class PlotConfig:
         self.y_axis_minimum = data.get('y_axis_minimum', None)
         self.y_axis_maximum = data.get('y_axis_maximum', None)
 
-        self.num_build = 10
-        if 'num_build' in data:
-            self.num_build = data['num_build']
-            assert isinstance(self.num_build, int)
+        self.num_builds = 10
+        if 'num_builds' in data:
+            self.num_builds = data['num_builds']
 
         self.data_series = []
         if 'data_series' in data:
