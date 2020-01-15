@@ -20,7 +20,7 @@ import sys
 
 from ros_buildfarm.argument import add_argument_append_timestamp
 from ros_buildfarm.argument import add_argument_arch
-from ros_buildfarm.argument import add_argument_binarydeb_dir
+from ros_buildfarm.argument import add_argument_binarypkg_dir
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
@@ -50,7 +50,7 @@ def main(argv=sys.argv[1:]):
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
     add_argument_target_repository(parser)
-    add_argument_binarydeb_dir(parser)
+    add_argument_binarypkg_dir(parser)
     add_argument_dockerfile_dir(parser)
     add_argument_skip_download_sourcedeb(parser)
     add_argument_append_timestamp(parser)
@@ -69,7 +69,7 @@ def main(argv=sys.argv[1:]):
 
         'skip_download_sourcedeb': args.skip_download_sourcedeb,
 
-        'binarydeb_dir': '/tmp/binarydeb',
+        'binarypkg_dir': '/tmp/binarydeb',
         'build_environment_variables': args.env_vars,
         'dockerfile_dir': '/tmp/docker_build_binarydeb',
     })
