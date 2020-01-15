@@ -472,8 +472,8 @@ The following options are valid in version ``1`` (beside the generic options):
     implicit zero value from the y-axis.
   * ``y_axis_minimum``: Minimum y-axis value.
   * ``y_axis_maximum``: Maximum y-axis value.
-  * ``num_build``: Number of builds back to show on this plot. An empty string
-    means all builds. Must not be "0".
+  * ``num_build``: Number of builds back to show on this plot.
+  An empty string means all builds. Must not be "0".
   * ``data_series``: a list of data series definitions comprised of:
 
     * ``data_file``: a path pattern relative to the workspace root to a file
