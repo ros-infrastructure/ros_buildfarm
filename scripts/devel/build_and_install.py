@@ -45,19 +45,7 @@ def call_abi_checker(workspace_root, ros_version, env):
     # Filter packages in source space that has been released
     index = rosdistro.get_index(rosdistro.get_index_url())
     dist_file = rosdistro.get_distribution_file(index, env['ROS_DISTRO'])
-
-    pkg_names_released = []
-    for pkg_name in pkg_names:
-        try:
-            # Check in released packages for pkg_name (KeyError if unreleased)
-            dist_file.release_packages[pkg_name]
-            pkg_names_released.append(pkg_name)
-        except KeyError:
-            # skip unreleased packages, nothing to do with ABI checking
-            pass
-    if not pkg_names_released:
-        print('No released packages found in the workspace. Skipping abi-checker run')
-        return True
+    pkg_names_released = [pkg_name for pkg_name in pkg_names if pkg_name in dist_file.release_packages]
 
     assert len(workspace_root) == 1, 'auto-abi tool needs the implementation of multiple local-dir'
     # ROS_DISTRO is set in the env object
