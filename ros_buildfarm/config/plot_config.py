@@ -46,7 +46,7 @@ class PlotConfig:
         self.y_axis_minimum = data.get('y_axis_minimum', None)
         self.y_axis_maximum = data.get('y_axis_maximum', None)
 
-        self.num_builds = 10
+        self.num_builds = ""
         if 'num_builds' in data:
             self.num_builds = data['num_builds']
 

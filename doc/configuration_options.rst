@@ -474,7 +474,7 @@ The following options are valid in version ``1`` (beside the generic options):
   * ``y_axis_maximum``: Maximum y-axis value.
   * ``num_builds``: Number of builds back to show on this plot.
     An empty string or not defined mean all builds.
-    Must not be "0", the default is 10.
+    Must not be "0", the default value is an empty string.
   * ``data_series``: a list of data series definitions comprised of:
 
     * ``data_file``: a path pattern relative to the workspace root to a file
