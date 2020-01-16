@@ -22,7 +22,7 @@
                 </a>
               </exclusionValuesList>
               <url>@(series.url)</url>
-              <displayTableFlag>false</displayTableFlag>
+              <displayTableFlag>true</displayTableFlag>
             </hudson.plugins.plot.CSVSeries>
 @[end for]@
           </series>
