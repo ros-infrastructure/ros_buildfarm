@@ -92,7 +92,7 @@ class RosdocIndex(object):
             if os.path.exists(path):
                 for key in os.listdir(path):
                     with open(os.path.join(path, key), 'r') as h:
-                        data[key] = yaml.load(h)
+                        data[key] = yaml.safe_load(h)
             maps.append(data)
         return ChainMap(*maps)
 

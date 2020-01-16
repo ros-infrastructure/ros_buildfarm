@@ -185,7 +185,7 @@ def main(argv=sys.argv[1:]):
                     print('- %s: skipping no manifest.yaml yet' % pkg_name)
                     continue
                 with open(current_manifest_yaml_file, 'r') as h:
-                    remote_data = yaml.load(h)
+                    remote_data = yaml.safe_load(h)
                 data = copy.deepcopy(remote_data)
 
                 data['vcs'] = vcs_type
