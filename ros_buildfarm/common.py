@@ -21,7 +21,7 @@ except ImportError:
     from urlparse import urlparse
 
 
-_package_format_mapping = {
+package_format_mapping = {
     'debian': 'deb',
     'fedora': 'rpm',
     'rhel': 'rpm',
