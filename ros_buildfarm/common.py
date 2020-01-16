@@ -20,6 +20,8 @@ try:
 except ImportError:
     from urlparse import urlparse
 
+from .debian_repo import get_debian_repo_index
+
 
 class JobValidationError(Exception):
     """
@@ -557,3 +559,12 @@ def get_packages_in_workspaces(workspace_roots, condition_context):
             pkg.evaluate_conditions(condition_context)
         pkgs.update(ws_pkgs)
     return pkgs
+
+
+def get_package_repo_data(repository_baseurl, targets, cache_dir):
+    data = {}
+    for target in targets:
+        index = get_debian_repo_index(
+            repository_baseurl, target, cache_dir)
+        data[target] = index
+    return data

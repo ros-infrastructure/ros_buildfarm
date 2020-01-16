@@ -15,7 +15,7 @@
 import logging
 import os
 
-from .package_repo import fetch_and_cache_gzip
+from .http_cache import fetch_and_cache_gzip
 
 
 def get_debian_repo_index(debian_repository_baseurl, target, cache_dir):

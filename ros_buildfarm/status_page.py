@@ -27,12 +27,12 @@ import time
 import yaml
 
 from .common import get_debian_package_name
+from .common import get_package_repo_data
 from .common import get_release_view_name
 from .common import get_short_arch
 from .common import Target
 from .config import get_index as get_config_index
 from .config import get_release_build_files
-from .package_repo import get_package_repo_data
 from .status_page_input import get_rosdistro_info
 from .status_page_input import RosPackage
 from .templates import expand_template

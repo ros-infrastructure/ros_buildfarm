@@ -20,11 +20,11 @@ from rosdistro import get_index
 
 from .common import get_binarydeb_job_name
 from .common import get_debian_package_name
+from .common import get_package_repo_data
 from .common import get_sourcedeb_job_name
 from .common import Target
 from .config import get_index as get_config_index
 from .config import get_release_build_files
-from .package_repo import get_package_repo_data
 from .status_page import _strip_version_suffix
 from .templates import expand_template
 
