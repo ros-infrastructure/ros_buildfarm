@@ -32,7 +32,7 @@ from .common import get_short_arch
 from .common import Target
 from .config import get_index as get_config_index
 from .config import get_release_build_files
-from .debian_repo import get_debian_repo_data
+from .package_repo import get_package_repo_data
 from .status_page_input import get_rosdistro_info
 from .status_page_input import RosPackage
 from .templates import expand_template
@@ -77,11 +77,11 @@ def build_release_status_page(
     testing_repo_url = os.path.join(base_url, 'testing')
     main_repo_url = os.path.join(base_url, 'main')
 
-    building_repo_data = get_debian_repo_data(
+    building_repo_data = get_package_repo_data(
         building_repo_url, targets, cache_dir)
-    testing_repo_data = get_debian_repo_data(
+    testing_repo_data = get_package_repo_data(
         testing_repo_url, targets, cache_dir)
-    main_repo_data = get_debian_repo_data(main_repo_url, targets, cache_dir)
+    main_repo_data = get_package_repo_data(main_repo_url, targets, cache_dir)
 
     repos_data = [building_repo_data, testing_repo_data, main_repo_data]
 
@@ -178,7 +178,7 @@ def build_debian_repos_status_page(
     # get all input data
     repos_data = []
     for repo_url in repo_urls:
-        repo_data = get_debian_repo_data(repo_url, targets, cache_dir)
+        repo_data = get_package_repo_data(repo_url, targets, cache_dir)
         repos_data.append(repo_data)
 
     # compute derived attributes

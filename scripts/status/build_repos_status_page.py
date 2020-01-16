@@ -32,7 +32,7 @@ def main(argv=sys.argv[1:]):
     add_argument_rosdistro_name(parser)
     add_argument_debian_repository_urls(parser)
     add_argument_os_code_name_and_arch_tuples(parser)
-    add_argument_cache_dir(parser, '/tmp/debian_repo_cache')
+    add_argument_cache_dir(parser, '/tmp/package_repo_cache')
     add_argument_output_name(parser)
     add_argument_output_dir(parser)
     args = parser.parse_args(argv)

@@ -103,7 +103,7 @@ if missed_jobs:
         ' ' + ' '.join(repository_args) +
         ' $args' +
         ' --groovy-script /tmp/trigger_jobs/trigger_jobs.groovy' +
-        ' --cache-dir /tmp/debian_repo_cache' +
+        ' --cache-dir /tmp/package_repo_cache' +
         ' --dockerfile-dir $WORKSPACE/docker_trigger_jobs',
         'echo "# END SECTION"',
         '',
@@ -114,8 +114,8 @@ if missed_jobs:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - trigger jobs"',
-        'rm -fr $WORKSPACE/debian_repo_cache',
-        'mkdir -p $WORKSPACE/debian_repo_cache',
+        'rm -fr $WORKSPACE/package_repo_cache',
+        'mkdir -p $WORKSPACE/package_repo_cache',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_trigger_jobs/docker.cid' +
@@ -123,7 +123,7 @@ if missed_jobs:
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v %s:%s:ro' % (credentials_src, credentials_dst) +
         ' -v $WORKSPACE/trigger_jobs:/tmp/trigger_jobs' +
-        ' -v $WORKSPACE/debian_repo_cache:/tmp/debian_repo_cache' +
+        ' -v $WORKSPACE/package_repo_cache:/tmp/package_repo_cache' +
         ' release_trigger_jobs',
         'echo "# END SECTION"',
     ]),

@@ -38,7 +38,7 @@ def main(argv=sys.argv[1:]):
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_build_name(parser, 'release')
-    add_argument_cache_dir(parser, '/tmp/debian_repo_cache')
+    add_argument_cache_dir(parser, '/tmp/package_repo_cache')
     add_argument_output_dir(parser)
     parser.add_argument(
         '--copy-resources',

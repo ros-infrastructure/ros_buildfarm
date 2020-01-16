@@ -75,16 +75,16 @@
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - status page"',
-        'rm -fr $WORKSPACE/debian_repo_cache',
+        'rm -fr $WORKSPACE/package_repo_cache',
         'rm -fr $WORKSPACE/status_page',
-        'mkdir -p $WORKSPACE/debian_repo_cache',
+        'mkdir -p $WORKSPACE/package_repo_cache',
         'mkdir -p $WORKSPACE/status_page',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_status_page/docker.cid' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/debian_repo_cache:/tmp/debian_repo_cache' +
+        ' -v $WORKSPACE/package_repo_cache:/tmp/package_repo_cache' +
         ' -v $WORKSPACE/status_page:/tmp/status_page' +
         ' status_page_generation',
         'echo "# END SECTION"',

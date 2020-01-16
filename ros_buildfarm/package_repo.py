@@ -28,6 +28,17 @@ except ImportError:
     from urllib2 import URLError
     from urllib2 import urlopen
 
+from .debian_repo import get_debian_repo_index
+
+
+def get_package_repo_data(repository_baseurl, targets, cache_dir):
+    data = {}
+    for target in targets:
+        index = get_debian_repo_index(
+            repository_baseurl, target, cache_dir)
+        data[target] = index
+    return data
+
 
 def fetch_and_cache_gzip(url, cache_dir):
     cache_filename = os.path.join(

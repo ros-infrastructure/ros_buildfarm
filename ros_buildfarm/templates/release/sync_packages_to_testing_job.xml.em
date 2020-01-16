@@ -62,7 +62,7 @@
         ' ' + os_code_name +
         ' ' + arch +
         ' ' + ' '.join(repository_args) +
-        ' --cache-dir /tmp/debian_repo_cache' +
+        ' --cache-dir /tmp/package_repo_cache' +
         ' --dockerfile-dir $WORKSPACE/docker_check_sync_criteria',
         'echo "# END SECTION"',
         '',
@@ -73,13 +73,13 @@
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - check sync condition"',
-        'rm -fr $WORKSPACE/debian_repo_cache',
-        'mkdir -p $WORKSPACE/debian_repo_cache',
+        'rm -fr $WORKSPACE/package_repo_cache',
+        'mkdir -p $WORKSPACE/package_repo_cache',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_check_sync_criteria/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/debian_repo_cache:/tmp/debian_repo_cache' +
+        ' -v $WORKSPACE/package_repo_cache:/tmp/package_repo_cache' +
         ' check_sync_condition',
         'echo "# END SECTION"',
     ]),

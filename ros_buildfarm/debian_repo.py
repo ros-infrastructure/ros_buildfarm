@@ -18,15 +18,6 @@ import os
 from .package_repo import fetch_and_cache_gzip
 
 
-def get_debian_repo_data(debian_repository_baseurl, targets, cache_dir):
-    data = {}
-    for target in targets:
-        index = get_debian_repo_index(
-            debian_repository_baseurl, target, cache_dir)
-        data[target] = index
-    return data
-
-
 def get_debian_repo_index(debian_repository_baseurl, target, cache_dir):
     url = os.path.join(
         debian_repository_baseurl, 'dists', target.os_code_name, 'main')
