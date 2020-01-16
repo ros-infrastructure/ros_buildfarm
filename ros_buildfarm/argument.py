@@ -360,9 +360,6 @@ def add_argument_require_gpu_support(parser):
     parser.add_argument(
         '--require-gpu-support', action='store_true',
         help='GPU acceleration is needed in the build container')
-    parser.add_argument(
-        '--run-only-gpu-tests', action='store_true',
-        help='Only run tests that require GPU when --require-gpu-support is enabled')
 
 
 def add_argument_skip_cleanup(parser):

@@ -123,16 +123,11 @@ class SourceBuildFile(BuildFile):
                 self.test_abi_force = bool(
                     data['test_abi']['force'])
 
-        self.run_only_gpu_tests = False
         self.tests_require_gpu_default = False
         if 'tests_require_gpu' in data:
             if 'default' in data['tests_require_gpu']:
                 self.tests_require_gpu_default = bool(
                     data['tests_require_gpu']['default'])
-            if 'run_only_gpu_tests' in data['tests_require_gpu']:
-                if 'default' in data['tests_require_gpu']['run_only_gpu_tests']:
-                    self.run_only_gpu_tests = bool(
-                        data['tests_require_gpu']['run_only_gpu_tests']['default'])
 
         self.collate_test_stats = bool(data.get('collate_test_stats', False))
 

@@ -21,7 +21,6 @@ import sys
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
 from ros_buildfarm.argument import add_argument_require_gpu_support
-from ros_buildfarm.common import has_gpu_support
 from ros_buildfarm.common import Scope
 from ros_buildfarm.workspace import call_build_tool
 from ros_buildfarm.workspace import clean_workspace
@@ -76,19 +75,6 @@ def main(argv=sys.argv[1:]):
                 '-DBUILD_TESTING=1',
                 '-DCATKIN_ENABLE_TESTING=1', '-DCATKIN_SKIP_TESTING=0',
                 '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir]
-            # Check gpu support
-            # No GPU support will exclude gpu_test tag by default
-            ctest_args = ['-LE', 'gpu_test']
-            if args.require_gpu_support:
-                if not has_gpu_support():
-                    print('--require-gpu-support is enabled but can not '
-                          'detect nvidia support installed')
-                    sys.exit(-1)
-                if args.run_only_gpu_tests:
-                    ctest_args = ['-L', 'gpu_test']
-                else:
-                    # GPU support, run all tests
-                    ctest_args = []
             additional_args = args.build_tool_args or []
             if args.build_tool == 'colcon':
                 additional_args += ['--test-result-base', test_results_dir]
@@ -98,7 +84,6 @@ def main(argv=sys.argv[1:]):
                 args.build_tool, args.rosdistro_name, args.workspace_root,
                 cmake_clean_cache=True,
                 cmake_args=cmake_args, args=additional_args,
-                ctest_args=None,
                 parent_result_spaces=parent_result_spaces, env=env)
         if not rc:
             with Scope('SUBSECTION', 'build tests'):
@@ -108,7 +93,6 @@ def main(argv=sys.argv[1:]):
                 rc = call_build_tool(
                     args.build_tool, args.rosdistro_name, args.workspace_root,
                     cmake_args=cmake_args,
-                    ctest_args=None,
                     make_args=['tests'], args=additional_args,
                     parent_result_spaces=parent_result_spaces, env=env)
             if not rc:
@@ -116,7 +100,6 @@ def main(argv=sys.argv[1:]):
                 additional_args = args.build_tool_args or []
                 if args.build_tool == 'colcon':
                     cmake_args = None
-                    ctest_args = ctest_args
                     make_args = None
                     additional_args = ['--test-result-base', test_results_dir]
                 # for workspaces with only plain cmake packages the setup files
@@ -135,7 +118,6 @@ def main(argv=sys.argv[1:]):
                         args.build_tool,
                         args.rosdistro_name, args.workspace_root,
                         cmake_args=cmake_args,
-                        ctest_args=ctest_args,
                         force_cmake=args.build_tool == 'catkin_make_isolated',
                         make_args=make_args, args=additional_args,
                         parent_result_spaces=parent_result_spaces, env=env,

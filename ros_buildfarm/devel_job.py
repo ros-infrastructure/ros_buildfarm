@@ -173,7 +173,6 @@ def configure_devel_jobs(
 
         # check for gpu support
         require_gpu_support = False
-        run_only_gpu_tests = False
         if getattr(repo.source_repository, 'tests_require_gpu', None) is False:
             pass
         elif getattr(repo.source_repository, 'tests_require_gpu', None) is None and \
@@ -182,15 +181,6 @@ def configure_devel_jobs(
         else:
             print("GPU support is required for repository '%s'" % repo_name)
             require_gpu_support = True
-            # check if only gpu tests needs to be run
-            if getattr(repo.source_repository, 'run_only_gpu_tests', None) is False:
-                pass
-            elif getattr(repo.source_repository, 'run_only_gpu_tests', None) is None and \
-                    not build_file.run_only_gpu_tests:
-                pass
-            else:
-                print('  - only GPU tests will be run')
-                run_only_gpu_tests = True
 
         for job_type in job_types:
             pull_request = job_type == 'pull_request'
@@ -206,8 +196,7 @@ def configure_devel_jobs(
                         groovy_script=groovy_script,
                         dry_run=dry_run,
                         run_abichecker=run_abichecker,
-                        require_gpu_support=require_gpu_support,
-                        run_only_gpu_tests=run_only_gpu_tests)
+                        require_gpu_support=require_gpu_support)
                     if not pull_request:
                         devel_job_names.append(job_name)
                     else:
@@ -262,8 +251,7 @@ def configure_devel_job(
         build_targets=None,
         dry_run=False,
         run_abichecker=None,
-        require_gpu_support=None,
-        run_only_gpu_tests=None):
+        require_gpu_support=None):
     """
     Configure a single Jenkins devel job.
 
@@ -343,8 +331,7 @@ def configure_devel_job(
         build_file, os_name, os_code_name, arch, source_repository,
         repo_name, pull_request, job_name, dist_cache=dist_cache,
         is_disabled=is_disabled, run_abichecker=run_abichecker,
-        require_gpu_support=require_gpu_support,
-        run_only_gpu_tests=run_only_gpu_tests)
+        require_gpu_support=require_gpu_support)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
@@ -365,7 +352,7 @@ def _get_devel_job_config(
         build_file, os_name, os_code_name, arch, source_repo_spec,
         repo_name, pull_request, job_name, dist_cache=None,
         is_disabled=False, run_abichecker=None,
-        require_gpu_support=None, run_only_gpu_tests=None):
+        require_gpu_support=None):
     template_name = 'devel/devel_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -438,7 +425,6 @@ def _get_devel_job_config(
 
         'run_abichecker': run_abichecker,
         'require_gpu_support': require_gpu_support,
-        'run_only_gpu_tests': run_only_gpu_tests,
         'notify_compiler_warnings': build_file.notify_compiler_warnings,
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,

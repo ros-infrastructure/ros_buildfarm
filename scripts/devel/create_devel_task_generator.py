@@ -184,7 +184,6 @@ def main(argv=sys.argv[1:]):
         'testing': args.testing,
         'run_abichecker': args.run_abichecker,
         'require_gpu_support': args.require_gpu_support,
-        'run_only_gpu_tests': args.run_only_gpu_tests,
         'workspace_root': mapped_workspaces[-1][1],
         'parent_result_space': parent_result_space,
     }
