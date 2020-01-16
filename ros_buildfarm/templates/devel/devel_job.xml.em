@@ -189,7 +189,6 @@ if pull_request:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
-        'echo faaa',
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
         ('if [ ! -c /dev/nvidia[0-9] ]; then echo "--require-gpu-support is enabled but can not detect nvidia support installed" && exit 1; fi' if require_gpu_support else ''),
         'docker run' +
