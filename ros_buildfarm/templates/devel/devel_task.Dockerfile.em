@@ -25,6 +25,10 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN useradd -u @uid -l -m buildfarm
 
 @(TEMPLATE(
+    'snippet/setup_nvidia_docker2.Dockerfile.em'
+))@
+
+@(TEMPLATE(
     'snippet/add_distribution_repositories.Dockerfile.em',
     distribution_repository_keys=distribution_repository_keys,
     distribution_repository_urls=distribution_repository_urls,
@@ -110,6 +114,8 @@ else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
         ' --rosdistro-name %s' % rosdistro_name
+    if require_gpu_support:
+        cmd += ' --require-gpu-support'
 cmd += \
     ' --build-tool ' + build_tool + \
     ' --workspace-root ' + workspace_root + \

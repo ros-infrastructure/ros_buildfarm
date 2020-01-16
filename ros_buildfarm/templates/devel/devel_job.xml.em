@@ -139,6 +139,7 @@ if pull_request:
         ' --build-tool ' + build_tool +
         ' --ros-version ' + str(ros_version) +
         (' --run-abichecker' if run_abichecker else '') +
+        (' --require-gpu-support' if require_gpu_support else '') +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
         'echo "# END SECTION"',
@@ -189,7 +190,9 @@ if pull_request:
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
+        ('if [ ! -c /dev/nvidia[0-9] ]; then echo "--require-gpu-support is enabled but can not detect nvidia support installed" && exit 1; fi' if require_gpu_support else ''),
         'docker run' +
+        (' --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw --gpus all' if require_gpu_support else '') +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
@@ -220,6 +223,7 @@ if pull_request:
         ''
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
         'docker run' +
+        (' --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw  --gpus all' if require_gpu_support else '') +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +

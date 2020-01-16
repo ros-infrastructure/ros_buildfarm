@@ -123,6 +123,12 @@ class SourceBuildFile(BuildFile):
                 self.test_abi_force = bool(
                     data['test_abi']['force'])
 
+        self.tests_require_gpu_default = False
+        if 'tests_require_gpu' in data:
+            if 'default' in data['tests_require_gpu']:
+                self.tests_require_gpu_default = bool(
+                    data['tests_require_gpu']['default'])
+
         self.collate_test_stats = bool(data.get('collate_test_stats', False))
 
     def filter_repositories(self, repository_names):

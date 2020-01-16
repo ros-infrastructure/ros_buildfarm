@@ -356,6 +356,12 @@ def add_argument_run_abichecker(parser):
         help='Run the ABI checker when compiling packages')
 
 
+def add_argument_require_gpu_support(parser):
+    parser.add_argument(
+        '--require-gpu-support', action='store_true',
+        help='GPU acceleration is needed in the build container')
+
+
 def add_argument_skip_cleanup(parser):
     parser.add_argument(
         '--skip-cleanup', action='store_true',

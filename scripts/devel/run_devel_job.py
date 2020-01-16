@@ -31,6 +31,7 @@ from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_repository_name
+from ros_buildfarm.argument import add_argument_require_gpu_support
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
@@ -63,6 +64,7 @@ def main(argv=sys.argv[1:]):
     add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)
     add_argument_run_abichecker(parser)
+    add_argument_require_gpu_support(parser)
     args = parser.parse_args(argv)
 
     data = copy.deepcopy(args.__dict__)

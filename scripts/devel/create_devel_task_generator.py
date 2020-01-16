@@ -25,6 +25,7 @@ from ros_buildfarm.argument import \
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
+from ros_buildfarm.argument import add_argument_require_gpu_support
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.common import get_binary_package_versions
@@ -68,6 +69,7 @@ def main(argv=sys.argv[1:]):
     add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)
     add_argument_run_abichecker(parser)
+    add_argument_require_gpu_support(parser)
     parser.add_argument(
         '--testing',
         action='store_true',
@@ -181,6 +183,7 @@ def main(argv=sys.argv[1:]):
 
         'testing': args.testing,
         'run_abichecker': args.run_abichecker,
+        'require_gpu_support': args.require_gpu_support,
         'workspace_root': mapped_workspaces[-1][1],
         'parent_result_space': parent_result_space,
     }

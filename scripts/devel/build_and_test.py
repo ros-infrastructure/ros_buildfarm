@@ -20,6 +20,7 @@ import sys
 
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
+from ros_buildfarm.argument import add_argument_require_gpu_support
 from ros_buildfarm.common import Scope
 from ros_buildfarm.workspace import call_build_tool
 from ros_buildfarm.workspace import clean_workspace
@@ -54,6 +55,7 @@ def main(argv=sys.argv[1:]):
         action='store_true',
         help='The flag if the workspace should be cleaned after the '
              'invocation')
+    add_argument_require_gpu_support(parser)
     args = parser.parse_args(argv)
 
     ensure_workspace_exists(args.workspace_root)
