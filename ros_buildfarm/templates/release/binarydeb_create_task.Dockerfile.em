@@ -77,7 +77,7 @@ cmds = [
     ' ' + rosdistro_name +
     ' ' + package_name +
     ' --sourcepkg-dir ' + binarypkg_dir +
-    (' --skip-download-sourcedeb' if skip_download_sourcedeb else ''),
+    (' --skip-download-sourcepkg' if skip_download_sourcepkg else ''),
 ]
 
 if append_timestamp:

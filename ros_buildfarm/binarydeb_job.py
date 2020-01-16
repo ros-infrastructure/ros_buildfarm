@@ -24,7 +24,7 @@ from ros_buildfarm.release_common import dpkg_parsechangelog
 
 def get_sourcedeb(
         rosdistro_index_url, rosdistro_name, package_name, sourcepkg_dir,
-        skip_download_sourcedeb=False):
+        skip_download_sourcepkg=False):
     # ensure that no source subfolder exists
     debian_package_name = get_debian_package_name(rosdistro_name, package_name)
     subfolders = _get_package_subfolders(sourcepkg_dir, debian_package_name)
@@ -33,7 +33,7 @@ def get_sourcedeb(
          "subfolders starting with '%s-'") % (sourcepkg_dir, package_name)
 
     debian_package_name = get_debian_package_name(rosdistro_name, package_name)
-    if not skip_download_sourcedeb:
+    if not skip_download_sourcepkg:
         # get expected package version from rosdistro
         from rosdistro import get_distribution_cache
         from rosdistro import get_index
