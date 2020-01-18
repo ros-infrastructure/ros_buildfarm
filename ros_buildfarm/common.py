@@ -21,6 +21,14 @@ except ImportError:
     from urlparse import urlparse
 
 
+package_format_mapping = {
+    'debian': 'deb',
+    'fedora': 'rpm',
+    'rhel': 'rpm',
+    'ubuntu': 'deb',
+}
+
+
 class JobValidationError(Exception):
     """
     Indicates that the validation of a build job failed.
