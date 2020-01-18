@@ -12,7 +12,7 @@ def get_generator_output_folders(pkg_rosdoc_config_file, pkg_name):
         with open(pkg_rosdoc_config_file, 'r') as h:
             content = h.read()
         try:
-            data = yaml.load(content)
+            data = yaml.safe_load(content)
         except Exception as e:
             print("WARNING: package '%s' has an invalid rosdoc config: %s" %
                   (pkg_name, e), file=sys.stderr)

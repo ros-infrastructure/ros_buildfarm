@@ -32,7 +32,7 @@ logger = logging.getLogger('ros_buildfarm.config')
 def get_index(url):
     logger.debug("Load index from '%s'" % url)
     yaml_str = load_url(url)
-    data = yaml.load(yaml_str)
+    data = yaml.safe_load(yaml_str)
     base_url = os.path.dirname(url)
     return Index(data, base_url)
 
@@ -104,7 +104,7 @@ def _load_build_file_data(entries):
     def _load_yaml_data(url):
         logger.debug('Load file from "%s"' % url)
         yaml_str = load_url(url)
-        return yaml.load(yaml_str)
+        return yaml.safe_load(yaml_str)
 
     data = {}
     for k, v in entries.items():
