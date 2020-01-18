@@ -102,7 +102,7 @@ def main(argv=sys.argv[1:]):
 
     # inject additional argument to skip fetching sourcedeb from repo
     script_name = '/run_binarydeb_job.py '
-    additional_argument = '--skip-download-sourcedeb '
+    additional_argument = '--skip-download-sourcepkg '
     for i, script in enumerate(binary_scripts):
         offset = script.find(script_name)
         if offset != -1:

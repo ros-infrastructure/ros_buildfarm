@@ -22,7 +22,7 @@ import sys
 
 from apt import Cache
 from ros_buildfarm.argument import add_argument_arch
-from ros_buildfarm.argument import add_argument_binarydeb_dir
+from ros_buildfarm.argument import add_argument_binarypkg_dir
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
@@ -53,7 +53,7 @@ def main(argv=sys.argv[1:]):
     add_argument_arch(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
-    add_argument_binarydeb_dir(parser)
+    add_argument_binarypkg_dir(parser)
     add_argument_dockerfile_dir(parser)
     add_argument_env_vars(parser)
     args = parser.parse_args(argv)
@@ -76,7 +76,7 @@ def main(argv=sys.argv[1:]):
 
     # add build dependencies from .dsc file
     dsc_file = get_dsc_file(
-        args.binarydeb_dir, debian_package_name, debian_package_version)
+        args.binarypkg_dir, debian_package_name, debian_package_version)
     debian_pkg_names += sorted(get_build_depends(dsc_file))
 
     # get versions for build dependencies
@@ -105,7 +105,7 @@ def main(argv=sys.argv[1:]):
 
         'rosdistro_name': args.rosdistro_name,
         'package_name': args.package_name,
-        'binarydeb_dir': args.binarydeb_dir,
+        'binarypkg_dir': args.binarypkg_dir,
     }
     create_dockerfile(
         'release/binarydeb_task.Dockerfile.em', data, args.dockerfile_dir)
@@ -115,7 +115,7 @@ def main(argv=sys.argv[1:]):
         os.path.join(os.path.dirname(__file__), '..', '..'))
     print('Mount the following volumes when running the container:')
     print('  -v %s:/tmp/ros_buildfarm:ro' % ros_buildfarm_basepath)
-    print('  -v %s:/tmp/binarydeb' % args.binarydeb_dir)
+    print('  -v %s:/tmp/binarydeb' % args.binarypkg_dir)
 
 
 def get_dsc_file(basepath, debian_package_name, debian_package_version):

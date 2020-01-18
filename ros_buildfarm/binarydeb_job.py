@@ -23,17 +23,17 @@ from ros_buildfarm.release_common import dpkg_parsechangelog
 
 
 def get_sourcedeb(
-        rosdistro_index_url, rosdistro_name, package_name, sourcedeb_dir,
-        skip_download_sourcedeb=False):
+        rosdistro_index_url, rosdistro_name, package_name, sourcepkg_dir,
+        skip_download_sourcepkg=False):
     # ensure that no source subfolder exists
     debian_package_name = get_debian_package_name(rosdistro_name, package_name)
-    subfolders = _get_package_subfolders(sourcedeb_dir, debian_package_name)
+    subfolders = _get_package_subfolders(sourcepkg_dir, debian_package_name)
     assert not subfolders, \
         ("Sourcedeb directory '%s' must not have any " +
-         "subfolders starting with '%s-'") % (sourcedeb_dir, package_name)
+         "subfolders starting with '%s-'") % (sourcepkg_dir, package_name)
 
     debian_package_name = get_debian_package_name(rosdistro_name, package_name)
-    if not skip_download_sourcedeb:
+    if not skip_download_sourcepkg:
         # get expected package version from rosdistro
         from rosdistro import get_distribution_cache
         from rosdistro import get_index
@@ -64,18 +64,18 @@ def get_sourcedeb(
             'source', '--download-only', '--only-source',
             debian_package_name + '=' + debian_package_versions[0]]
         print("Invoking '%s'" % ' '.join(cmd))
-        subprocess.check_call(cmd, cwd=sourcedeb_dir)
+        subprocess.check_call(cmd, cwd=sourcepkg_dir)
 
     # extract sourcedeb
-    filenames = _get_package_dsc_filename(sourcedeb_dir, debian_package_name)
+    filenames = _get_package_dsc_filename(sourcepkg_dir, debian_package_name)
     assert len(filenames) == 1, filenames
     dsc_filename = filenames[0]
     cmd = ['dpkg-source', '-x', dsc_filename]
     print("Invoking '%s'" % ' '.join(cmd))
-    subprocess.check_call(cmd, cwd=sourcedeb_dir)
+    subprocess.check_call(cmd, cwd=sourcepkg_dir)
 
     # ensure that one source subfolder exists
-    subfolders = _get_package_subfolders(sourcedeb_dir, debian_package_name)
+    subfolders = _get_package_subfolders(sourcepkg_dir, debian_package_name)
     assert len(subfolders) == 1, subfolders
     source_dir = subfolders[0]
 
@@ -90,10 +90,10 @@ def get_sourcedeb(
               ' '.join(sorted(maintainer_emails)))
 
 
-def append_build_timestamp(rosdistro_name, package_name, sourcedeb_dir):
+def append_build_timestamp(rosdistro_name, package_name, sourcepkg_dir):
     # ensure that one source subfolder exists
     debian_package_name = get_debian_package_name(rosdistro_name, package_name)
-    subfolders = _get_package_subfolders(sourcedeb_dir, debian_package_name)
+    subfolders = _get_package_subfolders(sourcepkg_dir, debian_package_name)
     assert len(subfolders) == 1, subfolders
     source_dir = subfolders[0]
 
@@ -117,10 +117,10 @@ def append_build_timestamp(rosdistro_name, package_name, sourcedeb_dir):
     subprocess.check_call(cmd, cwd=source_dir)
 
 
-def build_binarydeb(rosdistro_name, package_name, sourcedeb_dir):
+def build_binarydeb(rosdistro_name, package_name, sourcepkg_dir):
     # ensure that one source subfolder exists
     debian_package_name = get_debian_package_name(rosdistro_name, package_name)
-    subfolders = _get_package_subfolders(sourcedeb_dir, debian_package_name)
+    subfolders = _get_package_subfolders(sourcepkg_dir, debian_package_name)
     assert len(subfolders) == 1, subfolders
     source_dir = subfolders[0]
 

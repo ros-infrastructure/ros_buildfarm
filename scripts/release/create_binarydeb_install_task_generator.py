@@ -18,7 +18,7 @@ import argparse
 import sys
 
 from ros_buildfarm.argument import add_argument_arch
-from ros_buildfarm.argument import add_argument_binarydeb_dir
+from ros_buildfarm.argument import add_argument_binarypkg_dir
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
@@ -37,7 +37,7 @@ def main(argv=sys.argv[1:]):
     add_argument_arch(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
-    add_argument_binarydeb_dir(parser)
+    add_argument_binarypkg_dir(parser)
     add_argument_dockerfile_dir(parser)
     args = parser.parse_args(argv)
 
@@ -58,7 +58,7 @@ def main(argv=sys.argv[1:]):
 
     # output hints about necessary volumes to mount
     print('Mount the following volumes when running the container:')
-    print('  -v %s:/tmp/binarydeb:ro' % args.binarydeb_dir)
+    print('  -v %s:/tmp/binarydeb:ro' % args.binarypkg_dir)
 
 
 if __name__ == '__main__':

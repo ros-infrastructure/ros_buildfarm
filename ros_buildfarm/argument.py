@@ -110,32 +110,32 @@ def add_argument_source_dir(parser):
         help='The path to the package sources')
 
 
-def add_argument_sourcedeb_dir(parser):
+def add_argument_sourcepkg_dir(parser):
     parser.add_argument(
-        '--sourcedeb-dir',
+        '--sourcepkg-dir', '--sourcedeb-dir',
         required=True,
-        help='The path to the package sourcedeb')
+        help='The path to the source package')
 
 
-def add_argument_binarydeb_dir(parser):
+def add_argument_binarypkg_dir(parser):
     parser.add_argument(
-        '--binarydeb-dir',
+        '--binarypkg-dir', '--binarydeb-dir',
         required=True,
-        help='The path to the package binarydeb')
+        help='The path to the binary package')
 
 
-def add_argument_skip_download_sourcedeb(parser):
+def add_argument_skip_download_sourcepkg(parser):
     parser.add_argument(
-        '--skip-download-sourcedeb',
+        '--skip-download-sourcepkg', '--skip-download-sourcedeb',
         action='store_true',
-        help='Skip downloading sourcedeb and expect it to be already there')
+        help='Skip downloading source package and expect it to be already there')
 
 
 def add_argument_append_timestamp(parser):
     parser.add_argument(
         '--append-timestamp',
         action='store_true',
-        help='Append timestamp to binarydeb version')
+        help='Append timestamp to binary package version')
 
 
 def add_argument_output_dir(parser, required=False):
