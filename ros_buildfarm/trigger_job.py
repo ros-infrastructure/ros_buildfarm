@@ -20,11 +20,11 @@ from rosdistro import get_index
 
 from .common import get_binarydeb_job_name
 from .common import get_debian_package_name
+from .common import get_package_repo_data
 from .common import get_sourcedeb_job_name
 from .common import Target
 from .config import get_index as get_config_index
 from .config import get_release_build_files
-from .debian_repo import get_debian_repo_data
 from .status_page import _strip_version_suffix
 from .templates import expand_template
 
@@ -60,7 +60,7 @@ def trigger_release_jobs(
 
     repo_data = None
     if missing_only:
-        repo_data = get_debian_repo_data(
+        repo_data = get_package_repo_data(
             build_file.target_repository, targets, cache_dir)
 
     if groovy_script is None:

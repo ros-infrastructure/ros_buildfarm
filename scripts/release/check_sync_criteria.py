@@ -43,7 +43,7 @@ def main(argv=sys.argv[1:]):
     add_argument_build_name(parser, 'release')
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
-    add_argument_cache_dir(parser, '/tmp/debian_repo_cache')
+    add_argument_cache_dir(parser, '/tmp/package_repo_cache')
     args = parser.parse_args(argv)
 
     success = check_sync_criteria(
