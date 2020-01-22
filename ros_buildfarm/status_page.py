@@ -30,6 +30,7 @@ from .common import get_debian_package_name
 from .common import get_package_repo_data
 from .common import get_release_view_name
 from .common import get_short_arch
+from .common import get_short_os_code_name
 from .common import Target
 from .config import get_index as get_config_index
 from .config import get_release_build_files
@@ -134,6 +135,8 @@ def build_release_status_page(
         'targets': targets,
         'short_arches': dict(
             [(t.arch, get_short_arch(t.arch)) for t in targets]),
+        'short_code_names': dict(
+            [(t.os_code_name, get_short_os_code_name(t.os_code_name)) for t in targets]),
         'repos_data': repos_data,
 
         'affected_by_sync': affected_by_sync,
@@ -230,6 +233,8 @@ def build_debian_repos_status_page(
         'targets': targets,
         'short_arches': dict(
             [(t.arch, get_short_arch(t.arch)) for t in targets]),
+        'short_code_names': dict(
+            [(t.os_code_name, get_short_os_code_name(t.os_code_name)) for t in targets]),
         'repos_data': repos_data,
 
         'affected_by_sync': None,
