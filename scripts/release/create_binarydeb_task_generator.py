@@ -34,8 +34,8 @@ from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_binary_package_versions
-from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import get_distribution_repository_keys
+from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
 from rosdistro import get_distribution_file

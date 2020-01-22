@@ -18,10 +18,10 @@ from collections import OrderedDict
 import sys
 
 from ros_buildfarm.common import get_binarydeb_job_name
-from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import get_default_node_label
 from ros_buildfarm.common import get_github_project_url
 from ros_buildfarm.common import get_node_label
+from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import get_release_binary_view_name
 from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import get_release_source_view_name

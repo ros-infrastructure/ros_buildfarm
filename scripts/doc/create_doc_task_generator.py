@@ -39,10 +39,10 @@ from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_vcs_information
 from ros_buildfarm.common import find_executable
 from ros_buildfarm.common import get_binary_package_versions
-from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import get_devel_job_urls
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_doc_job_url
+from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import get_release_job_urls
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.common import Scope
