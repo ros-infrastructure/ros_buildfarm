@@ -7,6 +7,15 @@
               <properties>@ESCAPE(parameters)</properties>
               <textParamValueOnNewLine>false</textParamValueOnNewLine>
             </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+@[if parameter_files]@
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+              <propertiesFile>@(','.join(ESCAPE(parameter_files)))</propertiesFile>
+              <failTriggerOnMissing>false</failTriggerOnMissing>
+              <textParamValueOnNewLine>false</textParamValueOnNewLine>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+@[end if]@
           </configs>
 @[else]@
           <configs class="empty-list"/>
