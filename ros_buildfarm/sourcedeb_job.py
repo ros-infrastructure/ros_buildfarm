@@ -17,7 +17,7 @@ import subprocess
 from urllib.error import HTTPError
 from urllib.request import urlretrieve
 
-from ros_buildfarm.common import get_debian_package_name
+from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.release_common import dpkg_parsechangelog
 
 
@@ -63,7 +63,7 @@ def get_sources(
 
     # If a tarball already exists reuse it
     origtgz_version = pkg_version.split('-')[0]
-    debian_package_name = get_debian_package_name(rosdistro_name, pkg_name)
+    debian_package_name = get_os_package_name(rosdistro_name, pkg_name)
     filename = '%s_%s.orig.tar.gz' % (debian_package_name, origtgz_version)
 
     URL_TEMPLATE = '%s/pool/main/%s/%s/%s'
@@ -98,7 +98,7 @@ def _get_source_tag(
         rosdistro_name, pkg_name, pkg_version, os_name, os_code_name):
     assert os_name in ['debian', 'ubuntu']
     return 'debian/%s_%s_%s' % \
-        (get_debian_package_name(rosdistro_name, pkg_name),
+        (get_os_package_name(rosdistro_name, pkg_name),
          pkg_version, os_code_name)
 
 

@@ -167,13 +167,13 @@ def get_ci_view_name(rosdistro_name):
     return view_name
 
 
-def get_debian_package_name_prefix(rosdistro_name):
+def get_os_package_name_prefix(rosdistro_name):
     return 'ros-%s-' % rosdistro_name
 
 
-def get_debian_package_name(rosdistro_name, ros_package_name):
+def get_os_package_name(rosdistro_name, ros_package_name):
     return '%s%s' % \
-        (get_debian_package_name_prefix(rosdistro_name),
+        (get_os_package_name_prefix(rosdistro_name),
          ros_package_name.replace('_', '-'))
 
 

@@ -26,7 +26,7 @@ import time
 
 import yaml
 
-from .common import get_debian_package_name
+from .common import get_os_package_name
 from .common import get_package_repo_data
 from .common import get_release_view_name
 from .common import get_short_arch
@@ -256,7 +256,7 @@ PackageDescriptor = namedtuple(
 def get_rosdistro_package_descriptors(rosdistro_info, rosdistro_name):
     descriptors = {}
     for pkg_name, pkg in rosdistro_info.items():
-        debian_pkg_name = get_debian_package_name(rosdistro_name, pkg_name)
+        debian_pkg_name = get_os_package_name(rosdistro_name, pkg_name)
         descriptors[pkg_name] = PackageDescriptor(
             pkg_name, debian_pkg_name, pkg.version)
     return descriptors
