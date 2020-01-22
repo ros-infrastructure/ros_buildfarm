@@ -21,6 +21,7 @@ except ImportError:
     from urlparse import urlparse
 
 from .debian_repo import get_debian_repo_index
+from .rpm_repo import get_rpm_repo_index
 
 
 package_format_mapping = {
@@ -575,9 +576,20 @@ def get_packages_in_workspaces(workspace_roots, condition_context):
 
 
 def get_package_repo_data(repository_baseurl, targets, cache_dir):
+    get_index_methods = {
+        'deb': get_debian_repo_index,
+        'rpm': get_rpm_repo_index,
+    }
+
     data = {}
     for target in targets:
-        index = get_debian_repo_index(
+        package_format = package_format_mapping.get(target.os_name)
+        get_index_method = get_index_methods.get(package_format)
+        if not get_index_method:
+            raise RuntimeError(
+                "Unsupported package format '%s' for OS '%s'" % (
+                    package_format, target.os_name))
+        index = get_index_method(
             repository_baseurl, target, cache_dir)
         data[target] = index
     return data
