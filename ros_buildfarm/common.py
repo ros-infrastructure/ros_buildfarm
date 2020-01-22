@@ -583,12 +583,8 @@ def get_package_repo_data(repository_baseurl, targets, cache_dir):
 
     data = {}
     for target in targets:
-        package_format = package_format_mapping.get(target.os_name)
-        get_index_method = get_index_methods.get(package_format)
-        if not get_index_method:
-            raise RuntimeError(
-                "Unsupported package format '%s' for OS '%s'" % (
-                    package_format, target.os_name))
+        package_format = package_format_mapping[target.os_name]
+        get_index_method = get_index_methods[package_format]
         index = get_index_method(
             repository_baseurl, target, cache_dir)
         data[target] = index
