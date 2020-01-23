@@ -108,7 +108,7 @@ def main(argv=sys.argv[1:]):
         'binarypkg_dir': args.binarypkg_dir,
     }
     create_dockerfile(
-        'release/binarydeb_task.Dockerfile.em', data, args.dockerfile_dir)
+        'release/deb/binarypkg_task.Dockerfile.em', data, args.dockerfile_dir)
 
     # output hints about necessary volumes to mount
     ros_buildfarm_basepath = os.path.normpath(

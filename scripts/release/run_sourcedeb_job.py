@@ -62,7 +62,7 @@ def main(argv=sys.argv[1:]):
         'uid': get_user_id(),
     })
     create_dockerfile(
-        'release/sourcedeb_task.Dockerfile.em', data, args.dockerfile_dir)
+        'release/deb/sourcepkg_task.Dockerfile.em', data, args.dockerfile_dir)
 
 
 if __name__ == '__main__':
