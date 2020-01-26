@@ -328,9 +328,25 @@ def configure_release_jobs(
 
 def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names):
     from catkin_pkg.package import parse_package_string
+    from catkin_pkg.package import Dependency
     raw_dist_cache = get_distribution_cache(index, rosdistro_name)
+    pkg_names = set(['ros_workspace']).union(pkg_names)
     dist_cache = dict((pkg_name, parse_package_string(pkg_xml)) for pkg_name, pkg_xml in
                       raw_dist_cache.release_package_xmls.items() if pkg_name in pkg_names)
+
+    # for ROS 2 distributions bloom injects a dependency on ros_workspace
+    # into almost all packages (except its dependencies)
+    # therefore the same dependency needs to to be injected here
+    distribution_type = index.distributions[rosdistro_name].get(
+        'distribution_type')
+    if distribution_type == 'ros2':
+        no_ros_workspace_dep = set(['ros_workspace']).union(
+            _get_direct_dependencies('ros_workspace', dist_cache, pkg_names))
+
+        for pkg_name, pkg in dist_cache.items():
+            if pkg_name not in no_ros_workspace_dep:
+                pkg.exec_depends.append(Dependency('ros_workspace'))
+
     return dist_cache
 
 
@@ -488,15 +504,6 @@ def configure_release_job(
             print(("Skipping binary jobs for package '%s' because it is not " +
                    "yet in the rosdistro cache") % pkg_name, file=sys.stderr)
             return source_job_names, binary_job_names, job_configs
-        # for ROS 2 distributions bloom injects a dependency on ros_workspace
-        # into almost all packages (except its dependencies)
-        # therefore the same dependency needs to to be injected here
-        distribution_type = index.distributions[rosdistro_name].get(
-            'distribution_type')
-        if distribution_type == 'ros2' and pkg_name not in (
-            'ament_cmake_core', 'ament_package', 'ros_workspace',
-        ):
-            dependency_names.add('ros_workspace')
 
     # binarydeb jobs
     for arch in build_file.targets[os_name][os_code_name]:
