@@ -135,8 +135,8 @@ def build_release_status_page(
         'targets': targets,
         'short_arches': dict(
             [(t.arch, get_short_arch(t.arch)) for t in targets]),
-        'short_code_names': dict(
-            [(t.os_code_name, get_short_os_code_name(t.os_code_name)) for t in targets]),
+        'short_code_names': {
+            t.os_code_name: get_short_os_code_name(t.os_code_name) for t in targets},
         'repos_data': repos_data,
 
         'affected_by_sync': affected_by_sync,
@@ -233,8 +233,8 @@ def build_debian_repos_status_page(
         'targets': targets,
         'short_arches': dict(
             [(t.arch, get_short_arch(t.arch)) for t in targets]),
-        'short_code_names': dict(
-            [(t.os_code_name, get_short_os_code_name(t.os_code_name)) for t in targets]),
+        'short_code_names': {
+            t.os_code_name: get_short_os_code_name(t.os_code_name) for t in targets},
         'repos_data': repos_data,
 
         'affected_by_sync': None,
