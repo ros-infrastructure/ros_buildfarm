@@ -331,6 +331,13 @@ def add_argument_install_packages(parser):
              'packages detected for installation by rosdep.')
 
 
+def add_argument_invalidate(parser):
+    parser.add_argument(
+        '--invalidate', action='store_true',
+        help='Invalidate or remove any packages which recursively '
+             'depend on the target package(s).')
+
+
 def add_argument_package_selection_args(parser):
     return parser.add_argument(
         '--package-selection-args', nargs=argparse.REMAINDER,
@@ -342,6 +349,49 @@ def add_argument_build_tool_args(parser):
     return parser.add_argument(
         '--build-tool-args', nargs=argparse.REMAINDER,
         help='Arbitrary arguments passed to the build tool.')
+
+
+def add_argument_pulp_base_url(parser):
+    from_env = os.environ.get('PULP_BASE_URL')
+    return parser.add_argument(
+        '--pulp-base-url',
+        default=from_env, required=not bool(from_env),
+        help='URL of the pulp API endpoint')
+
+
+def add_argument_pulp_distribution_name(parser):
+    return parser.add_argument(
+        '--pulp-distribution-name', required=True,
+        help='Name of the pulp distribution to target with changes')
+
+
+def add_argument_pulp_password(parser):
+    from_env = os.environ.get('PULP_PASSWORD')
+    return parser.add_argument(
+        '--pulp-password',
+        default=from_env, required=not bool(from_env),
+        help='Password used to access the pulp API endpoint')
+
+
+def add_argument_pulp_resource_record(parser):
+    return parser.add_argument(
+        '--pulp-resource-record', default=None, metavar='FILE',
+        help='File in which to record the pulp HREFs of package resources')
+
+
+def add_argument_pulp_task_timeout(parser):
+    return parser.add_argument(
+        '--pulp-task-timeout',
+        default=60.0,
+        help='Duration to wait (in seconds) for a pulp task to complete')
+
+
+def add_argument_pulp_username(parser):
+    from_env = os.environ.get('PULP_USERNAME')
+    return parser.add_argument(
+        '--pulp-username',
+        default=from_env, required=not bool(from_env),
+        help='Username used to access the pulp API endpoint')
 
 
 def add_argument_repos_file_urls(parser):
