@@ -63,7 +63,7 @@ def build_release_status_page(
             for arch in sorted(build_file.targets[os_name][os_code_name]):
                 targets.append(Target(os_name, os_code_name, arch))
     if not targets:
-        print('The build file contains no supported targets')
+        print('The build file contains no supported targets', file=sys.stderr)
         return
     print('The build file contains the following targets:')
     for _, os_code_name, arch in targets:
