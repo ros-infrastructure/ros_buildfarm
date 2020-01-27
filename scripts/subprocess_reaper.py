@@ -64,13 +64,13 @@ def main(argv=None):
     cid_files = set()
     while proc.is_running():
         try:
-            children = proc.get_children(recursive=True)
+            children = proc.children(recursive=True)
         except psutil.NoSuchProcess:
             continue
         # check for docker since the cmdline is unavailable after termination
         for c in children:
             try:
-                cmdline = c.cmdline
+                cmdline = c.cmdline()
             except psutil.NoSuchProcess:
                 continue
             if cmdline[0] == 'docker' and cmdline[1] == 'run':
