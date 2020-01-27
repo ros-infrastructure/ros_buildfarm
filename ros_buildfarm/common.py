@@ -144,7 +144,7 @@ def get_distribution_repository_keys(urls, key_files):
     for url, key_file in distribution_repositories:
         print('  %s%s' % (url, ' (%s)' % key_file if key_file else ''))
         with open(key_file, 'r') as h:
-            keys.append(h.read().strip())
+            keys.append(h.read().rstrip())
     return keys
 
 
