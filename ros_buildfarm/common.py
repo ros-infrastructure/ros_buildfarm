@@ -106,7 +106,7 @@ def get_repositories_and_script_generating_key_files(
     repository_args = []
     if unique_repository_urls:
         repository_args.append('--distribution-repository-urls')
-        repository_args += unique_repository_urls
+        repository_args += [url.replace('$', '\\$') for url in unique_repository_urls]
 
     script_generating_key_files = []
     if unique_repository_keys:
@@ -145,7 +145,7 @@ def get_distribution_repository_keys(urls, key_files):
     for url, key_file in distribution_repositories:
         print('  %s%s' % (url, ' (%s)' % key_file if key_file else ''))
         with open(key_file, 'r') as h:
-            keys.append(h.read())
+            keys.append(h.read().rstrip())
     return keys
 
 
