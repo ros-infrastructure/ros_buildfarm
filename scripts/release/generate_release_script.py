@@ -57,7 +57,7 @@ def main(argv=sys.argv[1:]):
 
         def beforeFile(self, *args, **kwargs):
             template_path = kwargs['file'].name
-            if template_path.endswith('/release/binarydeb_job.xml.em'):
+            if template_path.endswith('/release/deb/binarypkg_job.xml.em'):
                 self.scripts.append('--')
 
         def beforeInclude(self, *args, **kwargs):

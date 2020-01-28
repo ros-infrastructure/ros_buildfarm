@@ -53,7 +53,7 @@ def main(argv=sys.argv[1:]):
             args.distribution_repository_key_files),
     }
     create_dockerfile(
-        'release/binarydeb_install_task.Dockerfile.em',
+        'release/deb/binarypkg_install_task.Dockerfile.em',
         data, args.dockerfile_dir)
 
     # output hints about necessary volumes to mount

@@ -575,7 +575,7 @@ def _get_sourcedeb_job_config(
         config, build_file, os_name, os_code_name,
         pkg_name, repo_name, release_repository, dist_cache=None,
         is_disabled=False, other_build_files_same_platform=None):
-    template_name = 'release/sourcedeb_job.xml.em'
+    template_name = 'release/deb/sourcepkg_job.xml.em'
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(build_file=build_file)
@@ -658,7 +658,7 @@ def _get_binarydeb_job_config(
         pkg_name, repo_name, release_repository,
         dist_cache=None, upstream_job_names=None,
         is_disabled=False):
-    template_name = 'release/binarydeb_job.xml.em'
+    template_name = 'release/deb/binarypkg_job.xml.em'
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(build_file=build_file)
@@ -761,7 +761,7 @@ def get_import_package_job_name(rosdistro_name):
 
 
 def _get_import_package_job_config(build_file):
-    template_name = 'release/import_package_job.xml.em'
+    template_name = 'release/deb/import_package_job.xml.em'
     job_data = {
         'target_queue': build_file.target_queue,
         'abi_incompatibility_assumed': build_file.abi_incompatibility_assumed,
@@ -806,7 +806,7 @@ def get_sync_packages_to_testing_job_name(
 def _get_sync_packages_to_testing_job_config(
         config_url, rosdistro_name, release_build_name, os_code_name, arch,
         config, build_file):
-    template_name = 'release/sync_packages_to_testing_job.xml.em'
+    template_name = 'release/deb/sync_packages_to_testing_job.xml.em'
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(build_file=build_file)
@@ -859,7 +859,7 @@ def get_sync_packages_to_main_job_name(rosdistro_name):
 
 
 def _get_sync_packages_to_main_job_config(rosdistro_name, build_file):
-    template_name = 'release/sync_packages_to_main_job.xml.em'
+    template_name = 'release/deb/sync_packages_to_main_job.xml.em'
     job_data = {
         'rosdistro_name': rosdistro_name,
 

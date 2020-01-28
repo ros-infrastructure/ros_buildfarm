@@ -74,7 +74,7 @@ def main(argv=sys.argv[1:]):
         'dockerfile_dir': '/tmp/docker_build_binarydeb',
     })
     create_dockerfile(
-        'release/binarydeb_create_task.Dockerfile.em',
+        'release/deb/binarypkg_create_task.Dockerfile.em',
         data, args.dockerfile_dir)
 
 

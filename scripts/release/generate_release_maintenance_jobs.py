@@ -116,7 +116,7 @@ def get_trigger_missed_jobs_job_config(args, config, build_file):
 
 
 def get_import_upstream_job_config(args, config, build_file):
-    template_name = 'release/import_upstream_job.xml.em'
+    template_name = 'release/deb/import_upstream_job.xml.em'
     return _get_job_config(args, config, config.notify_emails, template_name)
 
 
