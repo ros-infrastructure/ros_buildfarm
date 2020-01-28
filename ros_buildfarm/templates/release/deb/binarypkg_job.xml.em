@@ -231,6 +231,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @(SNIPPET(
     'builder_parameterized-trigger',
     project=import_package_job_name,
+    parameter_files=None,
     parameters='\n'.join([
         'subfolder=%s/${JOB_NAME}__${BUILD_NUMBER}' % os_code_name,
         'debian_package_name=%s' % debian_package_name]),

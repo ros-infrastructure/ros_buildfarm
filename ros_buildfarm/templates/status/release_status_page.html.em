@@ -102,7 +102,7 @@
         <th class="sortable"><div>Maintainer</div></th>
 @[end if]@
 @[for target in targets]@
-        <th><div title="@(target.os_name.capitalize()) @(target.os_code_name.capitalize()) @(target.arch)">@(target.os_code_name[0].upper())@(short_arches[target.arch])</div>@
+        <th><div title="@(target.os_name.capitalize()) @(target.os_code_name.capitalize()) @(target.arch)">@(short_code_names[target.os_code_name])@(short_arches[target.arch])</div>@
 @[for count in package_counts[target]]@
 <span class="sum">@count</span>@
 @[end for]@

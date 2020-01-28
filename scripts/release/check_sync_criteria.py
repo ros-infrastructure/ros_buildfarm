@@ -25,7 +25,7 @@ from ros_buildfarm.argument import add_argument_cache_dir
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.common import get_debian_package_name
+from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import Target
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
@@ -73,7 +73,7 @@ def check_sync_criteria(
     all_pkg_names = dist_file.release_packages.keys()
     pkg_names = build_file.filter_packages(all_pkg_names)
     for pkg_name in sorted(pkg_names):
-        debian_pkg_name = get_debian_package_name(rosdistro_name, pkg_name)
+        debian_pkg_name = get_os_package_name(rosdistro_name, pkg_name)
         binary_packages[pkg_name] = debian_pkg_name in repo_index
 
     # check that all elements from whitelist are present

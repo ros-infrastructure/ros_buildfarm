@@ -39,10 +39,10 @@ from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_vcs_information
 from ros_buildfarm.common import find_executable
 from ros_buildfarm.common import get_binary_package_versions
-from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_devel_job_urls
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_doc_job_url
+from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import get_release_job_urls
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.common import Scope
@@ -528,16 +528,16 @@ def main(argv=sys.argv[1:]):
             'python-sphinx',
             'python-yaml',
             # since catkin is not a run dependency but provides the setup files
-            get_debian_package_name(args.rosdistro_name, 'catkin'),
+            get_os_package_name(args.rosdistro_name, 'catkin'),
             # rosdoc_lite does not work without genmsg being importable
-            get_debian_package_name(args.rosdistro_name, 'genmsg'),
+            get_os_package_name(args.rosdistro_name, 'genmsg'),
         ]
         if args.build_tool == 'colcon':
             debian_pkg_names.append('python3-colcon-ros')
         if 'actionlib_msgs' in pkg_names:
             # to document actions in other packages in the same repository
             debian_pkg_names.append(
-                get_debian_package_name(args.rosdistro_name, 'actionlib_msgs'))
+                get_os_package_name(args.rosdistro_name, 'actionlib_msgs'))
         print('Always install the following generic dependencies:')
         for debian_pkg_name in sorted(debian_pkg_names):
             print('  -', debian_pkg_name)

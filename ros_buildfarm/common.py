@@ -21,6 +21,7 @@ except ImportError:
     from urlparse import urlparse
 
 from .debian_repo import get_debian_repo_index
+from .rpm_repo import get_rpm_repo_index
 
 
 package_format_mapping = {
@@ -105,7 +106,7 @@ def get_repositories_and_script_generating_key_files(
     repository_args = []
     if unique_repository_urls:
         repository_args.append('--distribution-repository-urls')
-        repository_args += unique_repository_urls
+        repository_args += [url.replace('$', '\\$') for url in unique_repository_urls]
 
     script_generating_key_files = []
     if unique_repository_keys:
@@ -144,7 +145,7 @@ def get_distribution_repository_keys(urls, key_files):
     for url, key_file in distribution_repositories:
         print('  %s%s' % (url, ' (%s)' % key_file if key_file else ''))
         with open(key_file, 'r') as h:
-            keys.append(h.read())
+            keys.append(h.read().rstrip())
     return keys
 
 
@@ -167,13 +168,13 @@ def get_ci_view_name(rosdistro_name):
     return view_name
 
 
-def get_debian_package_name_prefix(rosdistro_name):
+def get_os_package_name_prefix(rosdistro_name):
     return 'ros-%s-' % rosdistro_name
 
 
-def get_debian_package_name(rosdistro_name, ros_package_name):
+def get_os_package_name(rosdistro_name, ros_package_name):
     return '%s%s' % \
-        (get_debian_package_name_prefix(rosdistro_name),
+        (get_os_package_name_prefix(rosdistro_name),
          ros_package_name.replace('_', '-'))
 
 
@@ -575,9 +576,16 @@ def get_packages_in_workspaces(workspace_roots, condition_context):
 
 
 def get_package_repo_data(repository_baseurl, targets, cache_dir):
+    get_index_methods = {
+        'deb': get_debian_repo_index,
+        'rpm': get_rpm_repo_index,
+    }
+
     data = {}
     for target in targets:
-        index = get_debian_repo_index(
+        package_format = package_format_mapping[target.os_name]
+        get_index_method = get_index_methods[package_format]
+        index = get_index_method(
             repository_baseurl, target, cache_dir)
         data[target] = index
     return data

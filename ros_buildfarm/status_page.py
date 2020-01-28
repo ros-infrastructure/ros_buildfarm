@@ -26,10 +26,11 @@ import time
 
 import yaml
 
-from .common import get_debian_package_name
+from .common import get_os_package_name
 from .common import get_package_repo_data
 from .common import get_release_view_name
 from .common import get_short_arch
+from .common import get_short_os_code_name
 from .common import Target
 from .config import get_index as get_config_index
 from .config import get_release_build_files
@@ -56,12 +57,15 @@ def build_release_status_page(
     # get targets
     targets = []
     for os_name in sorted(build_file.targets.keys()):
-        if os_name not in ['debian', 'ubuntu']:
+        if os_name not in ['debian', 'fedora', 'rhel', 'ubuntu']:
             continue
         for os_code_name in sorted(build_file.targets[os_name].keys()):
             targets.append(Target(os_name, os_code_name, 'source'))
             for arch in sorted(build_file.targets[os_name][os_code_name]):
                 targets.append(Target(os_name, os_code_name, arch))
+    if not targets:
+        print('The build file contains no supported targets', file=sys.stderr)
+        return
     print('The build file contains the following targets:')
     for _, os_code_name, arch in targets:
         print('  - %s %s' % (os_code_name, arch))
@@ -134,6 +138,8 @@ def build_release_status_page(
         'targets': targets,
         'short_arches': dict(
             [(t.arch, get_short_arch(t.arch)) for t in targets]),
+        'short_code_names': {
+            t.os_code_name: get_short_os_code_name(t.os_code_name) for t in targets},
         'repos_data': repos_data,
 
         'affected_by_sync': affected_by_sync,
@@ -230,6 +236,8 @@ def build_debian_repos_status_page(
         'targets': targets,
         'short_arches': dict(
             [(t.arch, get_short_arch(t.arch)) for t in targets]),
+        'short_code_names': {
+            t.os_code_name: get_short_os_code_name(t.os_code_name) for t in targets},
         'repos_data': repos_data,
 
         'affected_by_sync': None,
@@ -256,7 +264,7 @@ PackageDescriptor = namedtuple(
 def get_rosdistro_package_descriptors(rosdistro_info, rosdistro_name):
     descriptors = {}
     for pkg_name, pkg in rosdistro_info.items():
-        debian_pkg_name = get_debian_package_name(rosdistro_name, pkg_name)
+        debian_pkg_name = get_os_package_name(rosdistro_name, pkg_name)
         descriptors[pkg_name] = PackageDescriptor(
             pkg_name, debian_pkg_name, pkg.version)
     return descriptors

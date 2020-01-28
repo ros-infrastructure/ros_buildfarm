@@ -18,10 +18,10 @@ from collections import OrderedDict
 import sys
 
 from ros_buildfarm.common import get_binarydeb_job_name
-from ros_buildfarm.common import get_debian_package_name
 from ros_buildfarm.common import get_default_node_label
 from ros_buildfarm.common import get_github_project_url
 from ros_buildfarm.common import get_node_label
+from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import get_release_binary_view_name
 from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import get_release_source_view_name
@@ -635,7 +635,7 @@ def _get_sourcedeb_job_config(
         'sourcedeb_files': sourcedeb_files,
 
         'import_package_job_name': get_import_package_job_name(rosdistro_name),
-        'debian_package_name': get_debian_package_name(
+        'debian_package_name': get_os_package_name(
             rosdistro_name, pkg_name),
 
         'notify_emails': notify_emails,
@@ -716,7 +716,7 @@ def _get_binarydeb_job_config(
         'build_environment_variables': build_environment_variables,
 
         'import_package_job_name': get_import_package_job_name(rosdistro_name),
-        'debian_package_name': get_debian_package_name(
+        'debian_package_name': get_os_package_name(
             rosdistro_name, pkg_name),
 
         'child_projects': sync_to_testing_job_name,
