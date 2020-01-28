@@ -47,6 +47,7 @@ cmd = \
     ' ' + config_url + \
     ' ' + rosdistro_name + \
     ' ' + release_build_name + \
+    ' ' + os_name + \
     ' ' + os_code_name + \
     ' ' + arch + \
     ' --cache-dir ' + cache_dir

@@ -59,6 +59,7 @@
         ' ' + config_url +
         ' ' + rosdistro_name +
         ' ' + release_build_name +
+        ' ' + os_name +
         ' ' + os_code_name +
         ' ' + arch +
         ' ' + ' '.join(repository_args) +

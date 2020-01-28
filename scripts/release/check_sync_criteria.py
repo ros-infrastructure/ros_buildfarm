@@ -24,12 +24,13 @@ from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_cache_dir
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
+from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_os_package_name
+from ros_buildfarm.common import get_package_repo_data
 from ros_buildfarm.common import Target
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
-from ros_buildfarm.debian_repo import get_debian_repo_index
 from rosdistro import get_distribution_file
 from rosdistro import get_index
 
@@ -41,6 +42,7 @@ def main(argv=sys.argv[1:]):
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_build_name(parser, 'release')
+    add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
     add_argument_cache_dir(parser, '/tmp/package_repo_cache')
@@ -48,13 +50,13 @@ def main(argv=sys.argv[1:]):
 
     success = check_sync_criteria(
         args.config_url, args.rosdistro_name, args.release_build_name,
-        args.os_code_name, args.arch, args.cache_dir)
+        args.os_name, args.os_code_name, args.arch, args.cache_dir)
     return 0 if success else 1
 
 
 def check_sync_criteria(
-        config_url, rosdistro_name, release_build_name, os_code_name, arch,
-        cache_dir):
+        config_url, rosdistro_name, release_build_name, os_name,
+        os_code_name, arch, cache_dir):
     # fetch debian package list
     config = get_config_index(config_url)
     index = get_index(config.rosdistro_index_url)
@@ -62,10 +64,10 @@ def check_sync_criteria(
     build_files = get_release_build_files(config, rosdistro_name)
     build_file = build_files[release_build_name]
 
-    target = Target('ubuntu', os_code_name, arch)
+    target = Target(os_name, os_code_name, arch)
 
-    repo_index = get_debian_repo_index(
-        build_file.target_repository, target, cache_dir)
+    repo_index = get_package_repo_data(
+        build_file.target_repository, [target], cache_dir)[target]
 
     # for each release package which matches the release build file
     # check if a binary package exists

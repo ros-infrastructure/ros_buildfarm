@@ -140,7 +140,7 @@ def configure_release_jobs(
         for arch in sorted(build_file.targets[os_name][os_code_name]):
             job_name, job_config = configure_sync_packages_to_testing_job(
                 config_url, rosdistro_name, release_build_name,
-                os_code_name, arch,
+                os_name, os_code_name, arch,
                 config=config, build_file=build_file, jenkins=jenkins,
                 dry_run=dry_run)
             if not jenkins:
@@ -458,7 +458,7 @@ def configure_release_job(
         for arch in build_file.targets[os_name][os_code_name]:
             configure_sync_packages_to_testing_job(
                 config_url, rosdistro_name, release_build_name,
-                os_code_name, arch,
+                os_name, os_code_name, arch,
                 config=config, build_file=build_file, jenkins=jenkins,
                 dry_run=dry_run)
 
@@ -781,8 +781,8 @@ def _get_import_package_job_config(build_file):
 
 
 def configure_sync_packages_to_testing_job(
-        config_url, rosdistro_name, release_build_name, os_code_name, arch,
-        config=None, build_file=None, jenkins=None, dry_run=False):
+        config_url, rosdistro_name, release_build_name, os_name, os_code_name,
+        arch, config=None, build_file=None, jenkins=None, dry_run=False):
     if config is None:
         config = get_config_index(config_url)
     if build_file is None:
@@ -795,8 +795,8 @@ def configure_sync_packages_to_testing_job(
     job_name = get_sync_packages_to_testing_job_name(
         rosdistro_name, os_code_name, arch)
     job_config = _get_sync_packages_to_testing_job_config(
-        config_url, rosdistro_name, release_build_name, os_code_name, arch,
-        config, build_file)
+        config_url, rosdistro_name, release_build_name, os_name, os_code_name,
+        arch, config, build_file)
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
@@ -813,8 +813,8 @@ def get_sync_packages_to_testing_job_name(
 
 
 def _get_sync_packages_to_testing_job_config(
-        config_url, rosdistro_name, release_build_name, os_code_name, arch,
-        config, build_file):
+        config_url, rosdistro_name, release_build_name, os_name, os_code_name,
+        arch, config, build_file):
     template_name = 'release/deb/sync_packages_to_testing_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -828,6 +828,7 @@ def _get_sync_packages_to_testing_job_config(
         'config_url': config_url,
         'rosdistro_name': rosdistro_name,
         'release_build_name': release_build_name,
+        'os_name': os_name,
         'os_code_name': os_code_name,
         'arch': arch,
         'repository_args': repository_args,
