@@ -18,7 +18,7 @@ import sys
 from time import gmtime, strftime
 import traceback
 
-from ros_buildfarm.common import get_debian_package_name
+from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.release_common import dpkg_parsechangelog
 
 
@@ -26,13 +26,13 @@ def get_sourcedeb(
         rosdistro_index_url, rosdistro_name, package_name, sourcepkg_dir,
         skip_download_sourcepkg=False):
     # ensure that no source subfolder exists
-    debian_package_name = get_debian_package_name(rosdistro_name, package_name)
+    debian_package_name = get_os_package_name(rosdistro_name, package_name)
     subfolders = _get_package_subfolders(sourcepkg_dir, debian_package_name)
     assert not subfolders, \
         ("Sourcedeb directory '%s' must not have any " +
          "subfolders starting with '%s-'") % (sourcepkg_dir, package_name)
 
-    debian_package_name = get_debian_package_name(rosdistro_name, package_name)
+    debian_package_name = get_os_package_name(rosdistro_name, package_name)
     if not skip_download_sourcepkg:
         # get expected package version from rosdistro
         from rosdistro import get_distribution_cache
@@ -92,7 +92,7 @@ def get_sourcedeb(
 
 def append_build_timestamp(rosdistro_name, package_name, sourcepkg_dir):
     # ensure that one source subfolder exists
-    debian_package_name = get_debian_package_name(rosdistro_name, package_name)
+    debian_package_name = get_os_package_name(rosdistro_name, package_name)
     subfolders = _get_package_subfolders(sourcepkg_dir, debian_package_name)
     assert len(subfolders) == 1, subfolders
     source_dir = subfolders[0]
@@ -119,7 +119,7 @@ def append_build_timestamp(rosdistro_name, package_name, sourcepkg_dir):
 
 def build_binarydeb(rosdistro_name, package_name, sourcepkg_dir):
     # ensure that one source subfolder exists
-    debian_package_name = get_debian_package_name(rosdistro_name, package_name)
+    debian_package_name = get_os_package_name(rosdistro_name, package_name)
     subfolders = _get_package_subfolders(sourcepkg_dir, debian_package_name)
     assert len(subfolders) == 1, subfolders
     source_dir = subfolders[0]

@@ -19,7 +19,7 @@ from rosdistro import get_cached_distribution
 from rosdistro import get_index
 
 from .common import get_binarydeb_job_name
-from .common import get_debian_package_name
+from .common import get_os_package_name
 from .common import get_package_repo_data
 from .common import get_sourcedeb_job_name
 from .common import Target
@@ -85,7 +85,7 @@ def trigger_release_jobs(
             continue
         pkg_version = repo.release_repository.version
 
-        debian_package_name = get_debian_package_name(rosdistro_name, pkg_name)
+        debian_package_name = get_os_package_name(rosdistro_name, pkg_name)
 
         for target in targets:
             job_name = get_sourcedeb_job_name(
