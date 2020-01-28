@@ -170,4 +170,9 @@ if __name__ == '__main__':
     # ignore SIGTERM so that if the parent process is killed
     # and forwards the signal, this script does not die
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
+    # When running on Windows the script is receiving a SIGINT
+    # resulting in a KeyboardInterrupt. Sadly this means that
+    # the script is not ^C-able on Windows.
+    if sys.platform == 'win32':
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
     sys.exit(main())
