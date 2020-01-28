@@ -23,6 +23,7 @@ from ros_buildfarm.common import get_default_node_label
 from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
+from ros_buildfarm.common import get_xunit_publisher_types_and_patterns
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_ci_build_files
@@ -293,6 +294,9 @@ def _get_ci_job_config(
 
         'show_images': build_file.show_images,
         'show_plots': build_file.show_plots,
+
+        'xunit_publisher_types': get_xunit_publisher_types_and_patterns(
+            ros_version),
     }
     job_config = expand_template(template_name, job_data)
     return job_config

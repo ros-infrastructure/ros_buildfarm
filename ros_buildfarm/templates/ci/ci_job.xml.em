@@ -436,10 +436,12 @@ parameters = [
     plots=show_plots,
 ))@
 @[end if]@
+@[if xunit_publisher_types]@
 @(SNIPPET(
     'publisher_xunit',
-    pattern='ws/test_results/**/*.xml',
+    types=xunit_publisher_types,
 ))@
+@[end if]@
   </publishers>
   <buildWrappers>
 @[if timeout_minutes is not None]@
