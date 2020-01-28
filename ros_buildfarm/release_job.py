@@ -342,7 +342,7 @@ def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names):
     # therefore the same dependency needs to to be injected here
     distribution_type = index.distributions[rosdistro_name].get(
         'distribution_type')
-    if distribution_type == 'ros2':
+    if distribution_type == 'ros2' and 'ros_workspace' in cached_pkgs:
         no_ros_workspace_dep = set(['ros_workspace']).union(
             _get_direct_dependencies('ros_workspace', cached_pkgs, pkg_names))
 
