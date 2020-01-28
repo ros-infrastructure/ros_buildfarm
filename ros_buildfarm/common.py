@@ -593,8 +593,7 @@ def get_package_repo_data(repository_baseurl, targets, cache_dir):
 
 def get_xunit_publisher_types_and_patterns(ros_version):
     types = []
-    # TODO remove the second condition after confirming this doesn't change any jobs
-    if ros_version == 1 or ros_version == 2:
+    if ros_version == 1:
         types.append(('GoogleTestType', 'ws/test_results/**/*.xml'))
     elif ros_version == 2:
         types.append(('GoogleTestType', 'ws/test_results/**/*.gtest.xml'))
