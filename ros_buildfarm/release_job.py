@@ -84,14 +84,14 @@ def configure_release_jobs(
         for pkg_name in sorted(explicitly_ignored_pkg_names):
             print('  -', pkg_name)
 
-    dist_cache = get_distribution_cache(index, rosdistro_name)
+    cached_pkgs = _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names)
 
     if explicitly_ignored_pkg_names:
         # get direct dependencies from distro cache for each package
         direct_dependencies = {}
         for pkg_name in pkg_names:
             direct_dependencies[pkg_name] = _get_direct_dependencies(
-                pkg_name, dist_cache, pkg_names) or set([])
+                pkg_name, cached_pkgs, pkg_names) or set([])
 
         # find recursive downstream deps for all explicitly ignored packages
         ignored_pkg_names = set(explicitly_ignored_pkg_names)
@@ -162,18 +162,11 @@ def configure_release_jobs(
     }
 
     # binary jobs must be generated in topological order
-    from catkin_pkg.package import parse_package_string
     from ros_buildfarm.common import topological_order_packages
-    pkgs = {}
-    for pkg_name in pkg_names:
-        if pkg_name not in dist_cache.release_package_xmls:
-            print("Skipping package '%s': no released package.xml in cache" %
-                  (pkg_name), file=sys.stderr)
-            continue
-        pkg_xml = dist_cache.release_package_xmls[pkg_name]
-        pkg = parse_package_string(pkg_xml)
-        pkgs[pkg_name] = pkg
-    ordered_pkg_tuples = topological_order_packages(pkgs)
+    for pkg_name in set(pkg_names).difference(cached_pkgs.keys()):
+        print("Skipping package '%s': no released package.xml in cache" %
+              (pkg_name), file=sys.stderr)
+    ordered_pkg_tuples = topological_order_packages(cached_pkgs)
 
     other_build_files = [v for k, v in build_files.items() if k != release_build_name]
 
@@ -219,7 +212,7 @@ def configure_release_jobs(
                         pkg_name, os_name, os_code_name,
                         config=config, build_file=build_file,
                         index=index, dist_file=dist_file,
-                        dist_cache=dist_cache,
+                        cached_pkgs=cached_pkgs,
                         jenkins=jenkins, views=views,
                         generate_import_package_job=False,
                         generate_sync_packages_jobs=False,
@@ -333,6 +326,33 @@ def configure_release_jobs(
             view_configs=all_view_configs)
 
 
+def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names):
+    from catkin_pkg.package import parse_package_string
+    from catkin_pkg.package import Dependency
+    dist_cache = get_distribution_cache(index, rosdistro_name)
+    pkg_names = set(['ros_workspace']).union(pkg_names)
+    cached_pkgs = {
+        pkg_name: parse_package_string(pkg_xml)
+        for pkg_name, pkg_xml in dist_cache.release_package_xmls.items()
+        if pkg_name in pkg_names
+    }
+
+    # for ROS 2 distributions bloom injects a dependency on ros_workspace
+    # into almost all packages (except its dependencies)
+    # therefore the same dependency needs to to be injected here
+    distribution_type = index.distributions[rosdistro_name].get(
+        'distribution_type')
+    if distribution_type == 'ros2':
+        no_ros_workspace_dep = set(['ros_workspace']).union(
+            _get_direct_dependencies('ros_workspace', cached_pkgs, pkg_names))
+
+        for pkg_name, pkg in cached_pkgs.items():
+            if pkg_name not in no_ros_workspace_dep:
+                pkg.exec_depends.append(Dependency('ros_workspace'))
+
+    return cached_pkgs
+
+
 def _get_downstream_package_names(pkg_names, dependencies):
     downstream_pkg_names = set([])
     for pkg_name, deps in dependencies.items():
@@ -348,7 +368,7 @@ def configure_release_job(
         config_url, rosdistro_name, release_build_name,
         pkg_name, os_name, os_code_name,
         config=None, build_file=None,
-        index=None, dist_file=None, dist_cache=None,
+        index=None, dist_file=None, cached_pkgs=None,
         jenkins=None, views=None,
         generate_import_package_job=True,
         generate_sync_packages_jobs=True,
@@ -408,10 +428,10 @@ def configure_release_job(
             'choose one of the following: ' +
             ', '.join(sorted(build_file.targets[os_name].keys())))
 
-    if dist_cache is None and \
+    if cached_pkgs is None and \
             (build_file.notify_maintainers or
              build_file.abi_incompatibility_assumed):
-        dist_cache = get_distribution_cache(index, rosdistro_name)
+        cached_pkgs = _get_and_parse_distribution_cache(index, rosdistro_name, [pkg_name])
     if jenkins is None:
         from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
@@ -467,7 +487,7 @@ def configure_release_job(
     job_config = _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name,
-        pkg_name, repo_name, repo.release_repository, dist_cache=dist_cache,
+        pkg_name, repo_name, repo.release_repository, cached_pkgs=cached_pkgs,
         is_disabled=is_source_disabled,
         other_build_files_same_platform=other_build_files_same_platform)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
@@ -480,22 +500,13 @@ def configure_release_job(
     dependency_names = []
     if build_file.abi_incompatibility_assumed:
         dependency_names = _get_direct_dependencies(
-            pkg_name, dist_cache, pkg_names)
+            pkg_name, cached_pkgs, pkg_names)
         # if dependencies are not yet available in rosdistro cache
         # skip binary jobs
         if dependency_names is None:
             print(("Skipping binary jobs for package '%s' because it is not " +
                    "yet in the rosdistro cache") % pkg_name, file=sys.stderr)
             return source_job_names, binary_job_names, job_configs
-        # for ROS 2 distributions bloom injects a dependency on ros_workspace
-        # into almost all packages (except its dependencies)
-        # therefore the same dependency needs to to be injected here
-        distribution_type = index.distributions[rosdistro_name].get(
-            'distribution_type')
-        if distribution_type == 'ros2' and pkg_name not in (
-            'ament_cmake_core', 'ament_package', 'ros_workspace',
-        ):
-            dependency_names.add('ros_workspace')
 
     # binarydeb jobs
     for arch in build_file.targets[os_name][os_code_name]:
@@ -516,7 +527,7 @@ def configure_release_job(
             config_url, rosdistro_name, release_build_name,
             config, build_file, os_name, os_code_name, arch,
             pkg_name, repo_name, repo.release_repository,
-            dist_cache=dist_cache, upstream_job_names=upstream_job_names,
+            cached_pkgs=cached_pkgs, upstream_job_names=upstream_job_names,
             is_disabled=is_disabled)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
@@ -549,12 +560,10 @@ def configure_release_views(
     return views
 
 
-def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
-    from catkin_pkg.package import parse_package_string
-    if pkg_name not in dist_cache.release_package_xmls:
+def _get_direct_dependencies(pkg_name, cached_pkgs, pkg_names):
+    if pkg_name not in cached_pkgs:
         return None
-    pkg_xml = dist_cache.release_package_xmls[pkg_name]
-    pkg = parse_package_string(pkg_xml)
+    pkg = cached_pkgs[pkg_name]
     # test dependencies are treated as build dependencies by bloom
     # so we need them here to ensure that all dependencies are available
     # before starting a build
@@ -573,7 +582,7 @@ def _get_direct_dependencies(pkg_name, dist_cache, pkg_names):
 def _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name,
-        pkg_name, repo_name, release_repository, dist_cache=None,
+        pkg_name, repo_name, release_repository, cached_pkgs=None,
         is_disabled=False, other_build_files_same_platform=None):
     template_name = 'release/deb/sourcepkg_job.xml.em'
 
@@ -604,7 +613,7 @@ def _get_sourcedeb_job_config(
                 if other_build_file.notify_maintainers:
                     notify_maintainers = True
 
-    maintainer_emails = _get_maintainer_emails(dist_cache, pkg_name) \
+    maintainer_emails = _get_maintainer_emails(cached_pkgs, pkg_name) \
         if notify_maintainers \
         else set([])
 
@@ -656,7 +665,7 @@ def _get_binarydeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name, arch,
         pkg_name, repo_name, release_repository,
-        dist_cache=None, upstream_job_names=None,
+        cached_pkgs=None, upstream_job_names=None,
         is_disabled=False):
     template_name = 'release/deb/binarypkg_job.xml.em'
 
@@ -680,7 +689,7 @@ def _get_binarydeb_job_config(
     sync_to_testing_job_name = [get_sync_packages_to_testing_job_name(
         rosdistro_name, os_code_name, arch)]
 
-    maintainer_emails = _get_maintainer_emails(dist_cache, pkg_name) \
+    maintainer_emails = _get_maintainer_emails(cached_pkgs, pkg_name) \
         if build_file.notify_maintainers \
         else set([])
 
@@ -869,13 +878,10 @@ def _get_sync_packages_to_main_job_config(rosdistro_name, build_file):
     return job_config
 
 
-def _get_maintainer_emails(dist_cache, pkg_name):
+def _get_maintainer_emails(cached_pkgs, pkg_name):
     maintainer_emails = set([])
     # add maintainers listed in latest release to recipients
-    if dist_cache and pkg_name in dist_cache.release_package_xmls:
-        from catkin_pkg.package import parse_package_string
-        pkg_xml = dist_cache.release_package_xmls[pkg_name]
-        pkg = parse_package_string(pkg_xml)
-        for m in pkg.maintainers:
+    if cached_pkgs and pkg_name in cached_pkgs:
+        for m in cached_pkgs[pkg_name].maintainers:
             maintainer_emails.add(m.email)
     return maintainer_emails
