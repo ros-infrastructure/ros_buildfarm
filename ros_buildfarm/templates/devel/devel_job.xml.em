@@ -264,12 +264,10 @@ if pull_request:
     'publisher_warnings',
     unstable_threshold=0 if notify_compiler_warnings else '',
 ))@
-@[if xunit_publisher_types]@
 @(SNIPPET(
     'publisher_xunit',
-    types=xunit_publisher_types,
+    pattern='ws/test_results/**/*.xml',
 ))@
-@[end if]@
 @[if (not pull_request) and collate_test_stats]@
 @(SNIPPET(
     'publisher_groovy-postbuild',
