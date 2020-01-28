@@ -57,12 +57,15 @@ def build_release_status_page(
     # get targets
     targets = []
     for os_name in sorted(build_file.targets.keys()):
-        if os_name not in ['debian', 'ubuntu']:
+        if os_name not in ['debian', 'fedora', 'rhel', 'ubuntu']:
             continue
         for os_code_name in sorted(build_file.targets[os_name].keys()):
             targets.append(Target(os_name, os_code_name, 'source'))
             for arch in sorted(build_file.targets[os_name][os_code_name]):
                 targets.append(Target(os_name, os_code_name, arch))
+    if not targets:
+        print('The build file contains no supported targets', file=sys.stderr)
+        return
     print('The build file contains the following targets:')
     for _, os_code_name, arch in targets:
         print('  - %s %s' % (os_code_name, arch))
