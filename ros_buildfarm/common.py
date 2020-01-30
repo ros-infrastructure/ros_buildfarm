@@ -589,3 +589,16 @@ def get_package_repo_data(repository_baseurl, targets, cache_dir):
             repository_baseurl, target, cache_dir)
         data[target] = index
     return data
+
+
+def get_xunit_publisher_types_and_patterns(ros_version):
+    types = []
+    if ros_version == 1:
+        types.append(('GoogleTestType', 'ws/test_results/**/*.xml'))
+    elif ros_version == 2:
+        types.append(('GoogleTestType', 'ws/test_results/**/*.gtest.xml'))
+        types.append(('JUnitType', 'ws/test_results/**/pytest.xml'))
+        types.append(('JUnitType', 'ws/test_results/**/*.xunit.xml'))
+    else:
+        assert False, 'Unsupported ROS version: ' + str(ros_version)
+    return types

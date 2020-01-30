@@ -25,6 +25,7 @@ from ros_buildfarm.common import get_github_project_url
 from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
+from ros_buildfarm.common import get_xunit_publisher_types_and_patterns
 from ros_buildfarm.common import git_github_orgunit
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import write_groovy_script_and_configs
@@ -433,6 +434,9 @@ def _get_devel_job_config(
         'notify_pull_requests': build_file.notify_pull_requests,
 
         'timeout_minutes': build_file.jenkins_job_timeout,
+
+        'xunit_publisher_types': get_xunit_publisher_types_and_patterns(
+            ros_version),
 
         'git_ssh_credential_id': config.git_ssh_credential_id,
 
