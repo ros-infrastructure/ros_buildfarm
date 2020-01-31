@@ -21,7 +21,7 @@ except ImportError:
     from urlparse import urlparse
 
 from .debian_repo import get_debian_repo_index
-from .rpm_repo import get_rpm_repo_index
+from .rpm_repo import get_ros_rpm_repo_index
 
 
 package_format_mapping = {
@@ -578,7 +578,7 @@ def get_packages_in_workspaces(workspace_roots, condition_context):
 def get_package_repo_data(repository_baseurl, targets, cache_dir):
     get_index_methods = {
         'deb': get_debian_repo_index,
-        'rpm': get_rpm_repo_index,
+        'rpm': get_ros_rpm_repo_index,
     }
 
     data = {}

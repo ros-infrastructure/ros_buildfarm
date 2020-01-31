@@ -20,6 +20,12 @@ from .http_cache import fetch_and_cache_gzip
 from .http_cache import fetch_and_cache_plaintext
 
 
+def get_ros_rpm_repo_index(rpm_repository_baseurl, target, cache_dir):
+    return get_rpm_repo_index(
+        os.path.join(rpm_repository_baseurl, '$releasever', '$basearch'),
+        target, cache_dir)
+
+
 def get_rpm_repo_index(rpm_repository_baseurl, target, cache_dir):
     # These variables are often included in repository base URLs by YUM/DNF
     url = rpm_repository_baseurl.replace('$releasever', target.os_code_name)
