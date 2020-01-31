@@ -27,6 +27,7 @@ from ros_buildfarm.argument import \
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_os_code_name
+from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
