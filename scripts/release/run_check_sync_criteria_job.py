@@ -27,6 +27,7 @@ from ros_buildfarm.argument import \
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_os_code_name
+from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
@@ -39,6 +40,10 @@ def main(argv=sys.argv[1:]):
     add_argument_config_url(parser)
     add_argument_rosdistro_name(parser)
     add_argument_build_name(parser, 'release')
+    parser.add_argument(
+        'os_name', nargs='?',
+        help='An OS name from the build file')
+    add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
     add_argument_distribution_repository_urls(parser)
@@ -46,6 +51,12 @@ def main(argv=sys.argv[1:]):
     add_argument_cache_dir(parser)
     add_argument_dockerfile_dir(parser)
     args = parser.parse_args(argv)
+
+    if args.os_name is None:
+        print(
+            'WARNING: Calling %s without specifying os_name is deprecated' % argv[0],
+            file=sys.stderr)
+        args.os_name = 'ubuntu'
 
     data = copy.deepcopy(args.__dict__)
     data.update({
