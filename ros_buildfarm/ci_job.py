@@ -295,8 +295,10 @@ def _get_ci_job_config(
         'show_images': build_file.show_images,
         'show_plots': build_file.show_plots,
 
+        # only Ubuntu Focal has a new enough pytest version which generates
+        # JUnit compliant result files
         'xunit_publisher_types': get_xunit_publisher_types_and_patterns(
-            ros_version),
+            ros_version, os_name == 'ubuntu' and os_code_name != 'bionic'),
     }
     job_config = expand_template(template_name, job_data)
     return job_config
