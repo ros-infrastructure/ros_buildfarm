@@ -671,7 +671,7 @@ def _get_binarydeb_job_config(
         cached_pkgs=None, upstream_job_names=None,
         is_disabled=False):
     package_format = package_format_mapping[os_name]
-    template_name = 'release/deb/binarypkg_job.xml.em'
+    template_name = 'release/%s/binarypkg_job.xml.em' % package_format
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(build_file=build_file)
@@ -703,8 +703,8 @@ def _get_binarydeb_job_config(
         'job_priority': build_file.jenkins_binary_job_priority,
         'node_label': get_node_label(
             build_file.jenkins_binary_job_label,
-            get_default_node_label('%s_%s_%s' % (
-                rosdistro_name, 'binarydeb', release_build_name))),
+            get_default_node_label('%s_%s%s_%s' % (
+                rosdistro_name, 'binary', package_format, release_build_name))),
 
         'disabled': is_disabled,
 
