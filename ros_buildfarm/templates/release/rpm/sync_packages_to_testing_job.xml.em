@@ -114,7 +114,7 @@
         ' --pulp-resource-record $WORKSPACE/ros-building-binary.txt',
         'echo "# END SECTION"',
         '',
-        'echo "# BEGIN SECTION: determine binary debug packages to testing repo"',
+        'echo "# BEGIN SECTION: determine binary debug packages to sync"',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/list_packages.py' +
         ' --pulp-base-url http://repo:24817' +
