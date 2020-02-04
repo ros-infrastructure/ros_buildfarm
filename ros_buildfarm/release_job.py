@@ -691,7 +691,7 @@ def _get_binarydeb_job_config(
             for var, value in sorted(build_file.build_environment_variables.items())]
 
     sync_to_testing_job_name = [get_sync_packages_to_testing_job_name(
-        rosdistro_name, os_code_name, arch)]
+        rosdistro_name, os_name, os_code_name, arch)]
 
     maintainer_emails = _get_maintainer_emails(cached_pkgs, pkg_name) \
         if build_file.notify_maintainers \
@@ -806,7 +806,7 @@ def configure_sync_packages_to_testing_job(
         jenkins = connect(config.jenkins_url)
 
     job_name = get_sync_packages_to_testing_job_name(
-        rosdistro_name, os_code_name, arch)
+        rosdistro_name, os_name, os_code_name, arch)
     job_config = _get_sync_packages_to_testing_job_config(
         config_url, rosdistro_name, release_build_name, os_name, os_code_name,
         arch, config, build_file)
@@ -819,16 +819,18 @@ def configure_sync_packages_to_testing_job(
 
 
 def get_sync_packages_to_testing_job_name(
-        rosdistro_name, os_code_name, arch):
+        rosdistro_name, os_name, os_code_name, arch):
     view_name = get_release_job_prefix(rosdistro_name)
-    return '%s_sync-packages-to-testing_%s_%s' % \
-        (view_name, os_code_name, arch)
+    return '%s_sync-packages-to-testing%s_%s_%s' % (
+        view_name, '' if package_format_mapping[os_name] == 'deb' else '_' + os_name,
+        os_code_name, arch)
 
 
 def _get_sync_packages_to_testing_job_config(
         config_url, rosdistro_name, release_build_name, os_name, os_code_name,
         arch, config, build_file):
-    template_name = 'release/deb/sync_packages_to_testing_job.xml.em'
+    package_format = package_format_mapping[os_name]
+    template_name = 'release/%s/sync_packages_to_testing_job.xml.em' % package_format
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(build_file=build_file)
@@ -846,7 +848,11 @@ def _get_sync_packages_to_testing_job_config(
         'arch': arch,
         'repository_args': repository_args,
 
+        'import_package_job_name': get_import_package_job_name(
+            rosdistro_name, package_format),
+
         'notify_emails': build_file.notify_emails,
+        'credential_id': build_file.upload_credential_id,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
