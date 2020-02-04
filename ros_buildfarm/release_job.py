@@ -586,7 +586,7 @@ def _get_sourcedeb_job_config(
         pkg_name, repo_name, release_repository, cached_pkgs=None,
         is_disabled=False, other_build_files_same_platform=None):
     package_format = package_format_mapping[os_name]
-    template_name = 'release/deb/sourcepkg_job.xml.em'
+    template_name = 'release/%s/sourcepkg_job.xml.em' % package_format
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(build_file=build_file)
@@ -625,8 +625,8 @@ def _get_sourcedeb_job_config(
         'job_priority': build_file.jenkins_source_job_priority,
         'node_label': get_node_label(
             build_file.jenkins_source_job_label,
-            get_default_node_label('%s_%s' % (
-                rosdistro_name, 'sourcedeb'))),
+            get_default_node_label('%s_%s%s' % (
+                rosdistro_name, 'source', package_format))),
 
         'disabled': is_disabled,
 
