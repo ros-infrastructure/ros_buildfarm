@@ -70,6 +70,10 @@ parameters = [
     'property_parameters-definition',
     parameters=parameters,
 ))@
+@(SNIPPET(
+    'property_authorization-matrix',
+    project_authorization_xml=project_authorization_xml
+))@
   </properties>
   <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
   <assignedNode>@(node_label)</assignedNode>
