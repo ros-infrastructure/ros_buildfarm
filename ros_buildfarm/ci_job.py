@@ -295,6 +295,9 @@ def _get_ci_job_config(
         'show_images': build_file.show_images,
         'show_plots': build_file.show_plots,
 
+        # Allow per-job authorization for CI builds.
+        'project_authorization_xml': build_file.project_authorization_xml,
+
         # only Ubuntu Focal has a new enough pytest version which generates
         # JUnit compliant result files
         'xunit_publisher_types': get_xunit_publisher_types_and_patterns(),

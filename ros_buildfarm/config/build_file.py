@@ -33,6 +33,9 @@ class BuildFile(object):
             if 'maintainers' in data['notifications'] and \
                     data['notifications']['maintainers']:
                 self.notify_maintainers = True
+        self.project_authorization_xml = None
+        if 'project_authorization_xml' in data:
+            self.project_authorization_xml = data['project_authorization_xml']
 
         self.repository_keys = []
         self.repository_urls = []

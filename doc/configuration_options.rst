@@ -76,6 +76,13 @@ A set of options which can be used in any build file.
   Note that yaml will turn bare words like ``yes`` into boolean values so it
   is recommended to quote values to avoid interpretation.
 
+* ``project_authorization_xml``: an XML blob which will be nested within a
+  ``<hudson.security.AuthorizationMatrixProperty>`` in job builds.
+  This property is definied for all build files but as of `#737`_ is only
+  implemented for **CI jobs**.
+
+  .. _#737: https://github.com/ros-infrastructure/ros_buildfarm/pull/737
+
 * ``repositories``: additional repositories to fetch packages from.
 
   * ``keys``: a list of PGP keys each as a multi line string.
