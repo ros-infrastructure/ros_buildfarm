@@ -78,7 +78,7 @@ A set of options which can be used in any build file.
 
 * ``project_authorization_xml``: an XML blob which will be nested within a
   ``<hudson.security.AuthorizationMatrixProperty>`` in job builds.
-  This property is definied for all build files but as of `#737`_ is only
+  This property is defined for all build files but as of `#737`_ is only
   implemented for **CI jobs**.
 
   .. _#737: https://github.com/ros-infrastructure/ros_buildfarm/pull/737
