@@ -46,6 +46,8 @@ class PlotConfig:
         self.y_axis_minimum = data.get('y_axis_minimum', None)
         self.y_axis_maximum = data.get('y_axis_maximum', None)
 
+        self.description = data.get('description', 'Please add a description')
+
         self.num_builds = data.get('num_builds', 0)
         assert isinstance(self.num_builds, int)
 
