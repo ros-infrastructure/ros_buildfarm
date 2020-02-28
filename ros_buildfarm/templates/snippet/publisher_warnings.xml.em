@@ -31,16 +31,16 @@
   <isAggregatingResults>false</isAggregatingResults>
   <isBlameDisabled>false</isBlameDisabled>
   <isForensicsDisabled>false</isForensicsDisabled>
+@[if unstable_threshold != '']@
   <qualityGates>
     <io.jenkins.plugins.analysis.core.util.QualityGate>
-@[if unstable_threshold != '']@
       <threshold>@unstable_threshold</threshold>
-@[else]@
-      <threshold/>
-@[end if]@
       <type>TOTAL</type>
       <status>WARNING</status>
     </io.jenkins.plugins.analysis.core.util.QualityGate>
   </qualityGates>
+@[else]@
+  <qualityGates/>
+@[end if]@
   <trendChartType>AGGREGATION_TOOLS</trendChartType>
 </io.jenkins.plugins.analysis.core.steps.IssuesRecorder>
