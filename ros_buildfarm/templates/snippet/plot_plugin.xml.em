@@ -3,7 +3,7 @@
 @[for plot_group, plot_list in plots.items()]@
 @[for plot in plot_list]@
         <hudson.plugins.plot.Plot>
-          <description>@(plot.description)</description>
+          <description>@(plot.description.replace('<', '&lt;').replace('<', '&gt;'))</description>
           <title>@(plot.title)</title>
           <yaxis>@(plot.y_axis_label)</yaxis>
           <series>
