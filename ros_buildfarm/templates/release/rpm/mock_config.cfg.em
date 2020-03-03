@@ -24,6 +24,9 @@ config_opts['use_nspawn'] = False
 # Inject g++ 8 into RHEL 7 builds
 config_opts['chroot_setup_cmd'] += ' devtoolset-8-gcc-c++ devtoolset-8-make-nonblocking'
 config_opts['macros']['_buildshell'] = '/usr/bin/scl enable devtoolset-8 -- /bin/sh'
+
+# Disable weak dependencies on RHEL 7 builds
+config_opts['macros']['_without_weak_deps'] = '1'
 @[else]@
 # Add g++, which is an assumed dependency in ROS
 config_opts['chroot_setup_cmd'] += ' gcc-c++ make'
