@@ -1,10 +1,12 @@
 <io.jenkins.plugins.analysis.core.steps.IssuesRecorder plugin="warnings-ng@@7.3.0">
   <analysisTools>
-    <!--
-         catkin inject CMake variables that are not
-         always used in build. Be careful if planning
-         to add the CMake parser
-    -->
+    <io.jenkins.plugins.analysis.warnings.Cmake>
+      <id></id>
+      <name></name>
+      <pattern></pattern>
+      <reportEncoding></reportEncoding>
+      <skipSymbolicLinks>false</skipSymbolicLinks>
+    </io.jenkins.plugins.analysis.warnings.Cmake>
     <io.jenkins.plugins.analysis.warnings.Gcc4>
       <id></id>
       <name></name>
