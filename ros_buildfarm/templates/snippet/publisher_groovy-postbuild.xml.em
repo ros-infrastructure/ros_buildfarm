@@ -1,5 +1,5 @@
     <org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder plugin="groovy-postbuild@@2.4.3">
-      <script plugin="script-security@@1.68">
+      <script plugin="script-security@@1.70">
         <script>@ESCAPE(script)</script>
         <sandbox>false</sandbox>
       </script>
