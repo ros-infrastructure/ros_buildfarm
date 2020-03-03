@@ -26,7 +26,11 @@
   <minimumSeverity plugin="analysis-model-api@@7.0.2">
     <name>LOW</name>
   </minimumSeverity>
-  <filters/>
+  <filters>
+    <io.jenkins.plugins.analysis.core.filter.ExcludeMessage>
+      <pattern>^Manually-specified variables were not used by the project:$</pattern>
+    </io.jenkins.plugins.analysis.core.filter.ExcludeMessage>
+  </filters>
   <isEnabledForFailure>false</isEnabledForFailure>
   <isAggregatingResults>false</isAggregatingResults>
   <isBlameDisabled>false</isBlameDisabled>
