@@ -472,6 +472,8 @@ The following options are valid in version ``1`` (beside the generic options):
   plot group and the list contains plot definitions comprised of:
 
   * ``title``: the title of the plot.
+  * ``description``: the description of the plot. This might contains HTML such
+    as the tags: <b>, <li>, <ul>, etc.
   * ``y_axis_label``: (optional) a label for the y-axis.
   * ``master_csv_name``: the name of the CSV file in which to aggregate the
     results on the Jenkins master.
