@@ -38,8 +38,8 @@ class RosPackage(object):
 
 
 def get_rosdistro_info(dist, build_file):
-    all_pkg_names = dist.release_packages.keys()
-    pkg_names = build_file.filter_packages(all_pkg_names)
+    pkg_names = dist.release_packages.keys()
+    filtered_pkg_names = build_file.filter_packages(pkg_names)
 
     packages = {}
     for pkg_name in pkg_names:
@@ -97,6 +97,13 @@ def get_rosdistro_info(dist, build_file):
                         break
             except InvalidPackage:
                 pass
+
+        # handle ignored packages
+        if pkg_name not in filtered_pkg_names:
+            ros_pkg.version = None
+            ros_pkg.status = 'disabled'
+            ros_pkg.status_description = \
+                'disabled by the release build configuration'
 
         packages[pkg_name] = ros_pkg
     return packages
