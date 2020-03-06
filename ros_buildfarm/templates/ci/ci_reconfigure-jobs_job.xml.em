@@ -96,13 +96,13 @@ if (repository_names) {
         ' $REPOSITORY_NAMES_FLAG',
         'echo "# END SECTION"',
         '',
-        'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs"',
+        'echo "# BEGIN SECTION: Build Dockerfile - reconfigure jobs for %s"' % (ci_build_name),
         'cd $WORKSPACE/docker_generate_ci_jobs',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
         'docker build --force-rm -t ci_reconfigure_jobs .',
         'echo "# END SECTION"',
         '',
-        'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs"',
+        'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs for %s"' % (ci_build_name),
         '# -e=GIT_BRANCH= is required since Jenkins leaves the wc in detached state',
         'docker run' +
         ' --rm ' +
