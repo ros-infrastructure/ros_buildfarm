@@ -19,7 +19,9 @@ import sys
 
 from ros_buildfarm.common import get_binarydeb_job_name
 from ros_buildfarm.common import get_default_node_label
+from ros_buildfarm.common import get_direct_dependencies
 from ros_buildfarm.common import get_github_project_url
+from ros_buildfarm.common import get_implicitly_ignored_package_names
 from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import get_release_binary_view_name
@@ -76,6 +78,7 @@ def configure_release_jobs(
         return
 
     pkg_names = dist_file.release_packages.keys()
+    cached_pkgs = _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names)
     filtered_pkg_names = build_file.filter_packages(pkg_names)
     explicitly_ignored_pkg_names = set(pkg_names) - set(filtered_pkg_names)
     if explicitly_ignored_pkg_names:
@@ -85,27 +88,8 @@ def configure_release_jobs(
         for pkg_name in sorted(explicitly_ignored_pkg_names):
             print('  -', pkg_name)
 
-    cached_pkgs = _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names)
-
-    if explicitly_ignored_pkg_names:
-        # get direct dependencies from distro cache for each package
-        direct_dependencies = {}
-        for pkg_name in pkg_names:
-            direct_dependencies[pkg_name] = _get_direct_dependencies(
-                pkg_name, cached_pkgs, pkg_names) or set([])
-
-        # find recursive downstream deps for all explicitly ignored packages
-        ignored_pkg_names = set(explicitly_ignored_pkg_names)
-        while True:
-            implicitly_ignored_pkg_names = _get_downstream_package_names(
-                ignored_pkg_names, direct_dependencies)
-            if implicitly_ignored_pkg_names - ignored_pkg_names:
-                ignored_pkg_names |= implicitly_ignored_pkg_names
-                continue
-            break
-        implicitly_ignored_pkg_names = \
-            ignored_pkg_names - explicitly_ignored_pkg_names
-
+        implicitly_ignored_pkg_names = get_implicitly_ignored_package_names(
+            cached_pkgs, explicitly_ignored_pkg_names)
         if implicitly_ignored_pkg_names:
             print(('The following packages are being %s because their ' +
                    'dependencies are being ignored:') % ('ignored'
@@ -345,21 +329,13 @@ def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names):
         'distribution_type')
     if distribution_type == 'ros2' and 'ros_workspace' in cached_pkgs:
         no_ros_workspace_dep = set(['ros_workspace']).union(
-            _get_direct_dependencies('ros_workspace', cached_pkgs, pkg_names))
+            get_direct_dependencies('ros_workspace', cached_pkgs, pkg_names))
 
         for pkg_name, pkg in cached_pkgs.items():
             if pkg_name not in no_ros_workspace_dep:
                 pkg.exec_depends.append(Dependency('ros_workspace'))
 
     return cached_pkgs
-
-
-def _get_downstream_package_names(pkg_names, dependencies):
-    downstream_pkg_names = set([])
-    for pkg_name, deps in dependencies.items():
-        if deps.intersection(pkg_names):
-            downstream_pkg_names.add(pkg_name)
-    return downstream_pkg_names
 
 
 # Configure a Jenkins release job which consists of
@@ -500,7 +476,7 @@ def configure_release_job(
 
     dependency_names = []
     if build_file.abi_incompatibility_assumed:
-        dependency_names = _get_direct_dependencies(
+        dependency_names = get_direct_dependencies(
             pkg_name, cached_pkgs, pkg_names)
         # if dependencies are not yet available in rosdistro cache
         # skip binary jobs
@@ -559,25 +535,6 @@ def configure_release_views(
             template_name='dashboard_view_all_jobs.xml.em', dry_run=dry_run)
 
     return views
-
-
-def _get_direct_dependencies(pkg_name, cached_pkgs, pkg_names):
-    if pkg_name not in cached_pkgs:
-        return None
-    pkg = cached_pkgs[pkg_name]
-    # test dependencies are treated as build dependencies by bloom
-    # so we need them here to ensure that all dependencies are available
-    # before starting a build
-    depends = set([
-        d.name for d in (
-            pkg.buildtool_depends +
-            pkg.build_depends +
-            pkg.buildtool_export_depends +
-            pkg.build_export_depends +
-            pkg.exec_depends +
-            pkg.test_depends)
-        if d.name in pkg_names])
-    return depends
 
 
 def _get_sourcedeb_job_config(
