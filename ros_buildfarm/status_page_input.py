@@ -39,6 +39,17 @@ class RosPackage(object):
 
 def get_rosdistro_info(dist, build_file):
     pkg_names = dist.release_packages.keys()
+    cached_pkgs = {}
+    for pkg_name in pkg_names:
+        pkg_xml = dist.get_release_package_xml(pkg_name)
+        if pkg_xml is not None:
+            from catkin_pkg.package import InvalidPackage, parse_package_string
+            try:
+                pkg_manifest = parse_package_string(pkg_xml)
+            except InvalidPackage:
+                continue
+            cached_pkgs[pkg_name] = pkg_manifest
+
     filtered_pkg_names = build_file.filter_packages(pkg_names)
 
     packages = {}
@@ -83,20 +94,15 @@ def get_rosdistro_info(dist, build_file):
         # maintainers and package url from manifest
         ros_pkg.maintainers = []
         ros_pkg.url = None
-        pkg_xml = dist.get_release_package_xml(pkg_name)
-        if pkg_xml is not None:
-            from catkin_pkg.package import InvalidPackage, parse_package_string
-            try:
-                pkg_manifest = parse_package_string(pkg_xml)
-                for m in pkg_manifest.maintainers:
-                    ros_pkg.maintainers.append(
-                        MaintainerDescriptor(m.name, m.email))
-                for u in pkg_manifest['urls']:
-                    if u.type == 'website':
-                        ros_pkg.url = u.url
-                        break
-            except InvalidPackage:
-                pass
+        if pkg_name in cached_pkgs:
+            pkg_manifest = cached_pkgs[pkg_name]
+            for m in pkg_manifest.maintainers:
+                ros_pkg.maintainers.append(
+                    MaintainerDescriptor(m.name, m.email))
+            for u in pkg_manifest['urls']:
+                if u.type == 'website':
+                    ros_pkg.url = u.url
+                    break
 
         # handle ignored packages
         if pkg_name not in filtered_pkg_names:
