@@ -595,3 +595,52 @@ def get_xunit_publisher_types_and_patterns():
     types = []
     types.append(('GoogleTestType', 'ws/test_results/**/*.xml'))
     return types
+
+
+def get_direct_dependencies(pkg_name, cached_pkgs, pkg_names):
+    if pkg_name not in cached_pkgs:
+        return None
+    pkg = cached_pkgs[pkg_name]
+    # test dependencies are treated as build dependencies by bloom
+    # so we need them here to ensure that all dependencies are available
+    # before starting a build
+    depends = set([
+        d.name for d in (
+            pkg.buildtool_depends +
+            pkg.build_depends +
+            pkg.buildtool_export_depends +
+            pkg.build_export_depends +
+            pkg.exec_depends +
+            pkg.test_depends)
+        if d.name in pkg_names])
+    return depends
+
+
+def get_downstream_package_names(pkg_names, dependencies):
+    downstream_pkg_names = set([])
+    for pkg_name, deps in dependencies.items():
+        if deps.intersection(pkg_names):
+            downstream_pkg_names.add(pkg_name)
+    return downstream_pkg_names
+
+
+def get_implicitly_ignored_package_names(cached_pkgs, explicitly_ignored_pkg_names):
+    pkg_names = set(cached_pkgs.keys())
+
+    # get direct dependencies from distro cache for each package
+    direct_dependencies = {}
+    for pkg_name in pkg_names:
+        direct_dependencies[pkg_name] = get_direct_dependencies(
+            pkg_name, cached_pkgs, pkg_names) or set([])
+
+    # find recursive downstream deps for all explicitly ignored packages
+    ignored_pkg_names = set(explicitly_ignored_pkg_names)
+    while True:
+        implicitly_ignored_pkg_names = get_downstream_package_names(
+            ignored_pkg_names, direct_dependencies)
+        if implicitly_ignored_pkg_names - ignored_pkg_names:
+            ignored_pkg_names |= implicitly_ignored_pkg_names
+            continue
+        break
+
+    return ignored_pkg_names.difference(explicitly_ignored_pkg_names)
