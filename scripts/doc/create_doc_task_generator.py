@@ -545,7 +545,9 @@ def main(argv=sys.argv[1:]):
                 'python3-sphinx',
                 'python3-yaml'])
         else:
-            raise RuntimeError('Unknown python version', condition_context['ROS_PYTHON_VERSION'])
+            raise RuntimeError(
+                'Unknown python version for distro {} {}'.format(
+                    args.rosdistro_name, condition_context))
 
         if args.build_tool == 'colcon':
             debian_pkg_names.append('python3-colcon-ros')
