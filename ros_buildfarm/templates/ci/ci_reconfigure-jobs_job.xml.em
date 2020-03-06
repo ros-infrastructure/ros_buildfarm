@@ -81,7 +81,7 @@ if (repository_names) {
         '',
         '# generate Dockerfile, build and run it',
         '# generating the Dockerfiles for the actual CI tasks',
-        'echo "# BEGIN SECTION: Generate Dockerfile - reconfigure jobs"',
+        'echo "# BEGIN SECTION: Generate Dockerfile - reconfigure jobs for %s"' % (ci_build_name),
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'if [ "$dry_run" = "true" ]; then DRY_RUN_FLAG="--dry-run"; fi',
         'if [ "$repository_names" != "" ]; then REPOSITORY_NAMES_FLAG="--repository-names $repository_names"; fi',
