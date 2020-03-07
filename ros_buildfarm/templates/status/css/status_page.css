@@ -110,11 +110,13 @@ span.developed:before { content: "developed"; color: #a2d39c; }
 span.maintained:before { content: "maintained"; color: #a2d39c; }
 span.unmaintained:before { content: "unmaintained"; color: #f0ac78; }
 span.end-of-life:before { content: "end-of-life"; color: #f07878; }
+span.disabled:before { content:"disabled"; color: #c8c8c8; }
 span.unknown:before { content:"unknown"; color: #c8c8c8; }
 span.developed,
 span.maintained,
 span.unmaintained,
 span.end-of-life,
+span.disabled,
 span.unknown { padding-right: 20px; width: auto; }
 
 .sum {
