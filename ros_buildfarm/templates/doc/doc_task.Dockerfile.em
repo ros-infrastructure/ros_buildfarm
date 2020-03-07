@@ -26,7 +26,7 @@ RUN useradd -u @uid -l -m buildfarm
 
 @(TEMPLATE(
     'snippet/set_environment_variables.Dockerfile.em',
-    evironment_variables=environment_variables,
+    environment_variables=environment_variables,
 ))@
 
 @(TEMPLATE(
