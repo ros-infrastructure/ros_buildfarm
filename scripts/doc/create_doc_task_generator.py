@@ -527,7 +527,7 @@ def main(argv=sys.argv[1:]):
             get_os_package_name(args.rosdistro_name, 'genmsg'),
         ]
 
-        if '3' == condition_context['ROS_PYTHON_VERSION']:
+        if '3' == str(condition_context['ROS_PYTHON_VERSION']):
             # the following are required by rosdoc_lite
             debian_pkg_names.extend([
                 'python3-catkin-pkg-modules',
@@ -536,7 +536,7 @@ def main(argv=sys.argv[1:]):
                 'python3-sphinx',
                 'python3-yaml'])
         else:
-            if '2' != condition_context['ROS_PYTHON_VERSION']:
+            if '2' != str(condition_context['ROS_PYTHON_VERSION']):
                 print('Unknown python version, using Python 2', condition_context)
             # the following are required by rosdoc_lite
             debian_pkg_names.extend([
