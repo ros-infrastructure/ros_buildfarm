@@ -536,8 +536,8 @@ def main(argv=sys.argv[1:]):
                 'python3-sphinx',
                 'python3-yaml'])
         else:
-            print('Unknown python version', condition_context)
-            # Assume it's old, and using Python 2
+            if '2' != condition_context['ROS_PYTHON_VERSION']:
+                print('Unknown python version, using Python 2', condition_context)
             # the following are required by rosdoc_lite
             debian_pkg_names.extend([
                 'python-catkin-pkg-modules',
