@@ -11,6 +11,12 @@ config_opts['yum_builddep_opts'] = config_opts.get('yum_builddep_opts', []) + ['
 config_opts['dnf_builddep_opts'] = config_opts.get('dnf_builddep_opts', []) + ['--setopt=install_weak_deps=True']
 config_opts['microdnf_builddep_opts'] = config_opts.get('microdnf_builddep_opts', []) + ['--setopt=install_weak_deps=True']
 
+@[if build_environment_variables]@
+# Set environment vars from the build config
+@[for env_key, env_val in [env_var.split('=', 1) for env_var in build_environment_variables]]@
+config_opts['environment']['@env_key'] = '@env_val'
+@[end for]
+@[end if]@
 # Disable debug packages until infrastructure can handle it
 config_opts['macros']['debug_package'] = '%{nil}'
 
