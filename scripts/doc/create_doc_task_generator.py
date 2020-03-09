@@ -594,7 +594,8 @@ def main(argv=sys.argv[1:]):
                 args.distribution_repository_urls,
                 args.distribution_repository_key_files),
 
-            'environment_variables': ['ROS_PYTHON_VERSION={}'.format(condition_context['ROS_PYTHON_VERSION'])],
+            'environment_variables': [
+                'ROS_PYTHON_VERSION={}'.format(condition_context['ROS_PYTHON_VERSION'])],
 
             'rosdistro_name': args.rosdistro_name,
 
