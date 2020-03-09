@@ -11,6 +11,9 @@ config_opts['yum_builddep_opts'] = config_opts.get('yum_builddep_opts', []) + ['
 config_opts['dnf_builddep_opts'] = config_opts.get('dnf_builddep_opts', []) + ['--setopt=install_weak_deps=True']
 config_opts['microdnf_builddep_opts'] = config_opts.get('microdnf_builddep_opts', []) + ['--setopt=install_weak_deps=True']
 
+# Set CPU count to 1 (so make will get -j1)
+config_opts['environment']['RPM_BUILD_NCPUS'] = '1'
+
 # Disable debug packages until infrastructure can handle it
 config_opts['macros']['debug_package'] = '%{nil}'
 
