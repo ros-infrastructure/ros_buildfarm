@@ -137,9 +137,9 @@ def main(argv=sys.argv[1:]):
             if pkg.name in package_names:
                 packages_to_remove[pkg.pulp_href] = pkg
 
-        package_provides = package_names.union(
-            prov[0] for pkg in packages_to_add.values() for prov in pkg.provides)
         if args.invalidate:
+            package_provides = package_names.union(
+                prov[0] for pkg in packages_to_add.values() for prov in pkg.provides)
             packages_to_remove.update(
                 _get_recursive_dependencies(packages_in_version, package_provides))
 
