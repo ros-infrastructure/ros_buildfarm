@@ -120,6 +120,8 @@ def main(argv=sys.argv[1:]):
                 '-t', os.path.join(
                     args.output_dir, 'rosdoc_tags', '%s.yaml' % pkg_name),
             ]
+            if '3' == os.environ.get('ROS_PYTHON_VERSION'):
+                rosdoc_lite_cmd.insert(0, 'python3')
             print("Invoking `rosdoc_lite` for package '%s': %s" %
                   (pkg_name, ' '.join(rosdoc_lite_cmd)))
             pkg_rc = subprocess.call(

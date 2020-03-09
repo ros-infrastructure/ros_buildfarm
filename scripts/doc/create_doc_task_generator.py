@@ -115,10 +115,11 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
 
     config = get_config_index(args.config_url)
+    index = get_index(config.rosdistro_index_url)
 
     condition_context = {
         'ROS_DISTRO': args.rosdistro_name,
-        'ROS_PYTHON_VERSION': 2,
+        'ROS_PYTHON_VERSION': index.distributions[args.rosdistro_name].get('python_version'),
         'ROS_VERSION': 1,
     }
 
@@ -224,7 +225,6 @@ def main(argv=sys.argv[1:]):
           'up-to-date')
     create_stamp_files(pkg_names, os.path.join(args.output_dir, 'api_rosdoc'))
 
-    index = get_index(config.rosdistro_index_url)
     dist_file = get_distribution_file(index, args.rosdistro_name)
     assert args.repository_name in dist_file.repositories
     valid_package_names = \
@@ -521,17 +521,32 @@ def main(argv=sys.argv[1:]):
             'rsync',
             # the following are required by rosdoc_lite
             'doxygen',
-            'python-catkin-pkg-modules',
-            'python-epydoc',
-            'python-kitchen',
-            'python-rospkg',
-            'python-sphinx',
-            'python-yaml',
             # since catkin is not a run dependency but provides the setup files
             get_os_package_name(args.rosdistro_name, 'catkin'),
             # rosdoc_lite does not work without genmsg being importable
             get_os_package_name(args.rosdistro_name, 'genmsg'),
         ]
+
+        if '3' == str(condition_context['ROS_PYTHON_VERSION']):
+            # the following are required by rosdoc_lite
+            debian_pkg_names.extend([
+                'python3-catkin-pkg-modules',
+                'python3-kitchen',
+                'python3-rospkg-modules',
+                'python3-sphinx',
+                'python3-yaml'])
+        else:
+            if '2' != str(condition_context['ROS_PYTHON_VERSION']):
+                print('Unknown python version, using Python 2', condition_context)
+            # the following are required by rosdoc_lite
+            debian_pkg_names.extend([
+                'python-catkin-pkg-modules',
+                'python-epydoc',
+                'python-kitchen',
+                'python-rospkg',
+                'python-sphinx',
+                'python-yaml'])
+
         if args.build_tool == 'colcon':
             debian_pkg_names.append('python3-colcon-ros')
         if 'actionlib_msgs' in pkg_names:
@@ -578,6 +593,9 @@ def main(argv=sys.argv[1:]):
             'distribution_repository_keys': get_distribution_repository_keys(
                 args.distribution_repository_urls,
                 args.distribution_repository_key_files),
+
+            'environment_variables': [
+                'ROS_PYTHON_VERSION={}'.format(condition_context['ROS_PYTHON_VERSION'])],
 
             'rosdistro_name': args.rosdistro_name,
 
