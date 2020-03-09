@@ -92,12 +92,13 @@ def main(argv=sys.argv[1:]):
 
         packages_in_version_page = pulp_packages_api.list(
             repository_version=old_publication.repository_version, limit=200)
-        packages_in_version = list(packages_in_version_page.results)
+        packages_in_version = {pkg.pulp_href: pkg for pkg in packages_in_version_page.results}
         while packages_in_version_page.next:
             packages_in_version_page = pulp_packages_api.list(
                 repository_version=old_publication.repository_version, limit=200,
                 offset=len(packages_in_version))
-            packages_in_version += packages_in_version_page.results
+            packages_in_version.update(
+                {pkg.pulp_href: pkg for pkg in packages_in_version_page.results})
 
         assert packages_in_version_page.count == len(packages_in_version)
         print('Found %d packages in the repository' % len(packages_in_version))
@@ -108,13 +109,13 @@ def main(argv=sys.argv[1:]):
         # First, remove packages matching the explicit expression
         if args.invalidate_expression:
             compiled_expression = re.compile(args.invalidate_expression)
-            for pkg in packages_in_version:
+            for pkg in packages_in_version.values():
                 if compiled_expression.match(pkg.name):
                     packages_to_remove[pkg.pulp_href] = pkg
 
         # Get the metadata for the packages we're adding
         for package_href in args.package_resources:
-            package = pulp_packages_api.read(package_href)
+            package = packages_in_version.get(package_href) or pulp_packages_api.read(package_href)
             print('Importing package: %s-%s%s-%s.%s' % (
                 package.name,
                 (package.epoch + ':') if package.epoch != '0' else '',
@@ -122,7 +123,7 @@ def main(argv=sys.argv[1:]):
                 package.release,
                 package.arch))
 
-            if package in packages_in_version:
+            if package.pulp_href in packages_in_version:
                 packages_to_remove.pop(package.pulp_href, None)
                 print('Package is already present - skipping: %s%s' % (
                     pulp_config.host, package.pulp_href))
@@ -133,7 +134,7 @@ def main(argv=sys.argv[1:]):
     with Scope('SUBSECTION', 'determining which packages to invalidate'):
         # Remove any packages with the same name
         package_names = set([pkg.name for pkg in packages_to_add.values()])
-        for pkg in packages_in_version:
+        for pkg in packages_in_version.values():
             if pkg.name in package_names:
                 packages_to_remove[pkg.pulp_href] = pkg
 
@@ -141,7 +142,7 @@ def main(argv=sys.argv[1:]):
             package_provides = package_names.union(
                 prov[0] for pkg in packages_to_add.values() for prov in pkg.provides)
             packages_to_remove.update(
-                _get_recursive_dependencies(packages_in_version, package_provides))
+                _get_recursive_dependencies(packages_in_version.values(), package_provides))
 
     with Scope('SUBSECTION', 'committing changes'):
         print('Adding %d and removing %d from the repository' % (
