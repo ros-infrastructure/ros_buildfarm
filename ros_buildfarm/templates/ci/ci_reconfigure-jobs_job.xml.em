@@ -66,6 +66,7 @@ if (repository_names) {
     script_generating_key_files=script_generating_key_files,
 ))@
 @[for ci_build_name in ci_build_names]@
+@{ cid_filename = '$WORKSPACE/docker_generate_ci_jobs/docker__%s.cid' % (ci_build_name) }@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
@@ -75,7 +76,8 @@ if (repository_names) {
         'mkdir -p $WORKSPACE/reconfigure_jobs',
         '',
         '# monitor all subprocesses and enforce termination',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ --cid-file $WORKSPACE/docker_generate_ci_jobs/docker.cid > $WORKSPACE/docker_generate_ci_jobs/subprocess_reaper.log 2>&1 &',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py' +
+        ' $$ --cid-file %s > $WORKSPACE/docker_generate_ci_jobs/subprocess_reaper.log 2>&1 &' % (cid_filename),
         '# sleep to give python time to startup',
         'sleep 1',
         '',
@@ -106,7 +108,7 @@ if (repository_names) {
         '# -e=GIT_BRANCH= is required since Jenkins leaves the wc in detached state',
         'docker run' +
         ' --rm ' +
-        ' --cidfile=$WORKSPACE/docker_generate_ci_jobs/docker.cid' +
+        ' --cidfile=%s' % (cid_filename) +
         ' -e=GIT_BRANCH=$GIT_BRANCH' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
