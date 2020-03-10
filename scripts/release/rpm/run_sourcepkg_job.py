@@ -58,7 +58,6 @@ def main(argv=sys.argv[1:]):
         'target_repository': None,
 
         'uid': get_user_id(),
-        'build_environment_variables': [],
     })
     create_dockerfile(
         'release/rpm/sourcepkg_task.Dockerfile.em', data, args.dockerfile_dir)

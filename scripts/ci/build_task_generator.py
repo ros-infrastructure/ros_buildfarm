@@ -117,7 +117,7 @@ def main(argv=sys.argv[1:]):
         'build_tool_args': args.build_tool_args,
         'ros_version': args.ros_version,
 
-        'build_environment_variables': args.env_vars,
+        'build_environment_variables': ['%s=%s' % var for var in args.env_vars.items()],
 
         'install_lists': install_lists,
         'dependencies': [],

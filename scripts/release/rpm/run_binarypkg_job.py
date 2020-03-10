@@ -72,7 +72,6 @@ def main(argv=sys.argv[1:]):
         'skip_download_sourcepkg': args.skip_download_sourcepkg,
 
         'sourcepkg_dir': os.path.join(args.binarypkg_dir, 'source'),
-        'build_environment_variables': args.env_vars,
     })
     create_dockerfile(
         'release/rpm/binarypkg_task.Dockerfile.em',

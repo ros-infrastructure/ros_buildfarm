@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import argparse
+from collections import OrderedDict
 import os
 
 
@@ -67,8 +68,8 @@ def add_argument_build_name(parser, build_file_type, nargs=None):
 
 def add_argument_env_vars(parser):
     parser.add_argument(
-        '--env-vars',
-        nargs='*', default=[],
+        '--env-vars', action=OrderedDictAction,
+        nargs='*', default=OrderedDict(),
         help="Environment variables as 'key=value' for Dockerfile "
              'ENV directives')
 
@@ -469,3 +470,16 @@ def extract_multiple_remainders(argv, arguments):
             remainders[argument.dest] = argv[index + 1:]
             del argv[index:]
     return remainders
+
+
+class OrderedDictAction(argparse.Action):
+    def __call__(self, parser, args, values, option_string=None):
+        dest = OrderedDict()
+        for value in values:
+            value_parts = value.split('=', 1)
+            if len(value_parts) != 2:
+                raise argparse.ArgumentError(
+                    argument=self,
+                    message="invalid key/value pair: '%s'" % value)
+            dest[value_parts[0].strip()] = value_parts[1].strip()
+        setattr(args, self.dest, dest)
