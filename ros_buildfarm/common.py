@@ -509,7 +509,8 @@ def topological_order_packages(packages):
             decorator.package.run_depends + decorator.package.test_depends
         # skip external dependencies, meaning names that are not known packages
         unique_depend_names = set([
-            d.name for d in all_depends if d.name in decorators_by_name.keys()])
+            d.name for d in all_depends if d.name in decorators_by_name.keys() and
+            d.evaluated_condition is not False])
         for name in unique_depend_names:
             if name in decorator.depends_for_topological_order:
                 # avoid function call to improve performance
@@ -613,7 +614,8 @@ def get_direct_dependencies(pkg_name, cached_pkgs, pkg_names):
             pkg.build_export_depends +
             pkg.exec_depends +
             pkg.test_depends)
-        if d.name in pkg_names])
+        if d.name in pkg_names and
+        d.evaluated_condition is not False])
     return depends
 
 
