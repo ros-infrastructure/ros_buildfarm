@@ -553,13 +553,13 @@ def get_system_architecture():
     raise RuntimeError('Unable to determine architecture')
 
 
-def get_packages_in_workspaces(workspace_roots, condition_context):
+def get_packages_in_workspaces(workspace_roots, condition_context=None):
     """
     Return packages found in the passed workspaces.
 
     :param workspace_roots: A list of absolute paths to workspaces
-    :param condition_context: A dict containing environment variables for the
-      conditions in the package manifests
+    :param condition_context: An optional dict containing environment variables
+      for the conditional evaluation in the package manifests
     :returns: A list of ``Package`` objects
     """
     from catkin_pkg.packages import find_packages
@@ -569,9 +569,10 @@ def get_packages_in_workspaces(workspace_roots, condition_context):
         source_space = os.path.join(workspace_root, 'src')
         print("Crawling for packages in workspace '%s'" % source_space)
         ws_pkgs = find_packages(source_space)
-        for pkg in ws_pkgs.values():
-            pkg.evaluate_conditions(condition_context)
         pkgs.update(ws_pkgs)
+    if condition_context is not None:
+        for pkg in pkgs.values():
+            pkg.evaluate_conditions(condition_context)
     return pkgs
 
 
