@@ -70,7 +70,7 @@ def main(argv=sys.argv[1:]):
         'skip_download_sourcepkg': args.skip_download_sourcepkg,
 
         'binarypkg_dir': '/tmp/binarydeb',
-        'build_environment_variables': ['%s=%s' % var for var in args.env_vars.items()],
+        'build_environment_variables': ['%s=%s' % key_value for key_value in args.env_vars.items()],
         'dockerfile_dir': '/tmp/docker_build_binarydeb',
     })
     create_dockerfile(

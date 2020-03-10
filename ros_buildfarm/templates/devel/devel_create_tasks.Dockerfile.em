@@ -82,7 +82,7 @@ cmd = \
     ' --distribution-repository-key-files ' + ' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))]) + \
     ' --build-tool ' + build_tool + \
     ' --ros-version ' + str(ros_version) + \
-    ' --env-vars ' + ' ' .join(['%s=%s' % var for var in env_vars.items()])
+    ' --env-vars ' + ' ' .join(['%s=%s' % key_value for key_value in env_vars.items()])
 if run_abichecker:
     cmd += ' --run-abichecker'
 if require_gpu_support:

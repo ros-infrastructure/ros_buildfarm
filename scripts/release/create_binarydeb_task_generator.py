@@ -97,7 +97,7 @@ def main(argv=sys.argv[1:]):
             args.distribution_repository_urls,
             args.distribution_repository_key_files),
 
-        'build_environment_variables': ['%s=%s' % var for var in args.env_vars.items()],
+        'build_environment_variables': ['%s=%s' % key_value for key_value in args.env_vars.items()],
 
         'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,

@@ -171,7 +171,7 @@ def main(argv=sys.argv[1:]):
         'build_tool': args.build_tool,
         'ros_version': args.ros_version,
 
-        'build_environment_variables': ['%s=%s' % var for var in args.env_vars.items()],
+        'build_environment_variables': ['%s=%s' % key_value for key_value in args.env_vars.items()],
 
         'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,
