@@ -77,11 +77,7 @@ def main(argv=sys.argv[1:]):
              'and instead of installing the tests are ran')
     args = parser.parse_args(argv)
 
-    condition_context = {}
-    for t in args.env_vars:
-        parts = t.split('=', 1)
-        assert len(parts) == 2, '--env-vars argument lacks equal sign: ' + t
-        condition_context[parts[0]] = parts[1]
+    condition_context = dict(args.env_vars)
     condition_context['ROS_DISTRO'] = args.rosdistro_name
     condition_context['ROS_VERSION'] = args.ros_version
 
@@ -175,7 +171,7 @@ def main(argv=sys.argv[1:]):
         'build_tool': args.build_tool,
         'ros_version': args.ros_version,
 
-        'build_environment_variables': args.env_vars,
+        'build_environment_variables': ['%s=%s' % key_value for key_value in args.env_vars.items()],
 
         'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,

@@ -99,7 +99,7 @@ def main(argv=sys.argv[1:]):
 
         'uid': get_user_id(),
 
-        'build_environment_variables': args.env_vars,
+        'build_environment_variables': ['%s=%s' % key_value for key_value in args.env_vars.items()],
 
         'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,
