@@ -30,21 +30,16 @@ from ros_buildfarm.workspace import clean_workspace
 from ros_buildfarm.workspace import ensure_workspace_exists
 
 
-def call_abi_checker(workspace_root, ros_version, env):
+def call_abi_checker(workspace_root, rosdistro_name, env):
     import rosdistro
 
-    condition_context = {}
-    condition_context['ROS_DISTRO'] = env['ROS_DISTRO']
-    condition_context['ROS_VERSION'] = ros_version
-    condition_context['ROS_PYTHON_VERSION'] = \
-        (env or os.environ).get('ROS_PYTHON_VERSION')
-    pkgs = get_packages_in_workspaces(workspace_root, condition_context)
+    pkgs = get_packages_in_workspaces(workspace_root)
     pkg_names = [pkg.name for pkg in pkgs.values()]
     assert pkg_names, 'No packages found in the workspace'
 
     # Filter packages in source space that has been released
     index = rosdistro.get_index(rosdistro.get_index_url())
-    dist_file = rosdistro.get_distribution_file(index, env['ROS_DISTRO'])
+    dist_file = rosdistro.get_distribution_file(index, rosdistro_name)
     pkg_names_released = [
         pkg_name for pkg_name in pkg_names if pkg_name in dist_file.release_packages]
 
@@ -123,7 +118,7 @@ def main(argv=sys.argv[1:]):
         with Scope('SUBSECTION', 'use abi checker'):
             abi_rc = call_abi_checker(
                 [args.workspace_root],
-                args.ros_version,
+                args.rosdistro_name,
                 env)
         # Never fail a build because of abi errors but make them
         # unstable by printing MAKE_BUILD_UNSTABLE. Jenkins will
