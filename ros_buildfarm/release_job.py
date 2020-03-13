@@ -152,6 +152,15 @@ def configure_release_jobs(
     for pkg_name in set(pkg_names).difference(cached_pkgs.keys()):
         print("Skipping package '%s': no released package.xml in cache" %
               (pkg_name), file=sys.stderr)
+    # topological_order_packages will assert if the members attribute of any
+    # group dependency is None. This works around this by extracting group
+    # members from an empty set. This is preferable to honoring group
+    # dependencies as bloom does not currently support them so this matches
+    # that behavior.
+    for pkg, pkgdata in cached_pkgs:
+        if pkgdata.group_depends:
+            for group_depend in pkgdata.group_depends:
+                group_depend.extract_group_members({})
     ordered_pkg_tuples = topological_order_packages(cached_pkgs)
 
     other_build_files = [v for k, v in build_files.items() if k != release_build_name]
