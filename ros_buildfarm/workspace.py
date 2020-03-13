@@ -111,17 +111,19 @@ def call_build_tool(
     if install and build_tool == 'catkin_make_isolated':
         cmd.append('--install')
 
+    if args:
+        cmd += args
+
+    # since `args` might contain the following arguments already it must be
+    # ensured that the --* is not duplicated since only the last will be used
     if cmake_args:
-        cmd += ['--cmake-args'] + cmake_args
+        _insert_nargs_arguments(cmd, '--cmake-args', cmake_args)
 
     if make_args:
         if build_tool == 'catkin_make_isolated':
-            cmd += ['--catkin-make-args'] + make_args
+            _insert_nargs_arguments(cmd, '--catkin-make-args', make_args)
         elif build_tool == 'colcon':
-            cmd += ['--cmake-target'] + make_args
-
-    if args:
-        cmd += args
+            _insert_nargs_arguments(cmd, '--cmake-target', make_args)
 
     cmd = ' '.join(cmd)
 
@@ -158,3 +160,11 @@ def call_build_tool(
     print("Invoking '%s' in '%s'" % (cmd, workspace_root))
     return subprocess.call(
         cmd, cwd=workspace_root, shell=True, stderr=subprocess.STDOUT, env=env)
+
+
+def _insert_nargs_arguments(cmd, argument_name, argument_values):
+    if argument_name not in cmd:
+        cmd += [argument_name] + argument_values
+    else:
+        index = cmd.index(argument_name)
+        cmd[index + 1:index + 1] = argument_values
