@@ -24,6 +24,7 @@ from ros_buildfarm.common import get_github_project_url
 from ros_buildfarm.common import get_implicitly_ignored_package_names
 from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common import get_os_package_name
+from ros_buildfarm.common import get_package_condition_context
 from ros_buildfarm.common import get_release_binary_view_name
 from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import get_release_source_view_name
@@ -321,6 +322,10 @@ def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names):
         for pkg_name, pkg_xml in dist_cache.release_package_xmls.items()
         if pkg_name in pkg_names
     }
+
+    condition_context = get_package_condition_context(index, rosdistro_name)
+    for pkg in cached_pkgs.values():
+        pkg.evaluate_conditions(condition_context)
 
     # for ROS 2 distributions bloom injects a dependency on ros_workspace
     # into almost all packages (except its dependencies)
