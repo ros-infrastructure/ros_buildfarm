@@ -645,3 +645,20 @@ def get_implicitly_ignored_package_names(cached_pkgs, explicitly_ignored_pkg_nam
         break
 
     return ignored_pkg_names.difference(explicitly_ignored_pkg_names)
+
+
+def get_package_condition_context(index, rosdistro_name):
+    python_version = index.distributions[rosdistro_name].get('python_version')
+    ros_version = {
+        'ros1': '1',
+        'ros2': '2',
+    }.get(index.distributions[rosdistro_name].get('distribution_type'))
+
+    condition_context = {
+        'ROS_DISTRO': rosdistro_name,
+    }
+    if python_version:
+        condition_context['ROS_PYTHON_VERSION'] = python_version
+    if ros_version:
+        condition_context['ROS_VERSION'] = ros_version
+    return condition_context

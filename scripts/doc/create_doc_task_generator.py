@@ -43,6 +43,7 @@ from ros_buildfarm.common import get_devel_job_urls
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_doc_job_url
 from ros_buildfarm.common import get_os_package_name
+from ros_buildfarm.common import get_package_condition_context
 from ros_buildfarm.common import get_release_job_urls
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.common import Scope
@@ -117,11 +118,7 @@ def main(argv=sys.argv[1:]):
     config = get_config_index(args.config_url)
     index = get_index(config.rosdistro_index_url)
 
-    condition_context = {
-        'ROS_DISTRO': args.rosdistro_name,
-        'ROS_PYTHON_VERSION': index.distributions[args.rosdistro_name].get('python_version'),
-        'ROS_VERSION': 1,
-    }
+    condition_context = get_package_condition_context(index, args.rosdistro_name)
 
     with Scope('SUBSECTION', 'packages'):
         # find packages in workspace
