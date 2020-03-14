@@ -326,6 +326,10 @@ def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names):
     condition_context = get_package_condition_context(index, rosdistro_name)
     for pkg in cached_pkgs.values():
         pkg.evaluate_conditions(condition_context)
+    for pkg in cached_pkgs.values():
+        for group_depend in pkg.group_depends:
+            if group_depend.evaluated_condition is not False:
+                group_depend.extract_group_members(cached_pkgs.values())
 
     # for ROS 2 distributions bloom injects a dependency on ros_workspace
     # into almost all packages (except its dependencies)
