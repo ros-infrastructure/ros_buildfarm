@@ -15,17 +15,16 @@
 # limitations under the License.
 
 import argparse
-import os
 import sys
 
-from pulpcore.client import pulp_rpm
 from ros_buildfarm.argument import add_argument_pulp_base_url
 from ros_buildfarm.argument import add_argument_pulp_password
 from ros_buildfarm.argument import add_argument_pulp_resource_record
 from ros_buildfarm.argument import add_argument_pulp_task_timeout
 from ros_buildfarm.argument import add_argument_pulp_username
 from ros_buildfarm.common import Scope
-from ros_buildfarm.pulp import PulpTaskPoller
+from ros_buildfarm.pulp import format_pkg_ver
+from ros_buildfarm.pulp import PulpRpmClient
 
 
 def main(argv=sys.argv[1:]):
@@ -42,38 +41,20 @@ def main(argv=sys.argv[1:]):
     add_argument_pulp_resource_record(parser)
     args = parser.parse_args(argv)
 
+    pulp_client = PulpRpmClient(
+        args.pulp_base_url, args.pulp_username, args.pulp_password,
+        task_timeout=args.pulp_task_timeout)
+
     with Scope('SUBSECTION', 'upload package(s) to pulp'):
-        pulp_config = pulp_rpm.Configuration(
-            args.pulp_base_url, username=args.pulp_username,
-            password=args.pulp_password)
-
-        # https://pulp.plan.io/issues/5932
-        pulp_config.safe_chars_for_path_param = '/'
-
-        pulp_rpm_client = pulp_rpm.ApiClient(pulp_config)
-        pulp_packages_api = pulp_rpm.ContentPackagesApi(pulp_rpm_client)
-
-        pulp_task_poller = PulpTaskPoller(pulp_config, args.pulp_task_timeout)
-
         created_resources = []
 
         for file_path in args.package_file:
-            relative_path = os.path.basename(file_path)
-
-            print("Uploading '%s' to '%s'." % (file_path, pulp_config.host))
-            upload_task_href = pulp_packages_api.create(
-                relative_path, file=file_path).task
-            upload_task = pulp_task_poller.wait_for_task(upload_task_href)
-
-            created_rpm = pulp_packages_api.read(upload_task.created_resources[0])
+            print("Uploading '%s'." % file_path)
+            created_rpm = pulp_client.upload_pkg(file_path)
             created_resources.append(created_rpm.pulp_href)
 
-            print('Created RPM resource: %s%s' % (pulp_config.host, created_rpm.pulp_href))
-            print("Package '%s' version: %s%s-%s" % (
-                created_rpm.name,
-                (created_rpm.epoch + ':') if created_rpm.epoch != '0' else '',
-                created_rpm.version,
-                created_rpm.release))
+            print('Created RPM resource: %s' % created_rpm.pulp_href)
+            print("Package '%s' version: %s" % (created_rpm.name, format_pkg_ver(created_rpm)))
 
         if args.pulp_resource_record:
             print("Saving upload record to '%s'." % args.pulp_resource_record)
