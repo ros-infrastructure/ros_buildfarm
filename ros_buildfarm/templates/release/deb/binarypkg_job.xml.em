@@ -102,7 +102,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' ' + os_code_name +
         ' ' + arch +
         ' ' + ' '.join(repository_args) +
-        ' --binarypkg-dir $WORKSPACE/binarydeb' +
+        ' --binarypkg-dir /tmp/binarydeb' +
         ' --dockerfile-dir $WORKSPACE/docker_generating_docker' +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         (' --append-timestamp' if append_timestamp else ''),
