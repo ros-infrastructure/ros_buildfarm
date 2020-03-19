@@ -16,6 +16,7 @@
 
 import argparse
 import copy
+import os
 import sys
 
 from ros_buildfarm.argument import \
@@ -45,8 +46,10 @@ def main(argv=sys.argv[1:]):
     add_argument_distribution_repository_key_files(parser)
     parser.add_argument(
         '--source-dir',
-        required=True,
-        help='The directory where the package sources will be stored')
+        required=False,
+        help='DEPRECATED')
+    parser.add_argument(
+        '--sourcepkg-dir', default='/tmp/sourcedeb')
     add_argument_dockerfile_dir(parser)
     args = parser.parse_args(argv)
 
@@ -59,6 +62,7 @@ def main(argv=sys.argv[1:]):
             args.distribution_repository_urls,
             args.distribution_repository_key_files),
 
+        'source_dir': os.path.join(args.sourcepkg_dir, 'source'),
         'uid': get_user_id(),
     })
     create_dockerfile(

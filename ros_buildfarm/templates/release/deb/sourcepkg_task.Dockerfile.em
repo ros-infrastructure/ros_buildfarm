@@ -68,13 +68,13 @@ cmds = [
     ' ' + os_name +
     ' ' + os_code_name +
     ' ' + ' '.join(distribution_repository_urls) +
-    ' --source-dir /tmp/sourcedeb/source',
+    ' --source-dir ' + source_dir,
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' +
     ' /tmp/ros_buildfarm/scripts/release/build_sourcedeb.py' +
     ' ' + os_name +
     ' ' + os_code_name +
-    ' --source-dir /tmp/sourcedeb/source',
+    ' --source-dir ' + source_dir,
 ]
 }@
 CMD ["@(' && '.join(cmds))"]
