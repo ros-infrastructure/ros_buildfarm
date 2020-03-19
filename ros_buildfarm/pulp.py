@@ -130,7 +130,7 @@ class PulpRpmClient:
 
     def import_and_invalidate(
             self, distribution_name, packages_to_add,
-            invalidate_expression, invalidate_downstream, package_cache={}, dry_run=False):
+            invalidate_expression, invalidate_downstream, package_cache=None, dry_run=False):
         distribution = self._rpm_distributions_api.list(
             name=distribution_name).results[0]
         old_publication = self._rpm_publications_api.read(distribution.publication)
@@ -140,11 +140,13 @@ class PulpRpmClient:
             pkg.pulp_href: pkg for pkg in
             self.enumerate_pkgs_in_repo_ver(old_publication.repository_version)}
 
+        # Set up the package chache
+        package_cache = {**(package_cache or {}), **current_pkgs}
+
         # Get the packages we're adding
         new_pkgs = {
             pkg.pulp_href: pkg for pkg in
-            [package_cache.get(pkg_href) or current_pkgs.get(pkg_href) or
-                self._rpm_packages_api.read(pkg_href)
+            [package_cache.get(pkg_href) or self._rpm_packages_api.read(pkg_href)
                 for pkg_href in packages_to_add]}
 
         # Invalidate packages
