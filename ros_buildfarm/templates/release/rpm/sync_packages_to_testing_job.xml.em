@@ -96,62 +96,13 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'echo "# BEGIN SECTION: determine source packages to sync"',
+        'echo "# BEGIN SECTION: sync packages to testing repos"',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/list_packages.py' +
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/sync_repo.py' +
         ' --pulp-base-url http://repo:24817' +
-        ' --pulp-distribution-name ros-building-%s-%s-SRPMS' % (os_name, os_code_name) +
-        ' --package-name-expression "^ros-%s-.*"' % rosdistro_name +
-        ' --pulp-resource-record $WORKSPACE/ros-building-source.txt',
-        'echo "# END SECTION"',
-        '',
-        'echo "# BEGIN SECTION: determine binary packages to sync"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/list_packages.py' +
-        ' --pulp-base-url http://repo:24817' +
-        ' --pulp-distribution-name ros-building-%s-%s-%s' % (os_name, os_code_name, arch) +
-        ' --package-name-expression "^ros-%s-.*"' % rosdistro_name +
-        ' --pulp-resource-record $WORKSPACE/ros-building-binary.txt',
-        'echo "# END SECTION"',
-        '',
-        'echo "# BEGIN SECTION: determine binary debug packages to sync"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/list_packages.py' +
-        ' --pulp-base-url http://repo:24817' +
-        ' --pulp-distribution-name ros-building-%s-%s-%s-debug' % (os_name, os_code_name, arch) +
-        ' --package-name-expression "^ros-%s-.*"' % rosdistro_name +
-        ' --pulp-resource-record $WORKSPACE/ros-building-binary-debug.txt',
-        'echo "# END SECTION"',
-    ]),
-))@
-@(SNIPPET(
-    'builder_shell',
-    script='\n'.join([
-        'echo "# BEGIN SECTION: sync source packages to testing repo"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'sed "s/^PULP_RESOURCES=//" $WORKSPACE/ros-building-source.txt | xargs' +
-        ' python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/import_package.py' +
-        ' --pulp-base-url http://repo:24817' +
-        ' --pulp-distribution-name ros-testing-%s-%s-SRPMS' % (os_name, os_code_name) +
-        ' --invalidate-expression "^ros-%s-.*"' % rosdistro_name,
-        'echo "# END SECTION"',
-        '',
-        'echo "# BEGIN SECTION: sync binary packages to testing repo"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'sed "s/^PULP_RESOURCES=//" $WORKSPACE/ros-building-binary.txt | xargs' +
-        ' python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/import_package.py' +
-        ' --pulp-base-url http://repo:24817' +
-        ' --pulp-distribution-name ros-testing-%s-%s-%s' % (os_name, os_code_name, arch) +
-        ' --invalidate-expression "^ros-%s-.*"' % rosdistro_name,
-        'echo "# END SECTION"',
-        '',
-        'echo "# BEGIN SECTION: sync binary debug packages to testing repo"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'sed "s/^PULP_RESOURCES=//" $WORKSPACE/ros-building-binary-debug.txt | xargs' +
-        ' python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/import_package.py' +
-        ' --pulp-base-url http://repo:24817' +
-        ' --pulp-distribution-name ros-testing-%s-%s-%s-debug' % (os_name, os_code_name, arch) +
-        ' --invalidate-expression "^ros-%s-.*"' % rosdistro_name,
+        ' --distribution-source-expression "^ros-building-%s-%s-(SRPMS|%s(-debug)?)$"' % (os_name, os_code_name, arch) +
+        ' --distribution-dest-expression "ros-testing-%s-%s-\\1"' % (os_name, os_code_name) +
+        ' --package-name-expression "^ros-%s-.*"' % rosdistro_name,
         'echo "# END SECTION"',
     ]),
 ))@
