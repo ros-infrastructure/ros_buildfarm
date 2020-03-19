@@ -25,7 +25,8 @@ from ros_buildfarm.argument import add_argument_pulp_password
 from ros_buildfarm.argument import add_argument_pulp_task_timeout
 from ros_buildfarm.argument import add_argument_pulp_username
 from ros_buildfarm.common import Scope
-from ros_buildfarm.pulp import format_pkg_ver, PulpRpmClient
+from ros_buildfarm.pulp import format_pkg_ver
+from ros_buildfarm.pulp import PulpRpmClient
 
 
 def main(argv=sys.argv[1:]):
