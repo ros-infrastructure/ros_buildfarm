@@ -36,12 +36,12 @@ RUN echo "@today_str"
     os_code_name='xenial',
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y make python-pip
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y make python3-pip
 @[if install_apt_packages]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y @(' '.join(install_apt_packages))
 @[end if]@
 @[if install_pip_packages]@
-RUN pip install -U @(' '.join(install_pip_packages))
+RUN pip3 install -U @(' '.join(install_pip_packages))
 @[end if]@
 
 USER buildfarm
