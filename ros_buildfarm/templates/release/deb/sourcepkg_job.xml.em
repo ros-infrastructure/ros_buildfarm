@@ -91,7 +91,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' ' + os_name +
         ' ' + os_code_name +
         ' ' + ' '.join(repository_args) +
-        ' --source-dir $WORKSPACE/sourcedeb/source' +
+        ' --sourcepkg-dir /tmp/sourcedeb' +
         ' --dockerfile-dir $WORKSPACE/docker_sourcedeb',
         'echo "# END SECTION"',
         '',
