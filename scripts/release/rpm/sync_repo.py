@@ -52,24 +52,32 @@ def main(argv=sys.argv[1:]):
         args.pulp_base_url, args.pulp_username, args.pulp_password,
         task_timeout=args.pulp_task_timeout)
 
-    dists_to_sync = OrderedDict()
+    dists_to_sync = []
     with Scope('SUBSECTION', 'enumerating distributions to sync'):
         dist_expression = re.compile(args.distribution_source_expression)
         distributions = {dist.name for dist in pulp_client.enumerate_distributions()}
         for dist_source in sorted(distributions):
-            (dist_dest, matched) = dist_expression.subn(
+            (dist_dest_pattern, matched_source) = dist_expression.subn(
                 args.distribution_dest_expression, dist_source)
-            if matched:
-                dists_to_sync[dist_source] = dist_dest
+            if matched_source:
+                dist_dest_matches = [
+                    dist for dist in distributions if re.match(dist_dest_pattern, dist)]
+                if not dist_dest_matches:
+                    print(
+                        "No distributions match destination pattern '%s'" % dist_dest_pattern,
+                        file=sys.stderr)
+                    return 1
+                dists_to_sync.extend((dist_source, dist_dest) for dist_dest in dist_dest_matches)
 
+        dists_to_sync = sorted(set(dists_to_sync))
         print('Syncing %d distributions:' % len(dists_to_sync))
-        for dist_source_dest in dists_to_sync.items():
+        for dist_source_dest in dists_to_sync:
             print('- %s => %s' % dist_source_dest)
 
     packages = {}
     with Scope('SUBSECTION', 'enumerating packages to sync'):
         package_expression = re.compile(args.package_name_expression)
-        for dist_source in dists_to_sync.keys():
+        for dist_source, _ in dists_to_sync:
             packages[dist_source] = {
                 pkg.pulp_href: pkg
                 for pkg in pulp_client.enumerate_pkgs_in_distribution_name(dist_source)
@@ -77,11 +85,11 @@ def main(argv=sys.argv[1:]):
 
         print('Matched %d packages from source distributions:' % (
             sum([len(pkgs) for pkgs in packages.values()])))
-        for dist_source in dists_to_sync.keys():
+        for dist_source, _ in dists_to_sync:
             print('- %s: %d matching packages' % (dist_source, len(packages[dist_source])))
 
     with Scope('SUBSECTION', 'invalidation and committing changes'):
-        for dist_source, dist_dest in dists_to_sync.items():
+        for dist_source, dist_dest in dists_to_sync:
             packages_to_sync = packages[dist_source]
             if not packages_to_sync:
                 print('Skipping sync from %s to %s' % (dist_source, dist_dest))
