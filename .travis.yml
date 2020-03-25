@@ -44,15 +44,13 @@ dist: xenial
 language: python
 jobs:
   include:
-    - language: python
-      python: "3.6"
+    - python: "3.6"
       install:
         - pip install catkin-pkg EmPy jenkinsapi PyYAML rosdistro vcstool
         - pip install flake8 flake8-import-order pep8 pyflakes pytest
       script:
         - py.test -s test
-    - language: python
-      python: "3.6"
+    - python: "3.6"
       services:
         - docker
       env: JOB_TYPE=devel REPOSITORY_NAME=rcutils ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
@@ -66,8 +64,7 @@ jobs:
         - generate_devel_script.py $CONFIG2_URL $ROS2_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME2 $ARCH > job.sh
         - . job.sh -y
         - (exit $test_result_RC)
-    - language: python
-      python: "3.6"
+    - python: "3.6"
       services:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="ament_cmake_ros" OVERLAY_PACKAGE_NAMES=rcutils ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
@@ -81,8 +78,7 @@ jobs:
         - generate_prerelease_script.py $CONFIG2_URL $ROS2_DISTRO_NAME default $OS_NAME $OS_CODE_NAME2 $ARCH $UNDERLAY_REPOSITORY_NAMES --pkg $OVERLAY_PACKAGE_NAMES --output-dir .
         - . prerelease.sh -y
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
-    - language: python
-      python: "3.6"
+    - python: "3.6"
       services:
         - docker
       env: JOB_TYPE=ci UNDERLAY1_PACKAGES="ament_flake8" UNDERLAY2_PACKAGES="ament_pep257" OVERLAY_PACKAGES="ament_cmake_ros"
@@ -101,8 +97,7 @@ jobs:
         - tar -xjf ros2-$ROS2_DISTRO_NAME-linux-$OS_CODE_NAME2-$ARCH-ci.tar.bz2 -C underlay2
         - generate_ci_script.py $CONFIG2_URL $ROS2_DISTRO_NAME nightly-release $OS_NAME $OS_CODE_NAME2 $ARCH --underlay-source-path underlay1/ros2-linux underlay2/ros2-linux --package-selection-args --packages-skip-up-to $UNDERLAY1_PACKAGES $UNDERLAY2_PACKAGES --packages-up-to $OVERLAY_PACKAGES > job.sh
         - (. job.sh -y; exit $test_result_RC)
-    - language: python
-      python: "3.6"
+    - python: "3.6"
       services:
         - docker
       env: JOB_TYPE=devel BUILD_TOOL=colcon REPOSITORY_NAME=roscpp_core ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
@@ -116,8 +111,7 @@ jobs:
         - generate_devel_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH --build-tool $BUILD_TOOL > job.sh
         - . job.sh -y
         - (exit $test_result_RC)
-    - language: python
-      python: "3.6"
+    - python: "3.6"
       services:
         - docker
       env: JOB_TYPE=devel REPOSITORY_NAME=roscpp_core
@@ -137,8 +131,7 @@ jobs:
         - . /opt/ros/kinetic/setup.sh
         - . job.sh -y
         - (exit $test_result_RC)
-    - language: python
-      python: "3.6"
+    - python: "3.6"
       services:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
@@ -150,8 +143,7 @@ jobs:
         - generate_doc_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - sh job.sh -y
         - ls -alR generated_documentation/api_rosdoc
-    - language: python
-      python: "3.6"
+    - python: "3.6"
       services:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
@@ -163,8 +155,7 @@ jobs:
       script:
         - generate_release_script.py $CONFIG_URL $ROS_DISTRO_NAME default $PACKAGE_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - sh job.sh -y
-    - language: python
-      python: "3.6"
+    - python: "3.6"
       services:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
@@ -183,8 +174,7 @@ jobs:
         - . /opt/ros/kinetic/setup.sh
         - . prerelease.sh -y
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
-    - language: python
-      python: "3.6"
+    - python: "3.6"
       services:
         - docker
       env: JOB_TYPE=external_prerelease
@@ -199,8 +189,7 @@ jobs:
         - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm ws/src/ros_buildfarm
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
         - ./prerelease.sh -y
-    - language: python
-      python: "3.6"
+    - python: "3.6"
       services:
         - docker
       env: JOB_TYPE=status_pages
@@ -213,8 +202,7 @@ jobs:
         - build_release_status_page.py $CONFIG_URL $ROS_DISTRO_NAME default
         - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples bionic:source bionic:amd64 bionic:arm64 bionic:armhf bionic:i386 --cache-dir ./debian_repo_cache --output-name melodic_bionic
         - ls -al
-    - language: python
-      python: "3.5"
+    - python: "3.5"
       services:
         - docker
       env: JOB_TYPE=devel REPOSITORY_NAME=roscpp_core
@@ -234,8 +222,7 @@ jobs:
         - . /opt/ros/kinetic/setup.sh
         - . job.sh -y
         - (exit $test_result_RC)
-    - language: python
-      python: "3.5"
+    - python: "3.5"
       services:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
@@ -247,8 +234,7 @@ jobs:
         - generate_doc_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - sh job.sh -y
         - ls -alR generated_documentation/api_rosdoc
-    - language: python
-      python: "3.5"
+    - python: "3.5"
       services:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
@@ -260,8 +246,7 @@ jobs:
       script:
         - generate_release_script.py $CONFIG_URL $ROS_DISTRO_NAME default $PACKAGE_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - sh job.sh -y
-    - language: python
-      python: "3.5"
+    - python: "3.5"
       services:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
@@ -280,8 +265,7 @@ jobs:
         - . /opt/ros/kinetic/setup.sh
         - . prerelease.sh -y
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
-    - language: python
-      python: "3.5"
+    - python: "3.5"
       services:
         - docker
       env: JOB_TYPE=external_prerelease
@@ -296,8 +280,7 @@ jobs:
         - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm ws/src/ros_buildfarm
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
         - ./prerelease.sh -y
-    - language: python
-      python: "3.5"
+    - python: "3.5"
       services:
         - docker
       env: JOB_TYPE=status_pages
@@ -310,8 +293,7 @@ jobs:
         - build_release_status_page.py $CONFIG_URL $ROS_DISTRO_NAME default
         - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples bionic:source bionic:amd64 bionic:arm64 bionic:armhf bionic:i386 --cache-dir ./debian_repo_cache --output-name melodic_bionic
         - ls -al
-    - language: python
-      python: "3.4"
+    - python: "3.4"
       services:
         - docker
       env: JOB_TYPE=devel REPOSITORY_NAME=roscpp_core
@@ -331,8 +313,7 @@ jobs:
         - . /opt/ros/kinetic/setup.sh
         - . job.sh -y
         - (exit $test_result_RC)
-    - language: python
-      python: "3.4"
+    - python: "3.4"
       services:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
@@ -344,8 +325,7 @@ jobs:
         - generate_doc_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - sh job.sh -y
         - ls -alR generated_documentation/api_rosdoc
-    - language: python
-      python: "3.4"
+    - python: "3.4"
       services:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
@@ -357,8 +337,7 @@ jobs:
       script:
         - generate_release_script.py $CONFIG_URL $ROS_DISTRO_NAME default $PACKAGE_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - sh job.sh -y
-    - language: python
-      python: "3.4"
+    - python: "3.4"
       services:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
@@ -377,8 +356,7 @@ jobs:
         - . /opt/ros/kinetic/setup.sh
         - . prerelease.sh -y
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
-    - language: python
-      python: "3.4"
+    - python: "3.4"
       services:
         - docker
       env: JOB_TYPE=external_prerelease
@@ -393,8 +371,7 @@ jobs:
         - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm ws/src/ros_buildfarm
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
         - ./prerelease.sh -y
-    - language: python
-      python: "3.4"
+    - python: "3.4"
       services:
         - docker
       env: JOB_TYPE=status_pages
@@ -407,8 +384,7 @@ jobs:
         - build_release_status_page.py $CONFIG_URL $ROS_DISTRO_NAME default
         - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples bionic:source bionic:amd64 bionic:arm64 bionic:armhf bionic:i386 --cache-dir ./debian_repo_cache --output-name melodic_bionic
         - ls -al
-    - language: python
-      python: "2.7"
+    - python: "2.7"
       services:
         - docker
       env: JOB_TYPE=devel REPOSITORY_NAME=roscpp_core
@@ -428,8 +404,7 @@ jobs:
         - . /opt/ros/kinetic/setup.sh
         - . job.sh -y
         - (exit $test_result_RC)
-    - language: python
-      python: "2.7"
+    - python: "2.7"
       services:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
@@ -441,8 +416,7 @@ jobs:
         - generate_doc_script.py $CONFIG_URL $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - sh job.sh -y
         - ls -alR generated_documentation/api_rosdoc
-    - language: python
-      python: "2.7"
+    - python: "2.7"
       services:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
@@ -454,8 +428,7 @@ jobs:
       script:
         - generate_release_script.py $CONFIG_URL $ROS_DISTRO_NAME default $PACKAGE_NAME $OS_NAME $OS_CODE_NAME $ARCH > job.sh
         - sh job.sh -y
-    - language: python
-      python: "2.7"
+    - python: "2.7"
       services:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
@@ -477,8 +450,7 @@ jobs:
         - . /opt/ros/kinetic/setup.sh
         - . prerelease.sh -y
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
-    - language: python
-      python: "2.7"
+    - python: "2.7"
       services:
         - docker
       env: JOB_TYPE=external_prerelease
@@ -493,8 +465,7 @@ jobs:
         - git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm ws/src/ros_buildfarm
         - generate_prerelease_script.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --output-dir .
         - ./prerelease.sh -y
-    - language: python
-      python: "2.7"
+    - python: "2.7"
       services:
         - docker
       env: JOB_TYPE=status_pages
