@@ -15,7 +15,6 @@
 # limitations under the License.
 
 import argparse
-from collections import OrderedDict
 import re
 import sys
 
