@@ -45,7 +45,7 @@
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/sync_repo.py' +
         ' --pulp-base-url http://repo:24817' +
         ' --distribution-source-expression "^ros-testing-([^-]*-[^-]*-[^-]*(-debug)?)$"' +
-        ' --distribution-dest-expression "ros-main-\\1"' +
+        ' --distribution-dest-expression "^ros-main-\\1$"' +
         ' --package-name-expression "^ros-%s-.*"' % rosdistro_name,
         'echo "# END SECTION"',
     ]),
