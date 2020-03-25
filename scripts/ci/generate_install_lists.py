@@ -143,18 +143,13 @@ def main(argv=sys.argv[1:]):
 
         os_pkg_names_test -= os_pkg_names_build
 
-    with Scope('SUBSECTION', 'Resolving packages versions using apt cache'):
-        apt_cache = Cache()
-        os_pkg_versions = get_binary_package_versions(
-            apt_cache, os_pkg_names_build | os_pkg_names_test)
-
     with open(os.path.join(args.output_dir, 'install_list_build.txt'), 'w') as out_file:
         for package in sorted(os_pkg_names_build):
-            out_file.write('%s=%s\n' % (package, os_pkg_versions[package]))
+            out_file.write('package\n')
 
     with open(os.path.join(args.output_dir, 'install_list_test.txt'), 'w') as out_file:
         for package in sorted(os_pkg_names_test):
-            out_file.write('%s=%s\n' % (package, os_pkg_versions[package]))
+            out_file.write('package\n')
 
 
 def get_dependencies(pkgs, label, get_dependencies_callback, target_pkgs):
