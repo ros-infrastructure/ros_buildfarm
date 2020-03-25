@@ -3,7 +3,7 @@ import html
 }@
     <hudson.plugins.plot.PlotPublisher plugin="plot@@2.1.3">
       <plots>
-@[for plot_group, plot_list in plots.items()]@
+@[for plot_group, plot_list in sorted(plots.items())]@
 @[for plot in plot_list]@
         <hudson.plugins.plot.Plot>
           <description>@(html.escape(plot.description))</description>
