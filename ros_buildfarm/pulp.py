@@ -114,6 +114,18 @@ class PulpRpmClient:
 
         return task
 
+    def _publish_and_distribute(self, distribution, repo_version_href):
+        # Publish the new version
+        publish_data = pulp_rpm.RpmRpmPublication(repository_version=repo_version_href)
+        publish_task_href = self._rpm_publications_api.create(publish_data).task
+        publish_task = self._wait_for_task(publish_task_href)
+
+        # Distribute the publication at the original endpoint
+        distribution.publication = publish_task.created_resources[0]
+        distribute_task_href = self._rpm_distributions_api.partial_update(
+            distribution.pulp_href, distribution).task
+        self._wait_for_task(distribute_task_href)
+
     def enumerate_distributions(self):
         return PulpPageIterator(
             self._rpm_distributions_api.list)
@@ -189,17 +201,7 @@ class PulpRpmClient:
         mod_task = self._wait_for_task(mod_task_href)
 
         if mod_task.created_resources:
-            # Publish the new version
-            publish_data = pulp_rpm.RpmRpmPublication(
-                repository_version=mod_task.created_resources[0])
-            publish_task_href = self._rpm_publications_api.create(publish_data).task
-            publish_task = self._wait_for_task(publish_task_href)
-
-            # Distribute the publication at the original endpoint
-            distribution.publication = publish_task.created_resources[0]
-            distribute_task_href = self._rpm_distributions_api.partial_update(
-                distribution.pulp_href, distribution).task
-            self._wait_for_task(distribute_task_href)
+            self._publish_and_distribute(distribution, mod_task.created_resources[0])
 
         return (new_pkgs.values(), pkgs_to_remove.values())
 

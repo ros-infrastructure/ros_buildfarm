@@ -46,7 +46,8 @@
         ' --pulp-base-url http://repo:24817' +
         ' --distribution-source-expression "^ros-testing-([^-]*-[^-]*-[^-]*(-debug)?)$"' +
         ' --distribution-dest-expression "^ros-main-\\1$"' +
-        ' --package-name-expression "^ros-%s-.*"' % rosdistro_name,
+        ' --package-name-expression "^ros-%s-.*"' % rosdistro_name +
+        ' --invalidate-expression "^ros-%s-.*"' % rosdistro_name,
         'echo "# END SECTION"',
     ]),
 ))@

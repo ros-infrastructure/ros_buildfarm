@@ -102,7 +102,8 @@
         ' --pulp-base-url http://repo:24817' +
         ' --distribution-source-expression "^ros-building-%s-%s-(SRPMS|%s(-debug)?)$"' % (os_name, os_code_name, arch) +
         ' --distribution-dest-expression "^ros-testing-%s-%s-\\1$"' % (os_name, os_code_name) +
-        ' --package-name-expression "^ros-%s-.*"' % rosdistro_name,
+        ' --package-name-expression "^ros-%s-.*"' % rosdistro_name +
+        ' --invalidate-expression "^ros-%s-.*"' % rosdistro_name,
         'echo "# END SECTION"',
     ]),
 ))@
