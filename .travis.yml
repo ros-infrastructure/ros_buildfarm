@@ -1,4 +1,4 @@
-ros_gpg_key_add_string: &rosgpgkeyadd |
+_ros_gpg_key_add_string: &rosgpgkeyadd |
   echo '-----BEGIN PGP PUBLIC KEY BLOCK-----
 
   mQINBFzvJpYBEADY8l1YvO7iYW5gUESyzsTGnMvVUmlV3XarBaJz9bGRmgPXh7jc
@@ -39,12 +39,13 @@ env:
     - OS_CODE_NAME2=bionic
     - ARCH=amd64
     - ROS_BUILDFARM_PULL_REQUEST_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
+os: linux
 dist: xenial
-matrix:
+language: python
+jobs:
   include:
     - language: python
       python: "3.6"
-      sudo: false
       install:
         - pip install catkin-pkg EmPy jenkinsapi PyYAML rosdistro vcstool
         - pip install flake8 flake8-import-order pep8 pyflakes pytest
@@ -52,7 +53,6 @@ matrix:
         - py.test -s test
     - language: python
       python: "3.6"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=devel REPOSITORY_NAME=rcutils ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
@@ -68,7 +68,6 @@ matrix:
         - (exit $test_result_RC)
     - language: python
       python: "3.6"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="ament_cmake_ros" OVERLAY_PACKAGE_NAMES=rcutils ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
@@ -84,7 +83,6 @@ matrix:
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
       python: "3.6"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=ci UNDERLAY1_PACKAGES="ament_flake8" UNDERLAY2_PACKAGES="ament_pep257" OVERLAY_PACKAGES="ament_cmake_ros"
@@ -105,7 +103,6 @@ matrix:
         - (. job.sh -y; exit $test_result_RC)
     - language: python
       python: "3.6"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=devel BUILD_TOOL=colcon REPOSITORY_NAME=roscpp_core ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
@@ -121,7 +118,6 @@ matrix:
         - (exit $test_result_RC)
     - language: python
       python: "3.6"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=devel REPOSITORY_NAME=roscpp_core
@@ -143,7 +139,6 @@ matrix:
         - (exit $test_result_RC)
     - language: python
       python: "3.6"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
@@ -157,7 +152,6 @@ matrix:
         - ls -alR generated_documentation/api_rosdoc
     - language: python
       python: "3.6"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
@@ -171,7 +165,6 @@ matrix:
         - sh job.sh -y
     - language: python
       python: "3.6"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
@@ -192,7 +185,6 @@ matrix:
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
       python: "3.6"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=external_prerelease
@@ -209,7 +201,6 @@ matrix:
         - ./prerelease.sh -y
     - language: python
       python: "3.6"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=status_pages
@@ -224,7 +215,6 @@ matrix:
         - ls -al
     - language: python
       python: "3.5"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=devel REPOSITORY_NAME=roscpp_core
@@ -246,7 +236,6 @@ matrix:
         - (exit $test_result_RC)
     - language: python
       python: "3.5"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
@@ -260,7 +249,6 @@ matrix:
         - ls -alR generated_documentation/api_rosdoc
     - language: python
       python: "3.5"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
@@ -274,7 +262,6 @@ matrix:
         - sh job.sh -y
     - language: python
       python: "3.5"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
@@ -295,7 +282,6 @@ matrix:
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
       python: "3.5"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=external_prerelease
@@ -312,7 +298,6 @@ matrix:
         - ./prerelease.sh -y
     - language: python
       python: "3.5"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=status_pages
@@ -327,7 +312,6 @@ matrix:
         - ls -al
     - language: python
       python: "3.4"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=devel REPOSITORY_NAME=roscpp_core
@@ -349,7 +333,6 @@ matrix:
         - (exit $test_result_RC)
     - language: python
       python: "3.4"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
@@ -363,7 +346,6 @@ matrix:
         - ls -alR generated_documentation/api_rosdoc
     - language: python
       python: "3.4"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
@@ -377,7 +359,6 @@ matrix:
         - sh job.sh -y
     - language: python
       python: "3.4"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
@@ -398,7 +379,6 @@ matrix:
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
       python: "3.4"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=external_prerelease
@@ -415,7 +395,6 @@ matrix:
         - ./prerelease.sh -y
     - language: python
       python: "3.4"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=status_pages
@@ -430,7 +409,6 @@ matrix:
         - ls -al
     - language: python
       python: "2.7"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=devel REPOSITORY_NAME=roscpp_core
@@ -452,7 +430,6 @@ matrix:
         - (exit $test_result_RC)
     - language: python
       python: "2.7"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
@@ -466,7 +443,6 @@ matrix:
         - ls -alR generated_documentation/api_rosdoc
     - language: python
       python: "2.7"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
@@ -480,7 +456,6 @@ matrix:
         - sh job.sh -y
     - language: python
       python: "2.7"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
@@ -504,7 +479,6 @@ matrix:
         - (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay)
     - language: python
       python: "2.7"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=external_prerelease
@@ -521,7 +495,6 @@ matrix:
         - ./prerelease.sh -y
     - language: python
       python: "2.7"
-      sudo: required
       services:
         - docker
       env: JOB_TYPE=status_pages
