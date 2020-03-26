@@ -27,6 +27,7 @@ from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import get_release_source_view_prefix
 from ros_buildfarm.common import \
     get_repositories_and_script_generating_key_files
+from ros_buildfarm.common import package_format_mapping
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.git import get_repository
@@ -50,6 +51,11 @@ def main(argv=sys.argv[1:]):
     build_files = get_release_build_files(config, args.rosdistro_name)
     build_file = build_files[args.release_build_name]
 
+    package_formats = set(
+        package_format_mapping[os_name] for os_name in build_file.targets.keys())
+    assert len(package_formats) == 1
+    package_format = package_formats.pop()
+
     group_name = get_release_job_prefix(
         args.rosdistro_name, args.release_build_name)
 
@@ -60,7 +66,7 @@ def main(argv=sys.argv[1:]):
     trigger_missed_jobs_job_config = get_trigger_missed_jobs_job_config(
         args, config, build_file)
     import_upstream_job_config = get_import_upstream_job_config(
-        args, config, build_file)
+        args, config, build_file, package_format)
     trigger_broken_with_non_broken_upstream_job_config = \
         _get_trigger_broken_with_non_broken_upstream_job_config(
             args.rosdistro_name, args.release_build_name, build_file)
@@ -82,7 +88,7 @@ def main(argv=sys.argv[1:]):
         jenkins, job_name, trigger_missed_jobs_job_config,
         dry_run=args.dry_run)
 
-    job_name = 'import_upstream'
+    job_name = 'import_upstream%s' % ('' if package_format == 'deb' else '_' + package_format)
     configure_job(
         jenkins, job_name, import_upstream_job_config, dry_run=args.dry_run)
 
@@ -115,9 +121,12 @@ def get_trigger_missed_jobs_job_config(args, config, build_file):
         additional_data=data)
 
 
-def get_import_upstream_job_config(args, config, build_file):
-    template_name = 'release/deb/import_upstream_job.xml.em'
-    return _get_job_config(args, config, config.notify_emails, template_name)
+def get_import_upstream_job_config(args, config, build_file, package_format):
+    template_name = 'release/%s/import_upstream_job.xml.em' % package_format
+    data = {'credential_id': build_file.upload_credential_id}
+    return _get_job_config(
+        args, config, config.notify_emails, template_name,
+        additional_data=data)
 
 
 def _get_job_config(

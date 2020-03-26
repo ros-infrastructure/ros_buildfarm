@@ -91,6 +91,7 @@ class PulpRpmClient:
         self._rpm_distributions_api = pulp_rpm.DistributionsRpmApi(self._rpm_client)
         self._rpm_packages_api = pulp_rpm.ContentPackagesApi(self._rpm_client)
         self._rpm_publications_api = pulp_rpm.PublicationsRpmApi(self._rpm_client)
+        self._rpm_remotes_api = pulp_rpm.RemotesRpmApi(self._rpm_client)
         self._rpm_repos_api = pulp_rpm.RepositoriesRpmApi(self._rpm_client)
 
     def _wait_for_task(self, task_href):
@@ -139,6 +140,9 @@ class PulpRpmClient:
     def enumerate_pkgs_in_repo_ver(self, repo_ver_href):
         return PulpPageIterator(
             self._rpm_packages_api.list, repository_version=repo_ver_href)
+
+    def enumerate_remotes(self):
+        return PulpPageIterator(self._rpm_remotes_api.list)
 
     def import_and_invalidate(
             self, distribution_name, packages_to_add,
@@ -204,6 +208,24 @@ class PulpRpmClient:
             self._publish_and_distribute(distribution, mod_task.created_resources[0])
 
         return (new_pkgs.values(), pkgs_to_remove.values())
+
+    def mirror_remote_to_distribution(self, remote_name, distribution_name, dry_run=False):
+        remote = self._rpm_remotes_api.list(name=remote_name).results[0]
+        distribution = self._rpm_distributions_api.list(name=distribution_name).results[0]
+        old_publication = self._rpm_publications_api.read(distribution.publication)
+
+        sync_data = pulp_rpm.RepositorySyncURL(
+            remote=remote.pulp_href,
+            mirror=True)
+
+        if dry_run:
+            return
+
+        sync_task_href = self._rpm_repos_api.sync(old_publication.repository, sync_data).task
+        sync_task = self._wait_for_task(sync_task_href)
+
+        if sync_task.created_resources:
+            self._publish_and_distribute(distribution, sync_task.created_resources[0])
 
     def upload_pkg(self, file_path):
         relative_path = os.path.basename(file_path)
