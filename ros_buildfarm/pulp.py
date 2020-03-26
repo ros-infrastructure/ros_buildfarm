@@ -142,8 +142,7 @@ class PulpRpmClient:
             self._rpm_packages_api.list, repository_version=repo_ver_href)
 
     def enumerate_remotes(self):
-        return PulpPageIterator(
-            self._rpm_remotes_api.list)
+        return PulpPageIterator(self._rpm_remotes_api.list)
 
     def import_and_invalidate(
             self, distribution_name, packages_to_add,

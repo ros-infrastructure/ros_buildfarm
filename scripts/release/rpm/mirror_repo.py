@@ -67,8 +67,8 @@ def main(argv=sys.argv[1:]):
 
         dists_to_sync = sorted(set(dists_to_sync))
         print('Syncing %d distributions:' % len(dists_to_sync))
-        for remote_source_dist_dest in dists_to_sync:
-            print('- %s => %s' % remote_source_dist_dest)
+        for remote_name_and_dist_dest in dists_to_sync:
+            print('- %s => %s' % remote_name_and_dist_dest)
 
     with Scope('SUBSECTION', 'synchronizing remotes and publishing mirrors'):
         for remote_name, dist_name in dists_to_sync:
