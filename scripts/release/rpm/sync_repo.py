@@ -19,6 +19,7 @@ import re
 import sys
 
 from ros_buildfarm.argument import add_argument_dry_run
+from ros_buildfarm.argument import add_argument_invalidate
 from ros_buildfarm.argument import add_argument_pulp_base_url
 from ros_buildfarm.argument import add_argument_pulp_password
 from ros_buildfarm.argument import add_argument_pulp_task_timeout
@@ -32,12 +33,17 @@ def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
         description='Sync packages between pulp distributions')
     add_argument_dry_run(parser)
+    add_argument_invalidate(parser)
+    parser.add_argument(
+        '--invalidate-expression',
+        default=None,
+        help='Any existing package names matching this expression will be removed')
     add_argument_pulp_base_url(parser)
     add_argument_pulp_password(parser)
     add_argument_pulp_task_timeout(parser)
     add_argument_pulp_username(parser)
     parser.add_argument(
-        '--package-name-expression', required=True,
+        '--package-name-expression', default='.*',
         help='Expression to match against packages in the repositories')
     parser.add_argument(
         '--distribution-source-expression', required=True,
@@ -97,8 +103,8 @@ def main(argv=sys.argv[1:]):
                 len(packages_to_sync), dist_source, dist_dest,
                 ' (dry run)' if args.dry_run else ''))
             new_pkgs, pkgs_removed = pulp_client.import_and_invalidate(
-                dist_dest, packages_to_sync, args.package_name_expression,
-                False, package_cache=packages_to_sync, dry_run=args.dry_run)
+                dist_dest, packages_to_sync, args.invalidate_expression,
+                args.invalidate, package_cache=packages_to_sync, dry_run=args.dry_run)
             print('- Added %d packages%s' % (
                 len(new_pkgs), ' (dry run)' if args.dry_run else ''))
             for pkg in sorted(new_pkgs, key=lambda pkg: pkg.name):
