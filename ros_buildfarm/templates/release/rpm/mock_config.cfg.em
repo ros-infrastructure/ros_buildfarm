@@ -44,7 +44,8 @@ config_opts['yum.conf'] += """
 name=ROS Buildfarm Repository @(i) - $basearch
 baseurl=@(url)
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ros-buildfarm-@(i)
-gpgcheck=@(1 if i < len(distribution_repository_keys) and distribution_repository_keys[i] else 0)
+repo_gpgcheck=@(1 if i < len(distribution_repository_keys) and distribution_repository_keys[i] else 0)
+gpgcheck=0
 enabled=1
 
 @[end for]@
@@ -52,6 +53,7 @@ enabled=1
 [ros-buildfarm-target-source]
 name=ROS Buildfarm Repository Target - SRPMS
 baseurl=@(target_repository)
+repo_gpgcheck=0
 gpgcheck=0
 enabled=0
 
