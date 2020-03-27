@@ -47,6 +47,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ros-buildfarm-@(i)
 repo_gpgcheck=@(1 if i < len(distribution_repository_keys) and distribution_repository_keys[i] else 0)
 gpgcheck=0
 enabled=1
+skip_if_unavailable=False
 
 @[end for]@
 @[if target_repository]@
@@ -56,6 +57,7 @@ baseurl=@(target_repository)
 repo_gpgcheck=0
 gpgcheck=0
 enabled=0
+skip_if_unavailable=False
 
 @[end if]@
 """
