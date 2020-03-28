@@ -251,7 +251,7 @@ def add_argument_os_code_name_and_arch_tuples(parser, required=True):
 def add_argument_os_name_and_os_code_name_and_arch_tuples(parser, required=True):
     parser.add_argument(
         '--os-name-and-os-code-name-and-arch-tuples',
-        nargs='+',
+        nargs='+', metavar='OS_NAME:OS_CODE_NAME:ARCH',
         required=required, action=colon_separated_tuple_action(3),
         help='The colon separated tuple containing an OS name, OS code name, ' +
              "and an architecture (e.g. 'ubuntu:trusty:amd64')")
