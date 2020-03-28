@@ -50,7 +50,7 @@
 @{
 status_page = status_pages[status_page_name]
 debian_repository_urls = status_page['debian_repository_urls']
-os_code_name_and_arch_tuples = status_page['os_code_name_and_arch_tuples']
+os_name_and_os_code_name_and_arch_tuples = status_page['os_name_and_os_code_name_and_arch_tuples']
 }@
 @(SNIPPET(
     'builder_shell',
@@ -60,8 +60,8 @@ os_code_name_and_arch_tuples = status_page['os_code_name_and_arch_tuples']
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/status/build_repos_status_page.py' +
         ' ' + rosdistro_name +
         ' ' + ' '.join(debian_repository_urls) +
-        ' --os-code-name-and-arch-tuples ' +
-        ' '.join(os_code_name_and_arch_tuples) +
+        ' --os-name-and-os-code-name-and-arch-tuples ' +
+        ' '.join(os_name_and_os_code_name_and_arch_tuples) +
         ' --cache-dir $WORKSPACE/package_repo_cache' +
         ' --output-name %s_%s' % (rosdistro_name, status_page_name) +
         ' --output-dir $WORKSPACE/status_page',
