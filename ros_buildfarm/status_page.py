@@ -172,10 +172,16 @@ def build_release_status_page(
 def build_debian_repos_status_page(
         rosdistro_name, repo_urls, os_code_name_and_arch_tuples,
         cache_dir, output_name, output_dir):
+    os_name_and_os_code_name_and_arch_tuples = []
+    for os_code_name_and_arch in os_code_name_and_arch_tuples:
+        assert os_code_name_and_arch.count(':') == 1, \
+            'The string (%s) does not contain single colon separating an ' + \
+            'OS code name and an architecture'
+        os_code_name, arch = os_code_name_and_arch.split(':')
+        os_name_and_os_code_name_and_arch_tuples.append(('ubuntu', os_code_name, arch))
+
     return build_repos_status_page(
-        rosdistro_name, repo_urls,
-        ['ubuntu:' + os_code_name_and_arch
-         for os_code_name_and_arch in os_code_name_and_arch_tuples],
+        rosdistro_name, repo_urls, os_name_and_os_code_name_and_arch_tuples,
         cache_dir, output_name, output_dir)
 
 
@@ -186,11 +192,7 @@ def build_repos_status_page(
 
     # get targets
     targets = []
-    for os_name_and_os_code_name_and_arch in os_name_and_os_code_name_and_arch_tuples:
-        assert os_name_and_os_code_name_and_arch.count(':') == 2, \
-            'The string (%s) does not contain two colons separating an ' + \
-            'OS name, OS code name, and an architecture'
-        os_name, os_code_name, arch = os_name_and_os_code_name_and_arch.split(':')
+    for os_name, os_code_name, arch in os_name_and_os_code_name_and_arch_tuples:
         targets.append(Target(os_name, os_code_name, arch))
 
     # get all input data

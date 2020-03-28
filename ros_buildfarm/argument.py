@@ -232,19 +232,24 @@ def add_argument_not_failed_only(parser):
 
 
 def add_argument_os_code_name_and_arch_tuples(parser, required=True):
-    class _PrefixUbuntuColonAction(argparse.Action):
+    class _AddUbuntuTupleAction(argparse.Action):
         def __call__(self, parser, args, values, option_string=None):
             import sys
             print('WARNING: ' + self.help, file=sys.stderr)
+            for value in values:
+                if value.count(':') != 1:
+                    raise argparse.ArgumentError(
+                        argument=self,
+                        message='expected 2 parts separated by colons')
             setattr(
                 args, 'os_name_and_os_code_name_and_arch_tuples',
-                ['ubuntu:' + value for value in values])
+                [('ubuntu:' + value).split(':') for value in values])
             setattr(args, self.dest, values)
 
     parser.add_argument(
         '--os-code-name-and-arch-tuples',
         nargs='+',
-        required=required, action=_PrefixUbuntuColonAction,
+        required=required, action=_AddUbuntuTupleAction,
         help="DEPRECATED: Use '--os-name-and-os-code-name-and-arch-tuples'")
 
 
@@ -479,7 +484,7 @@ def colon_separated_tuple_action(numparts):
                     raise argparse.ArgumentError(
                         argument=self,
                         message='expected %d parts separated by colons' % (numparts))
-            setattr(args, self.dest, values)
+                setattr(args, self.dest, [value.split(':') for value in values])
     return ColonSeparatedTupleAction
 
 
