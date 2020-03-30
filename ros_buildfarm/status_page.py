@@ -272,7 +272,7 @@ def build_repos_status_page(
 
 
 PackageDescriptor = namedtuple(
-    'PackageDescriptor', 'pkg_name debian_pkg_name version')
+    'PackageDescriptor', 'pkg_name debian_pkg_name version source_name')
 
 
 def get_rosdistro_package_descriptors(rosdistro_info, rosdistro_name):
@@ -280,7 +280,7 @@ def get_rosdistro_package_descriptors(rosdistro_info, rosdistro_name):
     for pkg_name, pkg in rosdistro_info.items():
         debian_pkg_name = get_os_package_name(rosdistro_name, pkg_name)
         descriptors[pkg_name] = PackageDescriptor(
-            pkg_name, debian_pkg_name, pkg.version)
+            pkg_name, debian_pkg_name, pkg.version, debian_pkg_name)
     return descriptors
 
 
@@ -294,7 +294,7 @@ def get_repos_package_descriptors(repos_data, targets):
                 version = _strip_os_code_name_suffix(repo_descriptor.version, target)
                 if debian_pkg_name not in descriptors:
                     descriptors[debian_pkg_name] = PackageDescriptor(
-                        debian_pkg_name, debian_pkg_name, version)
+                        debian_pkg_name, debian_pkg_name, version, repo_descriptor.source_name)
                     continue
                 if not version:
                     continue
@@ -304,7 +304,7 @@ def get_repos_package_descriptors(repos_data, targets):
                 # update version if higher
                 if _version_is_gt_other(version, other_version):
                     descriptors[debian_pkg_name] = PackageDescriptor(
-                        debian_pkg_name, debian_pkg_name, version)
+                        debian_pkg_name, debian_pkg_name, version, repo_descriptor.source_name)
     return descriptors
 
 
@@ -397,6 +397,7 @@ def get_version_status(
     for package_descriptor in package_descriptors.values():
         pkg_name = package_descriptor.pkg_name
         debian_pkg_name = package_descriptor.debian_pkg_name
+        source_pkg_name = package_descriptor.source_name
         ref_version = package_descriptor.version
         if strip_version:
             ref_version = _strip_version_suffix(ref_version)
@@ -413,7 +414,10 @@ def get_version_status(
 
                 if ref_version:
                     if not version:
-                        statuses.append('missing')
+                        if target.arch == 'source' and debian_pkg_name != source_pkg_name:
+                            statuses.append('ignore')
+                        else:
+                            statuses.append('missing')
                     elif version.startswith(ref_version):  # including equal
                         statuses.append('equal')
                     else:
