@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
+
 import argparse
 from collections import OrderedDict
 import os
@@ -259,7 +261,7 @@ def add_argument_os_name_and_os_code_name_and_arch_tuples(parser, required=True)
         nargs='+', metavar='OS_NAME:OS_CODE_NAME:ARCH',
         required=required, action=colon_separated_tuple_action(3),
         help='The colon separated tuple containing an OS name, OS code name, ' +
-             "and an architecture (e.g. 'ubuntu:trusty:amd64')")
+             "and an architecture (e.g. 'ubuntu:focal:amd64')")
 
 
 def add_argument_output_name(parser):
