@@ -420,7 +420,9 @@ parameters = [
     'archive_artifacts',
     artifacts=[
       'ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name, os_code_name, arch),
-    ] + [image for images in show_images.values() for image in images],
+    ] + [path for path in keep_files] + [
+      image for images in show_images.values() for image in images
+    ],
 ))@
 @[for title, artifacts in show_images.items()]@
 @(SNIPPET(
