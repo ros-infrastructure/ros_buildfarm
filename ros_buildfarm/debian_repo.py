@@ -15,6 +15,7 @@
 import logging
 import os
 
+from .common import RepositoryPackageDescriptor
 from .http_cache import fetch_and_cache_gzip
 
 
@@ -45,6 +46,7 @@ def get_debian_repo_index(debian_repository_baseurl, target, cache_dir):
         versions = [l[len(prefix):] for l in lines if l.startswith(prefix)]
         version = versions[0] if len(versions) == 1 else None
 
-        package_versions[debian_pkg_name] = version
+        package_versions[debian_pkg_name] = RepositoryPackageDescriptor(
+            debian_pkg_name, version)
 
     return package_versions

@@ -290,8 +290,8 @@ def get_repos_package_descriptors(repos_data, targets):
     for target in targets:
         for repo_data in repos_data:
             repo_index = repo_data[target]
-            for debian_pkg_name, version in repo_index.items():
-                version = _strip_os_code_name_suffix(version, target)
+            for debian_pkg_name, repo_descriptor in repo_index.items():
+                version = _strip_os_code_name_suffix(repo_descriptor.version, target)
                 if debian_pkg_name not in descriptors:
                     descriptors[debian_pkg_name] = PackageDescriptor(
                         debian_pkg_name, debian_pkg_name, version)
@@ -338,9 +338,9 @@ def get_affected_by_sync(
         affected_by_sync[pkg_name] = {}
         for target in targets:
             testing_version = _strip_version_suffix(
-                testing_repo_data.get(target, {}).get(debian_pkg_name, None))
+                _get_pkg_version(testing_repo_data, target, debian_pkg_name))
             main_version = _strip_version_suffix(
-                main_repo_data.get(target, {}).get(debian_pkg_name, None))
+                _get_pkg_version(main_repo_data, target, debian_pkg_name))
 
             affected_by_sync[pkg_name][target] = \
                 testing_version != main_version
@@ -369,12 +369,12 @@ def get_regressions(
         for target in targets:
             regressions[pkg_name][target] = False
             main_version = \
-                main_repo_data.get(target, {}).get(debian_pkg_name, None)
+                _get_pkg_version(main_repo_data, target, debian_pkg_name)
             if main_version is not None:
                 main_ver_loose = LooseVersion(main_version)
                 for repo_data in [building_repo_data, testing_repo_data]:
                     version = \
-                        repo_data.get(target, {}).get(debian_pkg_name, None)
+                        _get_pkg_version(repo_data, target, debian_pkg_name)
                     if not version or main_ver_loose > LooseVersion(version):
                         regressions[pkg_name][target] = True
     return regressions
@@ -405,7 +405,7 @@ def get_version_status(
         for target in targets:
             statuses = []
             for repo_data in repos_data:
-                version = repo_data.get(target, {}).get(debian_pkg_name, None)
+                version = _get_pkg_version(repo_data, target, debian_pkg_name)
                 if strip_version:
                     version = _strip_version_suffix(version)
                 if strip_os_code_name:
@@ -465,6 +465,11 @@ def _strip_os_code_name_suffix(version, target):
     return version
 
 
+def _get_pkg_version(repo_data, target, package_name):
+    repo_pkg_descriptor = repo_data.get(target, {}).get(package_name, None)
+    return repo_pkg_descriptor.version if repo_pkg_descriptor else None
+
+
 def get_homogeneous(package_descriptors, targets, repos_data):
     """
     For each package check if the version in one repo is equal for all targets.
@@ -483,7 +488,7 @@ def get_homogeneous(package_descriptors, targets, repos_data):
             versions.append(set([]))
             for target in targets:
                 version = _strip_version_suffix(
-                    repo_data.get(target, {}).get(debian_pkg_name, None))
+                    _get_pkg_version(repo_data, target, debian_pkg_name))
                 versions[-1].add(version)
         homogeneous[pkg_name] = max([len(v) for v in versions]) == 1
     return homogeneous
@@ -504,7 +509,7 @@ def get_package_counts(package_descriptors, targets, repos_data):
 
         for target in targets:
             for i, repo_data in enumerate(repos_data):
-                version = repo_data.get(target, {}).get(debian_pkg_name, None)
+                version = _get_pkg_version(repo_data, target, debian_pkg_name)
                 if version:
                     counts[target][i] += 1
     return counts
@@ -1238,7 +1243,7 @@ def write_yaml(yaml_filename, ordered_pkgs, repos_data):
                     if field not in d:
                         d[field] = {}
                     d = d[field]
-                d[name] = str(build_data[pkg.debian_name])
+                d[name] = str(build_data[pkg.debian_name].version)
         summary[pkg.name] = pkg_d
 
     with open(yaml_filename, 'w') as f:
