@@ -28,14 +28,18 @@ def get_ros_rpm_repo_index(rpm_repository_baseurl, target, cache_dir):
 
 def get_rpm_repo_index(rpm_repository_baseurl, target, cache_dir):
     # These variables are often included in repository base URLs by YUM/DNF
-    url = rpm_repository_baseurl.replace('$releasever', target.os_code_name)
-    url = url.replace('$basearch', target.arch if target.arch != 'source' else 'SRPMS')
+    for k, v in {
+        '$basearch': target.arch if target.arch != 'source' else 'SRPMS',
+        '$distname': target.os_name,
+        '$releasever': target.os_code_name,
+    }.items():
+        rpm_repository_baseurl = rpm_repository_baseurl.replace(k, v)
 
-    repomd_url = os.path.join(url, 'repodata', 'repomd.xml')
+    repomd_url = os.path.join(rpm_repository_baseurl, 'repodata', 'repomd.xml')
     repomd_cache_filename = fetch_and_cache_plaintext(repomd_url, cache_dir)
 
     primary_xml_url = os.path.join(
-        url, _get_primary_xml_location(repomd_cache_filename))
+        rpm_repository_baseurl, _get_primary_xml_location(repomd_cache_filename))
     primary_xml_cache_filename = fetch_and_cache_gzip(
         primary_xml_url, cache_dir)
 
