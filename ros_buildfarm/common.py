@@ -51,12 +51,15 @@ class PlatformPackageDescriptor(str):
     You should not rely on this but use the `version` property instead.
 
     To be replaced with:
-    namedtuple('PlatformPackageDescriptor', 'name version')
+    namedtuple('PlatformPackageDescriptor', 'version source_name')
     """
 
     @staticmethod
-    def __new__(cls, version):
+    def __new__(cls, version, source_name):
         return str.__new__(cls, version)
+
+    def __init__(self, version, source_name):
+        self.source_name = source_name
 
     @property
     def version(self):
