@@ -31,6 +31,8 @@ from .common import get_package_repo_data
 from .common import get_release_view_name
 from .common import get_short_arch
 from .common import get_short_os_code_name
+from .common import get_short_os_name
+from .common import package_format_mapping
 from .common import Target
 from .config import get_index as get_config_index
 from .config import get_release_build_files
@@ -170,16 +172,28 @@ def build_release_status_page(
 def build_debian_repos_status_page(
         rosdistro_name, repo_urls, os_code_name_and_arch_tuples,
         cache_dir, output_name, output_dir):
-    start_time = time.time()
-
-    # get targets
-    targets = []
+    os_name_and_os_code_name_and_arch_tuples = []
     for os_code_name_and_arch in os_code_name_and_arch_tuples:
         assert os_code_name_and_arch.count(':') == 1, \
             'The string (%s) does not contain single colon separating an ' + \
             'OS code name and an architecture'
         os_code_name, arch = os_code_name_and_arch.split(':')
-        targets.append(Target('ubuntu', os_code_name, arch))
+        os_name_and_os_code_name_and_arch_tuples.append(('ubuntu', os_code_name, arch))
+
+    return build_repos_status_page(
+        rosdistro_name, repo_urls, os_name_and_os_code_name_and_arch_tuples,
+        cache_dir, output_name, output_dir)
+
+
+def build_repos_status_page(
+        rosdistro_name, repo_urls, os_name_and_os_code_name_and_arch_tuples,
+        cache_dir, output_name, output_dir):
+    start_time = time.time()
+
+    # get targets
+    targets = []
+    for os_name, os_code_name, arch in os_name_and_os_code_name_and_arch_tuples:
+        targets.append(Target(os_name, os_code_name, arch))
 
     # get all input data
     repos_data = []
@@ -277,8 +291,7 @@ def get_repos_package_descriptors(repos_data, targets):
         for repo_data in repos_data:
             repo_index = repo_data[target]
             for debian_pkg_name, version in repo_index.items():
-                version = _strip_os_code_name_suffix(
-                    version, target.os_code_name)
+                version = _strip_os_code_name_suffix(version, target)
                 if debian_pkg_name not in descriptors:
                     descriptors[debian_pkg_name] = PackageDescriptor(
                         debian_pkg_name, debian_pkg_name, version)
@@ -396,8 +409,7 @@ def get_version_status(
                 if strip_version:
                     version = _strip_version_suffix(version)
                 if strip_os_code_name:
-                    version = _strip_os_code_name_suffix(
-                        version, target.os_code_name)
+                    version = _strip_os_code_name_suffix(version, target)
 
                 if ref_version:
                     if not version:
@@ -441,9 +453,13 @@ def _strip_version_suffix(version):
     return match.group(0) if match else version
 
 
-def _strip_os_code_name_suffix(version, os_code_name):
+def _strip_os_code_name_suffix(version, target):
     if version:
-        index = version.find(os_code_name)
+        if package_format_mapping[target.os_name] == 'rpm':
+            delimiter = '.' + get_short_os_name(target.os_name) + target.os_code_name
+        else:
+            delimiter = target.os_code_name
+        index = version.find(delimiter)
         if index != -1:
             version = version[:index]
     return version

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
+
 import argparse
 from collections import OrderedDict
 import os
@@ -231,13 +233,35 @@ def add_argument_not_failed_only(parser):
         help='Only trigger jobs for which the previous build did not fail')
 
 
-def add_argument_os_code_name_and_arch_tuples(parser):
+def add_argument_os_code_name_and_arch_tuples(parser, required=True):
+    class _AddUbuntuTupleAction(argparse.Action):
+        def __call__(self, parser, args, values, option_string=None):
+            import sys
+            print('WARNING: ' + self.help, file=sys.stderr)
+            for value in values:
+                if value.count(':') != 1:
+                    raise argparse.ArgumentError(
+                        argument=self,
+                        message='expected 2 parts separated by colons')
+            setattr(
+                args, 'os_name_and_os_code_name_and_arch_tuples',
+                [('ubuntu:' + value).split(':') for value in values])
+            setattr(args, self.dest, values)
+
     parser.add_argument(
         '--os-code-name-and-arch-tuples',
         nargs='+',
-        required=True,
-        help="The colon separated tuple containing an OS code name and an " +
-             "architecture (e.g. 'trusty:amd64')")
+        required=required, action=_AddUbuntuTupleAction,
+        help="DEPRECATED: Use '--os-name-and-os-code-name-and-arch-tuples'")
+
+
+def add_argument_os_name_and_os_code_name_and_arch_tuples(parser, required=True):
+    parser.add_argument(
+        '--os-name-and-os-code-name-and-arch-tuples',
+        nargs='+', metavar='OS_NAME:OS_CODE_NAME:ARCH',
+        required=required, action=colon_separated_tuple_action(3),
+        help='The colon separated tuple containing an OS name, OS code name, ' +
+             "and an architecture (e.g. 'ubuntu:focal:amd64')")
 
 
 def add_argument_output_name(parser):
@@ -452,6 +476,18 @@ def check_len_action(minargs, maxargs):
                     message='expected at most %s arguments' % (minargs))
             setattr(args, self.dest, values)
     return CheckLength
+
+
+def colon_separated_tuple_action(numparts):
+    class ColonSeparatedTupleAction(argparse.Action):
+        def __call__(self, parser, args, values, option_string=None):
+            for value in values:
+                if value.count(':') + 1 != numparts:
+                    raise argparse.ArgumentError(
+                        argument=self,
+                        message='expected %d parts separated by colons' % (numparts))
+                setattr(args, self.dest, [value.split(':') for value in values])
+    return ColonSeparatedTupleAction
 
 
 def extract_multiple_remainders(argv, arguments):

@@ -61,8 +61,8 @@ def get_job_config(args, config):
         if data is not None:
             status_pages[name] = data
         else:
-            print(("Skipping repos status page '%s' since no repository URL" +
-                   'matches any of the release build files') % name)
+            print(("Skipping repos status page '%s' since no repository URLs " +
+                   'match any of the release build files') % name)
 
     job_data = copy.deepcopy(args.__dict__)
     job_data.update({
@@ -102,14 +102,14 @@ def get_targets_by_repo(config, ros_distro_name):
         targets_by_repo[target_repository] = []
         targets = target_dicts_by_repo[target_repository]
         # TODO support other OS names
-        for os_name in ['debian', 'ubuntu']:
+        for os_name in ['debian', 'rhel', 'ubuntu']:
             if os_name not in targets:
                 continue
             for os_code_name in sorted(targets[os_name].keys()):
-                target = '%s:source' % os_code_name
+                target = '%s:%s:source' % (os_name, os_code_name)
                 targets_by_repo[target_repository].append(target)
                 for arch in sorted(targets[os_name][os_code_name].keys()):
-                    target = '%s:%s' % (os_code_name, arch)
+                    target = '%s:%s:%s' % (os_name, os_code_name, arch)
                     targets_by_repo[target_repository].append(target)
     return targets_by_repo
 
@@ -125,7 +125,7 @@ def get_status_page_data(repo_urls, targets_by_repo):
 
     data = {}
     data['debian_repository_urls'] = repo_urls
-    data['os_code_name_and_arch_tuples'] = targets
+    data['os_name_and_os_code_name_and_arch_tuples'] = targets
     return data
 
 
