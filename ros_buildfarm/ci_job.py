@@ -292,7 +292,7 @@ def _get_ci_job_config(
         'trigger_timer': trigger_timer,
         'trigger_jobs': trigger_jobs,
 
-        'keep_files': build_file.keep_files,
+        'archive_files': build_file.archive_files,
 
         'show_images': build_file.show_images,
         'show_plots': build_file.show_plots,
