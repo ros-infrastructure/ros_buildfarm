@@ -27,10 +27,10 @@ from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_os_package_name
-from ros_buildfarm.common import get_package_repo_data
 from ros_buildfarm.common import Target
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
+from ros_buildfarm.package_repo import get_package_repo_data
 from rosdistro import get_distribution_file
 from rosdistro import get_index
 
