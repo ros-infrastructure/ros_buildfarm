@@ -105,7 +105,7 @@ def trigger_release_jobs(
                 # check if artifact is missing
                 repo_index = repo_data[target]
                 if debian_package_name in repo_index:
-                    version = repo_index[debian_package_name]
+                    version = repo_index[debian_package_name].version
                     version = _strip_version_suffix(version)
                     if version == pkg_version:
                         print(("  Skipping job '%s' since the artifact is " +

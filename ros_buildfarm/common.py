@@ -42,6 +42,27 @@ class JobValidationError(Exception):
         super(JobValidationError, self).__init__(message)
 
 
+class PlatformPackageDescriptor(str):
+    """
+    Represents a package stored in a platform-specific package
+    repository.
+
+    Currently the class is inheriting from str for backwards compatibility.
+    You should not rely on this but use the `version` property instead.
+
+    To be replaced with:
+    namedtuple('PlatformPackageDescriptor', 'name version')
+    """
+
+    @staticmethod
+    def __new__(cls, version):
+        return str.__new__(cls, version)
+
+    @property
+    def version(self):
+        return str(self)
+
+
 next_scope_id = 1
 
 

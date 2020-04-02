@@ -189,12 +189,12 @@ if regressions and True in regressions[pkg.name].values():
 @
 @ @# a square for each repo
 @
-@ @ @[if status == 'equal' and repos_data[i][target][pkg.debian_name] == pkg.version]@
+@ @ @[if status == 'equal' and repos_data[i][target][pkg.debian_name].version == pkg.version]@
 @ @ @ <a/>@
 @ @ @[elif status in ['ignore', 'missing']]@
 @ @ @ <a class="@status[0]"/>@
 @ @ @[else]@
-@ @ @ <a class="@status[0]">@repos_data[i][target][pkg.debian_name]</a>@
+@ @ @ <a class="@status[0]">@repos_data[i][target][pkg.debian_name].version</a>@
 @ @ @[end if]@
 @ @[end for]@
 </td>@

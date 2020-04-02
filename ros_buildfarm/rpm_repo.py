@@ -16,6 +16,7 @@ import logging
 import os
 from xml.dom import minidom
 
+from .common import PlatformPackageDescriptor
 from .http_cache import fetch_and_cache_gzip
 from .http_cache import fetch_and_cache_plaintext
 
@@ -55,7 +56,8 @@ def get_rpm_repo_index(rpm_repository_baseurl, target, cache_dir):
         pkg_version_obj = pkg.getElementsByTagName('version')[0]
         pkg_version = pkg_version_obj.getAttribute('ver')
         pkg_release = pkg_version_obj.getAttribute('rel')
-        package_versions[pkg_name] = pkg_version + '-' + pkg_release
+        package_versions[pkg_name] = PlatformPackageDescriptor(
+            pkg_version + '-' + pkg_release)
 
     return package_versions
 
