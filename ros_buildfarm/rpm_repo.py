@@ -56,8 +56,14 @@ def get_rpm_repo_index(rpm_repository_baseurl, target, cache_dir):
         pkg_version_obj = pkg.getElementsByTagName('version')[0]
         pkg_version = pkg_version_obj.getAttribute('ver')
         pkg_release = pkg_version_obj.getAttribute('rel')
+        pkg_format = pkg.getElementsByTagName('format')[0]
+        pkg_sourcerpm = pkg_format.getElementsByTagName('rpm:sourcerpm')[0].firstChild
+        if pkg_sourcerpm:
+            pkg_source_name = pkg_sourcerpm.data.rsplit('-', 2)[0]
+        else:
+            pkg_source_name = None
         package_versions[pkg_name] = PlatformPackageDescriptor(
-            pkg_version + '-' + pkg_release)
+            pkg_version + '-' + pkg_release, pkg_source_name)
 
     return package_versions
 
