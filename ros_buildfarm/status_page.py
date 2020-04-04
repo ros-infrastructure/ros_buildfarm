@@ -414,7 +414,8 @@ def get_version_status(
 
                 if ref_version:
                     if not version:
-                        if target.arch == 'source' and debian_pkg_name != source_pkg_name:
+                        if target.arch == 'source' and \
+                                source_pkg_name and debian_pkg_name != source_pkg_name:
                             statuses.append('ignore')
                         else:
                             statuses.append('missing')
