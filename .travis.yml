@@ -305,6 +305,9 @@ jobs:
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python3-vcstool -y
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
         - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
@@ -319,6 +322,9 @@ jobs:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
       before_script:
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
         - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
@@ -332,6 +338,9 @@ jobs:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
       before_script:
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
         - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
@@ -351,6 +360,9 @@ jobs:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
         - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
@@ -368,6 +380,9 @@ jobs:
         - sudo apt-get update
         - sudo apt-get install -y python3-pip  python3-setuptools
         - sudo pip3 install vcstool
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
         - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
@@ -381,6 +396,9 @@ jobs:
         - docker
       env: JOB_TYPE=status_pages
       before_script:
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
         - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir status_pages && cd status_pages
@@ -402,6 +420,9 @@ jobs:
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python-vcstool -y
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
         - pip install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
@@ -416,6 +437,9 @@ jobs:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
       before_script:
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
         - pip install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
@@ -429,6 +453,10 @@ jobs:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
       before_script:
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
+        - pip install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
         - mkdir source && cd source && ln -s ../.. ros_buildfarm && cd ..
@@ -450,6 +478,9 @@ jobs:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
         - pip install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
@@ -467,6 +498,10 @@ jobs:
         - sudo apt-get update
         - sudo apt-get install -y python3-pip python3-setuptools
         - sudo pip3 install EmPy vcstool
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
+        - pip install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -479,6 +514,9 @@ jobs:
         - docker
       env: JOB_TYPE=status_pages
       before_script:
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5
+        # and https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L199
         - pip install pyparsing==2.4.7
         - python setup.py install
         - mkdir status_pages && cd status_pages
