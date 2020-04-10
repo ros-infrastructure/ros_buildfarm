@@ -305,6 +305,7 @@ jobs:
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python3-vcstool -y
+        - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -318,6 +319,7 @@ jobs:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
       before_script:
+        - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -330,6 +332,7 @@ jobs:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
       before_script:
+        - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
         - mkdir source && cd source && ln -s ../.. ros_buildfarm && cd ..
@@ -348,6 +351,7 @@ jobs:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
+        - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -364,6 +368,7 @@ jobs:
         - sudo apt-get update
         - sudo apt-get install -y python3-pip  python3-setuptools
         - sudo pip3 install vcstool
+        - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -376,6 +381,7 @@ jobs:
         - docker
       env: JOB_TYPE=status_pages
       before_script:
+        - pip3 install pyparsing==2.4.7
         - python setup.py install
         - mkdir status_pages && cd status_pages
       script:
@@ -396,6 +402,7 @@ jobs:
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python-vcstool -y
+        - pip install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -409,6 +416,7 @@ jobs:
         - docker
       env: JOB_TYPE=doc REPOSITORY_NAME=roscpp_core
       before_script:
+        - pip install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -442,6 +450,7 @@ jobs:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
+        - pip install pyparsing==2.4.7
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -470,6 +479,7 @@ jobs:
         - docker
       env: JOB_TYPE=status_pages
       before_script:
+        - pip install pyparsing==2.4.7
         - python setup.py install
         - mkdir status_pages && cd status_pages
       script:
