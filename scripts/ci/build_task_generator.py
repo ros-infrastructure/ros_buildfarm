@@ -76,6 +76,7 @@ def main(argv=sys.argv[1:]):
             'python3-catkin-pkg-modules',
             'python3-colcon-metadata',
             'python3-colcon-output',
+            'python3-colcon-package-selection',
             'python3-colcon-parallel-executor',
             'python3-colcon-ros',
             'python3-colcon-test-result',
