@@ -49,6 +49,10 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update
 
 USER buildfarm
 
+@[for repos_file in repos_file_names]@
+COPY @repos_file /tmp/@repos_file
+@[end for]@
+
 ENTRYPOINT ["sh", "-c"]
 @{
 args = \
@@ -70,7 +74,7 @@ cmds = [
     ' /tmp/ros_buildfarm/scripts/ci/create_workspace_task_generator.py' + \
     args + \
     ' --dockerfile-dir /tmp/docker_create_workspace' + \
-    ' --repos-file-urls ' + ' '.join(repos_file_urls) + \
+    ' --repos-file-urls ' + ' '.join('file:///tmp/%s' % repos_file for repos_file in repos_file_names) + \
     ' --repository-names ' + ' '.join(repository_names) + \
     ' --test-branch "%s"' % (test_branch) + \
     ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) + \

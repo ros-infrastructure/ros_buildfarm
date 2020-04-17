@@ -82,6 +82,10 @@ RUN sudo -H -u buildfarm -- git config --global user.email "jenkins@@ros.invalid
 RUN echo "@now_str"
 RUN python3 -u /tmp/wrapper_scripts/apt.py update
 
+@[for repos_file in repos_file_names]@
+COPY @repos_file /tmp/@repos_file
+@[end for]@
+
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
@@ -94,7 +98,7 @@ cmds = [
     ' /tmp/ros_buildfarm/scripts/ci/create_workspace.py' + \
     ' ' + rosdistro_name + \
     ' --workspace-root ' + workspace_root[-1] + \
-    ' --repos-file-urls ' + ' '.join(repos_file_urls) + \
+    ' --repos-file-urls ' + ' '.join('file:///tmp/%s' % repos_file for repos_file in repos_file_names) + \
     ' --repository-names ' + ' '.join(repository_names) + \
     ' --test-branch "%s"' % (test_branch),
 
