@@ -21,6 +21,7 @@ import sys
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
+from ros_buildfarm.argument import add_argument_build_tool_test_args
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
@@ -60,6 +61,7 @@ def main(argv=sys.argv[1:]):
     add_argument_install_packages(parser)
     a1 = add_argument_package_selection_args(parser)
     a2 = add_argument_build_tool_args(parser)
+    a3 = add_argument_build_tool_test_args(parser)
     add_argument_repos_file_urls(parser)
     add_argument_repository_names(parser, optional=True)
     add_argument_ros_version(parser)
@@ -70,7 +72,7 @@ def main(argv=sys.argv[1:]):
         help='Locations within the docker image where the workspace(s) '
              'will be mounted when the docker image is run.')
 
-    remainder_args = extract_multiple_remainders(argv, (a1, a2))
+    remainder_args = extract_multiple_remainders(argv, (a1, a2, a3))
     args = parser.parse_args(argv)
     for k, v in remainder_args.items():
         setattr(args, k, v)

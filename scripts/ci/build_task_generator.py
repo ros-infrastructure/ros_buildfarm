@@ -22,6 +22,7 @@ from apt import Cache
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
+from ros_buildfarm.argument import add_argument_build_tool_test_args
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
@@ -35,6 +36,7 @@ from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.argument import add_argument_testing
+from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
@@ -52,7 +54,8 @@ def main(argv=sys.argv[1:]):
     add_argument_arch(parser)
 
     add_argument_build_tool(parser, required=True)
-    add_argument_build_tool_args(parser)
+    a1 = add_argument_build_tool_args(parser)
+    a2 = add_argument_build_tool_test_args(parser)
     add_argument_distribution_repository_key_files(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_dockerfile_dir(parser)
@@ -65,7 +68,11 @@ def main(argv=sys.argv[1:]):
     parser.add_argument(
         '--workspace-root', nargs='+',
         help='The root path of the workspace to compile')
+
+    remainder_args = extract_multiple_remainders(argv, (a1, a2))
     args = parser.parse_args(argv)
+    for k, v in remainder_args.items():
+        setattr(args, k, v)
 
     apt_cache = Cache()
 
@@ -115,6 +122,7 @@ def main(argv=sys.argv[1:]):
 
         'build_tool': args.build_tool,
         'build_tool_args': args.build_tool_args,
+        'build_tool_test_args': args.build_tool_test_args,
         'ros_version': args.ros_version,
 
         'build_environment_variables': ['%s=%s' % key_value for key_value in args.env_vars.items()],

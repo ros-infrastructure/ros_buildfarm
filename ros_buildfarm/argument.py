@@ -376,6 +376,12 @@ def add_argument_build_tool_args(parser):
         help='Arbitrary arguments passed to the build tool.')
 
 
+def add_argument_build_tool_test_args(parser):
+    return parser.add_argument(
+        '--build-tool-test-args', nargs=argparse.REMAINDER,
+        help='Arbitrary arguments passed to the build tool during testing.')
+
+
 def add_argument_pulp_base_url(parser):
     from_env = os.environ.get('PULP_BASE_URL')
     return parser.add_argument(
