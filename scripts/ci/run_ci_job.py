@@ -16,7 +16,9 @@
 
 import argparse
 import copy
+import os
 import sys
+from urllib.request import urlretrieve
 
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_tool
@@ -79,12 +81,19 @@ def main(argv=sys.argv[1:]):
 
     assert args.repos_file_urls or args.repository_names
 
+    repos_file_names = []
+    for index, repos_file_url in enumerate(args.repos_file_urls):
+        repos_file_name = 'repositories-%d.repos' % (index)
+        urlretrieve(repos_file_url, os.path.join(args.dockerfile_dir, repos_file_name))
+        repos_file_names.append(repos_file_name)
+
     data = copy.deepcopy(args.__dict__)
     data.update({
         'distribution_repository_urls': args.distribution_repository_urls,
         'distribution_repository_keys': get_distribution_repository_keys(
             args.distribution_repository_urls,
             args.distribution_repository_key_files),
+        'repos_file_names': repos_file_names,
         'uid': get_user_id(),
     })
     create_dockerfile(

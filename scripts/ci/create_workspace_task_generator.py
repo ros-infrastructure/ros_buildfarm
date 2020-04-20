@@ -15,7 +15,9 @@
 # limitations under the License.
 
 import argparse
+import os
 import sys
+from urllib.request import urlretrieve
 
 from apt import Cache
 from ros_buildfarm.argument import add_argument_arch
@@ -65,6 +67,12 @@ def main(argv=sys.argv[1:]):
 
     assert args.repos_file_urls or args.repository_names
 
+    repos_file_names = []
+    for index, repos_file_url in enumerate(args.repos_file_urls):
+        repos_file_name = 'repositories-%d.repos' % (index)
+        urlretrieve(repos_file_url, os.path.join(args.dockerfile_dir, repos_file_name))
+        repos_file_names.append(repos_file_name)
+
     debian_pkg_names = [
         'git',
         'python3-apt',
@@ -104,7 +112,7 @@ def main(argv=sys.argv[1:]):
         'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,
 
-        'repos_file_urls': args.repos_file_urls,
+        'repos_file_names': repos_file_names,
         'repository_names': args.repository_names,
         'test_branch': args.test_branch,
 
