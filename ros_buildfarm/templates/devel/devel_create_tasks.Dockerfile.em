@@ -89,10 +89,13 @@ if require_gpu_support:
     cmd += ' --require-gpu-support'
 cmds += [
     cmd +
-    ' --dockerfile-dir /tmp/docker_build_and_install',
+    ' --dockerfile-dir /tmp/docker_build_and_install' +
+    ' --build-tool-args ' + ' '.join(build_tool_args or []),
     cmd +
     ' --dockerfile-dir /tmp/docker_build_and_test' +
-    ' --testing',
+    ' --testing' +
+    ' --build-tool-args ' + ' '.join(build_tool_args or []) +
+    ' --build-tool-test-args ' + ' '.join(build_tool_test_args or []),
 ]
 }@
 CMD ["@(' && '.join(cmds))"]

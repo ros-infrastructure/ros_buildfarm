@@ -20,6 +20,8 @@ import sys
 
 from apt import Cache
 from ros_buildfarm.argument import add_argument_build_tool
+from ros_buildfarm.argument import add_argument_build_tool_args
+from ros_buildfarm.argument import add_argument_build_tool_test_args
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
@@ -28,6 +30,7 @@ from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_require_gpu_support
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_run_abichecker
+from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_packages_in_workspaces
@@ -70,12 +73,18 @@ def main(argv=sys.argv[1:]):
     add_argument_dockerfile_dir(parser)
     add_argument_run_abichecker(parser)
     add_argument_require_gpu_support(parser)
+    a1 = add_argument_build_tool_args(parser)
+    a2 = add_argument_build_tool_test_args(parser)
     parser.add_argument(
         '--testing',
         action='store_true',
         help='The flag if the workspace should be built with tests enabled '
              'and instead of installing the tests are ran')
+
+    remainder_args = extract_multiple_remainders(argv, (a1, a2))
     args = parser.parse_args(argv)
+    for k, v in remainder_args.items():
+        setattr(args, k, v)
 
     condition_context = dict(args.env_vars)
     condition_context['ROS_DISTRO'] = args.rosdistro_name
@@ -169,6 +178,8 @@ def main(argv=sys.argv[1:]):
         'uid': get_user_id(),
 
         'build_tool': args.build_tool,
+        'build_tool_args': args.build_tool_args,
+        'build_tool_test_args': args.build_tool_test_args,
         'ros_version': args.ros_version,
 
         'build_environment_variables': ['%s=%s' % key_value for key_value in args.env_vars.items()],

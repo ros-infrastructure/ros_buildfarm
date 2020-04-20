@@ -244,6 +244,11 @@ The following options are valid in version ``2`` (beside the generic options):
   * ``catkin_make_isolated`` (default)
   * ``colcon``
 
+* ``build_tool_args``: arbitrary arguments passed to the build tool.
+
+* ``build_tool_test_args``: arbitrary arguments passed to the build tool during
+  testing.
+
 * ``notifications``: a dictionary with the following keys:
 
   * ``compiler_warnings``: boolean flag if compiler warnings should mark a job
