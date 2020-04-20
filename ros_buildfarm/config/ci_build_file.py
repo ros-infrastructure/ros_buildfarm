@@ -44,6 +44,10 @@ class CIBuildFile(BuildFile):
         if 'build_tool_args' in data:
             self.build_tool_args = data['build_tool_args']
 
+        self.build_tool_test_args = None
+        if 'build_tool_test_args' in data:
+            self.build_tool_test_args = data['build_tool_test_args']
+
         self.install_packages = []
         if 'install_packages' in data:
             self.install_packages = data['install_packages']

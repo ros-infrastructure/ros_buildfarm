@@ -285,6 +285,7 @@ def _get_ci_job_config(
         'install_packages': build_file.install_packages,
         'package_selection_args': build_file.package_selection_args,
         'build_tool_args': build_file.build_tool_args,
+        'build_tool_test_args': build_file.build_tool_test_args,
         'test_branch': build_file.test_branch,
 
         'underlay_source_jobs': underlay_source_jobs,

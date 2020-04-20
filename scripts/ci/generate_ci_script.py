@@ -24,6 +24,7 @@ from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
+from ros_buildfarm.argument import add_argument_build_tool_test_args
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
@@ -55,6 +56,7 @@ def main(argv=sys.argv[1:]):
     add_argument_build_tool(parser)
     a1 = add_argument_package_selection_args(parser)
     a2 = add_argument_build_tool_args(parser)
+    a3 = add_argument_build_tool_test_args(parser)
     add_argument_repos_file_urls(parser)
     add_argument_skip_cleanup(parser)
     add_argument_test_branch(parser)
@@ -62,7 +64,7 @@ def main(argv=sys.argv[1:]):
         '--underlay-source-path', nargs='*', metavar='DIR_NAME',
         help='Path to one or more install spaces to use as an underlay')
 
-    remainder_args = extract_multiple_remainders(argv, (a1, a2))
+    remainder_args = extract_multiple_remainders(argv, (a1, a2, a3))
     args = parser.parse_args(argv)
     for k, v in remainder_args.items():
         setattr(args, k, v)
@@ -86,6 +88,8 @@ def main(argv=sys.argv[1:]):
                 self.parameters['package_selection_args'] = ' '.join(args.package_selection_args)
             if args.build_tool_args is not None:
                 self.parameters['build_tool_args'] = ' '.join(args.build_tool_args)
+            if args.build_tool_test_args is not None:
+                self.parameters['build_tool_test_args'] = ' '.join(args.build_tool_test_args)
 
         def beforeInclude(self, *_, **kwargs):
             template_path = kwargs['file'].name

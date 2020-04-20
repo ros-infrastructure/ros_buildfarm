@@ -122,5 +122,7 @@ cmd += \
     ' --parent-result-space' + ''.join([' %s/install_isolated' % (space) for space in parent_result_space])
 if vars().get('build_tool_args'):
     cmd += ' --build-tool-args ' + ' '.join(build_tool_args)
+if vars().get('build_tool_test_args'):
+    cmd += ' --build-tool-test-args ' + ' '.join(build_tool_test_args)
 }@
 CMD ["@cmd"]

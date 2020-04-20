@@ -64,6 +64,12 @@ parameters = [
         'default_value': build_tool_args or '',
         'description': 'Arbitrary arguments passed to the build tool',
     },
+    {
+        'type': 'string',
+        'name': 'build_tool_test_args',
+        'default_value': build_tool_test_args or '',
+        'description': 'Arbitrary arguments passed to the build tool during testing',
+    },
 ]
 }@
 @(SNIPPET(
@@ -184,7 +190,8 @@ parameters = [
             ' /tmp/ws%d' % (i + 2) for i in range(len(underlay_source_paths))
         ]) +
         ' --package-selection-args $package_selection_args' +
-        ' --build-tool-args $build_tool_args',
+        ' --build-tool-args $build_tool_args' +
+        ' --build-tool-test-args $build_tool_test_args',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - generating CI tasks"',
