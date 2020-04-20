@@ -235,6 +235,7 @@ def add_argument_not_failed_only(parser):
 
 def add_argument_os_code_name_and_arch_tuples(parser, required=True):
     class _AddUbuntuTupleAction(argparse.Action):
+
         def __call__(self, parser, args, values, option_string=None):
             import sys
             print('WARNING: ' + self.help, file=sys.stderr)
@@ -465,6 +466,7 @@ def add_argument_testing(parser):
 
 def check_len_action(minargs, maxargs):
     class CheckLength(argparse.Action):
+
         def __call__(self, parser, args, values, option_string=None):
             if len(values) < minargs:
                 raise argparse.ArgumentError(
@@ -480,6 +482,7 @@ def check_len_action(minargs, maxargs):
 
 def colon_separated_tuple_action(numparts):
     class ColonSeparatedTupleAction(argparse.Action):
+
         def __call__(self, parser, args, values, option_string=None):
             for value in values:
                 if value.count(':') + 1 != numparts:
@@ -509,6 +512,7 @@ def extract_multiple_remainders(argv, arguments):
 
 
 class OrderedDictAction(argparse.Action):
+
     def __call__(self, parser, args, values, option_string=None):
         dest = OrderedDict()
         for value in values:

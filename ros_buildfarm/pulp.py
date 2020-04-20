@@ -42,7 +42,7 @@ def _enumerate_recursive_dependencies(packages, target_names):
 
 class PulpPageIterator:
 
-    def __init__(self, fetch_function, *args, **kwargs):
+    def __init__(self, fetch_function, *args, **kwargs):  # noqa: D107
         self._get_next = lambda offset: fetch_function(*args, **kwargs, offset=offset)
         self._offset = 0
         self._next_page()
@@ -72,7 +72,8 @@ class PulpPageIterator:
 class PulpRpmClient:
 
     def __init__(
-            self, base_url, username, password, task_timeout=60.0, task_polling_interval=0.5):
+            self, base_url, username, password,
+            task_timeout=60.0, task_polling_interval=0.5):  # noqa: D107
         self._task_timeout = task_timeout
         self._task_polling_interval = task_polling_interval
 

@@ -34,6 +34,8 @@ kwargs = {
         'PyYAML'],
     'tests_require': [
         'flake8 >= 3.7',
+        'flake8_class_newline',
+        'flake8_docstrings',
         'flake8_import_order',
         'pep8',
         'pyflakes'],
