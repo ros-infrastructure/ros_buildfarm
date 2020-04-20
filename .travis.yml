@@ -47,7 +47,7 @@ jobs:
     - python: "3.6"
       install:
         - pip install catkin-pkg EmPy jenkinsapi PyYAML rosdistro vcstool
-        - pip install flake8 flake8-import-order pep8 pyflakes pytest
+        - pip install flake8 flake8-class-newline flake8-docstrings flake8-import-order pep8 pyflakes pytest
       script:
         - py.test -s test
     - python: "3.6"
