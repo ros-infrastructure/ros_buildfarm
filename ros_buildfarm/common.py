@@ -44,8 +44,7 @@ class JobValidationError(Exception):
 
 class PlatformPackageDescriptor(str):
     """
-    Represents a package stored in a platform-specific package
-    repository.
+    Represents a package stored in a platform-specific package repository.
 
     Currently the class is inheriting from str for backwards compatibility.
     You should not rely on this but use the `version` property instead.
@@ -58,7 +57,7 @@ class PlatformPackageDescriptor(str):
     def __new__(cls, version, source_name):
         return str.__new__(cls, version)
 
-    def __init__(self, version, source_name):
+    def __init__(self, version, source_name):  # noqa: D107
         self.source_name = source_name
 
     @property

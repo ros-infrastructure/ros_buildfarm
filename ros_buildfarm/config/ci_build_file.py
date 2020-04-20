@@ -20,7 +20,7 @@ class CIBuildFile(BuildFile):
 
     _type = 'ci-build'
 
-    def __init__(self, name, data):
+    def __init__(self, name, data):  # noqa: D107
         assert 'type' in data, "Expected file type is '%s'" % \
             CIBuildFile._type
         assert data['type'] == CIBuildFile._type, \

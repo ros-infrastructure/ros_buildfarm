@@ -15,7 +15,7 @@
 
 class PlotConfig:
 
-    def __init__(self, name, data):
+    def __init__(self, name, data):  # noqa: D107
         self.name = name
 
         assert 'master_csv_name' in data, \
@@ -61,7 +61,7 @@ class PlotConfig:
 
 class PlotDataSeries:
 
-    def __init__(self, name, data):
+    def __init__(self, name, data):  # noqa: D107
         self.name = name
 
         assert 'data_file' in data, \
