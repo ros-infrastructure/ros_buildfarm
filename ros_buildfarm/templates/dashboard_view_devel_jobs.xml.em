@@ -60,7 +60,7 @@
       <graphHeight>220</graphHeight>
       <dateRange>0</dateRange>
       <dateShift>0</dateShift>
-      <displayStatus>ALL</displayStatus>
+      <displayStatus>FAILED</displayStatus>
     </hudson.plugins.view.dashboard.test.TestTrendChart>
   </rightPortlets>
   <topPortlets/>
