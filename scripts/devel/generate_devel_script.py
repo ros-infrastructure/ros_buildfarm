@@ -98,12 +98,14 @@ def main(argv=sys.argv[1:]):
                         ):
                             lines[i] = 'export build_tool_args="%s"' % (
                                 ' '.join(args.build_tool_args))
+                            break
                         if (
                             line.startswith('export build_tool_test_args=') and
                             args.build_tool_test_args is not None
                         ):
                             lines[i] = 'export build_tool_test_args="%s"' % (
                                 ' '.join(args.build_tool_test_args))
+                            break
                     script = '\n'.join(lines)
 
                 self.scripts.append(script)
