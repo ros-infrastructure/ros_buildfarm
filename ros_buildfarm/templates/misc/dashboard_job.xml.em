@@ -27,7 +27,7 @@
   <triggers>
 @(SNIPPET(
     'trigger_timer',
-    spec='0 */6 * * *',
+    spec='0 H/6 * * *',
 ))@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
