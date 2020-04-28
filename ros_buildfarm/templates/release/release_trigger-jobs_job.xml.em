@@ -61,7 +61,7 @@ if missed_jobs:
 @[if not missed_jobs]@
 @(SNIPPET(
     'trigger_timer',
-    spec='*/15 * * * *',
+    spec='H/15 * * * *',
 ))@
 @[else]@
 @(SNIPPET(
