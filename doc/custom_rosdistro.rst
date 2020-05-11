@@ -55,11 +55,19 @@ Add a tag to custom distribution files
 For more flexible configuration options you should always add a ``tag`` to your
 custom distribution file::
 
+    release_platforms:
+      ...
+    repositories:
+      ...
     tags:
     - YOUR_TAG
+    type: distribution
+    version: ...
 
-This allows the build files in the ROS build farm configuration to operate only
-on the packages / repositories from your custom distribution file.
+This allows the build files in the ROS build farm configuration to specify a
+`tag_whitelist <configuration_options.rst#generic-options-in-build-files>`_
+to operate only on the packages / repositories from your custom distribution
+file.
 
 
 Releasing into a custom rosdistro
