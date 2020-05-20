@@ -41,14 +41,38 @@ from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.templates import expand_template
 
 
+class _BuildToolArgsHelper(argparse.Action):
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, values)
+        if (
+            getattr(namespace, 'rosdistro_name', None) is not None and
+            getattr(namespace, 'config_url', None) is not None and
+            getattr(namespace, 'ci_build_name', None) is not None
+        ):
+            try:
+                config = get_config_index(namespace.config_url)
+                build_files = get_ci_build_files(config, namespace.rosdistro_name)
+                build_file = build_files[namespace.ci_build_name]
+
+                parser.epilog = '\n'.join([
+                    (parser.epilog or '') + 'default build tool arguments:',
+                    '  --build-tool-args ' + (build_file.build_tool_args or '(none)'),
+                    '  --build-tool-test-args ' + (build_file.build_tool_test_args or '(none)'),
+                ])
+            except Exception:
+                pass
+
+
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
-        description="Generate a 'CI' script")
+        description="Generate a 'CI' script",
+        formatter_class=argparse.RawTextHelpFormatter)
 
     # Positional
-    add_argument_config_url(parser)
-    add_argument_rosdistro_name(parser)
-    add_argument_build_name(parser, 'ci')
+    add_argument_config_url(parser, action=_BuildToolArgsHelper)
+    add_argument_rosdistro_name(parser, action=_BuildToolArgsHelper)
+    add_argument_build_name(parser, 'ci', action=_BuildToolArgsHelper)
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)

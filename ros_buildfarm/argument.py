@@ -19,9 +19,10 @@ from collections import OrderedDict
 import os
 
 
-def add_argument_config_url(parser):
+def add_argument_config_url(parser, action=None):
     parser.add_argument(
         'config_url',
+        action=action,
         help='The url of the ROS buildfarm configuration index')
 
 
@@ -41,9 +42,10 @@ def add_argument_rosdistro_index_url(parser, required=False):
             help=help_msg)
 
 
-def add_argument_rosdistro_name(parser):
+def add_argument_rosdistro_name(parser, action=None):
     parser.add_argument(
         'rosdistro_name',
+        action=action,
         help="The name of the ROS distro from the index")
 
 
@@ -60,10 +62,10 @@ def add_argument_older_rosdistro_names(parser):
         help='List of older rosdistro names to compare with')
 
 
-def add_argument_build_name(parser, build_file_type, nargs=None):
+def add_argument_build_name(parser, build_file_type, nargs=None, action=None):
     parser.add_argument(
         '%s_build_name' % build_file_type,
-        nargs=nargs,
+        action=action, nargs=nargs,
         help="The name / key of the '%s-build' file from the index" %
              build_file_type)
 
