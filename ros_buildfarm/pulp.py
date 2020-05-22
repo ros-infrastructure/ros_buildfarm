@@ -53,6 +53,12 @@ class PulpPageIterator:
         self._iter = iter(self._page.results)
 
     def __iter__(self):
+        # Make sure we're at the beginning
+        if self._page.previous:
+            self._offset = 0
+            self._next_page()
+        else:
+            self._iter = iter(self._page.results)
         return self
 
     def __len__(self):
