@@ -10,7 +10,7 @@
 @[if parameter_files]@
             <hudson.plugins.parameterizedtrigger.FileBuildParameters>
               <propertiesFile>@(','.join(ESCAPE(parameter_files)))</propertiesFile>
-              <failTriggerOnMissing>false</failTriggerOnMissing>
+              <failTriggerOnMissing>@(vars().get('missing_parameter_files_skip', False) ? 'true' : 'false')</failTriggerOnMissing>
               <textParamValueOnNewLine>false</textParamValueOnNewLine>
               <useMatrixChild>false</useMatrixChild>
               <onlyExactRuns>false</onlyExactRuns>
