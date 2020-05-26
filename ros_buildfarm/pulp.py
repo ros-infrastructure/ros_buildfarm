@@ -14,6 +14,7 @@
 
 import os
 import re
+import sys
 import time
 
 from pulpcore.client import pulp_rpm
@@ -211,8 +212,42 @@ class PulpRpmClient:
         mod_task_href = self._rpm_repos_api.modify(old_publication.repository, mod_data).task
         mod_task = self._wait_for_task(mod_task_href)
 
+        # WORKAROUND FOR https://pulp.plan.io/issues/6811
+        #
+        # This implementation doesn't care what the "latest" version of the repository
+        # looks like, but the implementation details of the add/remove operation in Pulp
+        # seem to. The expectation is that when `created_resources` is empty, the changes
+        # are unnecessary and already satisfied, but another case can lead to this
+        # behavior. See the referenced ticket for details.
+        #
+        # We can work around the behavior by specifically modifying the 'latest' version
+        # to look different from our intended state, and then ignoring that new version.
+        # This way we'll keep our revision history intact.
+        if not mod_task.created_resources and (new_pkgs or pkgs_to_remove):
+            # Create a new version with nothing in it. Hopefully that will be different
+            # from the 'latest'.
+            print('WARNING: Working around pulp issue #6811', file=sys.stderr)
+            workaround_mod_data = pulp_rpm.RepositoryAddRemoveContent(
+                add_content_units=[],
+                remove_content_units=['*'],
+                base_version=old_publication.repository_version)
+            workaround_mod_task_href = self._rpm_repos_api.modify(
+                old_publication.repository,
+                workaround_mod_data).task
+            workaround_mod_task = self._wait_for_task(workaround_mod_task_href)
+            assert workaround_mod_task.created_resources
+
+            # Now that the 'latest' version has changed, re-run the original operation
+            mod_task_href = self._rpm_repos_api.modify(
+                old_publication.repository,
+                mod_data).task
+            mod_task = self._wait_for_task(mod_task_href)
+        # END WORKAROUND
+
         if mod_task.created_resources:
             self._publish_and_distribute(distribution, mod_task.created_resources[0])
+        else:
+            print('WARNING: modifications resulted in no apparent changes', file=sys.stderr)
 
         return (new_pkgs.values(), pkgs_to_remove.values())
 
