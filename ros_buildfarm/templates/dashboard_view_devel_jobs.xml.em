@@ -23,7 +23,19 @@
     <jenkins.plugins.extracolumns.TestResultColumn plugin="extra-columns@@1.20">
       <testResultFormat>1</testResultFormat>
     </jenkins.plugins.extracolumns.TestResultColumn>
-    <hudson.plugins.warnings.WarningsColumn plugin="warnings@@4.68"/>
+    <io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn plugin="warnings-ng@@8.1.0">
+      <selectTools>false</selectTools>
+      <tools>
+        <io.jenkins.plugins.analysis.core.model.ToolSelection>
+          <id></id>
+        </io.jenkins.plugins.analysis.core.model.ToolSelection>
+      </tools>
+      <name># Issues</name>
+      <labelProviderFactory>
+        <jenkins plugin="plugin-util-api@@1.0.2"/>
+      </labelProviderFactory>
+      <type>TOTAL</type>
+    </io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn>
   </columns>
 @[if include_regex]@
   <includeRegex>@include_regex</includeRegex>
@@ -48,7 +60,7 @@
       <graphHeight>220</graphHeight>
       <dateRange>0</dateRange>
       <dateShift>0</dateShift>
-      <displayStatus>ALL</displayStatus>
+      <displayStatus>FAILED</displayStatus>
     </hudson.plugins.view.dashboard.test.TestTrendChart>
   </rightPortlets>
   <topPortlets/>

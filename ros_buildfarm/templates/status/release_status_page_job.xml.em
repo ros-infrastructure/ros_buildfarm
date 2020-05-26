@@ -24,7 +24,7 @@
     refspec=None,
 ))@
   <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
-  <assignedNode>agent_on_master</assignedNode>
+  <assignedNode>agent_on_master||buildagent</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -32,7 +32,7 @@
   <triggers>
 @(SNIPPET(
     'trigger_timer',
-    spec='*/20 * * * *',
+    spec='H/20 * * * *',
 ))@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
@@ -71,7 +71,7 @@
         'echo "# BEGIN SECTION: Build Dockerfile - status page"',
         'cd $WORKSPACE/docker_generate_status_page',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t status_page_generation .',
+        'docker build --force-rm -t status_page_generation_%s_%s .' % (rosdistro_name, release_build_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - status page"',
@@ -86,7 +86,7 @@
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/package_repo_cache:/tmp/package_repo_cache' +
         ' -v $WORKSPACE/status_page:/tmp/status_page' +
-        ' status_page_generation',
+        ' status_page_generation_%s_%s' % (rosdistro_name, release_build_name),
         'echo "# END SECTION"',
     ]),
 ))@

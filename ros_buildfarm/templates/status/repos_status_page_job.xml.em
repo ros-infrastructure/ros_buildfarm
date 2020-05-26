@@ -24,7 +24,7 @@
     refspec=None,
 ))@
   <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
-  <assignedNode>agent_on_master</assignedNode>
+  <assignedNode>agent_on_master||buildagent</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -32,7 +32,7 @@
   <triggers>
 @(SNIPPET(
     'trigger_timer',
-    spec='*/15 * * * *',
+    spec='H * * * *',
 ))@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
