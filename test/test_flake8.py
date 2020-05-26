@@ -17,6 +17,7 @@ import os
 from flake8 import configure_logging
 from flake8.api.legacy import StyleGuide
 from flake8.main.application import Application
+from flake8.options import config
 
 
 def test_flake8_conformance():
@@ -43,13 +44,25 @@ def get_style_guide(argv=None):
     # this is a fork of flake8.api.legacy.get_style_guide
     # to allow passing command line argument
     application = Application()
-    application.parse_preliminary_options_and_args(argv)
-    configure_logging(
-        application.prelim_opts.verbose, application.prelim_opts.output_file)
-    application.make_config_finder()
-    application.find_plugins()
-    application.register_plugin_options()
-    application.parse_configuration_and_cli(argv)
+    if not hasattr(application, 'parse_preliminary_options_and_args'):  # flake8 >= 3.8
+        prelim_opts, remaining_args = application.parse_preliminary_options(argv)
+        config_finder = config.ConfigFileFinder(
+            application.program,
+            prelim_opts.append_config,
+            config_file=prelim_opts.config,
+            ignore_config_files=prelim_opts.isolated,
+        )
+        application.find_plugins(config_finder)
+        application.register_plugin_options()
+        application.parse_configuration_and_cli(config_finder, remaining_args)
+    else:
+        application.parse_preliminary_options_and_args(argv)
+        configure_logging(
+            application.prelim_opts.verbose, application.prelim_opts.output_file)
+        application.make_config_finder()
+        application.find_plugins()
+        application.register_plugin_options()
+        application.parse_configuration_and_cli(argv)
     application.make_formatter()
     application.make_guide()
     application.make_file_checker_manager()
