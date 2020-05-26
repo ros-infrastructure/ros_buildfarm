@@ -50,8 +50,8 @@ def get_sourcedeb(
             'apt-cache', 'showsrc', debian_package_name]).decode()
         line_prefix = 'Version: '
         debian_package_versions = [
-            l[len(line_prefix):] for l in showsrc_output.splitlines()
-            if l.startswith(line_prefix + package_version)]
+            line[len(line_prefix):] for line in showsrc_output.splitlines()
+            if line.startswith(line_prefix + package_version)]
         assert len(debian_package_versions) == 1, \
             "Failed to find sourcedeb with version '%s', only found: %s" % \
             (package_version, ', '.join(debian_package_versions))
