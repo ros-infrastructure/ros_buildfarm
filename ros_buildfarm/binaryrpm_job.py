@@ -64,6 +64,7 @@ def build_binaryrpm(
         '--no-cleanup-after',
         '--verbose',
         '--root', 'ros_buildfarm',
+        '--postinstall',
         '--rebuild', source_packages[0]]
 
     if append_timestamp:
