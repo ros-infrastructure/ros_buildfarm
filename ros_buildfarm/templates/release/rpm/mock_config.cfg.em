@@ -3,6 +3,9 @@ include('/etc/mock/default.cfg')
 # Change the root name since we're modifying the chroot
 config_opts['root'] += '-ros-buildfarm'
 
+# Disable mock bootstrapping
+config_opts['use_bootstrap'] = False
+
 # Add python3-rpm-macros to resolve %{python3_pkgversion} in rosdep rules
 config_opts['chroot_setup_cmd'] += ' python3-rpm-macros'
 
