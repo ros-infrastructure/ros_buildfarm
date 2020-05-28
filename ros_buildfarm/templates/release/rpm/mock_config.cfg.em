@@ -10,9 +10,7 @@ config_opts['use_bootstrap'] = False
 config_opts['chroot_setup_cmd'] += ' python3-rpm-macros'
 
 # Install weak dependencies to get group members
-config_opts['yum_builddep_opts'] = config_opts.get('yum_builddep_opts', []) + ['--setopt=install_weak_deps=True']
-config_opts['dnf_builddep_opts'] = config_opts.get('dnf_builddep_opts', []) + ['--setopt=install_weak_deps=True']
-config_opts['microdnf_builddep_opts'] = config_opts.get('microdnf_builddep_opts', []) + ['--setopt=install_weak_deps=True']
+config_opts[f'{config_opts.package_manager}_builddep_opts'] = config_opts.get(f'{config_opts.package_manager}_builddep_opts', []) + ['--setopt=install_weak_deps=True']
 
 @[if env_vars]@
 # Set environment vars from the build config
@@ -41,7 +39,7 @@ config_opts['macros']['_without_weak_deps'] = '1'
 config_opts['chroot_setup_cmd'] += ' gcc-c++ make'
 @[end if]@
 
-config_opts['yum.conf'] += """
+config_opts[f'{config_opts.package_manager}.conf'] += """
 @[for i, url in enumerate(distribution_repository_urls)]@
 [ros-buildfarm-@(i)]
 name=ROS Buildfarm Repository @(i) - $basearch
