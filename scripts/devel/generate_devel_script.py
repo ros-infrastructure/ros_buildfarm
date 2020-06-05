@@ -31,6 +31,7 @@ from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_require_gpu_support
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_run_abichecker
+from ros_buildfarm.argument import build_tool_args_epilog_action
 from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import get_devel_job_name
 from ros_buildfarm.config import get_index as get_config_index
@@ -39,36 +40,15 @@ from ros_buildfarm.devel_job import configure_devel_job
 from ros_buildfarm.templates import expand_template
 
 
-class _BuildToolArgsHelper(argparse.Action):
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        setattr(namespace, self.dest, values)
-        if (
-            getattr(namespace, 'rosdistro_name', None) is not None and
-            getattr(namespace, 'config_url', None) is not None and
-            getattr(namespace, 'source_build_name', None) is not None
-        ):
-            try:
-                config = get_config_index(namespace.config_url)
-                build_files = get_source_build_files(config, namespace.rosdistro_name)
-                build_file = build_files[namespace.source_build_name]
-
-                parser.epilog = '\n'.join([
-                    (parser.epilog or '') + 'default build tool arguments:',
-                    '  --build-tool-args ' + (build_file.build_tool_args or '(none)'),
-                    '  --build-tool-test-args ' + (build_file.build_tool_test_args or '(none)'),
-                ])
-            except Exception:
-                pass
-
-
 def main(argv=sys.argv[1:]):
+    build_tool_args_helper = build_tool_args_epilog_action(
+        'source', get_source_build_files)
     parser = argparse.ArgumentParser(
         description="Generate a 'devel' script",
         formatter_class=argparse.RawTextHelpFormatter)
-    add_argument_config_url(parser, action=_BuildToolArgsHelper)
-    add_argument_rosdistro_name(parser, action=_BuildToolArgsHelper)
-    add_argument_build_name(parser, 'source', action=_BuildToolArgsHelper)
+    add_argument_config_url(parser, action=build_tool_args_helper)
+    add_argument_rosdistro_name(parser, action=build_tool_args_helper)
+    add_argument_build_name(parser, 'source', action=build_tool_args_helper)
     add_argument_repository_name(parser)
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)

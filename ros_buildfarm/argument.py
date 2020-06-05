@@ -18,6 +18,8 @@ import argparse
 from collections import OrderedDict
 import os
 
+from ros_buildfarm.config import get_index as get_config_index
+
 
 def add_argument_config_url(parser, action=None):
     parser.add_argument(
@@ -531,3 +533,34 @@ class OrderedDictAction(argparse.Action):
                     message="invalid key/value pair: '%s'" % value)
             dest[value_parts[0].strip()] = value_parts[1].strip()
         setattr(args, self.dest, dest)
+
+
+def build_tool_args_epilog_action(build_file_type, build_file_getter):
+    build_name = '%s_build_name' % build_file_type
+
+    class BuildToolArgsEpilogAction(argparse.Action):
+
+        def __call__(self, parser, namespace, values, option_string=None):
+            setattr(namespace, self.dest, values)
+            if None not in (
+                getattr(namespace, 'rosdistro_name', None),
+                getattr(namespace, 'config_url', None),
+                getattr(namespace, build_name, None),
+            ):
+                try:
+                    config = get_config_index(namespace.config_url)
+                    build_files = build_file_getter(config, namespace.rosdistro_name)
+                    build_file = build_files[getattr(namespace, build_name)]
+
+                    if parser.epilog is None:
+                        parser.epilog = ''
+                    elif parser.epilog:
+                        parser.epilog = parser.epilog.rstrip('\r\n') + '\n\n'
+                    parser.epilog += '\n'.join([
+                        'default build tool arguments:',
+                        '  --build-tool-args ' + (build_file.build_tool_args or '(none)'),
+                        '  --build-tool-test-args ' + (build_file.build_tool_test_args or '(none)'),
+                    ])
+                except Exception:
+                    pass
+    return BuildToolArgsEpilogAction
