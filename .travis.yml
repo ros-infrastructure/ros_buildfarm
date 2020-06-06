@@ -84,7 +84,7 @@ jobs:
       env: JOB_TYPE=ci UNDERLAY1_PACKAGES="ament_flake8" UNDERLAY2_PACKAGES="ament_pep257" OVERLAY_PACKAGES="ament_cmake_ros"
       before_script:
         # install colcon for test results
-        - pip install colcon-core colcon-test-result PyYAML
+        - pip install colcon-core colcon-test-result
         - python setup.py install
         - mkdir job job/underlay1 job/underlay2 && cd job
         - ln -s .. ros_buildfarm
@@ -123,7 +123,6 @@ jobs:
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python3-vcstool -y
-        - sudo apt-get install python3-yaml -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -149,9 +148,7 @@ jobs:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
       before_script:
-        - sudo apt-get update -qq
         - python setup.py install
-        - sudo apt-get install python3-yaml -y
         - mkdir job && cd job
         - mkdir source && cd source && ln -s ../.. ros_buildfarm && cd ..
         - mkdir binary && cd binary && ln -s ../.. ros_buildfarm && cd ..
@@ -169,7 +166,6 @@ jobs:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
-        - sudo apt-get install python3-yaml -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -184,7 +180,7 @@ jobs:
       env: JOB_TYPE=external_prerelease
       before_script:
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip python3-setuptools python3-yaml
+        - sudo apt-get install -y python3-pip python3-setuptools
         - sudo pip3 install vcstool
         - python setup.py install
         - mkdir job && cd job
@@ -218,7 +214,6 @@ jobs:
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python3-vcstool -y
-        - sudo apt-get install python3-yaml -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -244,8 +239,6 @@ jobs:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
       before_script:
-        - sudo apt-get update -qq
-        - sudo apt-get install python3-yaml -y
         - python setup.py install
         - mkdir job && cd job
         - mkdir source && cd source && ln -s ../.. ros_buildfarm && cd ..
@@ -264,7 +257,6 @@ jobs:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
-        - sudo apt-get install python3-yaml -y
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -279,7 +271,7 @@ jobs:
       env: JOB_TYPE=external_prerelease
       before_script:
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip python3-setuptools python3-yaml
+        - sudo apt-get install -y python3-pip python3-setuptools
         - sudo pip3 install vcstool
         - python setup.py install
         - mkdir job && cd job
@@ -313,7 +305,6 @@ jobs:
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python3-vcstool -y
-        - sudo apt-get install python3-yaml -y
         # pin pyparsing to the last version that supports Python 3.4 and below
         # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5-L9
         - pip3 install pyparsing==2.4.7
@@ -345,8 +336,6 @@ jobs:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
       before_script:
-        - sudo apt-get update -qq
-        - sudo apt-get install python3-yaml -y
         # pin pyparsing to the last version that supports Python 3.4 and below
         # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5-L9
         - pip3 install pyparsing==2.4.7
@@ -368,7 +357,6 @@ jobs:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
-        - sudo apt-get install python3-yaml -y
         # pin pyparsing to the last version that supports Python 3.4 and below
         # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5-L9
         - pip3 install pyparsing==2.4.7
@@ -386,7 +374,7 @@ jobs:
       env: JOB_TYPE=external_prerelease
       before_script:
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip python3-setuptools python3-PyYAML
+        - sudo apt-get install -y python3-pip  python3-setuptools
         - sudo pip3 install vcstool
         # pin pyparsing to the last version that supports Python 3.4 and below
         # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5-L9
@@ -426,7 +414,6 @@ jobs:
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
         - sudo apt-get install python-vcstool -y
-        - sudo apt-get install python-yaml -y
         # pin pyparsing to the last version that supports Python 3.4 and below
         # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5-L9
         - pip install pyparsing==2.4.7
@@ -458,8 +445,6 @@ jobs:
         - docker
       env: JOB_TYPE=release PACKAGE_NAME=rostime
       before_script:
-        - sudo apt-get update -qq
-        - sudo apt-get install python-yaml -y
         # pin pyparsing to the last version that supports Python 3.4 and below
         # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5-L9
         - pip install pyparsing==2.4.7
@@ -476,7 +461,7 @@ jobs:
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="roscpp_core" OVERLAY_PACKAGE_NAMES=roscpp
       before_script:
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip python3-setuptools python-yaml
+        - sudo apt-get install -y python3-pip python3-setuptools
         - sudo pip3 install EmPy
         # install catkin for test results
         - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list'
@@ -501,7 +486,7 @@ jobs:
       env: JOB_TYPE=external_prerelease
       before_script:
         - sudo apt-get update
-        - sudo apt-get install -y python3-pip python3-setuptools python-yaml
+        - sudo apt-get install -y python3-pip python3-setuptools
         - sudo pip3 install EmPy vcstool
         # pin pyparsing to the last version that supports Python 3.4 and below
         # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5-L9
