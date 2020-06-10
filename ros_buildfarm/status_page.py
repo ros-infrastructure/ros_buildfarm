@@ -42,6 +42,36 @@ from .templates import expand_template
 from .templates import get_template_path
 
 
+def get_targets(build_file):
+    targets = []
+    for os_name in sorted(build_file.targets.keys()):
+        if os_name not in ['debian', 'fedora', 'rhel', 'ubuntu']:
+            continue
+        for os_code_name in sorted(build_file.targets[os_name].keys()):
+            targets.append(Target(os_name, os_code_name, 'source'))
+            for arch in sorted(build_file.targets[os_name][os_code_name]):
+                targets.append(Target(os_name, os_code_name, arch))
+    return targets
+
+
+def generate_urls_and_repo_data(build_file, targets, cache_dir):
+    building_repo_url = build_file.target_repository
+    base_url = os.path.dirname(building_repo_url)
+    testing_repo_url = os.path.join(base_url, 'testing')
+    main_repo_url = os.path.join(base_url, 'main')
+
+    building_repo_data = get_package_repo_data(
+        building_repo_url, targets, cache_dir)
+    testing_repo_data = get_package_repo_data(
+        testing_repo_url, targets, cache_dir)
+    main_repo_data = get_package_repo_data(main_repo_url, targets, cache_dir)
+
+    repo_urls = [building_repo_url, testing_repo_url, main_repo_url]
+    repos_data = [building_repo_data, testing_repo_data, main_repo_data]
+
+    return repo_urls, repos_data
+
+
 def build_release_status_page(
         config_url, rosdistro_name, release_build_name,
         cache_dir, output_dir, copy_resources=False):
@@ -56,15 +86,7 @@ def build_release_status_page(
 
     index = get_index(config.rosdistro_index_url)
 
-    # get targets
-    targets = []
-    for os_name in sorted(build_file.targets.keys()):
-        if os_name not in ['debian', 'fedora', 'rhel', 'ubuntu']:
-            continue
-        for os_code_name in sorted(build_file.targets[os_name].keys()):
-            targets.append(Target(os_name, os_code_name, 'source'))
-            for arch in sorted(build_file.targets[os_name][os_code_name]):
-                targets.append(Target(os_name, os_code_name, arch))
+    targets = get_targets(build_file)
     if not targets:
         print('The build file contains no supported targets', file=sys.stderr)
         return
@@ -78,18 +100,8 @@ def build_release_status_page(
     rosdistro_info = get_rosdistro_info(dist, build_file)
 
     # derive testing and main urls from building url
-    building_repo_url = build_file.target_repository
-    base_url = os.path.dirname(building_repo_url)
-    testing_repo_url = os.path.join(base_url, 'testing')
-    main_repo_url = os.path.join(base_url, 'main')
-
-    building_repo_data = get_package_repo_data(
-        building_repo_url, targets, cache_dir)
-    testing_repo_data = get_package_repo_data(
-        testing_repo_url, targets, cache_dir)
-    main_repo_data = get_package_repo_data(main_repo_url, targets, cache_dir)
-
-    repos_data = [building_repo_data, testing_repo_data, main_repo_data]
+    repo_urls, repos_data = generate_urls_and_repo_data(build_file, targets, cache_dir)
+    building_repo_data, testing_repo_data, main_repo_data = repos_data
 
     # compute derived attributes
     package_descriptors = get_rosdistro_package_descriptors(
@@ -114,7 +126,6 @@ def build_release_status_page(
         rosdistro_name, config.jenkins_url, release_build_name, targets)
 
     # generate output
-    repo_urls = [building_repo_url, testing_repo_url, main_repo_url]
     repo_names = get_url_names(repo_urls)
 
     ordered_pkgs = []
@@ -1047,13 +1058,37 @@ def _maintainers(distro, pkg_name):
                 yield m.name, m.email
 
 
+def build_generic_compare_page(
+        pkgs_data, rosdistro_names,
+        output_dir, html_filename, copy_resources=False):
+    start_time = time.time()
+
+    template_name = 'status/release_compare_page.html.em'
+    data = {
+        'title': 'ROS packages in %s' % ' '.join([x.capitalize() for x in rosdistro_names]),
+
+        'start_time': start_time,
+        'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),
+
+        'resource_hashes': get_resource_hashes(),
+
+        'rosdistro_names': rosdistro_names,
+
+        'pkgs_data': {k: v for k, v in pkgs_data.items() if v},
+    }
+    html = expand_template(template_name, data)
+    output_filename = os.path.join(output_dir, html_filename)
+    print("Generating compare page: '%s'" % output_filename)
+    with open(output_filename, 'w') as h:
+        h.write(html)
+
+    additional_resources(output_dir, copy_resources=copy_resources)
+
 def build_release_compare_page(
         config_url, rosdistro_names,
         output_dir, copy_resources=False):
     from rosdistro import get_cached_distribution
     from rosdistro import get_index
-
-    start_time = time.time()
 
     config = get_config_index(config_url)
 
@@ -1067,31 +1102,18 @@ def build_release_compare_page(
 
     pkgs_data = {}
     for pkg_name in pkg_names:
-        pkg_data = _compare_package_version(distros, pkg_name)
-        if pkg_data:
-            pkgs_data[pkg_name] = pkg_data
+        pkgs_data[pkg_name] = _compare_package_version(distros, pkg_name)
 
-    template_name = 'status/release_compare_page.html.em'
-    data = {
-        'title': 'ROS packages in %s' % ' '.join([x.capitalize() for x in rosdistro_names]),
+    build_generic_compare_page(pkgs_data,
+                               rosdistro_names,
+                               output_dir,
+                               'compare_%s.html' % '_'.join(rosdistro_names),
+                               copy_resources=copy_resources)
 
-        'start_time': start_time,
-        'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),
 
-        'resource_hashes': get_resource_hashes(),
 
-        'rosdistro_names': rosdistro_names,
 
-        'pkgs_data': pkgs_data,
-    }
-    html = expand_template(template_name, data)
-    output_filename = os.path.join(
-        output_dir, 'compare_%s.html' % '_'.join(rosdistro_names))
-    print("Generating compare page: '%s'" % output_filename)
-    with open(output_filename, 'w') as h:
-        h.write(html)
 
-    additional_resources(output_dir, copy_resources=copy_resources)
 
 
 class CompareRow(object):
