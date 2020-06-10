@@ -64,9 +64,9 @@ tbody tr td > a {
   line-height: inherit;
   text-indent: -2000em;
 }
-.squares a, tbody tr td > a { background: #a2d39c; }
-.squares a.m, tbody tr td > a.m { background: #f07878; }
-.squares a.l, tbody tr td > a.l { background: #7ea7d8; }
+.squares a, tbody tr td > a, span.ok { background: #a2d39c; }
+.squares a.m, tbody tr td > a.m, span.m { background: #f07878; }
+.squares a.l, tbody tr td > a.l, span.l { background: #7ea7d8; }
 .squares a.h, tbody tr td > a.h { background: #f0ac78; }
 .squares a.i, tbody tr td > a.i { background: #c8c8c8; }
 .squares a.o, tbody tr td > a.o { background: #f0f078; }

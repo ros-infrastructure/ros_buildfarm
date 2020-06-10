@@ -1058,6 +1058,47 @@ def _maintainers(distro, pkg_name):
                 yield m.name, m.email
 
 
+def generate_version_breakdown(config, distros, pkg_names, cache_dir):
+    """
+        Generates a multi-level dictionary, where
+            * the first key is the ROS distribution,
+            * the second key is the package name,
+            * the third key is the (stripped) version
+            * the value is a list of dictionaries describing the builds with the given version
+                    * The keys of this dictionary are repo, release_build, os_name, os_code_name, arch
+    """
+    data = {}
+    for dist in distros:
+        rosdistro_name = dist.name
+        distro_data = {}
+        for release_build_name, build_file in get_release_build_files(config, rosdistro_name).items():
+            targets = get_targets(build_file)
+            repo_urls, repos_data = generate_urls_and_repo_data(build_file, targets, cache_dir)
+
+            for repo_name, repo_data in zip(REPOS_DATA_NAMES, repos_data):
+                for target in targets:
+                    for pkg_name in pkg_names:
+                        debian_pkg_name = get_os_package_name(rosdistro_name, pkg_name)
+                        if debian_pkg_name not in repo_data[target]:
+                            version = None
+                        else:
+                            version = repo_data[target][debian_pkg_name].version
+                            version = _strip_version_suffix(version)
+                            version = _strip_os_code_name_suffix(version, target)
+
+                        if pkg_name not in distro_data:
+                            distro_data[pkg_name] = {}
+                        if version not in distro_data[pkg_name]:
+                            distro_data[pkg_name][version] = []
+
+                        build_dict = dict(target._asdict())
+                        build_dict['release_build'] = release_build_name
+                        build_dict['repo'] = repo_name
+                        distro_data[pkg_name][version].append(build_dict)
+
+        data[rosdistro_name] = distro_data
+    return data
+
 def build_generic_compare_page(
         pkgs_data, rosdistro_names,
         output_dir, html_filename, copy_resources=False):
@@ -1110,10 +1151,33 @@ def build_release_compare_page(
                                'compare_%s.html' % '_'.join(rosdistro_names),
                                copy_resources=copy_resources)
 
+def build_advanced_release_compare_page(
+        config_url, rosdistro_names, cache_dir,
+        output_dir, copy_resources=False):
+    from rosdistro import get_cached_distribution
+    from rosdistro import get_index
 
+    config = get_config_index(config_url)
 
+    index = get_index(config.rosdistro_index_url)
 
+    # get all input data
+    distros = [get_cached_distribution(index, d) for d in rosdistro_names]
 
+    pkg_names = [d.release_packages.keys() for d in distros]
+    pkg_names = [x for y in pkg_names for x in y]
+
+    version_breakdown = generate_version_breakdown(config, distros, pkg_names, cache_dir)
+
+    pkgs_data = {}
+    for pkg_name in pkg_names:
+        pkgs_data[pkg_name] = _compare_package_version(distros, pkg_name, version_breakdown)
+
+    build_generic_compare_page(pkgs_data,
+                               rosdistro_names,
+                               output_dir,
+                               'active_compare.html',
+                               copy_resources=copy_resources)
 
 
 class CompareRow(object):
@@ -1184,7 +1248,52 @@ def _is_same_version_but_different_branch(version_a, version_b, branch_a, branch
         version_a.version[1] == version_b.version[1]
 
 
-def _compare_package_version(distros, pkg_name):
+def _get_descriptive_build_status_helper(pkg_status, combo):
+    """
+        Given a package status and a set of dictionary keys,
+        determine if the different versions of the package can be evenly split
+        across the different values of the keys
+
+        For instance, if all the builds on main are version 0.1 and all the versions on build/test are 0.2,
+        that's an even split, so if the combo was just ['repo'], it would return
+        {0.1: [main], 0.2: [build/test]}
+    """
+    version_lookup = {}
+    version_mapping = defaultdict(set)
+    for version, keys in pkg_status.items():
+        if version is None:
+            version = 'missing'
+        for key in keys:
+            new_key = tuple([key[c] for c in combo])
+            if new_key in version_lookup:
+                if version_lookup[new_key] != version:
+                    return None
+            else:
+                version_lookup[new_key] = version
+            version_mapping[version].add('/'.join(new_key))
+    return version_mapping
+
+def _get_descriptive_build_status(pkg_status):
+    """
+        Returns a descriptive string describing the build status, in terms of which builds result in which versions.
+        Uses a subset of the possible keys to determine the cleanest split, which will result in the most concise
+        description.
+    """
+    keys = ['repo', 'release_build', 'os_name', 'os_code_name', 'arch']
+    for num_keys in range(1, len(keys) + 1):
+        for combo in itertools.combinations(keys, num_keys):
+            version_mapping = _get_descriptive_build_status_helper(pkg_status, combo)
+            if version_mapping:
+                parts = []
+                for version, keys in version_mapping.items():
+                    parts.append('%s: %s' % (version, ', '.join(keys)))
+                return '\n\n'.join(parts)
+
+    # The last iteration above will use ALL the keys, and thus get a nice split, but we return an error, just in case.
+    return 'error in getting descriptive status'
+
+
+def _compare_package_version(distros, pkg_name, version_breakdown=None):
     from catkin_pkg.package import InvalidPackage, parse_package_string
     row = CompareRow(pkg_name)
     for distro in distros:
@@ -1231,8 +1340,34 @@ def _compare_package_version(distros, pkg_name):
     if not [v for v in row.versions if v]:
         return None
 
-    data = [row.pkg_name, row.get_repo_name_with_link(), row.get_maintainers()] + \
-        [v if v else '' for v in row.versions]
+    data = [row.pkg_name, row.get_repo_name_with_link(), row.get_maintainers()]
+    if version_breakdown:
+        for distro, v in zip(distros, row.versions):
+            if not v:
+                data.append('')
+                continue
+
+            pkg_status = version_breakdown[distro.name].get(pkg_name, {})
+
+            if len(pkg_status) == 1:
+                css_class = 'ok'
+                title = '%s: %s' % (v, '/'.join(REPOS_DATA_NAMES))
+            else:
+                title = _get_descriptive_build_status(pkg_status)
+
+                if None in pkg_status:
+                    css_class = 'm'
+                else:
+                    css_class = 'l'
+
+            data.append('<span class="%s" title="%s">%s</span>' % (css_class, title, v))
+
+    else:
+        for v in row.versions:
+            if not v:
+                data.append('')
+                continue
+            data.append(v)
 
     labels = row.get_labels(distros)
     if len(labels) > 0:
