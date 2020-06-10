@@ -1065,20 +1065,20 @@ def generate_version_breakdown(config, distros, pkg_names, cache_dir):
             * the second key is the package name,
             * the third key is the (stripped) version
             * the value is a list of dictionaries describing the builds with the given version
-                    * The keys of this dictionary are repo, release_build, os_name, os_code_name, arch
+                    * The keys of this dictionary are
+                      repo, release_build, os_name, os_code_name, arch
     """
     data = {}
     for dist in distros:
-        rosdistro_name = dist.name
         distro_data = {}
-        for release_build_name, build_file in get_release_build_files(config, rosdistro_name).items():
+        for release_build_name, build_file in get_release_build_files(config, dist.name).items():
             targets = get_targets(build_file)
             repo_urls, repos_data = generate_urls_and_repo_data(build_file, targets, cache_dir)
 
             for repo_name, repo_data in zip(REPOS_DATA_NAMES, repos_data):
                 for target in targets:
                     for pkg_name in pkg_names:
-                        debian_pkg_name = get_os_package_name(rosdistro_name, pkg_name)
+                        debian_pkg_name = get_os_package_name(dist.name, pkg_name)
                         if debian_pkg_name not in repo_data[target]:
                             version = None
                         else:
@@ -1096,8 +1096,9 @@ def generate_version_breakdown(config, distros, pkg_names, cache_dir):
                         build_dict['repo'] = repo_name
                         distro_data[pkg_name][version].append(build_dict)
 
-        data[rosdistro_name] = distro_data
+        data[dist.name] = distro_data
     return data
+
 
 def build_generic_compare_page(
         pkgs_data, rosdistro_names,
@@ -1125,6 +1126,7 @@ def build_generic_compare_page(
 
     additional_resources(output_dir, copy_resources=copy_resources)
 
+
 def build_release_compare_page(
         config_url, rosdistro_names,
         output_dir, copy_resources=False):
@@ -1150,6 +1152,7 @@ def build_release_compare_page(
                                output_dir,
                                'compare_%s.html' % '_'.join(rosdistro_names),
                                copy_resources=copy_resources)
+
 
 def build_advanced_release_compare_page(
         config_url, rosdistro_names, cache_dir,
@@ -1254,7 +1257,8 @@ def _get_descriptive_build_status_helper(pkg_status, combo):
         determine if the different versions of the package can be evenly split
         across the different values of the keys
 
-        For instance, if all the builds on main are version 0.1 and all the versions on build/test are 0.2,
+        For instance, if all the builds on main are version 0.1
+        and all the versions on build/test are 0.2,
         that's an even split, so if the combo was just ['repo'], it would return
         {0.1: [main], 0.2: [build/test]}
     """
@@ -1273,11 +1277,12 @@ def _get_descriptive_build_status_helper(pkg_status, combo):
             version_mapping[version].add('/'.join(new_key))
     return version_mapping
 
+
 def _get_descriptive_build_status(pkg_status):
     """
-        Returns a descriptive string describing the build status, in terms of which builds result in which versions.
-        Uses a subset of the possible keys to determine the cleanest split, which will result in the most concise
-        description.
+        Returns a descriptive string describing the build status, in terms of
+        which builds result in which versions. Uses a subset of the possible keys
+        to determine the cleanest split, which will result in the most concise description.
     """
     keys = ['repo', 'release_build', 'os_name', 'os_code_name', 'arch']
     for num_keys in range(1, len(keys) + 1):
@@ -1289,7 +1294,8 @@ def _get_descriptive_build_status(pkg_status):
                     parts.append('%s: %s' % (version, ', '.join(keys)))
                 return '\n\n'.join(parts)
 
-    # The last iteration above will use ALL the keys, and thus get a nice split, but we return an error, just in case.
+    # The last iteration above will use ALL the keys,
+    # and thus get a nice split, but we return an error, just in case.
     return 'error in getting descriptive status'
 
 

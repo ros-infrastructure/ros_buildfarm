@@ -29,8 +29,8 @@ from ros_buildfarm.argument import add_argument_config_url  # noqa
 from ros_buildfarm.argument import add_argument_older_rosdistro_names  # noqa
 from ros_buildfarm.argument import add_argument_output_dir  # noqa
 from ros_buildfarm.argument import add_argument_rosdistro_name  # noqa
-from ros_buildfarm.status_page import build_release_compare_page  # noqa
 from ros_buildfarm.status_page import build_advanced_release_compare_page
+from ros_buildfarm.status_page import build_release_compare_page  # noqa
 
 
 def main(argv=sys.argv[1:]):
