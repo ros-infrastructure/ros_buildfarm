@@ -24,11 +24,13 @@ try:
 except NameError:
     pass
 
+from ros_buildfarm.argument import add_argument_cache_dir
 from ros_buildfarm.argument import add_argument_config_url  # noqa
 from ros_buildfarm.argument import add_argument_older_rosdistro_names  # noqa
 from ros_buildfarm.argument import add_argument_output_dir  # noqa
 from ros_buildfarm.argument import add_argument_rosdistro_name  # noqa
 from ros_buildfarm.status_page import build_release_compare_page  # noqa
+from ros_buildfarm.status_page import build_advanced_release_compare_page
 
 
 def main(argv=sys.argv[1:]):
@@ -38,6 +40,7 @@ def main(argv=sys.argv[1:]):
     add_argument_rosdistro_name(parser)
     add_argument_older_rosdistro_names(parser)
     add_argument_output_dir(parser)
+    add_argument_cache_dir(parser, '/tmp/package_repo_cache')
     parser.add_argument(
         '--copy-resources',
         action='store_true',
@@ -54,6 +57,10 @@ def main(argv=sys.argv[1:]):
             build_release_compare_page(
                 args.config_url, [older_rosdistro_name, args.rosdistro_name],
                 args.output_dir, copy_resources=args.copy_resources)
+
+    build_advanced_release_compare_page(
+        args.config_url, args.older_rosdistro_names + [args.rosdistro_name],
+        args.cache_dir, args.output_dir, copy_resources=args.copy_resources)
 
 
 if __name__ == '__main__':
