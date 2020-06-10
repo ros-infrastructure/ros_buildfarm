@@ -21,6 +21,8 @@ import sys
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
+from ros_buildfarm.argument import add_argument_build_tool_args
+from ros_buildfarm.argument import add_argument_build_tool_test_args
 from ros_buildfarm.argument import add_argument_custom_rosdep_update_options
 from ros_buildfarm.argument import add_argument_custom_rosdep_urls
 from ros_buildfarm.argument import \
@@ -36,6 +38,7 @@ from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_run_abichecker
+from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
@@ -65,7 +68,13 @@ def main(argv=sys.argv[1:]):
     add_argument_dockerfile_dir(parser)
     add_argument_run_abichecker(parser)
     add_argument_require_gpu_support(parser)
+    a1 = add_argument_build_tool_args(parser)
+    a2 = add_argument_build_tool_test_args(parser)
+
+    remainder_args = extract_multiple_remainders(argv, (a1, a2))
     args = parser.parse_args(argv)
+    for k, v in remainder_args.items():
+        setattr(args, k, v)
 
     data = copy.deepcopy(args.__dict__)
     data.update({

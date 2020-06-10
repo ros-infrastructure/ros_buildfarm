@@ -22,6 +22,8 @@ from em import Hook
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
+from ros_buildfarm.argument import add_argument_build_tool_args
+from ros_buildfarm.argument import add_argument_build_tool_test_args
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
@@ -29,6 +31,8 @@ from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_require_gpu_support
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_run_abichecker
+from ros_buildfarm.argument import build_tool_args_epilog_action
+from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import get_devel_job_name
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_source_build_files
@@ -37,11 +41,14 @@ from ros_buildfarm.templates import expand_template
 
 
 def main(argv=sys.argv[1:]):
+    build_tool_args_helper = build_tool_args_epilog_action(
+        'source', get_source_build_files)
     parser = argparse.ArgumentParser(
-        description="Generate a 'devel' script")
-    add_argument_config_url(parser)
-    add_argument_rosdistro_name(parser)
-    add_argument_build_name(parser, 'source')
+        description="Generate a 'devel' script",
+        formatter_class=argparse.RawTextHelpFormatter)
+    add_argument_config_url(parser, action=build_tool_args_helper)
+    add_argument_rosdistro_name(parser, action=build_tool_args_helper)
+    add_argument_build_name(parser, 'source', action=build_tool_args_helper)
     add_argument_repository_name(parser)
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
@@ -49,7 +56,13 @@ def main(argv=sys.argv[1:]):
     add_argument_build_tool(parser)
     add_argument_run_abichecker(parser)
     add_argument_require_gpu_support(parser)
+    a1 = add_argument_build_tool_args(parser)
+    a2 = add_argument_build_tool_test_args(parser)
+
+    remainder_args = extract_multiple_remainders(argv, (a1, a2))
     args = parser.parse_args(argv)
+    for k, v in remainder_args.items():
+        setattr(args, k, v)
 
     # collect all template snippets of specific types
     class IncludeHook(Hook):
@@ -80,6 +93,25 @@ def main(argv=sys.argv[1:]):
                     script = script.replace(
                         ' --build-tool catkin_make_isolated',
                         ' --build-tool ' + args.build_tool)
+                if args.build_tool_args is not None or args.build_tool_test_args is not None:
+                    lines = script.splitlines()
+                    for i, line in enumerate(lines):
+                        if (
+                            line.startswith('export build_tool_args=') and
+                            args.build_tool_args is not None
+                        ):
+                            lines[i] = 'export build_tool_args="%s"' % (
+                                ' '.join(args.build_tool_args))
+                            break
+                        if (
+                            line.startswith('export build_tool_test_args=') and
+                            args.build_tool_test_args is not None
+                        ):
+                            lines[i] = 'export build_tool_test_args="%s"' % (
+                                ' '.join(args.build_tool_test_args))
+                            break
+                    script = '\n'.join(lines)
+
                 self.scripts.append(script)
 
     hook = IncludeHook()

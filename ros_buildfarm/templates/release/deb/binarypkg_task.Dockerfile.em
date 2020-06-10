@@ -55,6 +55,8 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-yaml
+
 @(TEMPLATE(
     'snippet/install_dh-python.Dockerfile.em',
     os_name=os_name,

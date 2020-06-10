@@ -122,6 +122,10 @@ if pull_request:
         '# sleep to give python time to startup',
         'sleep 1',
         '',
+        '# define the build tool arguments',
+        'export build_tool_args="' + (build_tool_args or '').replace('\\', '\\\\') + '"',
+        'export build_tool_test_args="' + (build_tool_test_args or '').replace('\\', '\\\\') + '"',
+        '',
         '# generate Dockerfile, build and run it',
         '# generating the Dockerfiles for the actual devel tasks',
         'echo "# BEGIN SECTION: Generate Dockerfile - devel tasks"',
@@ -141,7 +145,9 @@ if pull_request:
         (' --run-abichecker' if run_abichecker else '') +
         (' --require-gpu-support' if require_gpu_support else '') +
         ' --env-vars ' + ' '.join(build_environment_variables) +
-        ' --dockerfile-dir $WORKSPACE/docker_generating_dockers',
+        ' --dockerfile-dir $WORKSPACE/docker_generating_dockers' +
+        ' --build-tool-args $build_tool_args' +
+        ' --build-tool-test-args $build_tool_test_args',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - generating devel tasks"',

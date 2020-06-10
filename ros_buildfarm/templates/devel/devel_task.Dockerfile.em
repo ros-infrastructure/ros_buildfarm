@@ -58,6 +58,8 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-yaml
+
 @[if build_tool == 'colcon']@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pip
 @# colcon-core.package_identification.python needs at least version 30.3.0

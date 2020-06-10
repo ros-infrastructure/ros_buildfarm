@@ -33,6 +33,7 @@ from ros_buildfarm.argument import add_argument_repos_file_urls
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_cleanup
 from ros_buildfarm.argument import add_argument_test_branch
+from ros_buildfarm.argument import build_tool_args_epilog_action
 from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.ci_job import configure_ci_job
 from ros_buildfarm.common import get_ci_job_name
@@ -42,13 +43,16 @@ from ros_buildfarm.templates import expand_template
 
 
 def main(argv=sys.argv[1:]):
+    build_tool_args_helper = build_tool_args_epilog_action(
+        'ci', get_ci_build_files)
     parser = argparse.ArgumentParser(
-        description="Generate a 'CI' script")
+        description="Generate a 'CI' script",
+        formatter_class=argparse.RawTextHelpFormatter)
 
     # Positional
-    add_argument_config_url(parser)
-    add_argument_rosdistro_name(parser)
-    add_argument_build_name(parser, 'ci')
+    add_argument_config_url(parser, action=build_tool_args_helper)
+    add_argument_rosdistro_name(parser, action=build_tool_args_helper)
+    add_argument_build_name(parser, 'ci', action=build_tool_args_helper)
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)

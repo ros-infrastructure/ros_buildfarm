@@ -59,6 +59,14 @@ class SourceBuildFile(BuildFile):
         self.build_tool = data.get('build_tool', 'catkin_make_isolated')
         assert self.build_tool in ('catkin_make_isolated', 'colcon')
 
+        self.build_tool_args = None
+        if 'build_tool_args' in data:
+            self.build_tool_args = data['build_tool_args']
+
+        self.build_tool_test_args = None
+        if 'build_tool_test_args' in data:
+            self.build_tool_test_args = data['build_tool_test_args']
+
         self.notify_committers = None
         self.notify_compiler_warnings = False
         self.notify_pull_requests = False
