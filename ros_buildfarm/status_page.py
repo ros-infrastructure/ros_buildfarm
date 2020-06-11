@@ -1059,15 +1059,17 @@ def _maintainers(distro, pkg_name):
 
 
 def generate_version_breakdown(config, distros, pkg_names, cache_dir):
+
     """
-        Generates a multi-level dictionary, where
-            * the first key is the ROS distribution,
-            * the second key is the package name,
-            * the third key is the (stripped) version
-            * the value is a list of dictionaries describing the builds with the given version
-                    * The keys of this dictionary are
-                      repo, release_build, os_name, os_code_name, arch
+    Generate a multi-level dictionary describing all the versions.
+        * the first key is the ROS distribution,
+        * the second key is the package name,
+        * the third key is the (stripped) version
+        * the value is a list of dictionaries describing the builds with the given version
+                * The keys of this dictionary are
+                  repo, release_build, os_name, os_code_name, arch
     """
+
     data = {}
     for dist in distros:
         distro_data = {}
@@ -1252,16 +1254,17 @@ def _is_same_version_but_different_branch(version_a, version_b, branch_a, branch
 
 
 def _get_descriptive_build_status_helper(pkg_status, combo):
-    """
-        Given a package status and a set of dictionary keys,
-        determine if the different versions of the package can be evenly split
-        across the different values of the keys
 
-        For instance, if all the builds on main are version 0.1
-        and all the versions on build/test are 0.2,
-        that's an even split, so if the combo was just ['repo'], it would return
-        {0.1: [main], 0.2: [build/test]}
     """
+    Determine if the different versions of the package can be evenly split
+    across different values of the keys.
+
+    For instance, if all the builds on main are version 0.1
+    and all the versions on build/test are 0.2,
+    that's an even split, so if the combo was just ['repo'], it would return
+    {0.1: [main], 0.2: [build/test]}
+    """
+
     version_lookup = {}
     version_mapping = defaultdict(set)
     for version, keys in pkg_status.items():
@@ -1279,11 +1282,14 @@ def _get_descriptive_build_status_helper(pkg_status, combo):
 
 
 def _get_descriptive_build_status(pkg_status):
+
     """
-        Returns a descriptive string describing the build status, in terms of
-        which builds result in which versions. Uses a subset of the possible keys
-        to determine the cleanest split, which will result in the most concise description.
+    Build a descriptive string describing the build status.
+    Status is in terms of which builds result in which versions.
+    Use the subset of the possible keys to determine the cleanest split,
+    which will result in the most concise description.
     """
+
     keys = ['repo', 'release_build', 'os_name', 'os_code_name', 'arch']
     for num_keys in range(1, len(keys) + 1):
         for combo in itertools.combinations(keys, num_keys):
