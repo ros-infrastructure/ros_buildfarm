@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Open Source Robotics Foundation, Inc.
+# Copyright 2014-2020 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ from __future__ import print_function
 from collections import OrderedDict
 import sys
 
+from ros_buildfarm.common import filter_blocked_dependent_package_names
+from ros_buildfarm.common import filter_buildfile_packages_recursively
 from ros_buildfarm.common import get_binarydeb_job_name
 from ros_buildfarm.common import get_default_node_label
 from ros_buildfarm.common import get_direct_dependencies
@@ -25,6 +27,7 @@ from ros_buildfarm.common import get_implicitly_ignored_package_names
 from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import get_package_condition_context
+from ros_buildfarm.common import get_package_manifests
 from ros_buildfarm.common import get_release_binary_view_name
 from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import get_release_source_view_name
@@ -40,8 +43,11 @@ from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.git import get_repository
+from ros_buildfarm.package_repo import get_package_repo_data
 from ros_buildfarm.templates import expand_template
+from rosdistro import get_cached_distribution
 from rosdistro import get_distribution_cache
+from rosdistro import get_distribution_file as rosdistro_get_distribution_file
 from rosdistro import get_index
 
 
@@ -881,3 +887,54 @@ def _get_maintainer_emails(cached_pkgs, pkg_name):
         for m in cached_pkgs[pkg_name].maintainers:
             maintainer_emails.add(m.email)
     return maintainer_emails
+
+
+def partition_packages(
+        config_url, rosdistro_name, release_build_name, target, cache_dir,
+        deduplicate_dependencies=False, dist_cache=None):
+    """Check all packages in the rosdistro and compare to the debian packages repository.
+
+    Return the set of all packages and the set of missing ones.
+    """
+    # fetch debian package list
+    config = get_config_index(config_url)
+    index = get_index(config.rosdistro_index_url)
+    dist_file = rosdistro_get_distribution_file(index, rosdistro_name)
+    build_files = get_release_build_files(config, rosdistro_name)
+    build_file = build_files[release_build_name]
+
+    # Check that apt repos status
+    repo_index = get_package_repo_data(
+        build_file.target_repository, [target], cache_dir)[target]
+
+    # for each release package which matches the release build file
+    # check if a binary package exists
+    binary_packages = set()
+    all_pkg_names = dist_file.release_packages.keys()
+
+    # Remove packages without versions declared.
+    def get_package_version(dist_file, pkg_name):
+        pkg = dist_file.release_packages[pkg_name]
+        repo_name = pkg.repository_name
+        repo = dist_file.repositories[repo_name]
+        return repo.release_repository.version
+    all_pkg_names = [p for p in all_pkg_names if get_package_version(dist_file, p)]
+
+    distribution = get_cached_distribution(index, rosdistro_name, cache=dist_cache)
+    pkg_names = filter_buildfile_packages_recursively(all_pkg_names, build_file, distribution)
+    for pkg_name in sorted(pkg_names):
+        debian_pkg_name = get_os_package_name(rosdistro_name, pkg_name)
+        if debian_pkg_name in repo_index:
+            binary_packages.add(pkg_name)
+
+    # check that all elements from whitelist are present
+    missing_binary_packages = set(pkg_names) - binary_packages
+
+    if deduplicate_dependencies:
+        # Do not list missing packages that are dependencies of other missing ones
+        cached_pkgs = get_package_manifests(distribution)
+        missing_binary_packages = filter_blocked_dependent_package_names(
+            cached_pkgs,
+            missing_binary_packages)
+
+    return binary_packages, missing_binary_packages
