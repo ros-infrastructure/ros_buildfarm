@@ -3,14 +3,14 @@
     <io.jenkins.plugins.analysis.warnings.Cmake>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>@[if build_tool == 'colcon']ws/log/build_*/*/stdout_stderr.log@[end if]</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Cmake>
     <io.jenkins.plugins.analysis.warnings.Gcc4>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>@[if build_tool == 'colcon']ws/log/build_*/*/stdout_stderr.log@[end if]</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Gcc4>
