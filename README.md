@@ -15,3 +15,13 @@ to configure the jobs being generated (e.g.
 If you are going to use any of the provided infrastructure please consider
 watching the [buildfarm Discourse category](https://discourse.ros.org/c/buildfarm)
 in order to receive notifications e.g. about any upcoming changes.
+
+For quick reference to run scripts:
+
+ ## Check Sync Criteria
+
+    ./scripts/release/check_sync_criteria.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml melodic default ubuntu bionic amd64
+
+## Audit rosdistro
+
+    ./scripts/release/audit_rosdistro.py --cache-dir /tmp/rosdistrocache https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml noetic

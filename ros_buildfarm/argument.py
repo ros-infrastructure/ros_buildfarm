@@ -474,6 +474,14 @@ def add_argument_testing(parser):
              'them.')
 
 
+def add_argument_return_zero(parser):
+    parser.add_argument(
+        '--return-zero', action='store_true',
+        help='Always return zero, success, even if there are errors. '
+             'This is used for testing, and scripting. It is not generally'
+             ' recommended for use.')
+
+
 def check_len_action(minargs, maxargs):
     class CheckLength(argparse.Action):
 

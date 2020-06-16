@@ -25,6 +25,7 @@ from ros_buildfarm.argument import add_argument_cache_dir
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
+from ros_buildfarm.argument import add_argument_return_zero
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.common import Target
@@ -46,12 +47,13 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
     add_argument_cache_dir(parser, '/tmp/package_repo_cache')
+    add_argument_return_zero(parser)
     args = parser.parse_args(argv)
 
     success = check_sync_criteria(
         args.config_url, args.rosdistro_name, args.release_build_name,
         args.os_name, args.os_code_name, args.arch, args.cache_dir)
-    return 0 if success else 1
+    return 0 if success or args.return_zero else 1
 
 
 def check_sync_criteria(

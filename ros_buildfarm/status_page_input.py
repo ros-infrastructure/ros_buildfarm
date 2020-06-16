@@ -16,6 +16,7 @@ from collections import namedtuple
 
 from .common import get_implicitly_ignored_package_names
 from .common import get_os_package_name
+from .common import get_package_manifests
 
 MaintainerDescriptor = namedtuple('Maintainer', 'name email')
 
@@ -40,16 +41,7 @@ class RosPackage(object):
 
 def get_rosdistro_info(dist, build_file):
     pkg_names = dist.release_packages.keys()
-    cached_pkgs = {}
-    for pkg_name in pkg_names:
-        pkg_xml = dist.get_release_package_xml(pkg_name)
-        if pkg_xml is not None:
-            from catkin_pkg.package import InvalidPackage, parse_package_string
-            try:
-                pkg_manifest = parse_package_string(pkg_xml)
-            except InvalidPackage:
-                continue
-            cached_pkgs[pkg_name] = pkg_manifest
+    cached_pkgs = get_package_manifests(dist)
 
     filtered_pkg_names = build_file.filter_packages(pkg_names)
     explicitly_ignored_pkg_names = set(pkg_names) - set(filtered_pkg_names)
