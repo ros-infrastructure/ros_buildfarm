@@ -115,7 +115,8 @@ if not testing:
 else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
-        ' --rosdistro-name %s' % rosdistro_name
+        ' --rosdistro-name %s' % rosdistro_name + \
+        ' --ros-version ' + str(ros_version)
     if require_gpu_support:
         cmd += ' --require-gpu-support'
 cmd += \

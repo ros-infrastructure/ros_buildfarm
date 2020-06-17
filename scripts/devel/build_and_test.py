@@ -22,6 +22,7 @@ from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
 from ros_buildfarm.argument import add_argument_build_tool_test_args
 from ros_buildfarm.argument import add_argument_require_gpu_support
+from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import Scope
 from ros_buildfarm.workspace import call_build_tool
@@ -38,6 +39,7 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The name of the ROS distro to identify the setup file to be '
              'sourced (if available)')
+    add_argument_ros_version(parser)
     add_argument_build_tool(parser, required=True)
     a1 = add_argument_build_tool_args(parser)
     a2 = add_argument_build_tool_test_args(parser)
@@ -78,10 +80,11 @@ def main(argv=sys.argv[1:]):
         with Scope('SUBSECTION', 'build workspace in isolation'):
             test_results_dir = os.path.join(
                 args.workspace_root, 'test_results')
-            cmake_args = [
-                '-DBUILD_TESTING=1',
-                '-DCATKIN_ENABLE_TESTING=1', '-DCATKIN_SKIP_TESTING=0',
-                '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir]
+            cmake_args = ['-DBUILD_TESTING=1']
+            if args.ros_version == 1:
+                cmake_args += [
+                    '-DCATKIN_ENABLE_TESTING=1', '-DCATKIN_SKIP_TESTING=0',
+                    '-DCATKIN_TEST_RESULTS_DIR=%s' % test_results_dir]
             additional_args = args.build_tool_args or []
             if args.build_tool == 'colcon':
                 additional_args += ['--test-result-base', test_results_dir]

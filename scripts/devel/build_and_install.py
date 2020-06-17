@@ -103,9 +103,12 @@ def main(argv=sys.argv[1:]):
             parent_result_spaces = None
             if args.parent_result_space:
                 parent_result_spaces = args.parent_result_space
+            cmake_args = ['-DBUILD_TESTING=0']
+            if args.ros_version == 1:
+                cmake_args.append('-DCATKIN_SKIP_TESTING=1')
             rc = call_build_tool(
                 args.build_tool, args.rosdistro_name, args.workspace_root,
-                cmake_args=['-DBUILD_TESTING=0', '-DCATKIN_SKIP_TESTING=1'],
+                cmake_args=cmake_args,
                 args=args.build_tool_args,
                 install=True,
                 parent_result_spaces=parent_result_spaces, env=env)
