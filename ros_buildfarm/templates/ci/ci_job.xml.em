@@ -421,6 +421,7 @@ parameters = [
   <publishers>
 @(SNIPPET(
     'publisher_warnings',
+    build_tool=build_tool,
     unstable_threshold='',
 ))@
 @(SNIPPET(
