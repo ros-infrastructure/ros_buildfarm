@@ -40,6 +40,9 @@ def clean_workspace(workspace_root):
     test_results_dir = os.path.join(workspace_root, 'test_results')
     if os.path.exists(test_results_dir):
         shutil.rmtree(test_results_dir)
+    log_dir = os.path.join(workspace_root, 'log')
+    if os.path.exists(log_dir):
+        shutil.rmtree(log_dir)
 
 
 def call_build_tool(
