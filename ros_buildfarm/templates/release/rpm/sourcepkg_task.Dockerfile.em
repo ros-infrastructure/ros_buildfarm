@@ -36,7 +36,7 @@ RUN echo "@(today_str)"
 RUN @(package_manager) update -y
 
 @[for i, key in enumerate(distribution_repository_keys)]@
-RUN echo "@('\\n'.join(key.splitlines()))" > /etc/pki/mock/RPM-GPG-KEY-ros-buildfarm-@(i)
+RUN echo -e "@('\\n'.join(key.splitlines()))" > /etc/pki/mock/RPM-GPG-KEY-ros-buildfarm-@(i)
 @[end for]@
 COPY mock_config.cfg /etc/mock/ros_buildfarm.cfg
 
