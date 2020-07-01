@@ -256,7 +256,7 @@ class PulpRpmClient:
         distribution = self._rpm_distributions_api.list(name=distribution_name).results[0]
         old_publication = self._rpm_publications_api.read(distribution.publication)
 
-        sync_data = pulp_rpm.RepositorySyncURL(
+        sync_data = pulp_rpm.RpmRepositorySyncURL(
             remote=remote.pulp_href,
             mirror=True)
 
