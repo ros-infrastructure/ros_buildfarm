@@ -44,7 +44,7 @@ config_opts[f'{config_opts.package_manager}.conf'] += """
 [ros-buildfarm-@(i)]
 name=ROS Buildfarm Repository @(i) - $basearch
 baseurl=@(url)
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ros-buildfarm-@(i)
+gpgkey=file:///etc/pki/mock/RPM-GPG-KEY-ros-buildfarm-@(i)
 repo_gpgcheck=@(1 if i < len(distribution_repository_keys) and distribution_repository_keys[i] else 0)
 gpgcheck=0
 enabled=1
