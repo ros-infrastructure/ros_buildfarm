@@ -85,7 +85,8 @@ def call_build_tool(
         # can't be executed in parallel
         if colcon_verb == 'test':
             cmd += [
-                '--event-handlers', 'console_direct+', '--executor sequential']
+                '--event-handlers', 'console_direct+',
+                '--executor', 'sequential']
 
     if force_cmake:
         if build_tool == 'catkin_make_isolated':
