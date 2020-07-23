@@ -126,6 +126,7 @@ cmd += \
 if vars().get('build_tool_args'):
     cmd += ' --build-tool-args ' + ' '.join(build_tool_args)
 if vars().get('build_tool_test_args'):
-    cmd += ' --build-tool-test-args ' + ' '.join(build_tool_test_args)
+    cmd += ' --build-tool-test-args ' + ' '.join(
+        a if ' ' not in a else '"%s"' % a for a in build_tool_test_args)
 }@
-CMD ["@cmd"]
+CMD ["@(cmd.replace('"', '\\"'))"]

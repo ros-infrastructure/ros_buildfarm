@@ -85,7 +85,8 @@ def call_build_tool(
         # can't be executed in parallel
         if colcon_verb == 'test':
             cmd += [
-                '--event-handlers', 'console_direct+', '--executor sequential']
+                '--event-handlers', 'console_direct+',
+                '--executor', 'sequential']
 
     if force_cmake:
         if build_tool == 'catkin_make_isolated':
@@ -128,7 +129,8 @@ def call_build_tool(
         elif build_tool == 'colcon':
             _insert_nargs_arguments(cmd, '--cmake-target', make_args)
 
-    cmd = ' '.join(cmd)
+    cmd = ' '.join(
+        c if ' ' not in c else '"%s"' % c for c in cmd)
 
     # prepend setup files if available
     if parent_result_spaces is None:
