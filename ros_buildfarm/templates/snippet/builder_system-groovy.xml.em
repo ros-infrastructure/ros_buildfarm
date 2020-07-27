@@ -1,7 +1,7 @@
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.2">
 @[if command]@
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.70">
+        <script plugin="script-security@@1.74">
           <script>@ESCAPE(command)</script>
           <sandbox>false</sandbox>
         </script>

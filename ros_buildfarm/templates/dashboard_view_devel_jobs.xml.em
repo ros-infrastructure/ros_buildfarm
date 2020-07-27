@@ -32,7 +32,7 @@
       </tools>
       <name># Issues</name>
       <labelProviderFactory>
-        <jenkins plugin="plugin-util-api@@1.0.2"/>
+        <jenkins plugin="plugin-util-api@@1.2.2"/>
       </labelProviderFactory>
       <type>TOTAL</type>
     </io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn>
