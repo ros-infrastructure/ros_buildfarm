@@ -17,6 +17,9 @@ Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</descriptio
     priority=20,
 ))@
 @(SNIPPET(
+    'property_rebuild-settings',
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
 @(SNIPPET(
