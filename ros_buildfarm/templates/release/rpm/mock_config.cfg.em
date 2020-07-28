@@ -18,8 +18,9 @@ config_opts[f'{config_opts.package_manager}_builddep_opts'] = config_opts.get(f'
 config_opts['environment']['@env_key'] = '@env_val'
 @[end for]
 @[end if]@
-# Disable debug packages until infrastructure can handle it
-config_opts['macros']['%debug_package'] = '%{nil}'
+# Make debuginfo/debugsource packages best-effort
+config_opts['macros']['%_empty_manifest_terminate_build'] = '%{nil}'
+config_opts['macros']['%_missing_build_ids_terminate_build'] = '%{nil}'
 
 # Hack the %{dist} macro to allow release suffixing
 config_opts['macros']['%dist'] = '.' + config_opts['dist'] + '%{?dist_suffix}'
