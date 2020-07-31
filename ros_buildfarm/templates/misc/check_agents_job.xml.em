@@ -16,9 +16,6 @@
     'property_rebuild-settings',
 ))@
 @(SNIPPET(
-    'property_rebuild-settings',
-))@
-@(SNIPPET(
     'property_requeue-job',
 ))@
   </properties>
