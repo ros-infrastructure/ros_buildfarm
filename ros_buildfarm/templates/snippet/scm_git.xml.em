@@ -1,4 +1,4 @@
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@@4.0.0">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@@4.3.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -48,6 +48,7 @@
         <trackingSubmodules>false</trackingSubmodules>
         <reference></reference>
         <parentCredentials>false</parentCredentials>
+        <shallow>false</shallow>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
   </scm>

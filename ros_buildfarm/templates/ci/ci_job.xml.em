@@ -19,6 +19,9 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
 @[end if]@
 @(SNIPPET(
+    'property_rebuild-settings',
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
 @{
@@ -81,6 +84,7 @@ parameters = [
     project_authorization_xml=project_authorization_xml
 ))@
   </properties>
+  <scm class="hudson.scm.NullSCM"/>
   <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
   <assignedNode>@(node_label)</assignedNode>
   <canRoam>false</canRoam>
