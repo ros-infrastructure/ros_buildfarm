@@ -278,7 +278,7 @@ def _diff_configs(remote_config, new_config):
     lines2 = xml2.splitlines()
 
     return difflib.unified_diff(
-        lines1, lines2, 'remote config', 'new config', n=0)
+        lines1, lines2, 'remote config', 'new config', n=5)
 
 
 def remove_jobs(jenkins, job_prefix, excluded_job_names, dry_run=False):
