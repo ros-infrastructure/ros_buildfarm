@@ -77,7 +77,7 @@ _cached_views = {}
 
 def configure_view(
         jenkins, view_name, include_regex=None, filter_queue=True,
-        template_name='generic_view.xml.em', dry_run=False):
+        template_name='generic_view.xml.em', dry_run=False, context_lines=0):
     global _cached_views
     key = (view_name, include_regex, filter_queue, template_name, dry_run)
     if key in _cached_views:
@@ -122,7 +122,7 @@ def configure_view(
             'different type', file=sys.stderr)
         return None
 
-    diff = _diff_configs(remote_view_config, view_config)
+    diff = _diff_configs(remote_view_config, view_config, context_lines)
     # evaluate generator since it might yield no values
     diff = list(diff)
     if not diff:
@@ -176,7 +176,7 @@ def _get_view_type(view_config):
 _cached_jobs = {}
 
 
-def configure_job(jenkins, job_name, job_config, view=None, dry_run=False):
+def configure_job(jenkins, job_name, job_config, view=None, dry_run=False, context_lines=0):
     global _cached_jobs
     key = (job_name, job_config, view, dry_run)
     if key in _cached_jobs:
@@ -193,7 +193,7 @@ def configure_job(jenkins, job_name, job_config, view=None, dry_run=False):
         else:
             job = jenkins.get_job(job_name)
             remote_job_config = job.get_config()
-            diff = _diff_configs(remote_job_config, job_config)
+            diff = _diff_configs(remote_job_config, job_config, context_lines)
             # evaluate generator since it might yield no values
             diff = list(diff)
             if not diff:
@@ -258,7 +258,7 @@ def invoke_job(jenkins, job_name, cause=None):
     return True
 
 
-def _diff_configs(remote_config, new_config):
+def _diff_configs(remote_config, new_config, context_lines):
     remote_root = ElementTree.fromstring(remote_config)
     new_root = ElementTree.fromstring(new_config)
 
@@ -278,7 +278,7 @@ def _diff_configs(remote_config, new_config):
     lines2 = xml2.splitlines()
 
     return difflib.unified_diff(
-        lines1, lines2, 'remote config', 'new config', n=0)
+        lines1, lines2, 'remote config', 'new config', n=context_lines)
 
 
 def remove_jobs(jenkins, job_prefix, excluded_job_names, dry_run=False):
