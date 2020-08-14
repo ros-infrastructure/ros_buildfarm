@@ -600,9 +600,21 @@ def get_packages_in_workspaces(workspace_roots, condition_context=None):
     return pkgs
 
 
-def get_xunit_publisher_types_and_patterns():
+def get_xunit_publisher_types_and_patterns(
+    ros_version, pytest_junit_compliant
+):
     types = []
-    types.append(('GoogleTestType', 'ws/test_results/**/*.xml'))
+    if ros_version == 1:
+        types.append(('GoogleTestType', 'ws/test_results/**/*.xml'))
+    elif ros_version == 2:
+        types.append(('CTestType', 'ws/test_results/*/Testing/*/Test.xml'))
+        types.append(('GoogleTestType', 'ws/test_results/**/*.gtest.xml'))
+        types.append((
+            'JUnitType' if pytest_junit_compliant else 'GoogleTestType',
+            'ws/test_results/*/pytest.xml'))
+        types.append(('JUnitType', 'ws/test_results/**/*.xunit.xml'))
+    else:
+        assert False, 'Unsupported ROS version: ' + str(ros_version)
     return types
 
 
