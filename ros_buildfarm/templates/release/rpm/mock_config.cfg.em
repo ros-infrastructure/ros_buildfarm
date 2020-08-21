@@ -25,6 +25,10 @@ config_opts['macros']['%_missing_build_ids_terminate_build'] = '%{nil}'
 # Hack the %{dist} macro to allow release suffixing
 config_opts['macros']['%dist'] = '.' + config_opts['dist'] + '%{?dist_suffix}'
 
+# Disable automatic out-of-source CMake builds
+config_opts['macros']['%__cmake_in_source_build'] = '1'
+config_opts['macros']['%__cmake3_in_source_build'] = '1'
+
 # Required for running mock in Docker
 config_opts['use_nspawn'] = False
 
