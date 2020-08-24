@@ -612,7 +612,10 @@ def get_xunit_publisher_types_and_patterns(
         types.append((
             'JUnitType' if pytest_junit_compliant else 'GoogleTestType',
             'ws/test_results/*/pytest.xml'))
-        types.append(('JUnitType', 'ws/test_results/**/*.xunit.xml'))
+        # ament_cmake_pytest doesn't produce a pytest.xml
+        types.append((
+            'JUnitType' if pytest_junit_compliant else 'GoogleTestType',
+            'ws/test_results/**/*.xunit.xml'))
     else:
         assert False, 'Unsupported ROS version: ' + str(ros_version)
     return types
