@@ -368,7 +368,8 @@ parameters = [
         'echo "# BEGIN SECTION: ccache stats (before)"',
         'mkdir -p $HOME/.ccache',
         'docker run' +
-        ' --rm ' +
+        ' --rm' +
+        ' --cap-add SYS_PTRACE' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker_ccache_before.cid' +
         ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
         ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
