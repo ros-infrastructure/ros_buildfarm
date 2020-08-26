@@ -436,6 +436,13 @@ parameters = [
       image for images in show_images.values() for image in images
     ],
 ))@
+@[if benchmark_patterns]@
+@(SNIPPET(
+    'publisher_benchmark',
+    patterns=benchmark_patterns,
+    schema=benchmark_schema,
+))@
+@[end if]@
 @[for title, artifacts in show_images.items()]@
 @(SNIPPET(
     'image_gallery',
