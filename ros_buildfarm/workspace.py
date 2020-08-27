@@ -86,7 +86,9 @@ def call_build_tool(
         if colcon_verb == 'test':
             cmd += [
                 '--event-handlers', 'console_direct+',
-                '--executor', 'sequential']
+                '--executor', 'sequential',
+                # Force junit_family to make Jenkins xunit plugin 2.x happy
+                '--pytest-args', '-o', 'junit_family=xunit2']
 
     if force_cmake:
         if build_tool == 'catkin_make_isolated':
