@@ -86,9 +86,13 @@ def call_build_tool(
         if colcon_verb == 'test':
             cmd += [
                 '--event-handlers', 'console_direct+',
-                '--executor', 'sequential',
-                # Force junit_family to make Jenkins xunit plugin 2.x happy
-                '--pytest-args', '-o', 'junit_family=xunit2']
+                '--executor', 'sequential']
+
+            # In Foxy and prior, xunit2 format is needed to make Jenkins xunit plugin 2.x happy
+            # After Foxy, we introduced per-package changes to make local builds and CI
+            # builds act the same.
+            if rosdistro_name in ('dashing', 'eloquent', 'foxy'):
+                cmd += ['--pytest-args', '-o', 'junit_family=xunit2']
 
     if force_cmake:
         if build_tool == 'catkin_make_isolated':
