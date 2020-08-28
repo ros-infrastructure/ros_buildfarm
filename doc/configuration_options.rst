@@ -461,7 +461,7 @@ The following options are valid in version ``1`` (beside the generic options):
 * ``jenkins_job_weight``: the number of executors on a worker which are
   required to execute the job.
   Default is ``1``.
-  Activates the Jenkins Heavy Job plugin.
+  Uses the Jenkins Heavy Job plugin.
 
 * ``package_selection_args``: package selection arguments passed to ``colcon``
   to specify which packages should be built and tested.
