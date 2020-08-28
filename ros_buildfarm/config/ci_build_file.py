@@ -133,4 +133,6 @@ class CIBuildFile(BuildFile):
         self.benchmark_schema = None
         if 'benchmark_schema' in data:
             self.benchmark_schema = data['benchmark_schema']
-            assert self.benchmark_patterns
+            assert isinstance(self.benchmark_schema, str)
+            assert self.benchmark_patterns, \
+                "The 'benchmark_patterns' value is required when using 'benchmark_schema'"
