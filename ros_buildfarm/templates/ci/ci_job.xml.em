@@ -9,7 +9,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
   <properties>
 @(SNIPPET(
     'property_authorization-matrix',
-    project_authorization_xml=project_authorization_xml
+    project_authorization_xml=project_authorization_xml,
 ))@
 @(SNIPPET(
     'property_log-rotator',
