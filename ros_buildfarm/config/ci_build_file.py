@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+from xml.etree import ElementTree
+
 from .build_file import BuildFile
 from .plot_config import PlotConfig
 
@@ -132,7 +135,14 @@ class CIBuildFile(BuildFile):
 
         self.benchmark_schema = None
         if 'benchmark_schema' in data:
-            self.benchmark_schema = data['benchmark_schema']
+            self.benchmark_schema = data['benchmark_schema'].strip()
             assert isinstance(self.benchmark_schema, str)
+            try:
+                json.loads(self.benchmark_schema)
+            except json.decoder.JSONDecodeError:
+                try:
+                    ElementTree.fromstring(self.benchmark_schema)
+                except ElementTree.ParseError:
+                    assert False, "The 'benchmark_schema' value must be valid JSON or XML"
             assert self.benchmark_patterns, \
                 "The 'benchmark_patterns' value is required when using 'benchmark_schema'"
