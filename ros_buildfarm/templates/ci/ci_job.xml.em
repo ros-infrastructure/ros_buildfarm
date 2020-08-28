@@ -8,6 +8,10 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
   <keepDependencies>false</keepDependencies>
   <properties>
 @(SNIPPET(
+    'property_authorization-matrix',
+    project_authorization_xml=project_authorization_xml,
+))@
+@(SNIPPET(
     'property_log-rotator',
     days_to_keep=730,
     num_to_keep=100,
@@ -78,10 +82,6 @@ parameters = [
 @(SNIPPET(
     'property_parameters-definition',
     parameters=parameters,
-))@
-@(SNIPPET(
-    'property_authorization-matrix',
-    project_authorization_xml=project_authorization_xml
 ))@
   </properties>
   <scm class="hudson.scm.NullSCM"/>
