@@ -69,6 +69,7 @@ class CIBuildFile(BuildFile):
         if 'jenkins_job_upstream_triggers' in data:
             self.jenkins_job_upstream_triggers = data['jenkins_job_upstream_triggers']
             assert isinstance(self.jenkins_job_upstream_triggers, list)
+        self.jenkins_job_weight = None
         if 'jenkins_job_weight' in data:
             self.jenkins_job_weight = int(data['jenkins_job_weight'])
 
