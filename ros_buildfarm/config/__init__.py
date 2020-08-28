@@ -19,6 +19,11 @@ import os
 
 import yaml
 
+try:
+    from urllib.parse import urljoin
+except ImportError:
+    from urlparse import urljoin
+
 from .ci_build_file import CIBuildFile
 from .doc_build_file import DocBuildFile
 from .index import Index
@@ -29,10 +34,22 @@ from .source_build_file import SourceBuildFile
 logger = logging.getLogger('ros_buildfarm.config')
 
 
+def load_yaml(url):
+    class SafeLoaderWithInclude(yaml.SafeLoader):
+
+        def include(self, node):
+            include_url = urljoin(url, self.construct_scalar(node))
+            return load_yaml(include_url)
+
+    SafeLoaderWithInclude.add_constructor('!include', SafeLoaderWithInclude.include)
+
+    yaml_str = load_url(url)
+    return yaml.load(yaml_str, SafeLoaderWithInclude)
+
+
 def get_index(url):
     logger.debug("Load index from '%s'" % url)
-    yaml_str = load_url(url)
-    data = yaml.safe_load(yaml_str)
+    data = load_yaml(url)
     base_url = os.path.dirname(url)
     return Index(data, base_url)
 
@@ -103,8 +120,7 @@ def _get_build_file_data(index, dist_name, type_):
 def _load_build_file_data(entries):
     def _load_yaml_data(url):
         logger.debug('Load file from "%s"' % url)
-        yaml_str = load_url(url)
-        return yaml.safe_load(yaml_str)
+        return load_yaml(url)
 
     data = {}
     for k, v in entries.items():
