@@ -256,6 +256,7 @@ def _get_ci_job_config(
 
     job_data = {
         'job_priority': build_file.jenkins_job_priority,
+        'job_weight': build_file.jenkins_job_weight,
         'node_label': get_node_label(
             build_file.jenkins_job_label,
             get_default_node_label('%s_%s' % (

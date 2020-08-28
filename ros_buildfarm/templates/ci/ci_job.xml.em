@@ -83,6 +83,10 @@ parameters = [
     'property_authorization-matrix',
     project_authorization_xml=project_authorization_xml
 ))@
+@(SNIPPET(
+    'property_job-weight',
+    weight=job_weight,
+))@
   </properties>
   <scm class="hudson.scm.NullSCM"/>
   <scmCheckoutRetryCount>2</scmCheckoutRetryCount>

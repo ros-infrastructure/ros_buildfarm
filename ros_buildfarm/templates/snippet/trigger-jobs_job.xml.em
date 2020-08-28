@@ -45,6 +45,9 @@
 @[end if]@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
+@(SNIPPET(
+    'property_job-weight',
+))@
   </properties>
 @(SNIPPET(
     'scm_null',
