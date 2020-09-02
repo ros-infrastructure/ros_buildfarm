@@ -137,12 +137,15 @@ class CIBuildFile(BuildFile):
         if 'benchmark_schema' in data:
             self.benchmark_schema = data['benchmark_schema'].strip()
             assert isinstance(self.benchmark_schema, str)
-            try:
-                json.loads(self.benchmark_schema)
-            except json.decoder.JSONDecodeError:
+            if self.benchmark_schema.startswith('<'):
                 try:
                     ElementTree.fromstring(self.benchmark_schema)
-                except ElementTree.ParseError:
-                    assert False, "The 'benchmark_schema' value must be valid JSON or XML"
+                except ElementTree.ParseError as e:
+                    assert False, "The 'benchmark_schema' value contains invalid XML: " + str(e)
+            else:
+                try:
+                    json.loads(self.benchmark_schema)
+                except json.decoder.JSONDecodeError as e:
+                    assert False, "The 'benchmark_schema' value contains invalid JSON: " + str(e)
             assert self.benchmark_patterns, \
                 "The 'benchmark_patterns' value is required when using 'benchmark_schema'"
