@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+from xml.etree import ElementTree
+
 from .build_file import BuildFile
 
 
@@ -147,8 +150,20 @@ class SourceBuildFile(BuildFile):
 
         self.benchmark_schema = None
         if 'benchmark_schema' in data:
-            self.benchmark_schema = data['benchmark_schema']
-            assert self.benchmark_patterns
+            self.benchmark_schema = data['benchmark_schema'].strip()
+            assert isinstance(self.benchmark_schema, str)
+            if self.benchmark_schema.startswith('<'):
+                try:
+                    ElementTree.fromstring(self.benchmark_schema)
+                except ElementTree.ParseError as e:
+                    assert False, "The 'benchmark_schema' value contains invalid XML: " + str(e)
+            else:
+                try:
+                    json.loads(self.benchmark_schema)
+                except json.decoder.JSONDecodeError as e:
+                    assert False, "The 'benchmark_schema' value contains invalid JSON: " + str(e)
+            assert self.benchmark_patterns, \
+                "The 'benchmark_patterns' value is required when using 'benchmark_schema'"
 
     def filter_repositories(self, repository_names):
         res = set(repository_names)
