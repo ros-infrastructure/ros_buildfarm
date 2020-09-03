@@ -445,6 +445,9 @@ def _get_devel_job_config(
         'git_ssh_credential_id': config.git_ssh_credential_id,
 
         'collate_test_stats': build_file.collate_test_stats,
+
+        'benchmark_patterns': build_file.benchmark_patterns,
+        'benchmark_schema': build_file.benchmark_schema,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

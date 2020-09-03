@@ -294,6 +294,13 @@ The following options are valid in version ``2`` (beside the generic options):
   A special macro in the ROS wiki will then render those test results as part of
   the auto-generated *Package Header*.
 
+* ``benchmark_patterns``: a list of file patterns relative to the Jenkins
+  workspace where benchmark result files are expected to be found.
+
+* ``benchmark_schema``: a JSON or XML schema which describes the structure of
+  the files referenced by the ``benchmark_patterns`` value, which is required
+  when this option is specified.
+
 The following options are valid as keys in the ``_config`` dict under
 ``targets``:
 
@@ -516,6 +523,13 @@ The following options are valid in version ``1`` (beside the generic options):
       For EXCLUDE\_\*, the logic is inverted and all discovered columns EXCEPT
       those matching this value are included.
     * ``url``: Hyperlink URL to redirect when a point is clicked.
+
+* ``benchmark_patterns``: a list of file patterns relative to the Jenkins
+  workspace where benchmark result files are expected to be found.
+
+* ``benchmark_schema``: a JSON or XML schema which describes the structure of
+  the files referenced by the ``benchmark_patterns`` value, which is required
+  when this option is specified.
 
 * ``skip_rosdep_keys``: a list of rosdep keys which should be ignored when
   rosdep is invoked to resolve package dependencies.
