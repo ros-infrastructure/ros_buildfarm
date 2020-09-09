@@ -83,6 +83,10 @@ parameters = [
     'property_parameters-definition',
     parameters=parameters,
 ))@
+@(SNIPPET(
+    'property_job-weight',
+    weight=job_weight,
+))@
   </properties>
   <scm class="hudson.scm.NullSCM"/>
   <scmCheckoutRetryCount>2</scmCheckoutRetryCount>

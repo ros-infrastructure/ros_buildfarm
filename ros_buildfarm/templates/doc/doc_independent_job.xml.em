@@ -20,6 +20,9 @@
 @(SNIPPET(
     'property_requeue-job',
 ))@
+@(SNIPPET(
+    'property_job-weight',
+))@
   </properties>
 @(SNIPPET(
     'scm_null',

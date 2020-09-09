@@ -39,6 +39,9 @@ Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</descriptio
         },
     ],
 ))@
+@(SNIPPET(
+    'property_job-weight',
+))@
   </properties>
 @(SNIPPET(
     'scm_git',

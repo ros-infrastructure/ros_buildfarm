@@ -33,6 +33,9 @@
         },
     ],
 ))@
+@(SNIPPET(
+    'property_job-weight',
+))@
   </properties>
 @(SNIPPET(
     'scm_git',

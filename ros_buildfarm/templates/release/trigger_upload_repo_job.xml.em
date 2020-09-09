@@ -10,6 +10,9 @@
     <org.jenkinsci.plugins.requeuejob.RequeueJobProperty plugin="jobrequeue@@1.1">
       <requeueJob>false</requeueJob>
     </org.jenkinsci.plugins.requeuejob.RequeueJobProperty>
+@(SNIPPET(
+    'property_job-weight',
+))@
   </properties>
   <scm class="hudson.scm.NullSCM"/>
   <assignedNode>building_repository</assignedNode>

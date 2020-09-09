@@ -50,6 +50,9 @@ if pull_request:
     'property_parameters-definition',
     parameters=parameters,
 ))@
+@(SNIPPET(
+    'property_job-weight',
+))@
   </properties>
 @[if not pull_request]@
 @(SNIPPET(

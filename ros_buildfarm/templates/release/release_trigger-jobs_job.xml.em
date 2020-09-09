@@ -46,6 +46,9 @@ if missed_jobs:
         </hudson.model.ChoiceParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
+@(SNIPPET(
+    'property_job-weight',
+))@
   </properties>
 @(SNIPPET(
     'scm_git',
