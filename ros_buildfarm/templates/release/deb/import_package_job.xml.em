@@ -13,6 +13,9 @@
     priority=-1,
 ))@
 @(SNIPPET(
+    'property_rebuild-settings',
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
 @(SNIPPET(
@@ -27,6 +30,9 @@
             'name': 'debian_package_name',
         },
     ],
+))@
+@(SNIPPET(
+    'property_job-weight',
 ))@
   </properties>
 @(SNIPPET(

@@ -13,6 +13,9 @@
     priority=30,
 ))@
 @(SNIPPET(
+    'property_rebuild-settings',
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
 @(SNIPPET(
@@ -29,6 +32,9 @@
             'description': 'Only reconfigure the jobs of specific repositories',
         },
     ],
+))@
+@(SNIPPET(
+    'property_job-weight',
 ))@
   </properties>
 @(SNIPPET(

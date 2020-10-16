@@ -13,6 +13,9 @@
     priority=35,
 ))@
 @(SNIPPET(
+    'property_rebuild-settings',
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
     <hudson.model.ParametersDefinitionProperty>
@@ -43,6 +46,9 @@ if missed_jobs:
         </hudson.model.ChoiceParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
+@(SNIPPET(
+    'property_job-weight',
+))@
   </properties>
 @(SNIPPET(
     'scm_git',

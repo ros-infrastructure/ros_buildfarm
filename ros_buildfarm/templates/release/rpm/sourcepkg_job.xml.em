@@ -23,6 +23,9 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
 @[end if]@
 @(SNIPPET(
+    'property_rebuild-settings',
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
 @(SNIPPET(
@@ -34,6 +37,9 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
             'description': 'Skip cleanup of build artifacts',
         },
     ],
+))@
+@(SNIPPET(
+    'property_job-weight',
 ))@
   </properties>
 @(SNIPPET(

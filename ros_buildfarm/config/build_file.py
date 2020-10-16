@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+from xml.etree import ElementTree
+
+from ros_buildfarm.common import Target
+
 
 class BuildFile(object):
 
@@ -91,3 +96,26 @@ class BuildFile(object):
                 res.append(dist_file)
 
         return res
+
+    def get_targets_list(self):
+        target_list = []
+        for os_name, os_name_v in self.targets.items():
+            if os_name == '_config':
+                continue
+            for os_code_name, os_code_name_v in os_name_v.items():
+                for arch in os_code_name_v.keys():
+                    target_list.append(Target(os_name, os_code_name, arch))
+        return target_list
+
+    def _assert_valid_benchmark_schema(self):
+        assert isinstance(self.benchmark_schema, str)
+        if self.benchmark_schema.startswith('<'):
+            try:
+                ElementTree.fromstring(self.benchmark_schema)
+            except ElementTree.ParseError as e:
+                assert False, "The 'benchmark_schema' value contains invalid XML: " + str(e)
+        else:
+            try:
+                json.loads(self.benchmark_schema)
+            except json.decoder.JSONDecodeError as e:
+                assert False, "The 'benchmark_schema' value contains invalid JSON: " + str(e)

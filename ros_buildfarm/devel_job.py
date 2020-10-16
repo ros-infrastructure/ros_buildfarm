@@ -439,11 +439,15 @@ def _get_devel_job_config(
 
         # only Ubuntu Focal has a new enough pytest version which generates
         # JUnit compliant result files
-        'xunit_publisher_types': get_xunit_publisher_types_and_patterns(),
+        'xunit_publisher_types': get_xunit_publisher_types_and_patterns(
+            ros_version, os_name == 'ubuntu' and os_code_name != 'bionic'),
 
         'git_ssh_credential_id': config.git_ssh_credential_id,
 
         'collate_test_stats': build_file.collate_test_stats,
+
+        'benchmark_patterns': build_file.benchmark_patterns,
+        'benchmark_schema': build_file.benchmark_schema,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

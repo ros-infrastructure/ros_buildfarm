@@ -600,9 +600,24 @@ def get_packages_in_workspaces(workspace_roots, condition_context=None):
     return pkgs
 
 
-def get_xunit_publisher_types_and_patterns():
+def get_xunit_publisher_types_and_patterns(
+    ros_version, pytest_junit_compliant
+):
     types = []
-    types.append(('GoogleTestType', 'ws/test_results/**/*.xml'))
+    if ros_version == 1:
+        types.append(('GoogleTestType', 'ws/test_results/**/*.xml'))
+    elif ros_version == 2:
+        types.append(('CTestType', 'ws/test_results/*/Testing/*/Test.xml'))
+        types.append(('GoogleTestType', 'ws/test_results/**/*.gtest.xml'))
+        types.append((
+            'JUnitType' if pytest_junit_compliant else 'GoogleTestType',
+            'ws/test_results/*/pytest.xml'))
+        # ament_cmake_pytest doesn't produce a pytest.xml
+        types.append((
+            'JUnitType' if pytest_junit_compliant else 'GoogleTestType',
+            'ws/test_results/**/*.xunit.xml'))
+    else:
+        assert False, 'Unsupported ROS version: ' + str(ros_version)
     return types
 
 
@@ -634,14 +649,26 @@ def get_downstream_package_names(pkg_names, dependencies):
     return downstream_pkg_names
 
 
-def get_implicitly_ignored_package_names(cached_pkgs, explicitly_ignored_pkg_names):
-    pkg_names = set(cached_pkgs.keys())
+def get_package_manifests(dist):
+    cached_pkgs = {}
+    for pkg_name in dist.release_packages.keys():
+        pkg_xml = dist.get_release_package_xml(pkg_name)
+        if pkg_xml is not None:
+            from catkin_pkg.package import InvalidPackage, parse_package_string
+            try:
+                pkg_manifest = parse_package_string(pkg_xml)
+            except InvalidPackage:
+                continue
+            cached_pkgs[pkg_name] = pkg_manifest
+    return cached_pkgs
 
+
+def get_implicitly_ignored_package_names(cached_pkgs, explicitly_ignored_pkg_names):
     # get direct dependencies from distro cache for each package
     direct_dependencies = {}
-    for pkg_name in pkg_names:
+    for pkg_name in cached_pkgs.keys():
         direct_dependencies[pkg_name] = get_direct_dependencies(
-            pkg_name, cached_pkgs, pkg_names) or set([])
+            pkg_name, cached_pkgs, cached_pkgs) or set([])
 
     # find recursive downstream deps for all explicitly ignored packages
     ignored_pkg_names = set(explicitly_ignored_pkg_names)
@@ -654,6 +681,46 @@ def get_implicitly_ignored_package_names(cached_pkgs, explicitly_ignored_pkg_nam
         break
 
     return ignored_pkg_names.difference(explicitly_ignored_pkg_names)
+
+
+def filter_blocked_dependent_package_names(cached_pkgs, failed_pkg_names):
+    """Return the list of packages that are missing and not blocked.
+
+    Return the list of packages that are missing that are not depending
+    on other missing packages.
+    """
+    # get direct dependencies from distro cache for each package
+    direct_dependencies = {}
+    for pkg_name in cached_pkgs:
+        direct_dependencies[pkg_name] = get_direct_dependencies(
+            pkg_name, cached_pkgs, cached_pkgs) or set([])
+
+    # find recursive downstream deps for all explicitly ignored packages
+    all_deps = get_downstream_package_names(
+            failed_pkg_names, direct_dependencies)
+    while True:
+        blocked_pkgs = get_downstream_package_names(
+            all_deps, direct_dependencies)
+        if blocked_pkgs - all_deps:
+            all_deps |= blocked_pkgs
+            continue
+        break
+
+    return failed_pkg_names.difference(all_deps)
+
+
+def filter_buildfile_packages_recursively(package_names, buildfile, rosdistro_name):
+    """Filter packages based on the build including recursively blocked packages.
+
+    Filter a list of packages based on a build file's blacklist and whitelist
+    including implicit blacklisting of dependent packages for a specific rosdistro.
+    """
+    res = buildfile.filter_packages(package_names)
+    cached_pkgs = get_package_manifests(rosdistro_name)
+    implicitly_ignored = get_implicitly_ignored_package_names(
+        cached_pkgs, buildfile.package_blacklist)
+    res -= implicitly_ignored
+    return res
 
 
 def get_package_condition_context(index, rosdistro_name):

@@ -15,7 +15,13 @@
 ))@
 @[end if]@
 @(SNIPPET(
+    'property_rebuild-settings',
+))@
+@(SNIPPET(
     'property_requeue-job',
+))@
+@(SNIPPET(
+    'property_job-weight',
 ))@
   </properties>
 @(SNIPPET(

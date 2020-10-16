@@ -102,7 +102,7 @@ def get_targets_by_repo(config, ros_distro_name):
         targets_by_repo[target_repository] = []
         targets = target_dicts_by_repo[target_repository]
         # TODO support other OS names
-        for os_name in ['debian', 'rhel', 'ubuntu']:
+        for os_name in ['debian', 'fedora', 'rhel', 'ubuntu']:
             if os_name not in targets:
                 continue
             for os_code_name in sorted(targets[os_name].keys()):

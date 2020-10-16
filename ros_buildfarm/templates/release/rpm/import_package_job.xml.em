@@ -13,6 +13,9 @@
     priority=-1,
 ))@
 @(SNIPPET(
+    'property_rebuild-settings',
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
 @(SNIPPET(
@@ -40,6 +43,9 @@
             'description': 'Skip the commit operation but show what would change',
         },
     ],
+))@
+@(SNIPPET(
+    'property_job-weight',
 ))@
   </properties>
 @(SNIPPET(

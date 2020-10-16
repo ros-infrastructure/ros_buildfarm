@@ -62,8 +62,9 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python
 
 @[if build_tool == 'colcon']@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pip
-@# colcon-core.package_identification.python needs at least version 30.3.0
-RUN pip3 install -U setuptools
+@# colcon-core.package_identification.python needs at least setuptools 30.3.0
+@# pytest-rerunfailures enables usage of --retest-until-pass
+RUN pip3 install -U setuptools pytest-rerunfailures
 @[end if]@
 @[if ros_version == 2]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ros-@(rosdistro_name)-ros-workspace
@@ -131,6 +132,7 @@ cmd += \
 if vars().get('build_tool_args'):
     cmd += ' --build-tool-args ' + ' '.join(build_tool_args)
 if vars().get('build_tool_test_args'):
-    cmd += ' --build-tool-test-args ' + ' '.join(build_tool_test_args)
+    cmd += ' --build-tool-test-args ' + ' '.join(
+        a if ' ' not in a else '"%s"' % a for a in build_tool_test_args)
 }@
-CMD ["@cmd"]
+CMD ["@(cmd.replace('"', '\\"'))"]

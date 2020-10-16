@@ -25,6 +25,9 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
 @[end if]@
 @(SNIPPET(
+    'property_rebuild-settings',
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
 @{
@@ -46,6 +49,9 @@ if pull_request:
 @(SNIPPET(
     'property_parameters-definition',
     parameters=parameters,
+))@
+@(SNIPPET(
+    'property_job-weight',
 ))@
   </properties>
 @[if not pull_request]@
@@ -271,6 +277,13 @@ if pull_request:
     build_tool=build_tool,
     unstable_threshold=1 if notify_compiler_warnings else '',
 ))@
+@[if benchmark_patterns]@
+@(SNIPPET(
+    'publisher_benchmark',
+    patterns=benchmark_patterns,
+    schema=benchmark_schema,
+))@
+@[end if]@
 @[if xunit_publisher_types]@
 @(SNIPPET(
     'publisher_xunit',

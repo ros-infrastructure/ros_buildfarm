@@ -3,13 +3,13 @@
 if 'types' not in vars() and 'pattern' in vars():
     types = [('GoogleTestType', pattern)]
 }@
-    <xunit plugin="xunit@@2.3.8">
+    <xunit plugin="xunit@@2.3.9">
       <types>
 @[for type_tag_and_pattern in types]@
 @{
 # expanding these within the for statement leads to a TypeError in empy version 3.3.4 and older
 type_tag, pattern = type_tag_and_pattern
-assert type_tag in ('GoogleTestType', 'JUnitType'), 'Unsupported test type tag: ' + type_tag
+assert type_tag in ('CTestType', 'GoogleTestType', 'JUnitType'), 'Unsupported test type tag: ' + type_tag
 }@
         <@(type_tag)>
           <pattern>@ESCAPE(pattern)</pattern>

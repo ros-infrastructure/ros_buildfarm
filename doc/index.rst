@@ -67,6 +67,19 @@ Please see the documentation about using a
 configuration options and administrative tasks.
 
 
+Dealing with large and/or duplicated configuration elements
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The YAML loader used to load the configuration implements a special constructor
+used to load the YAML content from another file.
+This mechanism can be used to include configuration elements from a separate
+file as if it were embedded into another file.
+The special directive takes a single URL argument, which may either be relative
+to the current URL or absolute.
+
+For example: ``large_block: !include other_file.yaml``
+
+
 Generate the Jenkins jobs
 -------------------------
 

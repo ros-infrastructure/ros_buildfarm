@@ -13,6 +13,9 @@
     priority=30,
 ))@
 @(SNIPPET(
+    'property_rebuild-settings',
+))@
+@(SNIPPET(
     'property_requeue-job',
 ))@
 @(SNIPPET(
@@ -24,6 +27,9 @@
             'description': 'Skip the actual reconfiguration but show the diffs',
         },
     ],
+))@
+@(SNIPPET(
+    'property_job-weight',
 ))@
   </properties>
 @(SNIPPET(

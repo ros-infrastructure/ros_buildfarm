@@ -40,14 +40,30 @@ The sync to the ``main`` repository affects all architectures.
 Guidelines for gating a sync to main
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When preparing for a sync it is recommended to review the
-*release status page*.
-There are filters for viewing regressions, and what packages will sync if the
-sync to main is run as well as the ability to search.
+There is a manual process to go from testing to main.
+We refer to this as a sync.
 
-Note: A version downgrade is also marked as a regression since if users have
-already installed the previous package with the higher version number apt will
-not install the newer package with a lower version automatically.
+When you are preparing for a sync:
+
+* Run the ``rosdistro_audit.py`` script.
+  It will output text which is appropriate for posting to Discourse as a triage list.
+  The ``rosdistro_audit.py`` will report all packages which are failing to build for a whole buildfile.
+
+  * If it's failing on specific architectures, ticket it upstream and blacklist it in the config with a cross reference.
+  * If it's failing on all platforms, rollback or remove the release from the distro.
+* Check the list of packages comes from the status page, e.g. http://repositories.ros.org/status_page/ros_melodic_default.html
+  Click “REGRESSION” to find the list of regressions, click “SYNC” to see how many packages there are to sync.
+  Make sure there are no major regressions and ticket any with the maintainers.
+
+  Note: A version downgrade is also marked as a regression since apt will not automatically install a newer package with a lower version.
+
+* Announce the intent to sync with the above information.
+  Example: https://discourse.ros.org/t/preparing-for-kinetic-sync-2020-08-20/16002/5
+
+* After a period of time for resolving the identified issues above run the sync on Jenkins.
+* Once sync is done: announce on discourse. The details of the sync is in the console output of the "sync to main" job (make sure to not take the ones that generate debug packages otherwise the package count is off by a factor 2)
+* Tag the rosdistro with the format ``ROSDISTRO/YYYY-MM-DD``
+
 
 Importing new upstream packages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

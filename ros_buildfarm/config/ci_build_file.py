@@ -69,6 +69,9 @@ class CIBuildFile(BuildFile):
         if 'jenkins_job_upstream_triggers' in data:
             self.jenkins_job_upstream_triggers = data['jenkins_job_upstream_triggers']
             assert isinstance(self.jenkins_job_upstream_triggers, list)
+        self.jenkins_job_weight = None
+        if 'jenkins_job_weight' in data:
+            self.jenkins_job_weight = int(data['jenkins_job_weight'])
 
         self.package_selection_args = None
         if 'package_selection_args' in data:
@@ -123,3 +126,16 @@ class CIBuildFile(BuildFile):
                     assert isinstance(plot_config_data, dict)
                     self.show_plots[plot_group].append(
                         PlotConfig(name, plot_config_data))
+
+        self.benchmark_patterns = []
+        if 'benchmark_patterns' in data:
+            self.benchmark_patterns = data['benchmark_patterns']
+            assert isinstance(self.benchmark_patterns, list)
+            assert all(isinstance(pattern, str) for pattern in self.benchmark_patterns)
+
+        self.benchmark_schema = None
+        if 'benchmark_schema' in data:
+            self.benchmark_schema = data['benchmark_schema'].strip()
+            self._assert_valid_benchmark_schema()
+            assert self.benchmark_patterns, \
+                "The 'benchmark_patterns' value is required when using 'benchmark_schema'"

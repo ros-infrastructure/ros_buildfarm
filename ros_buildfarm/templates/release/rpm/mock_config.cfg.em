@@ -18,11 +18,16 @@ config_opts[f'{config_opts.package_manager}_builddep_opts'] = config_opts.get(f'
 config_opts['environment']['@env_key'] = '@env_val'
 @[end for]
 @[end if]@
-# Disable debug packages until infrastructure can handle it
-config_opts['macros']['debug_package'] = '%{nil}'
+# Make debuginfo/debugsource packages best-effort
+config_opts['macros']['%_empty_manifest_terminate_build'] = '%{nil}'
+config_opts['macros']['%_missing_build_ids_terminate_build'] = '%{nil}'
 
 # Hack the %{dist} macro to allow release suffixing
 config_opts['macros']['%dist'] = '.' + config_opts['dist'] + '%{?dist_suffix}'
+
+# Disable automatic out-of-source CMake builds
+config_opts['macros']['%__cmake_in_source_build'] = '1'
+config_opts['macros']['%__cmake3_in_source_build'] = '1'
 
 # Required for running mock in Docker
 config_opts['use_nspawn'] = False
@@ -30,10 +35,10 @@ config_opts['use_nspawn'] = False
 @[if os_name in ['centos', 'rhel'] and os_code_name == '7']@
 # Inject g++ 8 into RHEL 7 builds
 config_opts['chroot_setup_cmd'] += ' devtoolset-8-gcc-c++ devtoolset-8-make-nonblocking'
-config_opts['macros']['_buildshell'] = '/usr/bin/scl enable devtoolset-8 -- /bin/sh'
+config_opts['macros']['%_buildshell'] = '/usr/bin/scl enable devtoolset-8 -- /bin/sh'
 
 # Disable weak dependencies on RHEL 7 builds
-config_opts['macros']['_without_weak_deps'] = '1'
+config_opts['macros']['%_without_weak_deps'] = '1'
 @[else]@
 # Add g++, which is an assumed dependency in ROS
 config_opts['chroot_setup_cmd'] += ' gcc-c++ make'
@@ -44,7 +49,7 @@ config_opts[f'{config_opts.package_manager}.conf'] += """
 [ros-buildfarm-@(i)]
 name=ROS Buildfarm Repository @(i) - $basearch
 baseurl=@(url)
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ros-buildfarm-@(i)
+gpgkey=file:///etc/pki/mock/RPM-GPG-KEY-ros-buildfarm-@(i)
 repo_gpgcheck=@(1 if i < len(distribution_repository_keys) and distribution_repository_keys[i] else 0)
 gpgcheck=0
 enabled=1

@@ -69,6 +69,7 @@ jobs:
         - docker
       env: JOB_TYPE=prerelease UNDERLAY_REPOSITORY_NAMES="ament_cmake_ros" OVERLAY_PACKAGE_NAMES=rcutils ROSDISTRO_INDEX_URL=https://raw.githubusercontent.com/ros2/rosdistro/ros2/index-v4.yaml
       before_script:
+        - pip install -U importlib-metadata
         # install colcon for test results
         - pip install colcon-core colcon-test-result
         - python setup.py install
@@ -166,6 +167,7 @@ jobs:
         - sudo apt-get update -qq
         - sudo apt-get install dpkg -y  # necessary for catkin-pkg to be installable
         - sudo apt-get install ros-kinetic-catkin -y
+        - pip install -U importlib-metadata
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -181,7 +183,8 @@ jobs:
       before_script:
         - sudo apt-get update
         - sudo apt-get install -y python3-pip python3-setuptools
-        - sudo pip3 install vcstool
+        - pip install -U importlib-metadata
+        - pip install vcstool
         - python setup.py install
         - mkdir job && cd job
         - ln -s .. ros_buildfarm
@@ -514,5 +517,28 @@ jobs:
         - build_release_status_page.py $CONFIG_URL $ROS_DISTRO_NAME default
         - build_repos_status_page.py $ROS_DISTRO_NAME http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples bionic:source bionic:amd64 bionic:arm64 bionic:armhf bionic:i386 --cache-dir ./debian_repo_cache --output-name melodic_bionic
         - ls -al
+    - python: "2.7"
+      services:
+        - docker
+      env: JOB_TYPE=rosdistro_audit
+      before_script:
+        # pin pyparsing to the last version that supports Python 3.4 and below
+        # see https://github.com/pyparsing/pyparsing/blob/72f2c5a67b4a26f584104b9ff63e1f272f54c5df/CHANGES#L5-L9
+        - pip install pyparsing==2.4.7
+        - python setup.py install
+      script:
+        - audit_rosdistro.py $CONFIG_URL $ROS_DISTRO_NAME --return-zero
+        - audit_rosdistro.py $CONFIG2_URL $ROS2_DISTRO_NAME --return-zero
+    - python: "3.6"
+      services:
+        - docker
+      env: JOB_TYPE=rosdistro_audit
+      before_script:
+        - python setup.py install
+      script:
+        - audit_rosdistro.py $CONFIG_URL $ROS_DISTRO_NAME --return-zero
+        - audit_rosdistro.py $CONFIG2_URL $ROS2_DISTRO_NAME --return-zero
+        - check_sync_criteria.py $CONFIG_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH
+        - check_sync_criteria.py $CONFIG2_URL $ROS2_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH
 notifications:
   email: false
