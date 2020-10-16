@@ -89,8 +89,8 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
 @[if run_abichecker]@
 @{common_deps='python3 python3-catkin-pkg-modules python3-pip'}
-@[if os_name == 'ubuntu' and os_code_name == 'focal' ]@
-# Focal abi-compliance-checker package has a bug that breaks python invocation
+@[if os_name == 'ubuntu' and short_os_code_name >= 'F']@
+# Focal/Groovy abi-compliance-checker package has a bug that breaks python invocation
 # See: https://github.com/lvc/abi-compliance-checker/pull/80#issuecomment-652521014
 # Install 2.3 version from source, needs perl
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y curl make perl

@@ -34,6 +34,7 @@ from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_packages_in_workspaces
+from ros_buildfarm.common import get_short_os_code_name
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
 from rosdep2 import create_default_installer_context
@@ -166,6 +167,7 @@ def main(argv=sys.argv[1:]):
     data = {
         'os_name': args.os_name,
         'os_code_name': args.os_code_name,
+        'short_os_code_name': get_short_os_code_name(args.os_code_name),
         'arch': args.arch,
 
         'distribution_repository_urls': args.distribution_repository_urls,
