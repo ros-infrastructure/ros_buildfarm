@@ -94,8 +94,9 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 # See: https://github.com/lvc/abi-compliance-checker/pull/80#issuecomment-652521014
 # Install 2.3 version from source, needs perl
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y curl make perl
-RUN curl -sL https://github.com/lvc/abi-compliance-checker/archive/2.3.tar.gz | tar xvz -C /tmp
-RUN make install prefix=/usr -C /tmp/abi-compliance-checker-2.3
+RUN curl -sL https://github.com/lvc/abi-compliance-checker/archive/2.3.tar.gz | tar xvz -C /tmp && \
+    make install prefix=/usr -C /tmp/abi-compliance-checker-2.3 && \
+    rm -fr /tmp/abi-compliance
 @[else]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y abi-compliance-checker @(common_deps)
 @[end if]@
