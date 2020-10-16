@@ -88,13 +88,18 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 ))@
 
 @[if run_abichecker]@
+@{common_deps='python3 python3-catkin-pkg-modules python3-pip'}
+@[if os_name == 'ubuntu' and os_code_name == 'focal' ]@
 # Focal abi-compliance-checker package has a bug that breaks python invocation
 # See: https://github.com/lvc/abi-compliance-checker/pull/80#issuecomment-652521014
 # Install 2.3 version from source, needs perl
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y curl make perl python3 python3-catkin-pkg-modules python3-pip
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y curl make perl
 RUN curl -sL https://github.com/lvc/abi-compliance-checker/archive/2.3.tar.gz | tar xvz -C /tmp
 RUN make install prefix=/usr -C /tmp/abi-compliance-checker-2.3
-RUN pip3 install -U auto_abi_checker
+@[else]@
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y abi-compliance-checker @(common_deps)
+@[end if]@
+RUN pip3 install -U auto_abi_checker @(common_deps)
 @[end if]@
 
 # After all dependencies are installed, update ccache symlinks.
