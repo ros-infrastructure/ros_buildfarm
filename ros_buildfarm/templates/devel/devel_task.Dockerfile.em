@@ -102,7 +102,8 @@ RUN curl -sL https://github.com/lvc/abi-compliance-checker/archive/2.3.tar.gz | 
 @[else]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y abi-compliance-checker @(common_deps)
 @[end if]@
-RUN pip3 install -U auto_abi_checker @(common_deps)
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y @(common_deps)
+RUN pip3 install -U auto_abi_checker
 @[end if]@
 
 # After all dependencies are installed, update ccache symlinks.
