@@ -100,7 +100,6 @@ RUN curl -sL https://github.com/lvc/abi-compliance-checker/archive/2.3.tar.gz | 
 @[else]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y abi-compliance-checker
 @[end if]@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y @(common_deps)
 RUN pip3 install -U auto_abi_checker
 @[end if]@
 
