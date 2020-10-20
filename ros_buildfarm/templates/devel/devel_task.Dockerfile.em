@@ -73,8 +73,7 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
 @[if run_abichecker]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-catkin-pkg-modules python3-pip
-@{ubuntu_before_focal=('xenial', 'bionic')}@
-@[if os_name == 'ubuntu' and os_code_name not in ubuntu_before_focal]@
+@[if os_name == 'ubuntu' and os_code_name not in ('xenial', 'bionic')]@
 # Focal/Groovy abi-compliance-checker package has a bug that breaks python invocation
 # See: https://github.com/lvc/abi-compliance-checker/pull/80#issuecomment-652521014
 # Install 2.3 version from source, needs perl
