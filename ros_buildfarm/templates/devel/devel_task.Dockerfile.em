@@ -71,7 +71,7 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ros-@(rosd
 @[end if]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-catkin-pkg-modules
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-catkin-pkg-modules python3-pip
 @[if run_abichecker]@
 @{ubuntu_before_focal=('xenial', 'bionic')}@
 @[if os_name == 'ubuntu' and os_code_name not in ubuntu_before_focal]@
