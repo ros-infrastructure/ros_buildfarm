@@ -71,21 +71,6 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ros-@(rosd
 @[end if]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
-@(TEMPLATE(
-    'snippet/set_environment_variables.Dockerfile.em',
-    environment_variables=build_environment_variables,
-))@
-
-@(TEMPLATE(
-    'snippet/install_dependencies.Dockerfile.em',
-    dependencies=dependencies,
-    dependency_versions=dependency_versions,
-))@
-
-@(TEMPLATE(
-    'snippet/install_dependencies_from_file.Dockerfile.em',
-    install_lists=install_lists,
-))@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3 python3-catkin-pkg-modules python3-pip
 @[if run_abichecker]@
 @{ubuntu_before_focal=('xenial', 'bionic')}@
@@ -102,6 +87,22 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y abi-compli
 @[end if]@
 RUN pip3 install -U auto_abi_checker
 @[end if]@
+
+@(TEMPLATE(
+    'snippet/set_environment_variables.Dockerfile.em',
+    environment_variables=build_environment_variables,
+))@
+
+@(TEMPLATE(
+    'snippet/install_dependencies.Dockerfile.em',
+    dependencies=dependencies,
+    dependency_versions=dependency_versions,
+))@
+
+@(TEMPLATE(
+    'snippet/install_dependencies_from_file.Dockerfile.em',
+    install_lists=install_lists,
+))@
 
 # After all dependencies are installed, update ccache symlinks.
 # This command is supposed to be invoked whenever a new compiler is installed
