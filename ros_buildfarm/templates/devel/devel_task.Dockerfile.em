@@ -86,7 +86,7 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
     'snippet/install_dependencies_from_file.Dockerfile.em',
     install_lists=install_lists,
 ))@
-
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3 python3-catkin-pkg-modules python3-pip
 @[if run_abichecker]@
 @{common_deps='python3 python3-catkin-pkg-modules python3-pip'
 ubuntu_before_focal=('xenial', 'bionic')
