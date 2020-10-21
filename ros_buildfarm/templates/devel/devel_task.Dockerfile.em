@@ -71,6 +71,22 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ros-@(rosd
 @[end if]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
+@[if run_abichecker]@
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-catkin-pkg-modules python3-pip
+@[if os_name == 'ubuntu' and os_code_name not in ('xenial', 'bionic')]@
+# Focal/Groovy abi-compliance-checker package has a bug that breaks python invocation
+# See: https://github.com/lvc/abi-compliance-checker/pull/80#issuecomment-652521014
+# Install 2.3 version from source, needs perl
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y curl make perl
+RUN curl -sL https://github.com/lvc/abi-compliance-checker/archive/2.3.tar.gz | tar xvz -C /tmp && \
+    make install prefix=/usr -C /tmp/abi-compliance-checker-2.3 && \
+    rm -fr /tmp/abi-compliance
+@[else]@
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y abi-compliance-checker
+@[end if]@
+RUN pip3 install -U auto_abi_checker
+@[end if]@
+
 @(TEMPLATE(
     'snippet/set_environment_variables.Dockerfile.em',
     environment_variables=build_environment_variables,
@@ -86,11 +102,6 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
     'snippet/install_dependencies_from_file.Dockerfile.em',
     install_lists=install_lists,
 ))@
-
-@[if run_abichecker]@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y abi-compliance-checker python3 python3-catkin-pkg-modules python3-pip 
-RUN pip3 install -U auto_abi_checker
-@[end if]@
 
 # After all dependencies are installed, update ccache symlinks.
 # This command is supposed to be invoked whenever a new compiler is installed
