@@ -298,6 +298,7 @@ parameters = [
         'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s .' % (rosdistro_name),
         'echo "# END SECTION"',
         '',
+    ] + ([
         'echo "# BEGIN SECTION: ccache stats (before)"',
         'mkdir -p $HOME/.ccache',
         'docker run' +
@@ -309,6 +310,7 @@ parameters = [
         ' "ccache -s"',
         'echo "# END SECTION"',
         '',
+    ] if shared_ccache else []) + [
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
     ] + [
         'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, local_ros_version)
@@ -317,8 +319,8 @@ parameters = [
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
-        ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
-        ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
+        ((' -e CCACHE_DIR=/home/buildfarm/.ccache' +
+          ' -v $HOME/.ccache:/home/buildfarm/.ccache') if shared_ccache else '') +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ''.join([
             ' -v %s:/tmp/ws%s/install_isolated:ro' % (space, i if i > 1 else '')
@@ -328,6 +330,7 @@ parameters = [
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
+    ] + ([
         '',
         'echo "# BEGIN SECTION: ccache stats (after)"',
         'docker run' +
@@ -338,7 +341,7 @@ parameters = [
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name) +
         ' "ccache -s"',
         'echo "# END SECTION"',
-    ]),
+    ] if shared_ccache else [])),
 ))@
 @(SNIPPET(
     'builder_shell',
@@ -369,6 +372,7 @@ parameters = [
         'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s .' % (rosdistro_name),
         'echo "# END SECTION"',
         '',
+    ] + ([
         'echo "# BEGIN SECTION: ccache stats (before)"',
         'mkdir -p $HOME/.ccache',
         'docker run' +
@@ -380,6 +384,7 @@ parameters = [
         ' "ccache -s"',
         'echo "# END SECTION"',
         '',
+    ] if shared_ccache else []) + [
         'echo "# BEGIN SECTION: Run Dockerfile - build and test"',
     ] + [
         'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, local_ros_version)
@@ -390,8 +395,8 @@ parameters = [
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
-        ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
-        ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
+        ((' -e CCACHE_DIR=/home/buildfarm/.ccache' +
+          ' -v $HOME/.ccache:/home/buildfarm/.ccache') if shared_ccache else '') +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ''.join([
             ' -v %s:/tmp/ws%s/install_isolated:ro' % (space, i if i > 1 else '')
@@ -401,6 +406,7 @@ parameters = [
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s' % (rosdistro_name),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
+    ] + ([
         '',
         'echo "# BEGIN SECTION: ccache stats (after)"',
         'docker run' +
@@ -411,7 +417,7 @@ parameters = [
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s' % (rosdistro_name) +
         ' "ccache -s"',
         'echo "# END SECTION"',
-    ]),
+    ] if shared_ccache else [])),
 ))@
 @(SNIPPET(
     'builder_shell',

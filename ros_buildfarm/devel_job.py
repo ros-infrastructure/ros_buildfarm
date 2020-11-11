@@ -448,6 +448,8 @@ def _get_devel_job_config(
 
         'benchmark_patterns': build_file.benchmark_patterns,
         'benchmark_schema': build_file.benchmark_schema,
+
+        'shared_ccache': build_file.shared_ccache,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
