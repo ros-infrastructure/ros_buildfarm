@@ -45,9 +45,11 @@ We refer to this as a sync.
 
 When you are preparing for a sync:
 
-* Run the ``rosdistro_audit.py`` script.
+* Run the ``audit_rosdistro.py`` script in the ``scripts/release`` folder
   It will output text which is appropriate for posting to Discourse as a triage list.
-  The ``rosdistro_audit.py`` will report all packages which are failing to build for a whole buildfile.
+  The ``audit_rosdistro.py`` will report all packages which are failing to build for a whole buildfile.
+  
+  For example: ``./scripts/release/audit_rosdistro.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml kinetic``
 
   * If it's failing on specific architectures, ticket it upstream and blacklist it in the config with a cross reference.
   * If it's failing on all platforms, rollback or remove the release from the distro.
