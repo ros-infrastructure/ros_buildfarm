@@ -73,6 +73,10 @@ class BuildFile(object):
                     self.targets[os_name][os_code_name][arch] = \
                         data['targets'][os_name][os_code_name][arch]
 
+        self.shared_ccache = False
+        if 'shared_ccache' in data:
+            self.shared_ccache = bool(data['shared_ccache'])
+
     def filter_distribution_files_by_tags(self, dist_files):
         res = []
 

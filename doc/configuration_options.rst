@@ -113,6 +113,10 @@ A set of options which can be used in any build file.
   platform the associated docker image is based on, therefore no targets can
   be specified.
 
+* ``shared_ccache``: when set to ``true``, the executing user's ccache directory
+  is shared in the build container, which is configured to use ccache where
+  appropriate (default: ``false``).
+
 Description of common options
 -----------------------------
 

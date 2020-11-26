@@ -714,6 +714,8 @@ def _get_binarydeb_job_config(
         'timeout_minutes': build_file.jenkins_binary_job_timeout,
 
         'credential_id': build_file.upload_credential_id,
+
+        'shared_ccache': build_file.shared_ccache,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
