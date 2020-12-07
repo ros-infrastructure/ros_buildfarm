@@ -167,14 +167,21 @@ class DocBuildFile(BuildFile):
         # user host and docroot have default of uploading to the repo machine
         # next to the debs
         self.upload_user = data.get('upload_user', 'jenkins-agent')
-        self.upload_host = data.get('upload_host', 'repo')
+        self.upload_host = data.get('upload_host', None)
         self.upload_root = data.get('upload_root', '/var/repos/docs')
+
+        self.upload_repository_url = None
         if self.documentation_type == DOC_TYPE_DOCKER:
-            assert 'upload_repository_url' in data
-            self.upload_repository_url = data['upload_repository_url']
+            self.upload_repository_url = data.get('upload_repository_url', None)
             self.upload_repository_branch = data.get(
                 'upload_repository_branch', 'gh-pages'
             )
+
+            self.doc_repository_branch = data.get('doc_repository_branch', None)
+
+        # Ensure that we have one, and only one, place to upload to
+        assert (self.upload_host is not None) ^ (self.upload_repository_url is not None)
+
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']
 

@@ -24,14 +24,20 @@
     'property_job-weight',
 ))@
   </properties>
+@[if upload_repository_url is not None]@
 @(SNIPPET(
   'scm_git',
    url=upload_repository_url,
    branch_name=upload_repository_branch,
-   git_ssh_credential_id=upload_credential_id,
+   git_ssh_credential_id=credential_id,
    relative_target_dir='upload_repository',
    refspec=None,
 ))@
+@[else]@
+@(SNIPPET(
+    'scm_null',
+))@
+@[end if]@
   <assignedNode>@(node_label)</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
@@ -81,14 +87,18 @@
 @{
 import os
 doc_repository_name = os.path.splitext(os.path.basename(doc_repository_url))[0]
+
+if doc_repository_branch is None:
+  doc_repository_branch = ''
+else:
+  doc_repository_branch = '--no-single-branch -b ' + doc_repository_branch
 }@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone %s"' % doc_repository_name,
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 %s $WORKSPACE/repositories/%s' % (doc_repository_url, doc_repository_name),
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 %s %s $WORKSPACE/repositories/%s' % (doc_repository_url, doc_repository_branch, doc_repository_name),
         'git -C $WORKSPACE/repositories/%s log -n 1' % doc_repository_name,
-        'rm -fr $WORKSPACE/repositories/%s/.git' % doc_repository_name,
         'echo "# END SECTION"',
     ]),
 ))@
@@ -123,6 +133,22 @@ doc_repository_name = os.path.splitext(os.path.basename(doc_repository_url))[0]
         'echo "# END SECTION"',
     ]),
 ))@
+@[if upload_host is not None]@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'if [ -d "$WORKSPACE/repositories/%s/build/html" ]; then' % (doc_repository_name),
+        '  echo "# BEGIN SECTION: rsync API documentation to server"',
+        '  ssh %s@%s "mkdir -p %s"' %
+          (upload_user, upload_host, os.path.join(upload_root, 'build', 'html')),
+        '  cd $WORKSPACE/repositories/%s/build' % (doc_repository_name),
+        '  rsync -e ssh --stats -r --delete html %s@%s:%s' % \
+          (upload_user, upload_host, os.path.join(upload_root, 'build/html')),
+        '  echo "# END SECTION"',
+        'fi',
+    ]),
+))@
+@[end if]@
 @[end for]@
   </builders>
   <publishers>
@@ -132,10 +158,12 @@ doc_repository_name = os.path.splitext(os.path.basename(doc_repository_url))[0]
     dynamic_recipients=[],
     send_to_individuals=False,
 ))@
+@[if upload_repository_url is not None]@
 @(SNIPPET(
     'publisher_publish-over-git',
     branch=upload_repository_branch
 ))@
+@[end if]@
   </publishers>
   <buildWrappers>
 @[if timeout_minutes is not None]@

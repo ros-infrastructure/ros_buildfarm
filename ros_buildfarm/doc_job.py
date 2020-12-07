@@ -427,6 +427,12 @@ def _get_doc_independent_job_config(
         'notify_emails': build_file.notify_emails,
 
         'timeout_minutes': build_file.jenkins_job_timeout,
+
+        'upload_user': build_file.upload_user,
+        'upload_host': build_file.upload_host,
+        'upload_root': build_file.upload_root,
+
+        'credential_id': build_file.upload_credential_id
     }
 
     if build_file.documentation_type == 'make_target':
@@ -434,17 +440,13 @@ def _get_doc_independent_job_config(
         job_data.update({
             'install_apt_packages': build_file.install_apt_packages,
             'install_pip_packages': build_file.install_pip_packages,
-            'upload_user': build_file.upload_user,
-            'upload_host': build_file.upload_host,
-            'upload_root': build_file.upload_root,
-            'credential_id': build_file.upload_credential_id
         })
     elif build_file.documentation_type == 'docker_build':
         template_name = 'doc/doc_independent_docker_job.xml.em'
         job_data.update({
+            'doc_repository_branch': build_file.doc_repository_branch,
             'upload_repository_url': build_file.upload_repository_url,
             'upload_repository_branch': build_file.upload_repository_branch,
-            'upload_credential_id': build_file.upload_credential_id,
         })
     else:
         raise JobValidationError(
