@@ -432,7 +432,7 @@ def _get_doc_independent_job_config(
         'upload_host': build_file.upload_host,
         'upload_root': build_file.upload_root,
 
-        'credential_id': build_file.upload_credential_id
+        'upload_credential_id': build_file.upload_credential_id
     }
 
     if build_file.documentation_type == 'make_target':

@@ -179,6 +179,12 @@ class DocBuildFile(BuildFile):
 
             self.doc_repository_branch = data.get('doc_repository_branch', None)
 
+        # If neither upload location is specified, fall back to a default of
+        # an upload_host of 'repo', which is valid for the publish-over-ssh
+        # configuration.
+        if self.upload_host is None and self.upload_repository_url is None:
+            self.upload_host = 'repo'
+
         # Ensure that we have one, and only one, place to upload to
         assert (self.upload_host is not None) ^ (self.upload_repository_url is not None)
 

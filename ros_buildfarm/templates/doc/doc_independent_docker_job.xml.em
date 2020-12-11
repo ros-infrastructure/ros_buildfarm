@@ -29,7 +29,7 @@
   'scm_git',
    url=upload_repository_url,
    branch_name=upload_repository_branch,
-   git_ssh_credential_id=credential_id,
+   git_ssh_credential_id=upload_credential_id,
    relative_target_dir='upload_repository',
    refspec=None,
 ))@

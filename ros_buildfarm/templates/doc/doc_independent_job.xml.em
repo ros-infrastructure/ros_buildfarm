@@ -163,7 +163,7 @@ repo_name = os.path.splitext(os.path.basename(repo_url))[0]
 ))@
 @(SNIPPET(
     'build-wrapper_ssh-agent',
-    credential_ids=[credential_id],
+    credential_ids=[upload_credential_id],
 ))@
   </buildWrappers>
 </project>
