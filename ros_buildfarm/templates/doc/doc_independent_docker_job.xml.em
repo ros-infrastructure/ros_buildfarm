@@ -89,15 +89,15 @@ import os
 doc_repository_name = os.path.splitext(os.path.basename(doc_repository_url))[0]
 
 if doc_repository_branch is None:
-  doc_repository_branch = ''
+  repo_branch_arg = ''
 else:
-  doc_repository_branch = '--no-single-branch -b ' + doc_repository_branch
+  repo_branch_arg = '--no-single-branch -b ' + doc_repository_branch
 }@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone %s"' % doc_repository_name,
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 %s %s $WORKSPACE/repositories/%s' % (doc_repository_url, doc_repository_branch, doc_repository_name),
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 %s %s $WORKSPACE/repositories/%s' % (doc_repository_url, repo_branch_arg, doc_repository_name),
         'git -C $WORKSPACE/repositories/%s log -n 1' % doc_repository_name,
         'echo "# END SECTION"',
     ]),
@@ -137,11 +137,11 @@ else:
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'if [ -d "$WORKSPACE/repositories/%s/build/html" ]; then' % (doc_repository_name),
+        'if [ -d "$WORKSPACE/repositories/%s/build/html" ]; then' % doc_repository_name,
         '  echo "# BEGIN SECTION: rsync API documentation to server"',
         '  ssh %s@%s "mkdir -p %s"' %
           (upload_user, upload_host, os.path.join(upload_root, 'build', 'html')),
-        '  cd $WORKSPACE/repositories/%s/build' % (doc_repository_name),
+        '  cd $WORKSPACE/repositories/%s/build' % doc_repository_name,
         '  rsync -e ssh --stats -r --delete html %s@%s:%s' % \
           (upload_user, upload_host, os.path.join(upload_root, 'build/html')),
         '  echo "# END SECTION"',
