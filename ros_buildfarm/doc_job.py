@@ -444,7 +444,6 @@ def _get_doc_independent_job_config(
     elif build_file.documentation_type == 'docker_build':
         template_name = 'doc/doc_independent_docker_job.xml.em'
         job_data.update({
-            'doc_repository_branch': build_file.doc_repository_branch,
             'upload_repository_url': build_file.upload_repository_url,
             'upload_repository_branch': build_file.upload_repository_branch,
         })

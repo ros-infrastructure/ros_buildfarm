@@ -83,15 +83,15 @@
     'builder_shell_key-files',
     script_generating_key_files=script_generating_key_files,
 ))@
-@[for doc_repository_url in doc_repositories]@
+@[for doc_repository_url,branch in doc_repositories.items()]@
 @{
 import os
 doc_repository_name = os.path.splitext(os.path.basename(doc_repository_url))[0]
 
-if doc_repository_branch is None:
+if not branch:
   repo_branch_arg = ''
 else:
-  repo_branch_arg = '--no-single-branch -b ' + doc_repository_branch
+  repo_branch_arg = '--no-single-branch -b ' + branch
 }@
 @(SNIPPET(
     'builder_shell',

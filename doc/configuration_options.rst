@@ -348,8 +348,17 @@ The following options are valid in version ``2`` (beside the generic options):
     to configure the repositories. See *doc* jobs documentation to learn
     about the expected Dockerfile structure.
 
-* ``doc_repositories``: a list of repository URLs (used when the
-  ``documentation_type`` is set to ``make_target`` or ``docker_build``).
+* ``doc_repositories``: a list of repository URLs, or a dictionary of repository
+  URLs and branches (used when the ``documentation_type`` is set to ``make_target``
+  or ``docker_build``).  When the list form is used, the default branch from each
+  repository is always used.  When the dictionary form is used, it should have
+  the following structure:
+
+::
+   repo_name:
+     url: <url_to_doc_repository>
+     branch: <branch_name_to_use>
+
 * ``install_apt_packages``: a list of packages to be installed with apt (only
   allowed when the ``documentation_type`` is set to ``make_target``).
 * ``install_pip_packages``: a list of packages to be installed with pip (only

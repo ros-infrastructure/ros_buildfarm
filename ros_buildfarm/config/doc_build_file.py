@@ -74,10 +74,22 @@ class DocBuildFile(BuildFile):
             self.canonical_base_url = data['canonical_base_url']
             assert not self.canonical_base_url or is_rosdoc_type
 
-        self.doc_repositories = []
+        self.doc_repositories = {}
         if 'doc_repositories' in data:
-            self.doc_repositories = data['doc_repositories']
-            assert isinstance(self.doc_repositories, list)
+            doc_repos = data['doc_repositories']
+            if isinstance(doc_repos, list):
+                for url in doc_repos:
+                    self.doc_repositories[url] = ''
+            elif isinstance(doc_repos, dict):
+                for repo in doc_repos:
+                    assert 'url' in doc_repos[repo]
+                    url = doc_repos[repo]['url']
+                    if 'branch' in doc_repos[repo]:
+                        self.doc_repositories[url] = doc_repos[repo]['branch']
+                    else:
+                        self.doc_repositories[url] = ''
+            else:
+                assert isinstance(doc_repos, list) or isinstance(doc_repos, dict)
 
         # doc_repositories can only be used with make_target and docker_build
         # doc types
@@ -176,8 +188,6 @@ class DocBuildFile(BuildFile):
             self.upload_repository_branch = data.get(
                 'upload_repository_branch', 'gh-pages'
             )
-
-            self.doc_repository_branch = data.get('doc_repository_branch', None)
 
         # If neither upload location is specified, fall back to a default of
         # an upload_host of 'repo', which is valid for the publish-over-ssh
