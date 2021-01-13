@@ -63,6 +63,9 @@ RUN echo "@today_str"
 
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y devscripts dpkg-dev python3-apt python3-catkin-pkg-modules python3-empy python3-rosdistro-modules python3-yaml
 
+# Workaround for focal armhf certificate rehash issue
+RUN . /etc/os-release && test "$VERSION_ID" = "20.04" && test "$(uname -m)" = "armv7l" && c_rehash || true
+
 # always invalidate to actually have the latest apt repo state
 RUN echo "@now_str"
 RUN python3 -u /tmp/wrapper_scripts/apt.py update
