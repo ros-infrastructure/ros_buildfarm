@@ -136,7 +136,6 @@ doc_repository_name = os.path.splitext(os.path.basename(doc_repository_url))[0]
         'fi',
     ]),
 ))@
-
   </builders>
   <publishers>
 @(SNIPPET(
