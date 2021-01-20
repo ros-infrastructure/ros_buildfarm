@@ -2,16 +2,16 @@
 package_manager = 'dnf'
 python3_pkgversion = '3'
 
-if os_name in ['centos', 'rhel'] and os_code_name.isnumeric() and int(os_code_name) < 8:
+if os_name in ['rhel'] and os_code_name.isnumeric() and int(os_code_name) < 8:
     package_manager = 'yum'
     python3_pkgversion = '36'
 }@
 # generated from @template_name
 
-@[if os_name in ['centos', 'rhel']]@
+@[if os_name in ['rhel']]@
 FROM centos:@(os_code_name)
 
-# Enable EPEL on CentOS/RHEL
+# Enable EPEL on RHEL
 RUN @(package_manager) install -y epel-release
 @[else]@
 FROM @(os_name):@(os_code_name)

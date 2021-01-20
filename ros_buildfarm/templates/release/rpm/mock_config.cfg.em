@@ -32,7 +32,7 @@ config_opts['macros']['%__cmake3_in_source_build'] = '1'
 # Required for running mock in Docker
 config_opts['use_nspawn'] = False
 
-@[if os_name in ['centos', 'rhel'] and os_code_name == '7']@
+@[if os_name in ['rhel'] and os_code_name == '7']@
 # Inject g++ 8 into RHEL 7 builds
 config_opts['chroot_setup_cmd'] += ' devtoolset-8-gcc-c++ devtoolset-8-make-nonblocking'
 config_opts['macros']['%_buildshell'] = '/usr/bin/scl enable devtoolset-8 -- /bin/sh'
