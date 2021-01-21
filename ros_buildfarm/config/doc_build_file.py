@@ -74,10 +74,22 @@ class DocBuildFile(BuildFile):
             self.canonical_base_url = data['canonical_base_url']
             assert not self.canonical_base_url or is_rosdoc_type
 
-        self.doc_repositories = []
+        self.doc_repositories = {}
         if 'doc_repositories' in data:
-            self.doc_repositories = data['doc_repositories']
-            assert isinstance(self.doc_repositories, list)
+            doc_repos = data['doc_repositories']
+            if isinstance(doc_repos, list):
+                for url in doc_repos:
+                    self.doc_repositories[url] = ''
+            elif isinstance(doc_repos, dict):
+                for repo in doc_repos:
+                    assert 'url' in doc_repos[repo]
+                    url = doc_repos[repo]['url']
+                    if 'branch' in doc_repos[repo]:
+                        self.doc_repositories[url] = doc_repos[repo]['branch']
+                    else:
+                        self.doc_repositories[url] = ''
+            else:
+                assert isinstance(doc_repos, list) or isinstance(doc_repos, dict)
 
         # doc_repositories can only be used with make_target and docker_build
         # doc types
@@ -167,14 +179,25 @@ class DocBuildFile(BuildFile):
         # user host and docroot have default of uploading to the repo machine
         # next to the debs
         self.upload_user = data.get('upload_user', 'jenkins-agent')
-        self.upload_host = data.get('upload_host', 'repo')
+        self.upload_host = data.get('upload_host', None)
         self.upload_root = data.get('upload_root', '/var/repos/docs')
+
+        self.upload_repository_url = None
         if self.documentation_type == DOC_TYPE_DOCKER:
-            assert 'upload_repository_url' in data
-            self.upload_repository_url = data['upload_repository_url']
+            self.upload_repository_url = data.get('upload_repository_url', None)
             self.upload_repository_branch = data.get(
                 'upload_repository_branch', 'gh-pages'
             )
+
+        # If neither upload location is specified, fall back to a default of
+        # an upload_host of 'repo', which is valid for the publish-over-ssh
+        # configuration.
+        if self.upload_host is None and self.upload_repository_url is None:
+            self.upload_host = 'repo'
+
+        # Ensure that we have one, and only one, place to upload to
+        assert (self.upload_host is not None) ^ (self.upload_repository_url is not None)
+
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']
 

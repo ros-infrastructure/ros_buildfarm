@@ -61,18 +61,22 @@
     'builder_shell',
     script='rm -fr repositories',
 ))@
-@[for repo_url in doc_repositories]@
+@[for repo_url,branch in doc_repositories.items()]@
 @{
 import os
 repo_name = os.path.splitext(os.path.basename(repo_url))[0]
+
+if not branch:
+  repo_branch_arg = ''
+else:
+  repo_branch_arg = '--no-single-branch -b ' + branch
 }@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone %s"' % repo_name,
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 %s $WORKSPACE/repositories/%s' % (repo_url, repo_name),
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 %s %s $WORKSPACE/repositories/%s' % (repo_url, repo_branch_arg, repo_name),
         'git -C $WORKSPACE/repositories/%s log -n 1' % repo_name,
-        'rm -fr $WORKSPACE/repositories/%s/.git' % repo_name,
         'echo "# END SECTION"',
     ]),
 ))@
@@ -163,7 +167,7 @@ repo_name = os.path.splitext(os.path.basename(repo_url))[0]
 ))@
 @(SNIPPET(
     'build-wrapper_ssh-agent',
-    credential_ids=[credential_id],
+    credential_ids=[upload_credential_id],
 ))@
   </buildWrappers>
 </project>
