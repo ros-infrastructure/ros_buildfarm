@@ -150,6 +150,16 @@ else:
 ))@
 @[end if]@
 @[end for]@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: Clean up to save disk space on agents"',
+        '# ensure to have write permission before trying to delete the folder',
+        'chmod -R u+w $WORKSPACE/repositories',
+        'rm -fr $WORKSPACE/repositories',
+        'echo "# END SECTION"',
+    ]),
+))@
   </builders>
   <publishers>
 @(SNIPPET(
