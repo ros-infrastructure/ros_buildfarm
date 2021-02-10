@@ -151,6 +151,7 @@ def main(argv=sys.argv[1:]):
         # compare hashes to determine if documentation needs to be regenerated
         current_hashes = {}
         current_hashes['ros_buildfarm'] = 2  # increase to retrigger doc jobs
+        # TODO(wjwwood): update for rosdoc2
         current_hashes['rosdoc_lite'] = get_git_hash(args.rosdoc_lite_dir)
         current_hashes['catkin-sphinx'] = get_git_hash(args.catkin_sphinx_dir)
         repo_dir = os.path.join(
@@ -250,35 +251,36 @@ def main(argv=sys.argv[1:]):
             args.output_dir, ['deps', 'metapackage_deps'])
 
     # generate changelog html from rst
-    package_names_with_changelogs = set([])
-    with Scope('SUBSECTION', 'generate changelog html from rst'):
-        for pkg_path, pkg in pkgs.items():
-            abs_pkg_path = os.path.join(source_space, pkg_path)
-            assert os.path.exists(os.path.join(abs_pkg_path, 'package.xml'))
-            changelog_file = os.path.join(abs_pkg_path, 'CHANGELOG.rst')
-            if os.path.exists(changelog_file):
-                print(("Package '%s' contains a CHANGELOG.rst, generating " +
-                       "html") % pkg.name)
-                package_names_with_changelogs.add(pkg.name)
+    # TODO(wjwwood): figure out how to integrate this into rosdoc2 directly...
+    # package_names_with_changelogs = set([])
+    # with Scope('SUBSECTION', 'generate changelog html from rst'):
+    #     for pkg_path, pkg in pkgs.items():
+    #         abs_pkg_path = os.path.join(source_space, pkg_path)
+    #         assert os.path.exists(os.path.join(abs_pkg_path, 'package.xml'))
+    #         changelog_file = os.path.join(abs_pkg_path, 'CHANGELOG.rst')
+    #         if os.path.exists(changelog_file):
+    #             print(("Package '%s' contains a CHANGELOG.rst, generating " +
+    #                    "html") % pkg.name)
+    #             package_names_with_changelogs.add(pkg.name)
 
-                with open(changelog_file, 'r') as h:
-                    rst_code = h.read()
-                from docutils.core import publish_string
-                html_code = publish_string(rst_code, writer_name='html')
-                html_code = html_code.decode()
+    #             with open(changelog_file, 'r') as h:
+    #                 rst_code = h.read()
+    #             from docutils.core import publish_string
+    #             html_code = publish_string(rst_code, writer_name='html')
+    #             html_code = html_code.decode()
 
-                # strip system message from html output
-                open_tag = re.escape('<div class="first system-message">')
-                close_tag = re.escape('</div>')
-                pattern = '(' + open_tag + '.+?' + close_tag + ')'
-                html_code = re.sub(pattern, '', html_code, flags=re.DOTALL)
+    #             # strip system message from html output
+    #             open_tag = re.escape('<div class="first system-message">')
+    #             close_tag = re.escape('</div>')
+    #             pattern = '(' + open_tag + '.+?' + close_tag + ')'
+    #             html_code = re.sub(pattern, '', html_code, flags=re.DOTALL)
 
-                pkg_changelog_doc_path = os.path.join(
-                    args.output_dir, 'changelogs', pkg.name)
-                os.makedirs(pkg_changelog_doc_path)
-                with open(os.path.join(
-                        pkg_changelog_doc_path, 'changelog.html'), 'w') as h:
-                    h.write(html_code)
+    #             pkg_changelog_doc_path = os.path.join(
+    #                 args.output_dir, 'changelogs', pkg.name)
+    #             os.makedirs(pkg_changelog_doc_path)
+    #             with open(os.path.join(
+    #                     pkg_changelog_doc_path, 'changelog.html'), 'w') as h:
+    #                 h.write(html_code)
 
     ordered_pkg_tuples = topological_order_packages(pkgs)
 
