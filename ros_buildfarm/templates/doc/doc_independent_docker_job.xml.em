@@ -138,12 +138,12 @@ else:
     'builder_shell',
     script='\n'.join([
         'if [ -d "$WORKSPACE/repositories/%s/build/html" ]; then' % doc_repository_name,
-        '  echo "# BEGIN SECTION: rsync API documentation to server"',
+        '  echo "# BEGIN SECTION: rsync documentation to server"',
         '  ssh %s@%s "mkdir -p %s"' %
-          (upload_user, upload_host, os.path.join(upload_root, 'build', 'html')),
+          (upload_user, upload_host, upload_root),
         '  cd $WORKSPACE/repositories/%s/build' % doc_repository_name,
-        '  rsync -e ssh --stats -r --delete html %s@%s:%s' % \
-          (upload_user, upload_host, os.path.join(upload_root, 'build/html')),
+        '  rsync -e ssh --stats -r --delete html/ %s@%s:%s' % \
+          (upload_user, upload_host, upload_root),
         '  echo "# END SECTION"',
         'fi',
     ]),
@@ -185,5 +185,11 @@ else:
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
+@[if upload_host is not None]@
+@(SNIPPET(
+    'build-wrapper_ssh-agent',
+    credential_ids=[upload_credential_id],
+))@
+@[end if]@
   </buildWrappers>
 </project>
