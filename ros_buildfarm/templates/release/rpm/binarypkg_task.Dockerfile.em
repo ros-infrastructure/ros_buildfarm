@@ -2,7 +2,7 @@
 package_manager = 'dnf'
 python3_pkgversion = '3'
 
-if os_name in ['rhel'] and os_code_name.isnumeric() and int(os_code_name) < 8:
+if os_name == 'rhel' and os_code_name.isnumeric() and int(os_code_name) < 8:
     package_manager = 'yum'
     python3_pkgversion = '36'
 }@
