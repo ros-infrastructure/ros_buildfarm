@@ -1,0 +1,43 @@
+---
+name: ros_buildfarm status pages
+description: Execute a ROS buildfarm status pages job
+inputs:
+  config_url:
+    description: URL of the buildfarm configuration index
+    required: true
+    default: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+  config_name:
+    description: Name of the release configuration
+    required: true
+    default: default
+  ros_distro:
+    description: ROS distribution name
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - id: ros_buildfarm_job
+      shell: bash
+      run: |
+        echo ::group::Blocked releases
+        pushd $(mktemp -d)
+        ln -s ${{github.workspace}} ros_buildfarm
+        build_blocked_releases_page.py ${{inputs.config_url}} ${{inputs.ros_distro}}
+        echo ::endgroup::
+
+        echo ::group::Release compare
+        build_release_compare_page.py ${{inputs.config_url}} kinetic melodic
+        echo ::endgroup::
+
+        echo ::group::Release status
+        build_release_status_page.py ${{inputs.config_url}} ${{inputs.ros_distro}} ${{inputs.config_name}}
+        echo ::endgroup::
+
+        echo ::group::Repos status
+        build_repos_status_page.py ${{inputs.ros_distro}} http://packages.ros.org/ros-shadow-fixed/ubuntu http://packages.ros.org/ros/ubuntu --os-code-name-and-arch-tuples bionic:source bionic:amd64 bionic:arm64 bionic:armhf bionic:i386 --cache-dir ./debian_repo_cache --output-name ${{inputs.ros_distro}}_bionic
+        echo ::endgroup::
+
+        echo ::group::Show results
+        ls -al
+        echo ::endgroup::

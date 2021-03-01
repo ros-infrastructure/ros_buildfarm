@@ -1,0 +1,51 @@
+---
+name: ros_buildfarm release
+description: Execute a ROS buildfarm release job
+inputs:
+  config_url:
+    description: URL of the buildfarm configuration index
+    required: true
+    default: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+  config_name:
+    description: Name of the release configuration
+    required: true
+    default: default
+  ros_distro:
+    description: ROS distribution name
+    required: true
+  os_name:
+    description: Operating system name
+    required: true
+    default: ubuntu
+  os_code_name:
+    description: Operating system version name
+    required: true
+  arch:
+    description: Operating system architecture
+    required: true
+    default: amd64
+  pkg_name:
+    description: Name of the package to build source and binary packages for
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - id: ros_buildfarm_job
+      shell: bash
+      run: |
+        echo ::group::Generate job
+        pushd $(mktemp -d)
+        mkdir -p source binary
+        ln -s ${{github.workspace}} source/ros_buildfarm
+        ln -s ${{github.workspace}} binary/ros_buildfarm
+        generate_release_script.py \
+          ${{inputs.config_url}} ${{inputs.ros_distro}} ${{inputs.config_name}} \
+          ${{inputs.pkg_name}} \
+          ${{inputs.os_name}} ${{inputs.os_code_name}} ${{inputs.arch}} \
+          > job.sh
+        echo ::endgroup::
+
+        echo ::group::Run job
+        sh job.sh -y
+        echo ::endgroup::

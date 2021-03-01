@@ -1,0 +1,8 @@
+pyparsing == 2.4.7 ; python_version < '3.5'
+pyparsing ; python_version >= '3.5'
+
+colcon-core ; python_version >= '3.5'
+colcon-test-result ; python_version >= '3.5'
+
+PyYAML == 5.1.2 ; python_version < '3.5'
+PyYAML ; python_version >= '3.5'
