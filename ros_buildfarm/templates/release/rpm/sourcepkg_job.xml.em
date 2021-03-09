@@ -129,7 +129,6 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'export TZ="%s"' % timezone,
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
-        ' --pulp-base-url http://repo:24817' +
         ' --pulp-resource-record sourcepkg/upload_record.txt' +
         ' sourcepkg/*.src.rpm',
         'echo "# END SECTION"',
@@ -183,9 +182,9 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
   </publishers>
   <buildWrappers>
 @(SNIPPET(
-    'credentials_binding_plugin',
+    'pulp_credentials',
     credential_id=credential_id,
-    env_var_prefix='PULP',
+    dest_credential_id=dest_credential_id,
 ))@
 @[if timeout_minutes is not None]@
 @(SNIPPET(

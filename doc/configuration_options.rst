@@ -166,6 +166,12 @@ Description of common options
   master which is commonly used to upload artifacts to another host.
   This credential id is set in the buildfarm_deployment.
 
+* **Upload destination credential ID**: the ID of the credential entry managed
+  on the Jenkins master which contains the destination information used to
+  upload artifacts to another host.
+  This credential id is set in the buildfarm_deployment.
+  At present, this value is only used for RPM jobs.
+
 
 Specific options in release build files
 ---------------------------------------
