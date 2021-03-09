@@ -105,7 +105,6 @@
         'echo "# BEGIN SECTION: sync packages to testing repos"',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/sync_repo.py' +
-        ' --pulp-base-url http://repo:24817' +
         ' --distribution-source-expression "^ros-building-%s-%s-(SRPMS|%s(-debug)?)$"' % (os_name, os_code_name, arch) +
         ' --distribution-dest-expression "^ros-testing-%s-%s-\\1$"' % (os_name, os_code_name) +
         ' --package-name-expression "^ros-%s-.*"' % rosdistro_name +
@@ -124,9 +123,20 @@
   </publishers>
   <buildWrappers>
 @(SNIPPET(
-    'credentials_binding_plugin',
-    credential_id=credential_id,
-    env_var_prefix='PULP',
+    'credential_bindings',
+    bindings=[
+        {
+            'id': credential_id,
+            'type': 'user-pass',
+            'user_var': 'PULP_USERNAME',
+            'pass_var': 'PULP_PASSWORD',
+        },
+        {
+            'id': dest_credential_id,
+            'type': 'string',
+            'var': 'PULP_BASE_URL',
+        },
+    ],
 ))@
 @(SNIPPET(
     'build-wrapper_timestamper',

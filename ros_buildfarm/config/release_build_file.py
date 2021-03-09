@@ -100,6 +100,10 @@ class ReleaseBuildFile(BuildFile):
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']
 
+        self.upload_destination_credential_id = None
+        if 'upload_destination_credential_id' in data:
+            self.upload_destination_credential_id = data['upload_destination_credential_id']
+
     def filter_packages(self, package_names):
         res = set(package_names)
         if self.package_whitelist:

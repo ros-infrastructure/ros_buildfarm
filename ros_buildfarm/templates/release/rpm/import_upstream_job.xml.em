@@ -67,7 +67,6 @@
         'echo "# BEGIN SECTION: mirror repositories to pulp"',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/mirror_repo.py' +
-        ' --pulp-base-url http://repo:24817' +
         ' --remote-source-expression $REMOTE_SOURCE_EXPRESSION' +
         ' --distribution-dest-expression "^\\g<0>$"',
         'echo "# END SECTION"',
@@ -76,7 +75,6 @@
         'if [ "$EXECUTE_IMPORT" != "true" ]; then DRY_RUN_ARG="--dry-run"; fi',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/sync_repo.py' +
-        ' --pulp-base-url http://repo:24817' +
         ' --distribution-source-expression $REMOTE_SOURCE_EXPRESSION' +
         ' --distribution-dest-expression $DISTRIBUTION_DEST_EXPRESSION' +
         ' $DRY_RUN_ARG',
@@ -94,9 +92,20 @@
   </publishers>
   <buildWrappers>
 @(SNIPPET(
-    'credentials_binding_plugin',
-    credential_id=credential_id,
-    env_var_prefix='PULP',
+    'credential_bindings',
+    bindings=[
+        {
+            'id': credential_id,
+            'type': 'user-pass',
+            'user_var': 'PULP_USERNAME',
+            'pass_var': 'PULP_PASSWORD',
+        },
+        {
+            'id': dest_credential_id,
+            'type': 'string',
+            'var': 'PULP_BASE_URL',
+        },
+    ],
 ))@
 @(SNIPPET(
     'build-wrapper_timestamper',

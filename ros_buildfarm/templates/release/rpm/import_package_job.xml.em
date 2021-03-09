@@ -73,7 +73,6 @@
         'if [ "$INVALIDATE_EXPRESSION" != "" ]; then INVALIDATE_EXPRESSION_ARG="--invalidate-expression $INVALIDATE_EXPRESSION"; fi',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/import_package.py' +
-        ' --pulp-base-url http://repo:24817' +
         ' --pulp-distribution-name $DISTRIBUTION_NAME' +
         ' $PULP_RESOURCES' +
         ' $INVALIDATE_ARG' +
@@ -97,9 +96,20 @@
   </publishers>
   <buildWrappers>
 @(SNIPPET(
-    'credentials_binding_plugin',
-    credential_id=credential_id,
-    env_var_prefix='PULP',
+    'credential_bindings',
+    bindings=[
+        {
+            'id': credential_id,
+            'type': 'user-pass',
+            'user_var': 'PULP_USERNAME',
+            'pass_var': 'PULP_PASSWORD',
+        },
+        {
+            'id': dest_credential_id,
+            'type': 'string',
+            'var': 'PULP_BASE_URL',
+        },
+    ],
 ))@
 @(SNIPPET(
     'build-wrapper_timestamper',
