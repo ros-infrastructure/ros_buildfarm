@@ -96,20 +96,9 @@
   </publishers>
   <buildWrappers>
 @(SNIPPET(
-    'credential_bindings',
-    bindings=[
-        {
-            'id': credential_id,
-            'type': 'user-pass',
-            'user_var': 'PULP_USERNAME',
-            'pass_var': 'PULP_PASSWORD',
-        },
-        {
-            'id': dest_credential_id,
-            'type': 'string',
-            'var': 'PULP_BASE_URL',
-        },
-    ],
+    'pulp_credentials',
+    credential_id=credential_id,
+    dest_credential_id=dest_credential_id,
 ))@
 @(SNIPPET(
     'build-wrapper_timestamper',
