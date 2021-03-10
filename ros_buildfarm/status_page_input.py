@@ -44,12 +44,16 @@ def get_rosdistro_info(dist, build_file):
     cached_pkgs = get_package_manifests(dist)
 
     filtered_pkg_names = build_file.filter_packages(pkg_names)
-    explicitly_ignored_pkg_names = set(pkg_names) - set(filtered_pkg_names)
+    explicitly_ignored_without_recursion_pkg_names = \
+        set(pkg_names) & set(build_file.package_ignore_list)
+    explicitly_ignored_pkg_names = \
+        set(pkg_names) - set(filtered_pkg_names) - explicitly_ignored_without_recursion_pkg_names
     if explicitly_ignored_pkg_names:
         implicitly_ignored_pkg_names = get_implicitly_ignored_package_names(
             cached_pkgs, explicitly_ignored_pkg_names)
         filtered_pkg_names = \
             set(filtered_pkg_names) - implicitly_ignored_pkg_names
+    filtered_pkg_names = set(filtered_pkg_names) - explicitly_ignored_without_recursion_pkg_names
 
     packages = {}
     for pkg_name in pkg_names:

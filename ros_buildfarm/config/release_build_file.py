@@ -113,4 +113,5 @@ class ReleaseBuildFile(BuildFile):
         if self.package_whitelist:
             res &= set(self.package_whitelist)
         res -= set(self.package_blacklist)
+        res -= set(self.package_ignore_list)
         return res
