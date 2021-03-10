@@ -87,7 +87,10 @@ def configure_release_jobs(
     pkg_names = dist_file.release_packages.keys()
     cached_pkgs = _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names)
     filtered_pkg_names = build_file.filter_packages(pkg_names)
-    explicitly_ignored_pkg_names = set(pkg_names) - set(filtered_pkg_names)
+    explicitly_ignored_without_recursion_pkg_names = \
+        set(pkg_names) & set(build_file.package_ignore_list)
+    explicitly_ignored_pkg_names = \
+        set(pkg_names) - set(filtered_pkg_names) - explicitly_ignored_without_recursion_pkg_names
     if explicitly_ignored_pkg_names:
         print(('The following packages are being %s because of ' +
                'white-/blacklisting:') %
@@ -105,6 +108,14 @@ def configure_release_jobs(
                 print('  -', pkg_name)
             filtered_pkg_names = \
                 set(filtered_pkg_names) - implicitly_ignored_pkg_names
+
+    if explicitly_ignored_without_recursion_pkg_names:
+        print(('The following packages are being %s because of ' +
+               'ignore-listing:') %
+              ('ignored' if build_file.skip_ignored_packages else 'disabled'))
+        for pkg_name in sorted(explicitly_ignored_without_recursion_pkg_names):
+            print('  -', pkg_name)
+        filtered_pkg_names.difference_update(explicitly_ignored_without_recursion_pkg_names)
 
     # all further configuration will be handled by either the Jenkins API
     # or by a generated groovy script
@@ -499,6 +510,7 @@ def configure_release_job(
             print(("Skipping binary jobs for package '%s' because it is not " +
                    "yet in the rosdistro cache") % pkg_name, file=sys.stderr)
             return source_job_names, binary_job_names, job_configs
+        dependency_names.difference_update(build_file.package_ignore_list)
 
     # binarydeb jobs
     for arch in build_file.targets[os_name][os_code_name]:
