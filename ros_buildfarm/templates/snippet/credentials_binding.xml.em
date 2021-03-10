@@ -1,4 +1,4 @@
-    <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper plugin="credentials-binding@@1.20">
+    <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper plugin="credentials-binding@@1.24">
       <bindings>
 @[for binding in bindings]@
 @[if binding['type'] == 'user-pass']@
