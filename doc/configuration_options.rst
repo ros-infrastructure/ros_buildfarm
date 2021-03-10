@@ -157,6 +157,13 @@ Description of common options
   The blacklist is applied after the whitelist which means if an item is in
   both lists it is being *excluded*.
 
+* **Package 'ignore' listing**: The process for blacklisting packages also
+  affects the recursive dependencies of those packages.
+  The ignore list does not carry on to downstream packages.
+  A package using this option will require all downstream dependencies to patch
+  away the dependency.
+  Like the blacklist, the ignore list is applied after the whitelist.
+
 * **Skip ignored packages / repositories**: by default jobs are still being
   generated for blacklisted (or not whitelisted) items but these jobs are
   disabled.

@@ -720,6 +720,7 @@ def filter_buildfile_packages_recursively(package_names, buildfile, rosdistro_na
     implicitly_ignored = get_implicitly_ignored_package_names(
         cached_pkgs, buildfile.package_blacklist)
     res -= implicitly_ignored
+    res.difference_update(buildfile.package_ignore_list)
     return res
 
 
