@@ -6,10 +6,6 @@ inputs:
     description: URL of the buildfarm configuration index
     required: true
     default: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
-  config_name:
-    description: Name of the release configuration
-    required: true
-    default: default
   ros_distro:
     description: ROS distribution name
     required: true
