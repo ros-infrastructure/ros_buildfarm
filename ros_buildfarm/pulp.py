@@ -78,9 +78,9 @@ class PulpPageIterator:
 
 class PulpRpmClient:
 
-    def __init__(
+    def __init__(  # noqa: D107
             self, base_url, username, password,
-            task_timeout=60.0, task_polling_interval=0.5):  # noqa: D107
+            task_timeout=60.0, task_polling_interval=0.5):
         self._task_timeout = task_timeout
         self._task_polling_interval = task_polling_interval
 
