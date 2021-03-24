@@ -1,0 +1,76 @@
+---
+name: ros_buildfarm ci
+description: Execute a ROS buildfarm CI job
+inputs:
+  config_url:
+    description: URL of the buildfarm configuration index
+    required: true
+    default: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+  config_name:
+    description: Name of the CI configuration
+    required: true
+    default: nightly-release
+  ros_distro:
+    description: ROS distribution name
+    required: true
+  os_name:
+    description: Operating system name
+    required: true
+    default: ubuntu
+  os_code_name:
+    description: Operating system version name
+    required: true
+  arch:
+    description: Operating system architecture
+    required: true
+    default: amd64
+  underlay_dirs:
+    description: Paths to directories to use as underlay workspaces (space-separated)
+    required: false
+  package_selection_args:
+    description: Package selection arguments to pass along to the build tool
+    required: false
+
+outputs:
+  test_result:
+    description: Return code from the test results
+    value: ${{steps.ros_buildfarm_job.outputs.test_result}}
+  install_dir:
+    description: Install directory from the processed workspace
+    value: ${{steps.ros_buildfarm_job.outputs.install_dir}}
+
+runs:
+  using: composite
+  steps:
+    - id: ros_buildfarm_job
+      shell: bash
+      run: |
+        echo ::group::Generate job
+        underlay_dirs_arg=""
+        if [[ "${{inputs.underlay_dirs}}" != "" ]]; then
+          underlay_dirs_arg="--underlay-source-path ${{inputs.underlay_dirs}}"
+        fi
+        package_selection_args_arg=""
+        if [[ "${{inputs.package_selection_args}}" != "" ]]; then
+          package_selection_args_arg="--package-selection-args ${{inputs.package_selection_args}}"
+        fi
+
+        pushd $(mktemp -d)
+        ln -s ${{github.workspace}} ros_buildfarm
+        generate_ci_script.py \
+          ${{inputs.config_url}} ${{inputs.ros_distro}} ${{inputs.config_name}} \
+          ${{inputs.os_name}} ${{inputs.os_code_name}} ${{inputs.arch}} \
+          ${underlay_dirs_arg} \
+          ${package_selection_args_arg} \
+          > job.sh
+        echo ::endgroup::
+
+        echo ::group::Run job
+        (. job.sh -y && echo ::set-output name=test_result::$test_result_RC && exit $test_result_RC)
+        echo ::endgroup::
+
+        echo ::group::Extract results
+        mkdir results
+        tar -xjf ros*-${{inputs.ros_distro}}-linux-${{inputs.os_code_name}}-${{inputs.arch}}-ci.tar.bz2 -C results
+        echo ::set-output name=install_dir::$(ls -d $PWD/results/ros*-linux)
+        echo ::endgroup::

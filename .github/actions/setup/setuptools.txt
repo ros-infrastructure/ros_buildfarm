@@ -1,0 +1,2 @@
+setuptools == 43.0.0 ; python_version < '3.5'
+setuptools ; python_version >= '3.5'

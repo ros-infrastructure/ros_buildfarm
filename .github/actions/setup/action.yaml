@@ -1,0 +1,22 @@
+---
+name: ros_buildfarm set up
+description: Set up dependencies for a ROS buildfarm job
+
+runs:
+  using: composite
+  steps:
+    - id: ros_buildfarm_set_up
+      shell: bash
+      run: |
+        export CATKIN_DIR=$(mktemp -d)
+        git clone https://github.com/ros/catkin.git -b noetic-devel $CATKIN_DIR
+        echo $CATKIN_DIR/bin >> $GITHUB_PATH
+        python3 -m pip install -U -r ${{github.action_path}}/setuptools.txt
+        python3 -m pip install -U empy
+        python -m pip install -U -r ${{github.action_path}}/setuptools.txt
+        python -m pip install -U -r ${{github.action_path}}/requirements.txt ${{github.workspace}}
+        echo $HOME/.local/bin >> $GITHUB_PATH
+
+        if [[ "${{github.head_ref}}" != "" ]]; then
+          echo "ROS_BUILDFARM_PULL_REQUEST_BRANCH=${{github.head_ref}}" >> $GITHUB_ENV
+        fi

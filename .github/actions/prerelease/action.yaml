@@ -1,0 +1,74 @@
+---
+name: ros_buildfarm prerelease
+description: Execute a ROS buildfarm prerelease job
+inputs:
+  config_url:
+    description: URL of the buildfarm configuration index
+    required: true
+    default: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+  config_name:
+    description: Name of the prerelease configuration
+    required: true
+    default: default
+  ros_distro:
+    description: ROS distribution name
+    required: true
+  os_name:
+    description: Operating system name
+    required: true
+    default: ubuntu
+  os_code_name:
+    description: Operating system version name
+    required: true
+  arch:
+    description: Operating system architecture
+    required: true
+    default: amd64
+  underlay_repos:
+    description: Names of package repositories to build and test in the underlay workspace
+    required: false
+  overlay_pkg:
+    description: Names of packages to build and test in the overlay workspace
+    required: false
+  source_dir:
+    description: Directory containing package sources to pre-populate the workspace
+    required: false
+
+outputs:
+  underlay_test_result:
+    description: Return code from the underlay test results
+    value: ${{steps.ros_buildfarm_job.outputs.underlay_test_result}}
+  overlay_test_result:
+    description: Return code from the overlay test results
+    value: ${{steps.ros_buildfarm_job.outputs.overlay_test_result}}
+
+runs:
+  using: composite
+  steps:
+    - id: ros_buildfarm_job
+      shell: bash
+      run: |
+        echo ::group::Generate job
+        overlay_pkg_arg=""
+        if [[ "${{inputs.overlay_pkg}}" != "" ]]; then
+          overlay_pkg_arg="--pkg ${{inputs.overlay_pkg}}"
+        fi
+
+        pushd $(mktemp -d)
+        ln -s ${{github.workspace}} ros_buildfarm
+        mkdir ws
+        if [[ "${{inputs.source_dir}}" != "" ]]; then
+          cp -a ${{inputs.source_dir}} ws/src
+        fi
+
+        generate_prerelease_script.py \
+          ${{inputs.config_url}} ${{inputs.ros_distro}} ${{inputs.config_name}} \
+          ${{inputs.os_name}} ${{inputs.os_code_name}} ${{inputs.arch}} \
+          ${{inputs.underlay_repos}} \
+          ${overlay_pkg_arg} \
+          --output-dir .
+        echo ::endgroup::
+
+        echo ::group::Run job
+        (. prerelease.sh -y && echo ::set-output name=underlay_test_result::$test_result_RC_underlay && echo ::set-output name=overlay_test_result::$test_result_RC_overlay && (exit $test_result_RC_underlay) && (exit $test_result_RC_overlay))
+        echo ::endgroup::
