@@ -1,0 +1,36 @@
+---
+name: ros_buildfarm audit
+description: Execute a ROS buildfarm audit jobs
+inputs:
+  config_url:
+    description: URL of the buildfarm configuration index
+    required: true
+    default: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+  ros_distro:
+    description: ROS distribution name
+    required: true
+  os_name:
+    description: Operating system name
+    required: true
+    default: ubuntu
+  os_code_name:
+    description: Operating system version name
+    required: true
+  arch:
+    description: Operating system architecture
+    required: true
+    default: amd64
+
+runs:
+  using: composite
+  steps:
+    - id: ros_buildfarm_job
+      shell: bash
+      run: |
+        echo ::group::Audit rosdistro
+        audit_rosdistro.py ${{inputs.config_url}} ${{inputs.ros_distro}} --return-zero
+        echo ::endgroup::
+
+        echo ::group::Check sync criteria
+        check_sync_criteria.py ${{inputs.config_url}} ${{inputs.ros_distro}} default ${{inputs.os_name}} ${{inputs.os_code_name}} ${{inputs.arch}}
+        echo ::endgroup::

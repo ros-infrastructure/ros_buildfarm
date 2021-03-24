@@ -1,0 +1,53 @@
+---
+name: ros_buildfarm doc
+description: Execute a ROS buildfarm doc job
+inputs:
+  config_url:
+    description: URL of the buildfarm configuration index
+    required: true
+    default: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+  config_name:
+    description: Name of the doc configuration
+    required: true
+    default: default
+  ros_distro:
+    description: ROS distribution name
+    required: true
+  os_name:
+    description: Operating system name
+    required: true
+    default: ubuntu
+  os_code_name:
+    description: Operating system version name
+    required: true
+  arch:
+    description: Operating system architecture
+    required: true
+    default: amd64
+  repo:
+    description: Name of the package repository to build
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - id: ros_buildfarm_job
+      shell: bash
+      run: |
+        echo ::group::Generate job
+        pushd $(mktemp -d)
+        ln -s ${{github.workspace}} ros_buildfarm
+        generate_doc_script.py \
+          ${{inputs.config_url}} ${{inputs.ros_distro}} ${{inputs.config_name}} \
+          ${{inputs.repo}} \
+          ${{inputs.os_name}} ${{inputs.os_code_name}} ${{inputs.arch}} \
+          > job.sh
+        echo ::endgroup::
+
+        echo ::group::Run job
+        sh job.sh -y
+        echo ::endgroup::
+
+        echo ::group::Show results
+        ls -alR generated_documentation/api_rosdoc
+        echo ::endgroup::

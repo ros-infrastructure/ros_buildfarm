@@ -1,0 +1,63 @@
+---
+name: ros_buildfarm devel
+description: Execute a ROS buildfarm devel job
+inputs:
+  config_url:
+    description: URL of the buildfarm configuration index
+    required: true
+    default: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+  config_name:
+    description: Name of the devel configuration
+    required: true
+    default: default
+  ros_distro:
+    description: ROS distribution name
+    required: true
+  os_name:
+    description: Operating system name
+    required: true
+    default: ubuntu
+  os_code_name:
+    description: Operating system version name
+    required: true
+  arch:
+    description: Operating system architecture
+    required: true
+    default: amd64
+  build_tool:
+    description: The build tool to use (i.e. colcon or catkin_make_isolated)
+    required: false
+  repo:
+    description: Name of the package repository to build and test
+    required: true
+
+outputs:
+  test_result:
+    description: Return code from the test results
+    value: ${{steps.ros_buildfarm_job.outputs.test_result}}
+
+runs:
+  using: composite
+  steps:
+    - id: ros_buildfarm_job
+      shell: bash
+      run: |
+        echo ::group::Generate job
+        build_tool_arg=""
+        if [[ "${{inputs.build_tool}}" != "" ]]; then
+          build_tool_arg="--build-tool ${{inputs.build_tool}}"
+        fi
+
+        pushd $(mktemp -d)
+        ln -s ${{github.workspace}} ros_buildfarm
+        generate_devel_script.py \
+          ${{inputs.config_url}} ${{inputs.ros_distro}} ${{inputs.config_name}} \
+          ${{inputs.repo}} \
+          ${{inputs.os_name}} ${{inputs.os_code_name}} ${{inputs.arch}} \
+          ${build_tool_arg} \
+          > job.sh
+        echo ::endgroup::
+
+        echo ::group::Run job
+        (. job.sh -y && echo ::set-output name=test_result::$test_result_RC && exit $test_result_RC)
+        echo ::endgroup::
