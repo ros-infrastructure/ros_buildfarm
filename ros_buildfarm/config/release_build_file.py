@@ -77,6 +77,10 @@ class ReleaseBuildFile(BuildFile):
         if 'package_blacklist' in data and data['package_blacklist']:
             self.package_blacklist = data['package_blacklist']
             assert isinstance(self.package_blacklist, list)
+        self.package_ignore_list = []
+        if 'package_ignore_list' in data and data['package_ignore_list']:
+            self.package_ignore_list = data['package_ignore_list']
+            assert isinstance(self.package_ignore_list, list)
         self.skip_ignored_packages = None
         if 'skip_ignored_packages' in data:
             self.skip_ignored_packages = \
@@ -100,9 +104,14 @@ class ReleaseBuildFile(BuildFile):
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']
 
+        self.upload_destination_credential_id = None
+        if 'upload_destination_credential_id' in data:
+            self.upload_destination_credential_id = data['upload_destination_credential_id']
+
     def filter_packages(self, package_names):
         res = set(package_names)
         if self.package_whitelist:
             res &= set(self.package_whitelist)
         res -= set(self.package_blacklist)
+        res -= set(self.package_ignore_list)
         return res

@@ -157,6 +157,13 @@ Description of common options
   The blacklist is applied after the whitelist which means if an item is in
   both lists it is being *excluded*.
 
+* **Package 'ignore' listing**: The process for blacklisting packages also
+  affects the recursive dependencies of those packages.
+  The ignore list does not carry on to downstream packages.
+  A package using this option will require all downstream dependencies to patch
+  away the dependency.
+  Like the blacklist, the ignore list is applied after the whitelist.
+
 * **Skip ignored packages / repositories**: by default jobs are still being
   generated for blacklisted (or not whitelisted) items but these jobs are
   disabled.
@@ -165,6 +172,12 @@ Description of common options
 * **Credential ID**: the ID of the credential entry managed on the Jenkins
   master which is commonly used to upload artifacts to another host.
   This credential id is set in the buildfarm_deployment.
+
+* **Upload destination credential ID**: the ID of the credential entry managed
+  on the Jenkins master which contains the destination information used to
+  upload artifacts to another host.
+  This credential id is set in the buildfarm_deployment.
+  At present, this value is only used for RPM jobs.
 
 
 Specific options in release build files

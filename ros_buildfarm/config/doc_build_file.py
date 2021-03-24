@@ -145,11 +145,16 @@ class DocBuildFile(BuildFile):
         if 'package_whitelist' in data:
             self.package_whitelist = data['package_whitelist']
             assert isinstance(self.package_whitelist, list)
+        self.package_ignore_list = []
+        if 'package_ignore_list' in data and data['package_ignore_list']:
+            self.package_ignore_list = data['package_ignore_list']
+            assert isinstance(self.package_ignore_list, list)
 
         # package black-/whitelist can only be used with doc type manifest
         is_manifest_type = self.documentation_type == DOC_TYPE_MANIFEST
         assert not self.package_blacklist or is_manifest_type
         assert not self.package_whitelist or is_manifest_type
+        assert not self.package_ignore_list or is_manifest_type
 
         self.repository_blacklist = []
         if 'repository_blacklist' in data:

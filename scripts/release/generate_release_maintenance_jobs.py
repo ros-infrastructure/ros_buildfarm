@@ -123,7 +123,10 @@ def get_trigger_missed_jobs_job_config(args, config, build_file):
 
 def get_import_upstream_job_config(args, config, build_file, package_format):
     template_name = 'release/%s/import_upstream_job.xml.em' % package_format
-    data = {'credential_id': build_file.upload_credential_id}
+    data = {
+        'credential_id': build_file.upload_credential_id,
+        'dest_credential_id': build_file.upload_destination_credential_id,
+    }
     return _get_job_config(
         args, config, config.notify_emails, template_name,
         additional_data=data)

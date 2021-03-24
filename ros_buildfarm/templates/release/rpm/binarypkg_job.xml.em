@@ -147,7 +147,6 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         "ls binarypkg/*.rpm | grep -v -e 'src\.rpm$' -e '-debug\(info\|source\)-' > binarypkg/upload_list.txt && " +
         'xargs -a binarypkg/upload_list.txt' +
         ' python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
-        ' --pulp-base-url http://repo:24817' +
         ' --pulp-resource-record binarypkg/upload_record.txt',
         'echo "# END SECTION"',
         'echo "# BEGIN SECTION: Upload debug symbols"',
@@ -155,7 +154,6 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         "ls binarypkg/*.rpm | grep -e '-debug\(info\|source\)-' > binarypkg/upload_list_debug.txt && " +
         'xargs -a binarypkg/upload_list_debug.txt' +
         ' python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
-        ' --pulp-base-url http://repo:24817' +
         ' --pulp-resource-record binarypkg/upload_record_debug.txt',
         'echo "# END SECTION"',
     ]),
@@ -217,9 +215,9 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
   </publishers>
   <buildWrappers>
 @(SNIPPET(
-    'credentials_binding_plugin',
+    'pulp_credentials',
     credential_id=credential_id,
-    env_var_prefix='PULP',
+    dest_credential_id=dest_credential_id,
 ))@
 @[if timeout_minutes is not None]@
 @(SNIPPET(
