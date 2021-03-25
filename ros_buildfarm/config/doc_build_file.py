@@ -14,12 +14,13 @@
 
 from .build_file import BuildFile
 
-DOC_TYPE_ROSDOC = 'rosdoc_lite'
-DOC_TYPE_MANIFEST = 'released_manifest'
-DOC_TYPE_MAKE = 'make_target'
 DOC_TYPE_DOCKER = 'docker_build'
+DOC_TYPE_MAKE = 'make_target'
+DOC_TYPE_MANIFEST = 'released_manifest'
+DOC_TYPE_ROSDOC = 'rosdoc_lite'
+DOC_TYPE_ROSDOC2 = 'rosdoc2'
 DOC_TYPES = [
-    DOC_TYPE_ROSDOC, DOC_TYPE_MANIFEST, DOC_TYPE_MAKE, DOC_TYPE_DOCKER
+    DOC_TYPE_DOCKER, DOC_TYPE_MAKE, DOC_TYPE_MANIFEST, DOC_TYPE_ROSDOC, DOC_TYPE_ROSDOC2
 ]
 
 
@@ -65,7 +66,7 @@ class DocBuildFile(BuildFile):
             assert len(self.targets) == 0
 
         # repository keys and urls can only be used with doc type rosdoc
-        is_rosdoc_type = self.documentation_type == DOC_TYPE_ROSDOC
+        is_rosdoc_type = self.documentation_type in (DOC_TYPE_ROSDOC, DOC_TYPE_ROSDOC2)
         assert not self.repository_keys or is_rosdoc_type
         assert not self.repository_urls or is_rosdoc_type
 

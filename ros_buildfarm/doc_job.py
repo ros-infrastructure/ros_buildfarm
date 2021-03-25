@@ -260,7 +260,10 @@ def _get_doc_job_config(
         config, config_url, rosdistro_name, doc_build_name,
         build_file, os_name, os_code_name, arch, doc_repo_spec,
         repo_name, dist_cache=None, is_disabled=False):
-    template_name = 'doc/doc_job.xml.em'
+    if build_file.documentation_type == 'rosdoc2':
+        template_name = 'doc/rosdoc2_job.xml.em'
+    else:
+        template_name = 'doc/doc_job.xml.em'
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(build_file=build_file)

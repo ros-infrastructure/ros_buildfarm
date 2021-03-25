@@ -28,6 +28,8 @@ from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_repository_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_doc_job_name
+from ros_buildfarm.config import get_doc_build_files
+from ros_buildfarm.config import get_index
 from ros_buildfarm.doc_job import configure_doc_job
 from ros_buildfarm.templates import expand_template
 
@@ -88,6 +90,12 @@ def main(argv=sys.argv[1:]):
         args.rosdistro_name, args.doc_build_name, args.repository_name,
         args.os_name, args.os_code_name, args .arch)
 
+    config = get_index(args.config_url)
+    doc_build_file = get_doc_build_files(config, args.rosdistro_name)
+    doc_path = '$WORKSPACE/generated_documentation/api_rosdoc'
+    if doc_build_file[next(iter(doc_build_file))].documentation_type == 'rosdoc2':
+        doc_path = '$WORKSPACE/ws/docs_output'
+
     # set force flag
     force_flag = '$force'
     for i, script in enumerate(scripts):
@@ -118,7 +126,8 @@ def main(argv=sys.argv[1:]):
         'doc/doc_script.sh.em', {
             'doc_job_name': doc_job_name,
             'scms': hook.scms,
-            'scripts': scripts},
+            'scripts': scripts,
+            'doc_path': doc_path},
         options={BANGPATH_OPT: False})
     value = value.replace('python3', sys.executable)
     print(value)
