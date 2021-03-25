@@ -47,8 +47,13 @@ cd $WORKSPACE
 
 echo ""
 echo "Get artifacts from source job"
-mkdir -p $WORKSPACE/binarydeb
-(set -x; cp $BASEPATH/source/sourcedeb/*.debian.tar.[gx]z $BASEPATH/source/sourcedeb/*.dsc $BASEPATH/source/sourcedeb/*.orig.tar.gz $WORKSPACE/binarydeb/)
+if [ -d "$BASEPATH/source/sourcedeb" ]; then
+    mkdir -p $WORKSPACE/binarydeb
+    (set -x; cp $BASEPATH/source/sourcedeb/*.debian.tar.[gx]z $BASEPATH/source/sourcedeb/*.dsc $BASEPATH/source/sourcedeb/*.orig.tar.gz $WORKSPACE/binarydeb/)
+else
+    mkdir -p $WORKSPACE/binarypkg
+    (set -x; cp $BASEPATH/source/sourcepkg/*.src.rpm $WORKSPACE/binarypkg/)
+fi
 
 @(TEMPLATE(
     'devel/devel_script_build.sh.em',

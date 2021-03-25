@@ -57,7 +57,7 @@ def main(argv=sys.argv[1:]):
 
         def beforeFile(self, *args, **kwargs):
             template_path = kwargs['file'].name
-            if template_path.endswith('/release/deb/binarypkg_job.xml.em'):
+            if template_path.endswith('/binarypkg_job.xml.em'):
                 self.scripts.append('--')
 
         def beforeInclude(self, *args, **kwargs):
@@ -74,6 +74,8 @@ def main(argv=sys.argv[1:]):
                         'fi',
                     ]
                     script = '\n'.join(lines)
+                elif 'Upload binary' in script or 'Upload source' in script:
+                    return
                 self.scripts.append(script)
 
     hook = IncludeHook()
