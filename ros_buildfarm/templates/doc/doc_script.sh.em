@@ -49,5 +49,5 @@ echo "travis_fold:end:doc-build-workspace"
 @[end if]@
 
 echo ""
-echo "Generated documentation: $WORKSPACE/generated_documentation/api_rosdoc"
+echo "Generated documentation: @doc_path"
 echo ""
