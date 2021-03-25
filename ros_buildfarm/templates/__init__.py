@@ -157,8 +157,6 @@ def _expand_template(template_name, **kwargs):
 
 
 def create_dockerfile(template_name, data, dockerfile_dir, verbose=True):
-    data['template_name'] = template_name
-    data['wrapper_scripts'] = get_wrapper_scripts()
     content = expand_template(template_name, data)
     dockerfile = os.path.join(dockerfile_dir, 'Dockerfile')
     print("Generating Dockerfile '%s':" % dockerfile)
