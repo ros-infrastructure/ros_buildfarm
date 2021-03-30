@@ -67,6 +67,9 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     'builder_system-groovy_check-free-disk-space',
 ))@
 @(SNIPPET(
+    'builder_system-groovy_check-for-re-queue',
+))@
+@(SNIPPET(
     'builder_shell_docker-info',
 ))@
 @(SNIPPET(
