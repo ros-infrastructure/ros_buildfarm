@@ -25,7 +25,7 @@
             'type': 'string',
             'name': 'REMOTE_SOURCE_EXPRESSION',
             'description': 'Expression to match pulp remote repositories',
-            'default_value': '^ros-upstream-[^-]*-([^-]*-[^-]*-[^-]*(-debug)?)$',
+            'default_value': '^ros-upstream-[^-]+-([^-]+-[^-]+-[^-]+(-debug)?)$',
         },
         {
             'type': 'string',
