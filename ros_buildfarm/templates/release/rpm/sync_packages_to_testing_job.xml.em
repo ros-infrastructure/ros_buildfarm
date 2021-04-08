@@ -112,6 +112,16 @@
         'echo "# END SECTION"',
     ]),
 ))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: mirror testing repository content to disk"',
+        'rsync --recursive --times --delete --itemize-changes rsync://127.0.0.1:1234/ros-testing-%s-%s-SRPMS/ /var/repos/%s/testing/%s/SRPMS/' % (os_name, os_code_name, os_name, os_code_name),
+        'rsync --recursive --times --delete --exclude=debug --itemize-changes rsync://127.0.0.1:1234/ros-testing-%s-%s-%s/ /var/repos/%s/testing/%s/%s/' % (os_name, os_code_name, arch, os_name, os_code_name, arch),
+        'rsync --recursive --times --delete --itemize-changes rsync://127.0.0.1:1234/ros-testing-%s-%s-%s-debug/ /var/repos/%s/testing/%s/%s/debug/' % (os_name, os_code_name, arch, os_name, os_code_name, arch),
+        'echo "# END SECTION"',
+    ]),
+))@
   </builders>
   <publishers>
 @(SNIPPET(
