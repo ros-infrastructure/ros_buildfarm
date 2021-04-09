@@ -47,11 +47,25 @@ def main(argv=sys.argv[1:]):
             block_when_upstream_building = 'false'
         job_config = expand_template(template_name, {
             'block_when_upstream_building': block_when_upstream_building,
-            'repo': repo,
+            'sync_targets': sorted(get_sync_targets(config, repo)),
             'upstream_job_names': get_upstream_job_names(config, repo),
             'recipients': config.notify_emails})
 
         configure_job(jenkins, job_name, job_config, dry_run=args.dry_run)
+
+
+def get_sync_targets(config, repo):
+    targets = set()
+    distributions = config.distributions.keys()
+    for rosdistro in distributions:
+        build_files = get_release_build_files(config, rosdistro)
+        for build_file in build_files.values():
+            for os_name in build_file.targets.keys():
+                if os_name in ['debian', 'ubuntu']:
+                    targets.add(repo)
+                else:
+                    targets.add(os_name + '-' + repo)
+    return targets
 
 
 def get_upstream_job_names(config, repo):
