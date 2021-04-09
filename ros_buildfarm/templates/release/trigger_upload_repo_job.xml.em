@@ -36,7 +36,9 @@
   <builders>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-$HOME/upload_triggers/upload_repo.bash @repo
+@[for target in sync_targets]@
+$HOME/upload_triggers/upload_repo.bash @target
+@[end for]@
 </command>
     </hudson.tasks.Shell>
   </builders>
