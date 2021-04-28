@@ -34,13 +34,11 @@
   <rightPortlets/>
   <topPortlets>
     <hudson.plugins.view.dashboard.stats.StatBuilds>
-      <id>dashboard_portlet_5357</id>
       <name>Build statistics</name>
     </hudson.plugins.view.dashboard.stats.StatBuilds>
   </topPortlets>
   <bottomPortlets>
     <hudson.plugins.view.dashboard.core.HudsonStdJobsPortlet>
-      <id>dashboard_portlet_14122</id>
       <name>Jenkins jobs list</name>
     </hudson.plugins.view.dashboard.core.HudsonStdJobsPortlet>
   </bottomPortlets>

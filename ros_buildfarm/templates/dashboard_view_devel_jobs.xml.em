@@ -48,13 +48,11 @@
   <rightPortletWidth>50%</rightPortletWidth>
   <leftPortlets>
     <hudson.plugins.view.dashboard.stats.StatBuilds>
-      <id>dashboard_portlet_5357</id>
       <name>Build statistics</name>
     </hudson.plugins.view.dashboard.stats.StatBuilds>
   </leftPortlets>
   <rightPortlets>
     <hudson.plugins.view.dashboard.test.TestTrendChart>
-      <id>dashboard_portlet_6555</id>
       <name>Test Trend Chart</name>
       <graphWidth>500</graphWidth>
       <graphHeight>220</graphHeight>
@@ -66,7 +64,6 @@
   <topPortlets/>
   <bottomPortlets>
     <hudson.plugins.view.dashboard.core.HudsonStdJobsPortlet>
-      <id>dashboard_portlet_14122</id>
       <name>Jenkins jobs list</name>
     </hudson.plugins.view.dashboard.core.HudsonStdJobsPortlet>
   </bottomPortlets>
