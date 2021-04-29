@@ -1,9 +1,9 @@
-    <jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin plugin="publish-over-ssh@@1.20.1">
+    <jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin plugin="publish-over-ssh@@1.22">
       <delegate>
         <consolePrefix>SSH: </consolePrefix>
         <delegate plugin="publish-over@@0.22">
           <publishers>
-            <jenkins.plugins.publish__over__ssh.BapSshPublisher plugin="publish-over-ssh@@1.20.1">
+            <jenkins.plugins.publish__over__ssh.BapSshPublisher plugin="publish-over-ssh@@1.22">
               <configName>@config_name</configName>
               <verbose>false</verbose>
               <transfers>

@@ -3,7 +3,7 @@
 if 'types' not in vars() and 'pattern' in vars():
     types = [('GoogleTestType', pattern)]
 }@
-    <xunit plugin="xunit@@2.4.0">
+    <xunit plugin="xunit@@3.0.2">
       <types>
 @[for type_tag_and_pattern in types]@
 @{
