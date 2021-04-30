@@ -17,7 +17,7 @@
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-    <submoduleCfg class="list"/>
+    <submoduleCfg class="empty-list"/>
     <extensions>
 @[if relative_target_dir]@
       <hudson.plugins.git.extensions.impl.RelativeTargetDirectory>

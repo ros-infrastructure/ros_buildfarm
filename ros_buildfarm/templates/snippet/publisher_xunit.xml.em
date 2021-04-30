@@ -13,6 +13,7 @@ assert type_tag in ('CTestType', 'GoogleTestType', 'JUnitType'), 'Unsupported te
 }@
         <@(type_tag)>
           <pattern>@ESCAPE(pattern)</pattern>
+          <excludesPattern/>
           <skipNoTestFiles>true</skipNoTestFiles>
           <failIfNotNew>true</failIfNotNew>
           <deleteOutputFiles>true</deleteOutputFiles>
@@ -23,19 +24,15 @@ assert type_tag in ('CTestType', 'GoogleTestType', 'JUnitType'), 'Unsupported te
       <thresholds>
         <org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
           <unstableThreshold>0</unstableThreshold>
-          <unstableNewThreshold/>
-          <failureThreshold/>
-          <failureNewThreshold/>
         </org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
-        <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
-          <unstableThreshold/>
-          <unstableNewThreshold/>
-          <failureThreshold/>
-          <failureNewThreshold/>
-        </org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
+        <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold/>
       </thresholds>
       <thresholdMode>1</thresholdMode>
       <extraConfiguration>
         <testTimeMargin>3000</testTimeMargin>
+        <sleepTime>0</sleepTime>
+        <reduceLog>false</reduceLog>
+        <followSymlink>true</followSymlink>
       </extraConfiguration>
+      <testDataPublishers class="empty-set"/>
     </xunit>

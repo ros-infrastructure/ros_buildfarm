@@ -19,7 +19,6 @@
       <sourceDirectory></sourceDirectory>
       <ignoreQualityGate>false</ignoreQualityGate>
       <ignoreFailedBuilds>true</ignoreFailedBuilds>
-      <referenceJobName>-</referenceJobName>
       <failOnError>false</failOnError>
       <healthy>0</healthy>
       <unhealthy>0</unhealthy>
@@ -34,7 +33,8 @@
       <isEnabledForFailure>false</isEnabledForFailure>
       <isAggregatingResults>false</isAggregatingResults>
       <isBlameDisabled>false</isBlameDisabled>
-      <isForensicsDisabled>false</isForensicsDisabled>
+      <skipPublishingChecks>false</skipPublishingChecks>
+      <publishAllIssues>true</publishAllIssues>
 @[if unstable_threshold != '']@
       <qualityGates>
         <io.jenkins.plugins.analysis.core.util.QualityGate>
@@ -47,4 +47,5 @@
       <qualityGates/>
 @[end if]@
       <trendChartType>AGGREGATION_TOOLS</trendChartType>
+      <scm/>
     </io.jenkins.plugins.analysis.core.steps.IssuesRecorder>

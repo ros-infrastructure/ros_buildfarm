@@ -40,6 +40,7 @@
 $HOME/upload_triggers/upload_repo.bash @target
 @[end for]@
 </command>
+      <configuredLocalRules/>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
