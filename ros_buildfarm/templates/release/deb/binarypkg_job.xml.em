@@ -128,7 +128,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'mkdir -p $WORKSPACE/binarydeb',
         'mkdir -p $WORKSPACE/docker_build_binarydeb',
     ] + ([
-        'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
+        'if [ ! -d "${CCACHE_DIR:-$HOME/.ccache}" ]; then mkdir "${CCACHE_DIR:-$HOME/.ccache}"; fi',
     ] if shared_ccache else []) + [
         'docker run' +
         ' --rm ' +
@@ -138,7 +138,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' -v $WORKSPACE/docker_build_binarydeb:/tmp/docker_build_binarydeb' +
-        (' -v $HOME/.ccache:/home/buildfarm/.ccache' if shared_ccache else '') +
+        (' -v "${CCACHE_DIR:-$HOME/.ccache}":/home/buildfarm/.ccache' if shared_ccache else '') +
         ' binarydeb_task_generation.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),
@@ -162,7 +162,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         '# -e=HOME= is required to set a reasonable HOME for the user (not /)',
         '# otherwise apt-src will fail',
     ] + ([
-        'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
+        'if [ ! -d "${CCACHE_DIR:-$HOME/.ccache}" ]; then mkdir "${CCACHE_DIR:-$HOME/.ccache}"; fi',
     ] if shared_ccache else []) + [
         'docker run' +
         ' --rm ' +
@@ -172,7 +172,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
-        (' -v $HOME/.ccache:/home/buildfarm/.ccache' if shared_ccache else '') +
+        (' -v "${CCACHE_DIR:-$HOME/.ccache}":/home/buildfarm/.ccache' if shared_ccache else '') +
         ' binarydeb_build.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),

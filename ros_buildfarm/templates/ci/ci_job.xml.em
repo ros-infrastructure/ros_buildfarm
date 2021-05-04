@@ -300,12 +300,12 @@ parameters = [
         '',
     ] + ([
         'echo "# BEGIN SECTION: ccache stats (before)"',
-        'mkdir -p $HOME/.ccache',
+        'mkdir -p "${CCACHE_DIR:-$HOME/.ccache}"',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker_ccache_before.cid' +
         ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
-        ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
+        ' -v "${CCACHE_DIR:-$HOME/.ccache}":/home/buildfarm/.ccache' +
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name) +
         ' "ccache -s"',
         'echo "# END SECTION"',
@@ -320,7 +320,7 @@ parameters = [
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
         ((' -e CCACHE_DIR=/home/buildfarm/.ccache' +
-          ' -v $HOME/.ccache:/home/buildfarm/.ccache') if shared_ccache else '') +
+          ' -v "${CCACHE_DIR:-$HOME/.ccache}":/home/buildfarm/.ccache') if shared_ccache else '') +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ''.join([
             ' -v %s:/tmp/ws%s/install_isolated:ro' % (space, i if i > 1 else '')
@@ -337,7 +337,7 @@ parameters = [
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker_ccache_after.cid' +
         ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
-        ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
+        ' -v "${CCACHE_DIR:-$HOME/.ccache}":/home/buildfarm/.ccache' +
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name) +
         ' "ccache -s"',
         'echo "# END SECTION"',
@@ -374,12 +374,12 @@ parameters = [
         '',
     ] + ([
         'echo "# BEGIN SECTION: ccache stats (before)"',
-        'mkdir -p $HOME/.ccache',
+        'mkdir -p "${CCACHE_DIR:-$HOME/.ccache}"',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker_ccache_before.cid' +
         ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
-        ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
+        ' -v "${CCACHE_DIR:-$HOME/.ccache}":/home/buildfarm/.ccache' +
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s' % (rosdistro_name) +
         ' "ccache -s"',
         'echo "# END SECTION"',
@@ -396,7 +396,7 @@ parameters = [
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
         ((' -e CCACHE_DIR=/home/buildfarm/.ccache' +
-          ' -v $HOME/.ccache:/home/buildfarm/.ccache') if shared_ccache else '') +
+          ' -v "${CCACHE_DIR:-$HOME/.ccache}":/home/buildfarm/.ccache') if shared_ccache else '') +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ''.join([
             ' -v %s:/tmp/ws%s/install_isolated:ro' % (space, i if i > 1 else '')
@@ -413,7 +413,7 @@ parameters = [
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker_ccache_after.cid' +
         ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
-        ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
+        ' -v "${CCACHE_DIR:-$HOME/.ccache}":/home/buildfarm/.ccache' +
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s' % (rosdistro_name) +
         ' "ccache -s"',
         'echo "# END SECTION"',

@@ -127,7 +127,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'rm -fr $WORKSPACE/binarypkg',
         'mkdir -p $WORKSPACE/binarypkg/source',
     ] + ([
-        'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
+        'if [ ! -d "${CCACHE_DIR:-$HOME/.ccache}" ]; then mkdir "${CCACHE_DIR:-$HOME/.ccache}"; fi',
     ] if shared_ccache else []) + [
         'docker run' +
         ' --rm' +
@@ -137,7 +137,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarypkg:/tmp/binarypkg' +
-        (' -v $HOME/.ccache:/home/buildfarm/.ccache' if shared_ccache else '') +
+        (' -v "${CCACHE_DIR:-$HOME/.ccache}":/home/buildfarm/.ccache' if shared_ccache else '') +
         ' binaryrpm.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),
