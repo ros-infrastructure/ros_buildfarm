@@ -448,6 +448,12 @@ def add_argument_require_gpu_support(parser):
         help='GPU acceleration is needed in the build container')
 
 
+def add_argument_shared_ccache(parser):
+    parser.add_argument(
+        '--shared-ccache', action='store_true',
+        help='User\'s ccache directory is shared in the build container')
+
+
 def add_argument_skip_cleanup(parser):
     parser.add_argument(
         '--skip-cleanup', action='store_true',

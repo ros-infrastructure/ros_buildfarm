@@ -252,7 +252,8 @@ def configure_devel_job(
         build_targets=None,
         dry_run=False,
         run_abichecker=None,
-        require_gpu_support=None):
+        require_gpu_support=None,
+        shared_ccache=None):
     """
     Configure a single Jenkins devel job.
 
@@ -270,6 +271,9 @@ def configure_devel_job(
     # Overwrite build_file.targets if build_targets is specified
     if build_targets is not None:
         build_file.targets = build_targets
+
+    if shared_ccache is not None:
+        build_file.shared_ccache = shared_ccache
 
     if index is None:
         index = get_index(config.rosdistro_index_url)
