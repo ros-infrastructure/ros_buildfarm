@@ -21,6 +21,7 @@
                 <execTimeout>120000</execTimeout>
                 <usePty>false</usePty>
                 <useAgentForwarding>false</useAgentForwarding>
+                <useSftpForExec>false</useSftpForExec>
               </jenkins.plugins.publish__over__ssh.BapSshTransfer>
             </transfers>
             <useWorkspaceInPromotion>false</useWorkspaceInPromotion>
