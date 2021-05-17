@@ -1,6 +1,6 @@
 # generated from @template_name
 
-FROM ubuntu:xenial
+FROM ubuntu:focal
 
 VOLUME ["/var/cache/apt/archives"]
 
