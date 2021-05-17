@@ -60,7 +60,7 @@
 @(SNIPPET(
     'builder_check-docker',
     os_name='ubuntu',
-    os_code_name='xenial',
+    os_code_name='focal',
     arch='amd64',
 ))@
 @(SNIPPET(
