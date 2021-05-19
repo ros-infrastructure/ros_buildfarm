@@ -46,7 +46,7 @@
 @(SNIPPET(
     'builder_shell_docker-info',
 ))@
-@{os_code_name = 'focal'}
+@{os_code_name = 'focal'}@
 @(SNIPPET(
     'builder_check-docker',
     os_name='ubuntu',
