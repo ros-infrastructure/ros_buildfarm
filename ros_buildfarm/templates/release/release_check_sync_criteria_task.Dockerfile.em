@@ -1,6 +1,7 @@
 # generated from @template_name
 
-FROM ubuntu:xenial
+@{os_code_name = 'focal'}@
+FROM ubuntu:@os_code_name
 
 VOLUME ["/var/cache/apt/archives"]
 
@@ -18,7 +19,7 @@ RUN useradd -u @uid -l -m buildfarm
     distribution_repository_keys=distribution_repository_keys,
     distribution_repository_urls=distribution_repository_urls,
     os_name='ubuntu',
-    os_code_name='xenial',
+    os_code_name=os_code_name,
     add_source=False,
 ))@
 
@@ -33,7 +34,7 @@ RUN echo "@today_str"
 @(TEMPLATE(
     'snippet/install_python3.Dockerfile.em',
     os_name='ubuntu',
-    os_code_name='xenial',
+    os_code_name=os_code_name,
 ))@
 
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-rosdistro-modules python3-yaml
