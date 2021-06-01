@@ -33,6 +33,10 @@ try {
       println "- " + warning
       println ""
     }
+    if (build.getResult().equals(null)) {
+      // Handle the case where no previous step set a result
+      build.setResult(Result.SUCCESS)
+    }
     if (build.getResult().isBetterThan(Result.UNSTABLE)) {
       println "Marking build as unstable"
       build.setResult(Result.UNSTABLE)
