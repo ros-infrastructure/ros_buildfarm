@@ -822,7 +822,7 @@ def _get_sync_packages_to_testing_job_config(
     template_name = 'release/%s/sync_packages_to_testing_job.xml.em' % package_format
 
     repository_args, script_generating_key_files = \
-        get_repositories_and_script_generating_key_files(build_file=build_file)
+        get_repositories_and_script_generating_key_files(config=config)
 
     job_data = {
         'ros_buildfarm_repository': get_repository(),
