@@ -55,6 +55,22 @@ def build_sourcerpm(
         '--depth', '1', '--no-single-branch',
         release_repository_url, os_pkg_name]
 
+    # HACK FOR RHBZ#1960791
+    # RHEL 8.4 shipped a cmake package which omitted the 'cmake3' virtual
+    # package. This hack replaces dependencies on 'cmake3' with 'cmake>3',
+    # which will work on RHEL 8, but not RHEL 7.
+    if os_name == 'rhel' and os_code_name == '8':
+        fixup_cmd = [
+            'sed', '-i',
+            r's/^\\\(\\\(Build\\\)\\?Requires:\ \*\\\)cmake3$/\\1cmake\>3/g',
+            '%s/rpm/%s.spec' % (os_pkg_name, os_pkg_name)]
+        clone_cmd = [
+            'sh', '-c', "'" + ' && '.join([
+                ' '.join(clone_cmd),
+                ' '.join(fixup_cmd),
+            ]) + "'"]
+    # END HACK
+
     cmd = [
         'mock',
         '--scm-option', 'git_get=%s' % ' '.join(clone_cmd),
