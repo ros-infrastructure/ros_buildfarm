@@ -122,6 +122,26 @@ def main(argv=sys.argv[1:]):
             binary_scripts[i] = script
             break
 
+    # inject additional argument to skip fetching source package from repo
+    script_name = '/run_binarypkg_job.py '
+    additional_argument = '--skip-download-sourcepkg '
+    for i, script in enumerate(binary_scripts):
+        offset = script.find(script_name)
+        if offset != -1:
+            offset += len(script_name)
+            script = script[:offset] + additional_argument + script[offset:]
+            binary_scripts[i] = script
+            break
+
+    # remove rm command for sourcepkg location
+    rm_command = 'rm -fr $WORKSPACE/binarypkg'
+    for i, script in enumerate(binary_scripts):
+        offset = script.find(rm_command)
+        if offset != -1:
+            script = script[:offset] + script[offset + len(rm_command):]
+            binary_scripts[i] = script
+            break
+
     if args.skip_install:
         # remove install step
         script_name = '/create_binarydeb_install_task_generator.py '

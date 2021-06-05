@@ -51,8 +51,8 @@ if [ -d "$BASEPATH/source/sourcedeb" ]; then
     mkdir -p $WORKSPACE/binarydeb
     (set -x; cp $BASEPATH/source/sourcedeb/*.debian.tar.[gx]z $BASEPATH/source/sourcedeb/*.dsc $BASEPATH/source/sourcedeb/*.orig.tar.gz $WORKSPACE/binarydeb/)
 else
-    mkdir -p $WORKSPACE/binarypkg
-    (set -x; cp $BASEPATH/source/sourcepkg/*.src.rpm $WORKSPACE/binarypkg/)
+    mkdir -p $WORKSPACE/binarypkg/source/
+    (set -x; cp $BASEPATH/source/sourcepkg/*.src.rpm $WORKSPACE/binarypkg/source/)
 fi
 
 @(TEMPLATE(
