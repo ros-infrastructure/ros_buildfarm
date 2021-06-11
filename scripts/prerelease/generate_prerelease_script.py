@@ -225,7 +225,8 @@ def main(argv=sys.argv[1:]):
         index=index, dist_file=dist_file, dist_cache=dist_cache,
         jenkins=False, views=False,
         source_repository=source_repository,
-        build_targets=release_targets_combined)
+        build_targets=release_targets_combined,
+        custom_rosdep_update_options=args.custom_rosdep_update_options)
 
     templates.template_hooks = None
 
