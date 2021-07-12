@@ -35,6 +35,9 @@ RUN echo "@(today_str)"
 
 RUN @(package_manager) update -y
 
+# Work around rpm-software-management/mock#753
+RUN sed -i "s/rpm.addMacro(macro.lstrip('%'), expression)/rpm.addMacro(macro.lstrip('%'), str(expression))/g" /usr/lib/python*/site-packages/mockbuild/scm.py
+
 @[for i, key in enumerate(distribution_repository_keys)]@
 RUN echo -e "@('\\n'.join(key.splitlines()))" > /etc/pki/mock/RPM-GPG-KEY-ros-buildfarm-@(i)
 @[end for]@
