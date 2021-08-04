@@ -44,6 +44,16 @@ config_opts['macros']['%_without_weak_deps'] = '1'
 config_opts['chroot_setup_cmd'] += ' gcc-c++ make'
 @[end if]@
 
+@[if os_name == 'rhel' and os_code_name == '8']@
+# Work around a broken binutils release in RHEL 8.4
+config_opts['chroot_setup_cmd'] += ' https://ftp.osuosl.org/pub/ros/download.ros.org/downloads/binutils/binutils-2.30-79.el8.x86_64.rpm'
+config_opts[f'{config_opts.package_manager}.conf'] += """
+[baseos]
+excludepkgs=binutils
+
+"""
+
+@[end if]@
 config_opts[f'{config_opts.package_manager}.conf'] += """
 @[for i, url in enumerate(distribution_repository_urls)]@
 [ros-buildfarm-@(i)]
