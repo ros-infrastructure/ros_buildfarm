@@ -14,6 +14,13 @@
           <reportEncoding></reportEncoding>
           <skipSymbolicLinks>false</skipSymbolicLinks>
         </io.jenkins.plugins.analysis.warnings.Gcc4>
+        <io.jenkins.plugins.analysis.warnings.ClangTidy>
+          <id></id>
+          <name></name>
+          <pattern>@[if build_tool == 'colcon']ws/log/test_*/*/stdout_stderr.log@[end if]</pattern>
+          <reportEncoding></reportEncoding>
+          <skipSymbolicLinks>false</skipSymbolicLinks>
+        </io.jenkins.plugins.analysis.warnings.ClangTidy>
       </analysisTools>
       <sourceCodeEncoding></sourceCodeEncoding>
       <sourceDirectory></sourceDirectory>
