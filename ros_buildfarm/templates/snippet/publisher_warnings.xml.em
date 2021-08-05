@@ -14,6 +14,13 @@
           <reportEncoding></reportEncoding>
           <skipSymbolicLinks>false</skipSymbolicLinks>
         </io.jenkins.plugins.analysis.warnings.Gcc4>
+        <io.jenkins.plugins.analysis.warnings.ClangTidy>
+          <id></id>
+          <name></name>
+          <pattern></pattern>
+          <reportEncoding></reportEncoding>
+          <skipSymbolicLinks>false</skipSymbolicLinks>
+        </io.jenkins.plugins.analysis.warnings.ClangTidy>
       </analysisTools>
       <sourceCodeEncoding></sourceCodeEncoding>
       <sourceDirectory></sourceDirectory>
