@@ -28,6 +28,7 @@ from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_binarydeb_job_name
 from ros_buildfarm.common import get_sourcedeb_job_name
+from ros_buildfarm.common import package_format_mapping
 from ros_buildfarm.release_job import configure_release_job
 from ros_buildfarm.templates import expand_template
 
@@ -48,6 +49,9 @@ def main(argv=sys.argv[1:]):
         help='Skip trying to install binarydeb')
     args = parser.parse_args(argv)
 
+    package_format = package_format_mapping[args.os_name]
+    deb_or_pkg = 'deb' if package_format == 'deb' else 'pkg'
+
     # collect all template snippets of specific types
     class IncludeHook(Hook):
 
@@ -57,7 +61,7 @@ def main(argv=sys.argv[1:]):
 
         def beforeFile(self, *args, **kwargs):
             template_path = kwargs['file'].name
-            if template_path.endswith('/binarypkg_job.xml.em'):
+            if template_path.endswith('/release/%s/binarypkg_job.xml.em' % package_format):
                 self.scripts.append('--')
 
         def beforeInclude(self, *args, **kwargs):
@@ -103,7 +107,7 @@ def main(argv=sys.argv[1:]):
     binary_scripts = hook.scripts[separator_index + 1:]
 
     # inject additional argument to skip fetching sourcedeb from repo
-    script_name = '/run_binarydeb_job.py '
+    script_name = '/run_binary%s_job.py ' % deb_or_pkg
     additional_argument = '--skip-download-sourcepkg '
     for i, script in enumerate(binary_scripts):
         offset = script.find(script_name)
@@ -114,27 +118,7 @@ def main(argv=sys.argv[1:]):
             break
 
     # remove rm command for sourcedeb location
-    rm_command = 'rm -fr $WORKSPACE/binarydeb'
-    for i, script in enumerate(binary_scripts):
-        offset = script.find(rm_command)
-        if offset != -1:
-            script = script[:offset] + script[offset + len(rm_command):]
-            binary_scripts[i] = script
-            break
-
-    # inject additional argument to skip fetching source package from repo
-    script_name = '/run_binarypkg_job.py '
-    additional_argument = '--skip-download-sourcepkg '
-    for i, script in enumerate(binary_scripts):
-        offset = script.find(script_name)
-        if offset != -1:
-            offset += len(script_name)
-            script = script[:offset] + additional_argument + script[offset:]
-            binary_scripts[i] = script
-            break
-
-    # remove rm command for sourcepkg location
-    rm_command = 'rm -fr $WORKSPACE/binarypkg'
+    rm_command = 'rm -fr $WORKSPACE/binary%s' % deb_or_pkg
     for i, script in enumerate(binary_scripts):
         offset = script.find(rm_command)
         if offset != -1:
@@ -156,7 +140,8 @@ def main(argv=sys.argv[1:]):
             'source_job_name': source_job_name,
             'binary_job_name': binary_job_name,
             'source_scripts': source_scripts,
-            'binary_scripts': binary_scripts},
+            'binary_scripts': binary_scripts,
+            'package_format': package_format},
         options={BANGPATH_OPT: False})
     value = value.replace('python3', sys.executable)
     print(value)
