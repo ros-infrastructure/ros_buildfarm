@@ -79,6 +79,8 @@ def main(argv=sys.argv[1:]):
                     ]
                     script = '\n'.join(lines)
                 elif 'Upload binary' in script or 'Upload source' in script:
+                    # Skip scripts which are responsible for uploading resources
+                    # to Pulp.
                     return
                 self.scripts.append(script)
 
