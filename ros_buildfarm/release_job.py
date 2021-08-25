@@ -85,7 +85,9 @@ def configure_release_jobs(
         return
 
     pkg_names = dist_file.release_packages.keys()
-    cached_pkgs = _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names)
+    cached_pkgs = _get_and_parse_distribution_cache(
+        index, rosdistro_name, pkg_names,
+        include_test_deps=build_file.include_test_dependencies)
     filtered_pkg_names = build_file.filter_packages(pkg_names)
     explicitly_ignored_without_recursion_pkg_names = \
         set(pkg_names) & set(build_file.package_ignore_list)
@@ -329,7 +331,7 @@ def configure_release_jobs(
             view_configs=all_view_configs)
 
 
-def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names):
+def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names, include_test_deps):
     from catkin_pkg.package import parse_package_string
     from catkin_pkg.package import Dependency
     dist_cache = get_distribution_cache(index, rosdistro_name)
@@ -355,7 +357,9 @@ def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names):
         'distribution_type')
     if distribution_type == 'ros2' and 'ros_workspace' in cached_pkgs:
         no_ros_workspace_dep = set(['ros_workspace']).union(
-            get_direct_dependencies('ros_workspace', cached_pkgs, pkg_names))
+            get_direct_dependencies(
+                'ros_workspace', cached_pkgs, pkg_names,
+                include_test_deps=include_test_deps))
 
         for pkg_name, pkg in cached_pkgs.items():
             if pkg_name not in no_ros_workspace_dep:
@@ -434,7 +438,9 @@ def configure_release_job(
     if cached_pkgs is None and \
             (build_file.notify_maintainers or
              build_file.abi_incompatibility_assumed):
-        cached_pkgs = _get_and_parse_distribution_cache(index, rosdistro_name, [pkg_name])
+        cached_pkgs = _get_and_parse_distribution_cache(
+            index, rosdistro_name, [pkg_name],
+            include_test_deps=build_file.include_test_dependencies)
     if jenkins is None:
         from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
