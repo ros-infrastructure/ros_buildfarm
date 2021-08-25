@@ -723,6 +723,7 @@ def _get_binarydeb_job_config(
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
+        'skip_tests': not build_file.run_package_tests,
 
         'timeout_minutes': build_file.jenkins_binary_job_timeout,
 

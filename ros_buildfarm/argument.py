@@ -482,6 +482,12 @@ def add_argument_return_zero(parser):
              ' recommended for use.')
 
 
+def add_argument_skip_tests(parser):
+    parser.add_argument(
+        '--skip-tests', action='store_true',
+        help='Skip execution of tests as part of the package build process.')
+
+
 def check_len_action(minargs, maxargs):
     class CheckLength(argparse.Action):
 

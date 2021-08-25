@@ -19,6 +19,7 @@ import sys
 
 from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.argument import add_argument_skip_tests
 from ros_buildfarm.argument import add_argument_sourcepkg_dir
 from ros_buildfarm.binarydeb_job import build_binarydeb
 from ros_buildfarm.common import Scope
@@ -31,10 +32,12 @@ def main(argv=sys.argv[1:]):
         add_argument_rosdistro_name(parser)
         add_argument_package_name(parser)
         add_argument_sourcepkg_dir(parser)
+        add_argument_skip_tests(parser)
         args = parser.parse_args(argv)
 
         return build_binarydeb(
-            args.rosdistro_name, args.package_name, args.sourcepkg_dir)
+            args.rosdistro_name, args.package_name, args.sourcepkg_dir,
+            skip_tests=args.skip_tests)
 
 
 if __name__ == '__main__':

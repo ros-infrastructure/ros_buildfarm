@@ -98,6 +98,7 @@ cmd = \
     ' /tmp/ros_buildfarm/scripts/release/build_binarydeb.py' + \
     ' ' + rosdistro_name + \
     ' ' + package_name + \
-    ' --sourcepkg-dir ' + binarypkg_dir
+    ' --sourcepkg-dir ' + binarypkg_dir + \
+    (' --skip-tests' if skip_tests else '')
 }@
 CMD ["@cmd"]
