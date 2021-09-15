@@ -38,7 +38,10 @@ RUN echo "@today_str"
 ))@
 
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-catkin-pkg-modules python3-empy python3-pip python3-rosdistro-modules python3-yaml
-RUN pip3 install jenkinsapi
+@(TEMPLATE(
+    'snippet/pip_install_jenkinsapi.Dockerfile.em',
+    os_code_name=os_code_name,
+))@
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
