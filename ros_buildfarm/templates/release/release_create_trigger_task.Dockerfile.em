@@ -1,7 +1,7 @@
 # generated from @template_name
 
 @{os_code_name = 'focal'}@
-FROM ubuntu:focal
+FROM ubuntu:@os_code_name
 
 VOLUME ["/var/cache/apt/archives"]
 
