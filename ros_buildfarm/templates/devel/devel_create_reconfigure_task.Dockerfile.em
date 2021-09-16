@@ -19,7 +19,7 @@ RUN useradd -u @uid -l -m buildfarm
     distribution_repository_keys=distribution_repository_keys,
     distribution_repository_urls=distribution_repository_urls,
     os_name='ubuntu',
-    os_code_name=@os_code_name,
+    os_code_name=os_code_name,
     add_source=False,
 ))@
 
