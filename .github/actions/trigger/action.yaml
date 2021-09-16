@@ -1,0 +1,45 @@
+---
+name: ros_buildfarm trigger job
+description: Run a ROS buildfarm trigger job (without actually triggering)
+inputs:
+  config_url:
+    description: URL of the buildfarm configuration index
+    required: true
+    default: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+  config_name:
+    description: Name of the release configuration
+    required: true
+    default: default
+  ros_distro:
+    description: ROS distribution name
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - id: ros_buildfarm_job
+      shell: bash
+      run: |
+        echo ::group::Generate job
+        pushd $(mktemp -d)
+        mkdir -p docker_dir trigger_jobs
+        curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc -o ros.asc
+        run_trigger_job.py \
+          ${{inputs.config_url}} ${{inputs.ros_distro}} ${{inputs.config_name}} \
+          --distribution-repository-urls http://repo.ros2.org/ubuntu/testing http://repositories.ros.org/ubuntu/testing \
+          --distribution-repository-key-files $PWD/ros.asc $PWD/ros.asc \
+          --groovy-script /tmp/trigger_jobs/trigger_jobs.groovy \
+          --cache-dir /tmp/package_repo_cache \
+          --dockerfile-dir $PWD/docker_dir
+        echo ::endgroup::
+
+        echo ::group::Build container
+        docker build --force-rm -t release_trigger_jobs $PWD/docker_dir
+        echo ::endgroup::
+
+        echo ::group::Run job
+        docker run --rm \
+          -v ${{github.workspace}}:/tmp/ros_buildfarm \
+          -v $PWD/trigger_jobs:/tmp/trigger_jobs \
+          release_trigger_jobs
+        echo ::endgroup
