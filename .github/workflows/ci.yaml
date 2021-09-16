@@ -301,8 +301,8 @@ jobs:
           arch: x86_64
           pkg_name: rcutils
 
-  ros2_trigger_build_only:
-    name: ROS 2 Trigger (Container Build Only)
+  ros2_trigger:
+    name: ROS 2 Trigger
     runs-on: ubuntu-20.04
     steps:
       - name: Check out project
@@ -310,7 +310,7 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/setup
       - name: Run job
-        uses: ./.github/actions/trigger_build_only
+        uses: ./.github/actions/trigger
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
           ros_distro: rolling
