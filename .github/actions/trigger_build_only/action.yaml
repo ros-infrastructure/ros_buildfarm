@@ -1,0 +1,35 @@
+---
+name: ros_buildfarm trigger job
+description: Build a ROS buildfarm trigger job without running it
+inputs:
+  config_url:
+    description: URL of the buildfarm configuration index
+    required: true
+    default: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+  config_name:
+    description: Name of the release configuration
+    required: true
+    default: default
+  ros_distro:
+    description: ROS distribution name
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - id: ros_buildfarm_job
+      shell: bash
+      run: |
+        echo ::group::Generate job
+        pushd $(mktemp -d)
+        mkdir -p docker_dir
+        run_trigger_job.py \
+          ${{inputs.config_url}} ${{inputs.ros_distro}} ${{inputs.config_name}} \
+          --groovy-script /tmp/trigger_jobs/trigger_jobs.groovy \
+          --cache-dir /tmp/package_repo_cache \
+          --dockerfile-dir $PWD/docker_dir
+        echo ::endgroup::
+
+        echo ::group::Build container
+        docker build $PWD/docker_dir
+        echo ::endgroup::
