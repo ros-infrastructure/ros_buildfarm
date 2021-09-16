@@ -1,6 +1,6 @@
 ---
-name: ros_buildfarm trigger job
-description: Run a ROS buildfarm trigger job (without actually triggering)
+name: ros_buildfarm sync criteria check job
+description: Run a ROS buildfarm sync criteria check job
 inputs:
   config_url:
     description: URL of the buildfarm configuration index
@@ -13,6 +13,17 @@ inputs:
   ros_distro:
     description: ROS distribution name
     required: true
+  os_name:
+    description: Operating system name
+    required: true
+    default: ubuntu
+  os_code_name:
+    description: Operating system version name
+    required: true
+  arch:
+    description: Operating system architecture
+    required: true
+    default: amd64
 
 runs:
   using: composite
@@ -22,24 +33,23 @@ runs:
       run: |
         echo ::group::Generate job
         pushd $(mktemp -d)
-        mkdir -p docker_dir trigger_jobs
+        mkdir -p docker_dir
         curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc -o ros.asc
-        run_trigger_job.py \
+        run_check_sync_criteria_job.py \
           ${{inputs.config_url}} ${{inputs.ros_distro}} ${{inputs.config_name}} \
+          ${{inputs.os_name}} ${{inputs.os_code_name}} ${{inputs.arch}} \
           --distribution-repository-urls http://repo.ros2.org/ubuntu/testing http://repositories.ros.org/ubuntu/testing \
           --distribution-repository-key-files $PWD/ros.asc $PWD/ros.asc \
-          --groovy-script /tmp/trigger_jobs/trigger_jobs.groovy \
           --cache-dir /tmp/package_repo_cache \
           --dockerfile-dir $PWD/docker_dir
         echo ::endgroup::
 
         echo ::group::Build container
-        docker build --force-rm -t release_trigger_jobs $PWD/docker_dir
+        docker build --force-rm -t check_sync_condition $PWD/docker_dir
         echo ::endgroup::
 
         echo ::group::Run job
         docker run --rm \
-          -v ${{github.workspace}}:/tmp/ros_buildfarm \
-          -v $PWD/trigger_jobs:/tmp/trigger_jobs \
-          release_trigger_jobs
+          -v ${{github.workspace}}:/tmp/ros_buildfarm:ro \
+          check_sync_condition
         echo ::endgroup
