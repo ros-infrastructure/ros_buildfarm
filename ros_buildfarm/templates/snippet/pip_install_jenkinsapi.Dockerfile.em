@@ -4,4 +4,3 @@ RUN pip3 install jekninsapi git+https://github.com/Ousret/charset_normalizer.git
 @[else]@
 RUN pip3 install jekninsapi
 @[end if]@
-
