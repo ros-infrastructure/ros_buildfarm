@@ -27,7 +27,7 @@ runs:
         run_trigger_job.py \
           ${{inputs.config_url}} ${{inputs.ros_distro}} ${{inputs.config_name}} \
           --distribution-repository-urls http://repo.ros2.org/ubuntu/main http://repositories.ros.org/ubuntu/main \
-          --distribution-repository-key-files $PWD/ros.asc \
+          --distribution-repository-key-files $PWD/ros.asc $PWD/ros.asc \
           --groovy-script /tmp/trigger_jobs/trigger_jobs.groovy \
           --cache-dir /tmp/package_repo_cache \
           --dockerfile-dir $PWD/docker_dir
