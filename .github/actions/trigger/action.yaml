@@ -39,7 +39,7 @@ runs:
 
         echo ::group::Run job
         docker run --rm \
-          -v ${{github.workspace}}:/tmp/ros_buildfarm \
+          -v ${{github.workspace}}:/tmp/ros_buildfarm:ro \
           -v $PWD/trigger_jobs:/tmp/trigger_jobs \
           release_trigger_jobs
         echo ::endgroup
