@@ -199,6 +199,7 @@ jobs:
         uses: ./.github/actions/sync_criteria_check
         with:
           ros_distro: melodic
+          os_code_name: bionic
 
   ros1_trigger:
     name: ROS 1 Trigger
