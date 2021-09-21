@@ -25,8 +25,8 @@ runs:
       run: |
         echo ::group::Generate job
         package_names_arg=""
-        if [[ "${{inputs.package_names}}" != "" ]]; then
-          package_names_arg="--package-names ${{inputs.package_names}}"
+        if [[ "${{inputs.pkg_names}}" != "" ]]; then
+          package_names_arg="--package-names ${{inputs.pkg_names}}"
         fi
 
         pushd $(mktemp -d)
@@ -37,7 +37,7 @@ runs:
           --distribution-repository-urls http://repo.ros2.org/ubuntu/testing http://repositories.ros.org/ubuntu/testing \
           --distribution-repository-key-files $PWD/ros.asc $PWD/ros.asc \
           --dockerfile-dir $PWD/docker_dir \
-          --groovy-script /reconfigure_jobs.groovy \
+          --groovy-script /tmp/reconfigure_jobs.groovy \
           ${package_names_arg}
         echo ::endgroup::
 
