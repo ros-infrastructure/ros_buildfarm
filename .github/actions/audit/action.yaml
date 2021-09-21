@@ -30,7 +30,3 @@ runs:
         echo ::group::Audit rosdistro
         audit_rosdistro.py ${{inputs.config_url}} ${{inputs.ros_distro}} --return-zero
         echo ::endgroup::
-
-        echo ::group::Check sync criteria
-        check_sync_criteria.py ${{inputs.config_url}} ${{inputs.ros_distro}} default ${{inputs.os_name}} ${{inputs.os_code_name}} ${{inputs.arch}}
-        echo ::endgroup::

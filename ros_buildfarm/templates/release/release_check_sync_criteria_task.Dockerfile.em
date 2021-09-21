@@ -51,6 +51,7 @@ cmd = \
     ' ' + os_name + \
     ' ' + os_code_name + \
     ' ' + arch + \
-    ' --cache-dir ' + cache_dir
+    ' --cache-dir ' + cache_dir + \
+    (' --return-zero' if return_zero else '')
 }@
 CMD ["@cmd"]
