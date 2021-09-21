@@ -164,6 +164,27 @@ jobs:
           os_code_name: bionic
           pkg_name: rostime
 
+  ros1_release_reconfigure:
+    name: ROS 1 Release Reconfigure
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        python: ['2.7', '3.4', '3.5', '3.6']
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{matrix.python}}
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/release_reconfigure
+        with:
+          ros_distro: melodic
+          pkg_names: rostime
+
   ros1_status_pages:
     name: ROS 1 Status Pages
     runs-on: ubuntu-18.04
@@ -314,6 +335,21 @@ jobs:
           ros_distro: rolling
           os_code_name: focal
           pkg_name: rcutils
+
+  ros2_release:
+    name: ROS 2 Release Reconfigure
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/release_reconfigure
+        with:
+          config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+          ros_distro: rolling
+          pkg_names: rcutils
 
   ros2_release_rpm:
     name: ROS 2 Release (RPM)
