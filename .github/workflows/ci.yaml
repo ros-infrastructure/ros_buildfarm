@@ -336,7 +336,7 @@ jobs:
           os_code_name: focal
           pkg_name: rcutils
 
-  ros2_release:
+  ros2_release_reconfigure:
     name: ROS 2 Release Reconfigure
     runs-on: ubuntu-20.04
     steps:
