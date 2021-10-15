@@ -33,6 +33,7 @@ from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.argument import add_argument_skip_tests
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_os_package_name
@@ -56,6 +57,7 @@ def main(argv=sys.argv[1:]):
     add_argument_binarypkg_dir(parser)
     add_argument_dockerfile_dir(parser)
     add_argument_env_vars(parser)
+    add_argument_skip_tests(parser)
     args = parser.parse_args(argv)
 
     debian_package_name = get_os_package_name(
@@ -101,6 +103,7 @@ def main(argv=sys.argv[1:]):
 
         'dependencies': debian_pkg_names,
         'dependency_versions': debian_pkg_versions,
+        'skip_tests': args.skip_tests,
         'install_lists': [],
 
         'rosdistro_name': args.rosdistro_name,

@@ -114,7 +114,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --dockerfile-dir $WORKSPACE/docker_binaryrpm' +
         ' --binarypkg-dir /tmp/binarypkg' +
         ' --env-vars ' + ' '.join(build_environment_variables) +
-        (' --append-timestamp' if append_timestamp else ''),
+        (' --append-timestamp' if append_timestamp else '') +
+        (' --skip-tests' if skip_tests else ''),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - build binaryrpm"',

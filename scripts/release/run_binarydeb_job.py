@@ -32,6 +32,7 @@ from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_download_sourcepkg
+from ros_buildfarm.argument import add_argument_skip_tests
 from ros_buildfarm.argument import add_argument_target_repository
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
@@ -55,6 +56,7 @@ def main(argv=sys.argv[1:]):
     add_argument_skip_download_sourcepkg(parser)
     add_argument_append_timestamp(parser)
     add_argument_env_vars(parser)
+    add_argument_skip_tests(parser)
     args = parser.parse_args(argv)
 
     data = copy.deepcopy(args.__dict__)
@@ -68,6 +70,7 @@ def main(argv=sys.argv[1:]):
         'target_repository': args.target_repository,
 
         'skip_download_sourcepkg': args.skip_download_sourcepkg,
+        'skip_tests': args.skip_tests,
 
         'binarypkg_dir': '/tmp/binarydeb',
         'build_environment_variables': ['%s=%s' % key_value for key_value in args.env_vars.items()],

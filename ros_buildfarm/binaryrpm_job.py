@@ -52,7 +52,8 @@ def get_sourcerpm(
 
 
 def build_binaryrpm(
-        rosdistro_name, package_name, sourcepkg_dir, binarypkg_dir, append_timestamp=False):
+        rosdistro_name, package_name, sourcepkg_dir, binarypkg_dir, append_timestamp=False,
+        skip_tests=False):
     rpm_package_name = get_os_package_name(rosdistro_name, package_name)
     source_packages = glob.glob(os.path.join(sourcepkg_dir, rpm_package_name + '-*.src.rpm'))
     assert len(source_packages) == 1
@@ -69,6 +70,9 @@ def build_binaryrpm(
 
     if append_timestamp:
         cmd += ['--define', 'dist_suffix .%(date -u +%%Y%%m%%d.%%H%%M%%S)']
+
+    if skip_tests:
+        cmd += ['--without', 'tests']
 
     print("Invoking '%s'" % ' '.join(cmd))
     subprocess.check_call(cmd)
