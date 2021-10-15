@@ -21,6 +21,17 @@ jobs:
         run: |
           python -m pytest -s test
 
+  config_validation:
+    name: Configuration Validation
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Validate Configration
+        run: validate_config_index.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+
   ros1_audit:
     name: ROS 1 Audit
     runs-on: ubuntu-18.04
