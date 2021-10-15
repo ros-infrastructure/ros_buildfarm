@@ -277,7 +277,7 @@ jobs:
           underlay_dirs: ${{steps.underlay1.outputs.install_dir}} ${{steps.underlay2.outputs.install_dir}}
           package_selection_args: --packages-skip-up-to ament_flake8 ament_pep257 --packages-up-to ament_cmake_ros
 
-  ros1_config:
+  ros2_config:
     name: ROS 2 Config Validation
     runs-on: ubuntu-20.04
     steps:
