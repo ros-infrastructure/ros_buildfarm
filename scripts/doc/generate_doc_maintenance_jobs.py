@@ -29,7 +29,7 @@ from ros_buildfarm.common import \
     get_repositories_and_script_generating_key_files
 from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index
-from ros_buildfarm.config.doc_build_file import DOC_TYPE_ROSDOC
+from ros_buildfarm.config.doc_build_file import DOC_TYPE_ROSDOC, DOC_TYPE_ROSDOC2
 from ros_buildfarm.git import get_repository
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import configure_management_view
@@ -51,7 +51,7 @@ def main(argv=sys.argv[1:]):
     build_files = get_doc_build_files(config, args.rosdistro_name)
     build_file = build_files[args.doc_build_name]
 
-    if build_file.documentation_type != DOC_TYPE_ROSDOC:
+    if build_file.documentation_type not in [DOC_TYPE_ROSDOC, DOC_TYPE_ROSDOC2]:
         print(("The doc build file '%s' has the wrong documentation type to " +
                "be used with this script") % args.doc_build_name,
               file=sys.stderr)
