@@ -110,7 +110,8 @@ class ReleaseBuildFile(BuildFile):
 
         self.include_test_dependencies = True
         self.run_package_tests = True
-        if 'package_dependency_behavior' in data:
+        if data.get('package_dependency_behavior'):
+            assert isinstance(data['package_dependency_behavior'], dict)
             if 'include_test_dependencies' in data['package_dependency_behavior']:
                 self.include_test_dependencies = \
                     bool(data['package_dependency_behavior']['include_test_dependencies'])
