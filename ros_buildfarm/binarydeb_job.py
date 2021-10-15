@@ -117,7 +117,7 @@ def append_build_timestamp(rosdistro_name, package_name, sourcepkg_dir):
     subprocess.check_call(cmd, cwd=source_dir)
 
 
-def build_binarydeb(rosdistro_name, package_name, sourcepkg_dir, skip_tests=True):
+def build_binarydeb(rosdistro_name, package_name, sourcepkg_dir, skip_tests=False):
     # ensure that one source subfolder exists
     debian_package_name = get_os_package_name(rosdistro_name, package_name)
     subfolders = _get_package_subfolders(sourcepkg_dir, debian_package_name)
