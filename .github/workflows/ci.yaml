@@ -21,17 +21,6 @@ jobs:
         run: |
           python -m pytest -s test
 
-  config_validation:
-    name: Configuration Validation
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Check out project
-        uses: actions/checkout@v2
-      - name: Install dependencies
-        uses: ./.github/actions/setup
-      - name: Validate Configration
-        run: validate_config_index.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
-
   ros1_audit:
     name: ROS 1 Audit
     runs-on: ubuntu-18.04
@@ -52,6 +41,17 @@ jobs:
         with:
           ros_distro: melodic
           os_code_name: bionic
+
+  ros1_config:
+    name: ROS 1 Config Validation
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Validate configration
+        run: validate_config_index.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
 
   ros1_devel:
     name: ROS 1 Devel
@@ -276,6 +276,17 @@ jobs:
           os_code_name: focal
           underlay_dirs: ${{steps.underlay1.outputs.install_dir}} ${{steps.underlay2.outputs.install_dir}}
           package_selection_args: --packages-skip-up-to ament_flake8 ament_pep257 --packages-up-to ament_cmake_ros
+
+  ros1_config:
+    name: ROS 2 Config Validation
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Validate configration
+        run: validate_config_index.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
 
   ros2_devel:
     name: ROS 2 Devel
