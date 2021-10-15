@@ -90,12 +90,7 @@ class Index(object):
                 for key in unset_keys:
                     self.distributions[distro_name][key] = value_types[key]()
 
-        self.ci_builds = {}
-        if 'ci_builds' in data and data['ci_builds']:
-            assert isinstance(data['ci_builds'], dict)
-            for k, v in data['ci_builds'].items():
-                v = _resolve_url(base_url, v)
-                self.ci_builds[k] = v
+        # rosdistro-independent configurations go here
 
         self.doc_builds = {}
         if 'doc_builds' in data and data['doc_builds']:
