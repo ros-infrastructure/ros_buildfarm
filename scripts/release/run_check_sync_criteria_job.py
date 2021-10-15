@@ -30,6 +30,7 @@ from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
+from ros_buildfarm.argument import add_argument_return_zero
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
@@ -52,6 +53,7 @@ def main(argv=sys.argv[1:]):
     add_argument_distribution_repository_key_files(parser)
     add_argument_cache_dir(parser)
     add_argument_dockerfile_dir(parser)
+    add_argument_return_zero(parser)
     args = parser.parse_args(argv)
 
     if args.os_name is None:
