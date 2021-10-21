@@ -621,21 +621,19 @@ def get_xunit_publisher_types_and_patterns(
     return types
 
 
-def get_direct_dependencies(pkg_name, cached_pkgs, pkg_names):
+def get_direct_dependencies(pkg_name, cached_pkgs, pkg_names, include_test_deps=True):
     if pkg_name not in cached_pkgs:
         return None
     pkg = cached_pkgs[pkg_name]
-    # test dependencies are treated as build dependencies by bloom
-    # so we need them here to ensure that all dependencies are available
-    # before starting a build
+    pkg_deps = (pkg.buildtool_depends + pkg.build_depends +
+                pkg.buildtool_export_depends + pkg.build_export_depends)
+    if include_test_deps:
+        pkg_deps += pkg.exec_depends + pkg.test_depends
+    # test dependencies are treated similar to build dependencies by bloom
+    # so if configured to include test dependencies, we need them here to
+    # ensure that all dependencies are available before starting a build
     depends = set([
-        d.name for d in (
-            pkg.buildtool_depends +
-            pkg.build_depends +
-            pkg.buildtool_export_depends +
-            pkg.build_export_depends +
-            pkg.exec_depends +
-            pkg.test_depends)
+        d.name for d in pkg_deps
         if d.name in pkg_names and
         d.evaluated_condition is not False])
     return depends

@@ -104,6 +104,7 @@ cmds.append(
     ' --distribution-repository-key-files ' + ' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))]) +
     ' --binarypkg-dir ' + binarypkg_dir +
     ' --env-vars ' + ' '.join(build_environment_variables) +
-    ' --dockerfile-dir ' + dockerfile_dir)
+    ' --dockerfile-dir ' + dockerfile_dir +
+    (' --skip-tests' if skip_tests else ''))
 }@
 CMD ["@(' && '.join(cmds))"]

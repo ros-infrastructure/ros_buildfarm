@@ -5,7 +5,6 @@ on:
   push:
     branches: [master]
   pull_request:
-    branches: ['*']
 
 jobs:
   pytest:
@@ -185,6 +184,39 @@ jobs:
         with:
           ros_distro: melodic
 
+  ros1_sync_criteria_check:
+    name: ROS 1 Sync Criteria Check
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        python: ['2.7', '3.4', '3.5', '3.6']
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/sync_criteria_check
+        with:
+          ros_distro: melodic
+          os_code_name: bionic
+
+  ros1_trigger:
+    name: ROS 1 Trigger
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        python: ['2.7', '3.4', '3.5', '3.6']
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/trigger
+        with:
+          ros_distro: melodic
+
   ros2_audit:
     name: ROS 2 Audit
     runs-on: ubuntu-20.04
@@ -266,3 +298,85 @@ jobs:
           os_code_name: focal
           overlay_pkg: rcutils
           underlay_repos: ament_cmake_ros
+
+  ros2_release:
+    name: ROS 2 Release
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/release
+        with:
+          config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+          ros_distro: rolling
+          os_code_name: focal
+          pkg_name: rcutils
+
+  ros2_release_rpm:
+    name: ROS 2 Release (RPM)
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/release
+        with:
+          config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+          config_name: rhel
+          ros_distro: rolling
+          os_name: rhel
+          os_code_name: 8
+          arch: x86_64
+          pkg_name: rcutils
+
+  ros2_sync_criteria_check:
+    name: ROS 2 Sync Criteria Check
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/sync_criteria_check
+        with:
+          config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+          ros_distro: rolling
+          os_code_name: focal
+
+  ros2_sync_criteria_check_rpm:
+    name: ROS 2 Sync Criteria Check (RPM)
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/sync_criteria_check
+        with:
+          config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+          config_name: rhel
+          ros_distro: rolling
+          os_name: rhel
+          os_code_name: 8
+          arch: x86_64
+
+  ros2_trigger:
+    name: ROS 2 Trigger
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/trigger
+        with:
+          config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+          ros_distro: rolling

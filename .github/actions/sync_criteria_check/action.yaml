@@ -1,0 +1,65 @@
+---
+name: ros_buildfarm sync criteria check job
+description: Run a ROS buildfarm sync criteria check job
+inputs:
+  config_url:
+    description: URL of the buildfarm configuration index
+    required: true
+    default: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+  config_name:
+    description: Name of the release configuration
+    required: true
+    default: default
+  ros_distro:
+    description: ROS distribution name
+    required: true
+  os_name:
+    description: Operating system name
+    required: true
+    default: ubuntu
+  os_code_name:
+    description: Operating system version name
+    required: true
+  arch:
+    description: Operating system architecture
+    required: true
+    default: amd64
+  return_zero:
+    description: Always return zero on success, even if criteria are not met
+    required: true
+    default: true
+
+runs:
+  using: composite
+  steps:
+    - id: ros_buildfarm_job
+      shell: bash
+      run: |
+        echo ::group::Generate job
+        return_zero_arg=""
+        if ! ${{inputs.return_zero}}; then
+          return_zero_arg="--return-zero"
+        fi
+
+        pushd $(mktemp -d)
+        mkdir -p docker_dir
+        curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc -o ros.asc
+        run_check_sync_criteria_job.py \
+          ${{inputs.config_url}} ${{inputs.ros_distro}} ${{inputs.config_name}} \
+          ${{inputs.os_name}} ${{inputs.os_code_name}} ${{inputs.arch}} \
+          --distribution-repository-urls http://repo.ros2.org/ubuntu/testing http://repositories.ros.org/ubuntu/testing \
+          --distribution-repository-key-files $PWD/ros.asc $PWD/ros.asc \
+          --cache-dir /tmp/package_repo_cache \
+          --dockerfile-dir $PWD/docker_dir \
+          ${return_zero_arg}
+        echo ::endgroup::
+
+        echo ::group::Build container
+        docker build --force-rm -t check_sync_condition $PWD/docker_dir
+        echo ::endgroup::
+
+        echo ::group::Run job
+        docker run --rm \
+          -v ${{github.workspace}}:/tmp/ros_buildfarm:ro \
+          check_sync_condition
+        echo ::endgroup

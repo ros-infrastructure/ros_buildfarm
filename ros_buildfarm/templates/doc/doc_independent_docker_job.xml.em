@@ -57,10 +57,11 @@
 @(SNIPPET(
     'builder_shell_docker-info',
 ))@
+@{os_code_name = 'focal'}@
 @(SNIPPET(
     'builder_check-docker',
     os_name='ubuntu',
-    os_code_name='xenial',
+    os_code_name=os_code_name,
     arch='amd64',
 ))@
 @(SNIPPET(
@@ -73,8 +74,6 @@
     script='\n'.join([
       'rm -fr $WORKSPACE/repositories',
       'mkdir -p $WORKSPACE/repositories',
-      'rm -fr $WORKSPACE/docker_containers',
-      'mkdir -p $WORKSPACE/docker_containers',
       'rm -fr $WORKSPACE/docker_generating_docker',
       'mkdir -p $WORKSPACE/docker_generating_docker'
     ])
@@ -107,7 +106,7 @@ else:
     script='\n'.join([
         '# monitor all subprocesses and enforce termination',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py' +
-        ' $$ --cid-file $WORKSPACE/docker_containers/docker_%s.cid >' % doc_repository_name +
+        ' $$ --cid-file $WORKSPACE/docker_%s.cid >' % doc_repository_name +
         ' $WORKSPACE/docker_generating_docker/docker_%s.log 2>&1 &' % doc_repository_name,
         '# sleep to give python time to startup',
         'sleep 1',
@@ -124,7 +123,7 @@ else:
         'docker run' +
         ' --rm' +
         ' --net=host' +
-        ' --cidfile=$WORKSPACE/docker_containers/docker_%s.cid' % doc_repository_name +
+        ' --cidfile=$WORKSPACE/docker_%s.cid' % doc_repository_name +
         ' -v $WORKSPACE/repositories/%s:/tmp/doc_repository' % doc_repository_name +
         ' -v $WORKSPACE/upload_repository:/tmp/upload_repository' +
         ' -e REPO=/tmp/doc_repository' +

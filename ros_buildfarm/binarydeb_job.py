@@ -117,12 +117,16 @@ def append_build_timestamp(rosdistro_name, package_name, sourcepkg_dir):
     subprocess.check_call(cmd, cwd=source_dir)
 
 
-def build_binarydeb(rosdistro_name, package_name, sourcepkg_dir):
+def build_binarydeb(rosdistro_name, package_name, sourcepkg_dir, skip_tests=False):
     # ensure that one source subfolder exists
     debian_package_name = get_os_package_name(rosdistro_name, package_name)
     subfolders = _get_package_subfolders(sourcepkg_dir, debian_package_name)
     assert len(subfolders) == 1, subfolders
     source_dir = subfolders[0]
+
+    env = dict(os.environ)
+    if skip_tests:
+        env['DEB_BUILD_OPTIONS'] = (env.get('DEB_BUILD_OPTIONS', '') + ' nocheck').lstrip()
 
     source, version = dpkg_parsechangelog(
         source_dir, ['Source', 'Version'])
@@ -130,12 +134,12 @@ def build_binarydeb(rosdistro_name, package_name, sourcepkg_dir):
     print("Package '%s' version: %s" % (debian_package_name, version))
 
     cmd = ['apt-src', 'import', source, '--here', '--version', version]
-    subprocess.check_call(cmd, cwd=source_dir)
+    subprocess.check_call(cmd, cwd=source_dir, env=env)
 
     cmd = ['apt-src', 'build', source]
     print("Invoking '%s' in '%s'" % (' '.join(cmd), source_dir))
     try:
-        subprocess.check_call(cmd, cwd=source_dir)
+        subprocess.check_call(cmd, cwd=source_dir, env=env)
     except subprocess.CalledProcessError:
         traceback.print_exc()
         sys.exit("""

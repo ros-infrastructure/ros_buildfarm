@@ -58,7 +58,8 @@ cmds = [
     ' ' + package_name +
     ' --sourcepkg-dir ' + sourcepkg_dir +
     ' --binarypkg-dir ' + binarypkg_dir +
-    (' --append-timestamp' if append_timestamp else ''),
+    (' --append-timestamp' if append_timestamp else '') +
+    (' --skip-tests' if skip_tests else ''),
 ]
 }@
 CMD ["@(' && '.join(cmds))"]

@@ -108,6 +108,17 @@ class ReleaseBuildFile(BuildFile):
         if 'upload_destination_credential_id' in data:
             self.upload_destination_credential_id = data['upload_destination_credential_id']
 
+        self.include_test_dependencies = True
+        self.run_package_tests = True
+        if data.get('package_dependency_behavior'):
+            assert isinstance(data['package_dependency_behavior'], dict)
+            if 'include_test_dependencies' in data['package_dependency_behavior']:
+                self.include_test_dependencies = \
+                    bool(data['package_dependency_behavior']['include_test_dependencies'])
+            if 'run_package_tests' in data['package_dependency_behavior']:
+                self.run_package_tests = \
+                    bool(data['package_dependency_behavior']['run_package_tests'])
+
     def filter_packages(self, package_names):
         res = set(package_names)
         if self.package_whitelist:

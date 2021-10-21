@@ -518,6 +518,7 @@ def main(argv=sys.argv[1:]):
             'rsync',
             # the following are required by rosdoc_lite
             'doxygen',
+            'graphviz',
             # since catkin is not a run dependency but provides the setup files
             get_os_package_name(args.rosdistro_name, 'catkin'),
             # rosdoc_lite does not work without genmsg being importable

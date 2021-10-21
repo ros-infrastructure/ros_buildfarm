@@ -234,6 +234,16 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``upload_credential_id``: the ID of the credential to upload the built
   packages to the repository host.
 
+* ``package_dependecy_behavior``: a dictionary with the following optional
+  keys:
+
+  * ``include_test_dependencies``: a boolean flag indicating whether test and
+    exec dependencies should be included in the package dependencies for each
+    binary job (default: ``true``).
+
+  * ``run_package_tests``: a boolean flag indicating whether binary package
+    builds should also build and run tests (default: ``true``).
+
 
 Specific options in source build files
 ---------------------------------------
