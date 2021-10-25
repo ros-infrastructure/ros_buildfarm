@@ -87,8 +87,13 @@ class ReleaseBuildFile(BuildFile):
                 bool(data['skip_ignored_packages'])
 
         self.sync_package_count = None
+        self.sync_package_percent = None
         self.sync_packages = []
         if 'sync' in data:
+            if 'package_percent' in data['sync']:
+                percent = float(data['sync']['package_percent'])
+                assert percent >= 0.0 and percent <= 100.0
+                self.sync_package_percent = percent / 100.0
             if 'package_count' in data['sync']:
                 self.sync_package_count = int(data['sync']['package_count'])
             if 'packages' in data['sync'] and data['sync']['packages']:

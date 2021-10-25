@@ -111,6 +111,23 @@ def check_sync_criteria(
               '(more or equal then the configured sync limit of %d)' %
               build_file.sync_package_count)
 
+    # check that the sync_package_percent is satisfied
+    if build_file.sync_package_percent is not None:
+        sync_package_count = int(len(pkg_names) * build_file.sync_package_percent)
+        binary_package_count = len([
+            pkg_name
+            for pkg_name, has_binary_package in binary_packages.items()
+            if has_binary_package])
+        if binary_package_count < sync_package_count:
+            print('Only %d%% binary packages available (at least %d%% are required to sync)' %
+                  (binary_package_count / len(pkg_names) * 100.0,
+                   build_file.sync_package_percent * 100.0),
+                  file=sys.stderr)
+            return False
+        print('%d%% binary packages available (>= to the configured sync percent of %d%%)' %
+              (binary_package_count / len(pkg_names) * 100.0,
+               build_file.sync_package_percent * 100.0))
+
     return True
 
 

@@ -37,7 +37,7 @@ runs:
       run: |
         echo ::group::Generate job
         return_zero_arg=""
-        if ! ${{inputs.return_zero}}; then
+        if [[ "${{inputs.return_zero}}" != "false" ]]; then
           return_zero_arg="--return-zero"
         fi
 

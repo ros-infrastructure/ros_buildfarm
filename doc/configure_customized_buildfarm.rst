@@ -57,7 +57,7 @@ Change the sync criteria
 You can configure the sync criteria when packages are being synced from the
 ``building`` to the ``testing`` repository.
 
-The release build files have two optional configuration options to restrict
+The release build files have three optional configuration options to restrict
 when a sync should happen:
 
 * ``sync: package_count:`` which defines the minimum required number of
@@ -65,6 +65,8 @@ when a sync should happen:
 
 * ``sync: packages:`` a list of package names which must be available
 
+* ``sync: package_percent:`` which defines the minimum percentage of
+  available packages
 
 Change the priority and timeouts of the Jenkins jobs
 ----------------------------------------------------
