@@ -170,13 +170,12 @@ def parse_build_depends(dep_str):
         dep_profs = dep_str[dep_sep + 1:-1]
         dep_str = dep_str[:dep_sep].rstrip()
         profiles.update(dep_profs.split())
-    # 2. Architectures (zero or more)
+    # 2. Architectures (zero or one)
     arches = set()
-    while dep_str.endswith(']'):
+    if dep_str.endswith(']'):
         dep_sep = dep_str.find('[')
-        dep_arches = dep_str[dep_sep + 1:-1]
+        arches.update(dep_str[dep_sep + 1:-1].split())
         dep_str = dep_str[:dep_sep].rstrip()
-        arches.update(dep_arches.split())
     # 3. Version (zero or one)
     version = None
     if dep_str.endswith(')'):
