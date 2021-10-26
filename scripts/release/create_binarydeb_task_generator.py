@@ -76,10 +76,15 @@ def main(argv=sys.argv[1:]):
     # build_binarydeb dependencies
     debian_pkg_names = ['apt-src']
 
+    # compute build profiles for reading dependencies
+    build_profiles = set()
+    if args.skip_tests:
+        build_profiles.add('nocheck')
+
     # add build dependencies from .dsc file
     dsc_file = get_dsc_file(
         args.binarypkg_dir, debian_package_name, debian_package_version)
-    debian_pkg_names += sorted(get_build_depends(dsc_file))
+    debian_pkg_names += sorted(get_build_depends(dsc_file, build_profiles))
 
     # get versions for build dependencies
     apt_cache = Cache()
@@ -147,19 +152,62 @@ def get_dsc_file(basepath, debian_package_name, debian_package_version):
     return dsc_files[0]
 
 
-def get_build_depends(dsc_file):
+def parse_build_depends(dep_str):
+    """
+    Parse a single entry in a 'Build-Depends' list.
+
+    :param dep_str: A string containing the full dependency declaration.
+    :returns: A tuple containing the dependency name, version, architectures,
+      and profiles.
+    """
+    # The order of the parts is part of the spec
+    dep_str = dep_str.strip()
+
+    # 1. Profiles (zero or more)
+    profiles = set()
+    while dep_str.endswith('>'):
+        dep_sep = dep_str.find('<')
+        dep_profs = dep_str[dep_sep + 1:-1]
+        dep_str = dep_str[:dep_sep].rstrip()
+        profiles.update(dep_profs.split())
+    # 2. Architectures (zero or more)
+    arches = set()
+    while dep_str.endswith(']'):
+        dep_sep = dep_str.find('[')
+        dep_arches = dep_str[dep_sep + 1:-1]
+        dep_str = dep_str[:dep_sep].rstrip()
+        arches.update(dep_arches.split())
+    # 3. Version (zero or one)
+    version = None
+    if dep_str.endswith(')'):
+        dep_sep = dep_str.find('(')
+        version = dep_str[dep_sep + 1:-1].strip()
+        dep_str = dep_str[:dep_sep].rstrip()
+
+    return (dep_str, version, arches, profiles)
+
+
+def omit_by_spec(entry, spec):
+    if entry.startswith('!'):
+        return entry[1:] in spec
+    else:
+        return entry not in spec
+
+
+def get_build_depends(dsc_file, build_profiles=()):
     with open(dsc_file, 'r') as h:
         content = h.read()
 
     deps = None
     for line in content.splitlines():
-        if line.startswith('Build-Depends: '):
-            deps = set([])
+        if line.startswith('Build-Depends:'):
+            deps = set()
             deps_str = line[15:]
-            for dep_str in deps_str.split(', '):
-                if dep_str.endswith(')'):
-                    dep_str = dep_str[:dep_str.find(' (')]
-                deps.add(dep_str)
+            for dep_str in deps_str.split(','):
+                (dep_name, _, _, dep_profs) = parse_build_depends(dep_str)
+                if any(omit_by_spec(p, build_profiles) for p in dep_profs):
+                    continue
+                deps.add(dep_name)
             break
     assert deps is not None
     return deps
