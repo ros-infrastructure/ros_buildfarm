@@ -127,6 +127,7 @@ def build_binarydeb(rosdistro_name, package_name, sourcepkg_dir, skip_tests=Fals
     env = dict(os.environ)
     if skip_tests:
         env['DEB_BUILD_OPTIONS'] = (env.get('DEB_BUILD_OPTIONS', '') + ' nocheck').lstrip()
+        env['DEB_BUILD_PROFILES'] = (env.get('DEB_BUILD_PROFILES', '') + ' nocheck').lstrip()
 
     source, version = dpkg_parsechangelog(
         source_dir, ['Source', 'Version'])
