@@ -126,7 +126,12 @@ def build_binarydeb(rosdistro_name, package_name, sourcepkg_dir, skip_tests=Fals
 
     env = dict(os.environ)
     if skip_tests:
+        # There are two settings which documentation suggests for disabling
+        # tests in debian builds:
+        # This setting should prevent invocation in dh_auto_test
         env['DEB_BUILD_OPTIONS'] = (env.get('DEB_BUILD_OPTIONS', '') + ' nocheck').lstrip()
+        # This setting should filter out Build-Depends marked with <!nocheck>
+        env['DEB_BUILD_PROFILES'] = (env.get('DEB_BUILD_PROFILES', '') + ' nocheck').lstrip()
 
     source, version = dpkg_parsechangelog(
         source_dir, ['Source', 'Version'])
