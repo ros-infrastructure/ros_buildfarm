@@ -145,9 +145,12 @@ class PulpRpmClient:
         publication = self._rpm_publications_api.read(distribution.publication)
         return self.enumerate_pkgs_in_repo_ver(publication.repository_version)
 
-    def enumerate_pkgs_in_repo_ver(self, repo_ver_href):
+    def enumerate_pkgs_in_repo_ver(self, repo_ver_href, names=None):
+        name__in = ','.join(names) if names is not None else None
         return PulpPageIterator(
-            self._rpm_packages_api.list, repository_version=repo_ver_href)
+            self._rpm_packages_api.list, repository_version=repo_ver_href,
+            fields='pulp_href,name,epoch,version,arch,release,provides,requires',
+            limit=250, name__in=name__in)
 
     def enumerate_remotes(self):
         return PulpPageIterator(self._rpm_remotes_api.list)
@@ -159,19 +162,33 @@ class PulpRpmClient:
             name=distribution_name).results[0]
         old_publication = self._rpm_publications_api.read(distribution.publication)
 
-        # Get the current packages
-        current_pkgs = {
-            pkg.pulp_href: pkg for pkg in
-            self.enumerate_pkgs_in_repo_ver(old_publication.repository_version)}
+        if package_cache is None:
+            package_cache = {}
 
-        # Set up the package chache
-        package_cache = {**(package_cache or {}), **current_pkgs}
+        # If we need to invalidate, fetch everything up front
+        if invalidate_expression or invalidate_downstream:
+            # Get the current packages
+            current_pkgs = {
+                pkg.pulp_href: pkg for pkg in
+                self.enumerate_pkgs_in_repo_ver(old_publication.repository_version)}
+            package_cache.update(current_pkgs)
 
         # Get the packages we're adding
         new_pkgs = {
             pkg.pulp_href: pkg for pkg in
             [package_cache.get(pkg_href) or self._rpm_packages_api.read(pkg_href)
                 for pkg_href in packages_to_add]}
+
+        # If we didn't already fetch everything, enumerate only
+        # packages with the same name
+        if not invalidate_expression and not invalidate_downstream:
+            # Get the current packages
+            names = set(p.name for p in new_pkgs.values())
+            current_pkgs = {
+                pkg.pulp_href: pkg for pkg in
+                self.enumerate_pkgs_in_repo_ver(
+                    old_publication.repository_version, names=names)}
+            package_cache.update(current_pkgs)
 
         # Invalidate packages
         pkgs_to_remove = {}
