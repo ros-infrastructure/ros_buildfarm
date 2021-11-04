@@ -159,6 +159,9 @@ def configure_ci_job(
     if build_targets is not None:
         build_file.targets = build_targets
 
+    if trigger_timer is None:
+        trigger_timer = build_file.jenkins_job_schedule
+
     if index is None:
         index = get_index(config.rosdistro_index_url)
     if dist_file is None:
