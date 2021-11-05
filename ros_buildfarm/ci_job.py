@@ -108,8 +108,7 @@ def _configure_ci_jobs(
                 jenkins=jenkins, views=views,
                 is_disabled=is_disabled,
                 groovy_script=groovy_script,
-                dry_run=dry_run,
-                trigger_timer=build_file.jenkins_job_schedule)
+                dry_run=dry_run)
             ci_job_names.append(job_name)
             if groovy_script is not None:
                 print("Configuration for job '%s'" % job_name)
@@ -159,8 +158,12 @@ def configure_ci_job(
     if build_targets is not None:
         build_file.targets = build_targets
 
-    if trigger_timer is None:
-        trigger_timer = build_file.jenkins_job_schedule
+    if trigger_timer is not None:
+        print(
+          'WARNING: trigger_timer keyword has been deprecated. '
+          'jenkins_job_schedule property of `build_file` is used instead.',
+          file=sys.stderr)
+    trigger_timer = build_file.jenkins_job_schedule
 
     if index is None:
         index = get_index(config.rosdistro_index_url)
