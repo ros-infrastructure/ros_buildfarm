@@ -27,7 +27,6 @@ from ros_buildfarm.common import get_xunit_publisher_types_and_patterns
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_ci_build_files
-from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.git import get_repository
 from ros_buildfarm.templates import expand_template
@@ -69,11 +68,6 @@ def _configure_ci_jobs(
     for os_name, os_code_name, arch in targets:
         print('  -', os_name, os_code_name, arch)
 
-    dist_file = get_distribution_file(index, rosdistro_name, build_file)
-    if not dist_file:
-        print('No distribution file matches the build file')
-        return
-
     ci_view_name = get_ci_view_name(rosdistro_name)
 
     # all further configuration will be handled by either the Jenkins API
@@ -104,8 +98,7 @@ def _configure_ci_jobs(
                 config_url, rosdistro_name, ci_build_name,
                 os_name, os_code_name, arch,
                 config=config, build_file=build_file,
-                index=index, dist_file=dist_file,
-                jenkins=jenkins, views=views,
+                index=index, jenkins=jenkins, views=views,
                 is_disabled=is_disabled,
                 groovy_script=groovy_script,
                 dry_run=dry_run,
@@ -161,11 +154,10 @@ def configure_ci_job(
 
     if index is None:
         index = get_index(config.rosdistro_index_url)
-    if dist_file is None:
-        dist_file = get_distribution_file(index, rosdistro_name, build_file)
-        if not dist_file:
-            raise JobValidationError(
-                'No distribution file matches the build file')
+    if dist_file is not None:
+        print(
+            'WARNING: dist_file keyword has been deprecated because it '
+            'was never actually used.', file=sys.stderr)
 
     if os_name not in build_file.targets.keys():
         raise JobValidationError(
