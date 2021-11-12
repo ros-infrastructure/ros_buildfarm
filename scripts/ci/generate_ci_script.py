@@ -16,6 +16,7 @@
 
 import argparse
 import os
+import re
 import sys
 
 from em import BANGPATH_OPT
@@ -161,7 +162,7 @@ def main(argv=sys.argv[1:]):
             'build_tool': args.build_tool or build_file.build_tool,
             'parameters': hook.parameters},
         options={BANGPATH_OPT: False})
-    value = value.replace('python3 ', sys.executable + ' ')
+    value = re.sub(r'(^| )python3 ', r'\1' + sys.executable + ' ', value, flags=re.M)
     print(value)
 
 

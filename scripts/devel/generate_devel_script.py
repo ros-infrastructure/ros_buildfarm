@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import argparse
+import re
 import sys
 
 from em import BANGPATH_OPT
@@ -142,7 +143,7 @@ def main(argv=sys.argv[1:]):
             'scripts': hook.scripts,
             'build_tool': args.build_tool or build_file.build_tool},
         options={BANGPATH_OPT: False})
-    value = value.replace('python3', sys.executable)
+    value = re.sub(r'(^| )python3 ', r'\1' + sys.executable + ' ', value, flags=re.M)
     print(value)
 
 

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import argparse
+import re
 import sys
 
 from em import BANGPATH_OPT
@@ -145,7 +146,7 @@ def main(argv=sys.argv[1:]):
             'binary_scripts': binary_scripts,
             'package_format': package_format},
         options={BANGPATH_OPT: False})
-    value = value.replace('python3', sys.executable)
+    value = re.sub(r'(^| )python3 ', r'\1' + sys.executable + ' ', value, flags=re.M)
     print(value)
 
 
