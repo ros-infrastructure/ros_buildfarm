@@ -56,7 +56,7 @@ COPY @repos_file /tmp/@repos_file
 ENTRYPOINT ["sh", "-c"]
 @{
 args = \
-    ' ' + rosdistro_name + \
+    ' ' + (rosdistro_name or "''") + \
     ' ' + os_name + \
     ' ' + os_code_name + \
     ' ' + arch + \
