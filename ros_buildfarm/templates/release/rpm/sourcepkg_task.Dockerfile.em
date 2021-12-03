@@ -9,7 +9,7 @@ if os_name == 'rhel' and os_code_name.isnumeric() and int(os_code_name) < 8:
 # generated from @template_name
 
 @[if os_name in ['rhel']]@
-FROM centos:@(os_code_name)
+FROM almalinux:@(os_code_name)
 
 # Enable EPEL on RHEL
 RUN @(package_manager) install -y epel-release
