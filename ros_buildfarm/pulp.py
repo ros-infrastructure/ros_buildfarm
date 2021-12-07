@@ -80,7 +80,7 @@ class PulpRpmClient:
 
     def __init__(  # noqa: D107
             self, base_url, username, password,
-            task_timeout=60.0, task_polling_interval=0.5):
+            task_timeout=120.0, task_polling_interval=0.5):
         self._task_timeout = task_timeout
         self._task_polling_interval = task_polling_interval
 
@@ -113,7 +113,7 @@ class PulpRpmClient:
             time.sleep(self._task_polling_interval)
             timeout -= self._task_polling_interval
             if timeout <= 0:
-                task_cancel = pulpcore.TaskCancel('canceled')
+                task_cancel = pulpcore.PatchedTaskCancel('canceled')
                 task = self._core_tasks_api.tasks_cancel(task.pulp_href, task_cancel)
                 if task.state != 'completed':
                     raise RuntimeError(
