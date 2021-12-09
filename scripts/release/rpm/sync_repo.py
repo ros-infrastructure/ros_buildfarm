@@ -102,9 +102,10 @@ def main(argv=sys.argv[1:]):
             print('Syncing %d packages from %s to %s...%s' % (
                 len(packages_to_sync), dist_source, dist_dest,
                 ' (dry run)' if args.dry_run else ''))
+            package_cache = dict(packages_to_sync)
             new_pkgs, pkgs_removed = pulp_client.import_and_invalidate(
                 dist_dest, packages_to_sync, args.invalidate_expression,
-                args.invalidate, package_cache=packages_to_sync, dry_run=args.dry_run)
+                args.invalidate, package_cache=package_cache, dry_run=args.dry_run)
             print('- Added %d packages%s' % (
                 len(new_pkgs), ' (dry run)' if args.dry_run else ''))
             for pkg in sorted(new_pkgs, key=lambda pkg: pkg.name):
