@@ -99,8 +99,11 @@ def main(argv=sys.argv[1:]):
 
         # get direct build dependencies
         package_root = args.package_root[-1]
+        non_ros_package_paths = set(
+            d for d in selected_packages.values()
+            if not os.path.isfile(os.path.join(d, 'package.xml')))
         print("Crawling for packages in '%s'" % package_root)
-        pkgs = find_packages(package_root)
+        pkgs = find_packages(package_root, exclude_paths=non_ros_package_paths)
 
         pkg_names = [pkg.name for pkg in pkgs.values()]
         print('Found the following ROS packages:')
