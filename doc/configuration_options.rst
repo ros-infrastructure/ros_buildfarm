@@ -583,3 +583,8 @@ The following options are valid in version ``1`` (beside the generic options):
 
 * ``underlay_from_ci_jobs``: names of other CI jobs which should be used
   as an underlay to this job.
+
+* ``upload_directory``: a subdirectory name to upload the resulting archive
+  to, if desired.
+  By default, the resulting archives are only available to other jobs within
+  Jenkins.

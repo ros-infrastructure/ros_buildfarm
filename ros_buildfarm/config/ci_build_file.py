@@ -139,3 +139,7 @@ class CIBuildFile(BuildFile):
             self._assert_valid_benchmark_schema()
             assert self.benchmark_patterns, \
                 "The 'benchmark_patterns' value is required when using 'benchmark_schema'"
+
+        self.upload_directory = None
+        if 'upload_directory' in data:
+            self.upload_directory = data['upload_directory']
