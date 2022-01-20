@@ -303,6 +303,8 @@ def _get_ci_job_config(
         'benchmark_schema': build_file.benchmark_schema,
 
         'shared_ccache': build_file.shared_ccache,
+
+        'upload_directory': build_file.upload_directory,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

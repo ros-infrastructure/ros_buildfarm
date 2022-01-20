@@ -446,6 +446,17 @@ parameters = [
       image for images in show_images.values() for image in images
     ],
 ))@
+@[if upload_directory]@
+@(SNIPPET(
+    'publisher_publish-over-ssh',
+    config_name='ci_archives',
+    remote_directory=upload_directory,
+    source_files=[
+        'ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name, os_code_name, arch),
+    ],
+    remove_prefix=None,
+))@
+@[end if]@
 @[if benchmark_patterns]@
 @(SNIPPET(
     'publisher_benchmark',
