@@ -88,7 +88,7 @@ def expand_template(template_name, data, options=None):
             '%Y-%m-%d (%z)', now)
         data['timezone'] = '%s%s%02d' % (
             time.tzname[0], '-' if time.timezone < 0 else '+',
-            time.timezone / 60 / 60)
+            abs(time.timezone / 60 / 60))
         data['wrapper_scripts'] = get_wrapper_scripts()
 
         _add_helper_functions(data)
