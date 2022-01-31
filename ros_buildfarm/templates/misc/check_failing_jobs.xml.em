@@ -22,7 +22,7 @@
 @(SNIPPET(
     'scm_null',
 ))@
-  <assignedNode>master</assignedNode>
+  <assignedNode>built-in || master</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
