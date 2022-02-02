@@ -69,7 +69,7 @@ def build_binaryrpm(
         '--rebuild', source_packages[0]]
 
     if append_timestamp:
-        cmd += ['--define', 'dist_suffix .%(date -u +%%Y%%m%%d.%%H%%M%%S)']
+        cmd += ['--define', 'release_suffix .%(date -u +%%Y%%m%%d.%%H%%M%%S)']
 
     if skip_tests:
         cmd += ['--without', 'tests']
