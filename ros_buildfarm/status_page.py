@@ -16,7 +16,6 @@ from __future__ import print_function
 
 from collections import defaultdict
 from collections import namedtuple
-from distutils.version import LooseVersion
 import itertools
 import os
 import re
@@ -24,6 +23,7 @@ import shutil
 import sys
 import time
 
+import packaging.version
 import yaml
 
 from .common import get_os_package_name
@@ -371,11 +371,11 @@ def get_regressions(
             main_version = \
                 _get_pkg_version(main_repo_data, target, debian_pkg_name)
             if main_version is not None:
-                main_ver_loose = LooseVersion(main_version)
+                main_ver_parsed = packaging.version.parse(main_version)
                 for repo_data in [building_repo_data, testing_repo_data]:
                     version = \
                         _get_pkg_version(repo_data, target, debian_pkg_name)
-                    if not version or main_ver_loose > LooseVersion(version):
+                    if not version or main_ver_parsed > packaging.version.parse(version):
                         regressions[pkg_name][target] = True
     return regressions
 
@@ -568,29 +568,7 @@ def get_resource_hashes():
 
 
 def _version_is_gt_other(version, other_version):
-    try:
-        # might raise TypeError: http://bugs.python.org/issue14894
-        return LooseVersion(version) > LooseVersion(other_version)
-    except TypeError:
-        loose_version, other_loose_version = \
-            _get_comparable_loose_versions(version, other_version)
-        return loose_version < other_loose_version
-
-
-def _get_comparable_loose_versions(version_str1, version_str2):
-    loose_version1 = LooseVersion(version_str1)
-    loose_version2 = LooseVersion(version_str2)
-    if sys.version_info[0] > 2:
-        # might raise TypeError in Python 3: http://bugs.python.org/issue14894
-        version_parts1 = loose_version1.version
-        version_parts2 = loose_version2.version
-        for i in range(min(len(version_parts1), len(version_parts2))):
-            try:
-                version_parts1[i] < version_parts2[i]
-            except TypeError:
-                version_parts1[i] = str(version_parts1[i])
-                version_parts2[i] = str(version_parts2[i])
-    return loose_version1, loose_version2
+    return packaging.version.parse(version) > packaging.version.parse(other_version)
 
 
 def build_blocked_releases_page(
@@ -1120,7 +1098,7 @@ class CompareRow(object):
         return ' '.join([self.maintainers[k] for k in sorted(self.maintainers.keys())])
 
     def get_labels(self, distros):
-        all_versions = [LooseVersion(v) if v else v for v in self.versions]
+        all_versions = [packaging.version.parse(v) if v else v for v in self.versions]
         valid_versions = [v for v in all_versions if v]
         labels = []
         if any([
@@ -1142,13 +1120,13 @@ class CompareRow(object):
 
 
 def _is_only_patch_is_different(a, b):
-    return a.version[0] == b.version[0] and \
-        a.version[1] == b.version[1] and a.version[2] != b.version[2]
+    return a.release[0] == b.release[0] and \
+        a.release[1] == b.release[1] and a.release[2] != b.release[2]
 
 
 def _is_greater(a, b):
-    return a.version[0] > b.version[0] or \
-        (a.version[0] == b.version[0] and a.version[1] > b.version[1])
+    return a.release[0] > b.release[0] or \
+        (a.release[0] == b.release[0] and a.release[1] > b.release[1])
 
 
 def _is_same_version_but_different_branch(version_a, version_b, branch_a, branch_b):
@@ -1158,8 +1136,8 @@ def _is_same_version_but_different_branch(version_a, version_b, branch_a, branch
     # skip when any branch is unknown or they are equal
     if not branch_a or not branch_b or branch_a == branch_b:
         return False
-    return version_a.version[0] == version_b.version[0] and \
-        version_a.version[1] == version_b.version[1]
+    return version_a.release[0] == version_b.release[0] and \
+        version_a.release[1] == version_b.release[1]
 
 
 def _compare_package_version(distros, pkg_name):
