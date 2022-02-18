@@ -521,6 +521,14 @@ The following options are valid in version ``1`` (beside the generic options):
   checkout into the workspace with their branch specified in the ``source``
   entry.
 
+* ``package_names``: the names of released packages in the rosdistro to be
+  checked into the workspace at the version specified in the ``release``
+  entry.
+
+* ``package_dependencies``: a boolean flag which indiciates when to include any
+  necessary recursive dependencies to build the packages specified in
+  ``package_names``. Defaults to ``false``.
+
 * ``archive_files``: a list of workspace-relative paths and/or glob expressions to
   files to be kept as additional build artifacts.
 

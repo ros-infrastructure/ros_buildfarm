@@ -208,6 +208,8 @@ def configure_ci_job(
         os_code_name, arch,
         build_file.repos_files,
         build_file.repository_names,
+        build_file.package_names,
+        build_file.package_dependencies,
         underlay_source_jobs,
         underlay_source_paths,
         trigger_timer, trigger_jobs,
@@ -230,8 +232,8 @@ def configure_ci_view(jenkins, view_name, dry_run=False):
 def _get_ci_job_config(
         index, rosdistro_name, build_file, os_name,
         os_code_name, arch,
-        repos_files, repository_names, underlay_source_jobs,
-        underlay_source_paths, trigger_timer,
+        repos_files, repository_names, package_names, package_dependencies,
+        underlay_source_jobs, underlay_source_paths, trigger_timer,
         trigger_jobs, is_disabled=False):
     template_name = 'ci/ci_job.xml.em'
 
@@ -279,6 +281,8 @@ def _get_ci_job_config(
 
         'repos_file_urls': repos_files,
         'repository_names': repository_names,
+        'package_names': package_names,
+        'package_dependencies': package_dependencies,
 
         'skip_rosdep_keys': build_file.skip_rosdep_keys,
         'install_packages': build_file.install_packages,

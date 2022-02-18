@@ -55,6 +55,18 @@ parameters = [
     },
     {
         'type': 'string',
+        'name': 'package_names',
+        'default_value': ' '.join(package_names),
+        'description': 'Released package names from the rosdistro to be built (space-separated)',
+    },
+    {
+        'type': 'boolean',
+        'name': 'package_dependencies',
+        'default_value': package_dependencies,
+        'description': 'If selected, dependencies for packages in package_names will also be built',
+    },
+    {
+        'type': 'string',
         'name': 'test_branch',
         'default_value': test_branch or '',
         'description': 'Branch to attempt to checkout before doing batch job',
@@ -179,6 +191,7 @@ parameters = [
         'echo "# BEGIN SECTION: Generate Dockerfile - CI tasks"',
         'export TZ="%s"' % timezone,
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
+	'if [ "$package_dependencies" = "true" ]; then package_dependencies_arg=--package-dependencies; fi',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/run_ci_job.py' +
         ' ' + rosdistro_name +
         ' ' + os_name +
@@ -191,6 +204,8 @@ parameters = [
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers' +
         ' --repos-file-urls $repos_file_urls' +
         ' --repository-names $repository_names' +
+        ' --package-names $package_names' +
+        ' $package_dependencies_arg' +
         ' --test-branch "$test_branch"' +
         ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) +
         ' --install-packages $install_packages' +

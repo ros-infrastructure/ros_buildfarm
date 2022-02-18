@@ -32,6 +32,8 @@ from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_install_packages
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
+from ros_buildfarm.argument import add_argument_package_dependencies
+from ros_buildfarm.argument import add_argument_package_names
 from ros_buildfarm.argument import add_argument_package_selection_args
 from ros_buildfarm.argument import add_argument_repos_file_urls
 from ros_buildfarm.argument import add_argument_repository_names
@@ -66,6 +68,8 @@ def main(argv=sys.argv[1:]):
     a3 = add_argument_build_tool_test_args(parser)
     add_argument_repos_file_urls(parser)
     add_argument_repository_names(parser, optional=True)
+    add_argument_package_names(parser, optional=True)
+    add_argument_package_dependencies(parser)
     add_argument_ros_version(parser)
     add_argument_skip_rosdep_keys(parser)
     add_argument_test_branch(parser)
@@ -79,7 +83,7 @@ def main(argv=sys.argv[1:]):
     for k, v in remainder_args.items():
         setattr(args, k, v)
 
-    assert args.repos_file_urls or args.repository_names
+    assert args.repos_file_urls or args.repository_names or args.package_names
 
     repos_file_names = []
     for index, repos_file_url in enumerate(args.repos_file_urls):

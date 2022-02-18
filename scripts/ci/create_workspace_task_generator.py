@@ -28,6 +28,8 @@ from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
+from ros_buildfarm.argument import add_argument_package_dependencies
+from ros_buildfarm.argument import add_argument_package_names
 from ros_buildfarm.argument import add_argument_package_selection_args
 from ros_buildfarm.argument import add_argument_repos_file_urls
 from ros_buildfarm.argument import add_argument_repository_names
@@ -57,6 +59,8 @@ def main(argv=sys.argv[1:]):
     add_argument_package_selection_args(parser)
     add_argument_repos_file_urls(parser)
     add_argument_repository_names(parser, optional=True)
+    add_argument_package_names(parser, optional=True)
+    add_argument_package_dependencies(parser)
     add_argument_skip_rosdep_keys(parser)
     add_argument_test_branch(parser)
     parser.add_argument(
@@ -65,7 +69,7 @@ def main(argv=sys.argv[1:]):
         help='The root path of the workspace to compile')
     args = parser.parse_args(argv)
 
-    assert args.repos_file_urls or args.repository_names
+    assert args.repos_file_urls or args.repository_names or args.package_names
 
     repos_file_names = []
     for index, repos_file_url in enumerate(args.repos_file_urls):
@@ -114,6 +118,8 @@ def main(argv=sys.argv[1:]):
 
         'repos_file_names': repos_file_names,
         'repository_names': args.repository_names,
+        'package_names': args.package_names,
+        'package_dependencies': args.package_dependencies,
         'test_branch': args.test_branch,
 
         'skip_rosdep_keys': args.skip_rosdep_keys,
