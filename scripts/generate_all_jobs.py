@@ -118,11 +118,9 @@ def main(argv=sys.argv[1:]):
                 args.config_url, ros_distro_name, source_build_name,
                 dry_run=not args.commit)
 
-        ci_build_files = get_ci_build_files(config, ros_distro_name)
-        for ci_build_name in ci_build_files.keys():
+        if get_ci_build_files(config, ros_distro_name):
             generate_ci_maintenance_jobs(
-                args.config_url, ros_distro_name, ci_build_name,
-                dry_run=not args.commit)
+                args.config_url, ros_distro_name, dry_run=not args.commit)
 
         doc_build_files = get_doc_build_files(config, ros_distro_name)
         for doc_build_name, doc_build_file in doc_build_files.items():
@@ -270,7 +268,12 @@ def generate_release_maintenance_jobs(
 
 
 def generate_ci_maintenance_jobs(
-        config_url, ros_distro_name, ci_build_name, dry_run=False):
+        config_url, ros_distro_name, ci_build_name=None, dry_run=False):
+    if ci_build_name is not None:
+        print(
+            "The 'ci_build_name' argument to 'generate_ci_maintenance_jobs' "
+            ' has been deprecated because it is not used.', file=sys.stderr)
+
     cmd = [
         _resolve_script('ci', 'generate_ci_maintenance_jobs.py'),
         config_url,
