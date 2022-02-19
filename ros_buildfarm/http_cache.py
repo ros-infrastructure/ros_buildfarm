@@ -28,6 +28,8 @@ except ImportError:
     from urllib2 import URLError
     from urllib2 import urlopen
 
+logger = logging.getLogger(__name__)
+
 
 def fetch_and_cache_gzip(url, cache_dir):
     cache_filename = os.path.join(
@@ -49,7 +51,7 @@ def _fetch_gzip_url(url, dst_filename):
     dst_dirname = os.path.dirname(dst_filename)
     if not os.path.exists(dst_dirname):
         os.makedirs(dst_dirname)
-    logging.debug('Downloading gz url: %s' % url)
+    logger.debug('Downloading gz url: %s' % url)
     gz_str = _load_url(url)
     gz_stream = BytesIO(gz_str)
     g = GzipFile(fileobj=gz_stream, mode='rb')
@@ -61,7 +63,7 @@ def _fetch_plain_url(url, dst_filename):
     dst_dirname = os.path.dirname(dst_filename)
     if not os.path.exists(dst_dirname):
         os.makedirs(dst_dirname)
-    logging.debug('Downloading url: %s' % url)
+    logger.debug('Downloading url: %s' % url)
     with open(dst_filename, 'wb') as f:
         f.write(_load_url(url))
 

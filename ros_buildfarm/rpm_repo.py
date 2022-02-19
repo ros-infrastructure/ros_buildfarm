@@ -20,6 +20,8 @@ from .common import PlatformPackageDescriptor
 from .http_cache import fetch_and_cache_gzip
 from .http_cache import fetch_and_cache_plaintext
 
+logger = logging.getLogger(__name__)
+
 
 def get_ros_rpm_repo_index(rpm_repository_baseurl, target, cache_dir):
     return get_rpm_repo_index(
@@ -44,7 +46,7 @@ def get_rpm_repo_index(rpm_repository_baseurl, target, cache_dir):
     primary_xml_cache_filename = fetch_and_cache_gzip(
         primary_xml_url, cache_dir)
 
-    logging.debug('Reading file: %s' % primary_xml_cache_filename)
+    logger.debug('Reading file: %s' % primary_xml_cache_filename)
     pkgdb = minidom.parse(primary_xml_cache_filename)
 
     # extract version number of every package
@@ -69,7 +71,7 @@ def get_rpm_repo_index(rpm_repository_baseurl, target, cache_dir):
 
 
 def _get_primary_xml_location(repomd_xml):
-    logging.debug('Reading file: %s' % repomd_xml)
+    logger.debug('Reading file: %s' % repomd_xml)
     repomd_data_elements = minidom.parse(
         repomd_xml).getElementsByTagName('data')
 

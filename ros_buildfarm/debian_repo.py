@@ -18,6 +18,8 @@ import os
 from .common import PlatformPackageDescriptor
 from .http_cache import fetch_and_cache_gzip
 
+logger = logging.getLogger(__name__)
+
 
 def get_debian_repo_index(debian_repository_baseurl, target, cache_dir):
     url = os.path.join(
@@ -29,7 +31,7 @@ def get_debian_repo_index(debian_repository_baseurl, target, cache_dir):
 
     cache_filename = fetch_and_cache_gzip(url, cache_dir)
 
-    logging.debug('Reading file: %s' % cache_filename)
+    logger.debug('Reading file: %s' % cache_filename)
     # split package blocks
     with open(cache_filename, 'rb') as f:
         blocks = f.read().decode('utf8').split('\n\n')

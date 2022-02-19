@@ -31,7 +31,7 @@ from .loader import load_url
 from .release_build_file import ReleaseBuildFile
 from .source_build_file import SourceBuildFile
 
-logger = logging.getLogger('ros_buildfarm.config')
+logger = logging.getLogger(__name__)
 
 
 def load_yaml(url):
