@@ -12,13 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import os
 import re
-import sys
 import time
 
 from pulpcore.client import pulp_rpm
 from pulpcore.client import pulpcore
+
+logger = logging.getLogger(__name__)
 
 
 def format_pkg_ver(pkg):
@@ -110,6 +112,9 @@ class PulpRpmClient:
             if task.state in ['failed', 'canceled']:
                 raise RuntimeError(
                     "Pulp task '%s' did not complete (%s)" % (task.pulp_href, task.state))
+            logger.debug(
+                "Pulp task '%s' is '%s': checking again in %ds" % (
+                    task.pulp_href, task.state, self._task_polling_interval))
             time.sleep(self._task_polling_interval)
             timeout -= self._task_polling_interval
             if timeout <= 0:
@@ -124,16 +129,20 @@ class PulpRpmClient:
         return task
 
     def _publish_and_distribute(self, distribution, repo_version_href):
+        logger.debug('Publishing and distributing: ' + repo_version_href)
+
         # Publish the new version
         publish_data = pulp_rpm.RpmRpmPublication(repository_version=repo_version_href)
         publish_task_href = self._rpm_publications_api.create(publish_data).task
         publish_task = self._wait_for_task(publish_task_href)
+        logger.debug('Created publication: ' + publish_task.created_resources[0])
 
         # Distribute the publication at the original endpoint
         distribution.publication = publish_task.created_resources[0]
         distribute_task_href = self._rpm_distributions_api.partial_update(
             distribution.pulp_href, distribution).task
         self._wait_for_task(distribute_task_href)
+        logger.debug('Updated distribution: ' + distribution.pulp_href)
 
     def enumerate_distributions(self):
         return PulpPageIterator(
@@ -158,15 +167,19 @@ class PulpRpmClient:
     def import_and_invalidate(
             self, distribution_name, packages_to_add,
             invalidate_expression, invalidate_downstream, package_cache=None, dry_run=False):
+        logger.debug("Performing import and invalidation for '%s'" % (distribution_name,))
         distribution = self._rpm_distributions_api.list(
             name=distribution_name).results[0]
+        logger.debug('Got distribution: ' + distribution.pulp_href)
         old_publication = self._rpm_publications_api.read(distribution.publication)
+        logger.debug('Got old publication: ' + old_publication.pulp_href)
 
         if package_cache is None:
             package_cache = {}
 
         # If we need to invalidate, fetch everything up front
         if invalidate_expression or invalidate_downstream:
+            logger.debug('Getting package list for ' + old_publication.repository_version)
             # Get the current packages
             current_pkgs = {
                 pkg.pulp_href: pkg for pkg in
@@ -174,6 +187,8 @@ class PulpRpmClient:
             package_cache.update(current_pkgs)
 
         # Get the packages we're adding
+        logger.debug(
+            'Getting information about %d packages being added' % (len(packages_to_add),))
         new_pkgs = {
             pkg.pulp_href: pkg for pkg in
             [package_cache.get(pkg_href) or self._rpm_packages_api.read(pkg_href)
@@ -182,6 +197,7 @@ class PulpRpmClient:
         # If we didn't already fetch everything, enumerate only
         # packages with the same name
         if not invalidate_expression and not invalidate_downstream:
+            logger.debug('Getting information about packages being replaced')
             # Get the current packages
             names = set(p.name for p in new_pkgs.values())
             current_pkgs = {
@@ -191,6 +207,7 @@ class PulpRpmClient:
             package_cache.update(current_pkgs)
 
         # Invalidate packages
+        logger.debug('Determining packages to invalidate')
         pkgs_to_remove = {}
         new_pkg_names = set([pkg.name for pkg in new_pkgs.values()])
         # 1. Remove packages with the same name
@@ -219,9 +236,11 @@ class PulpRpmClient:
             new_pkgs.pop(href_in_current, None)
 
         if dry_run:
+            logger.debug('Finished (dry-run)')
             return (new_pkgs.values(), pkgs_to_remove.values())
 
         # Commit the changes
+        logger.debug('Committing changes')
         mod_data = pulp_rpm.RepositoryAddRemoveContent(
             add_content_units=list(new_pkgs.keys()),
             remove_content_units=list(pkgs_to_remove.keys()),
@@ -243,7 +262,7 @@ class PulpRpmClient:
         if not mod_task.created_resources and (new_pkgs or pkgs_to_remove):
             # Create a new version with nothing in it. Hopefully that will be different
             # from the 'latest'.
-            print('WARNING: Working around pulp issue #6811', file=sys.stderr)
+            logger.warning('Working around pulp issue #6811')
             workaround_mod_data = pulp_rpm.RepositoryAddRemoveContent(
                 add_content_units=[],
                 remove_content_units=['*'],
@@ -264,7 +283,7 @@ class PulpRpmClient:
         if mod_task.created_resources:
             self._publish_and_distribute(distribution, mod_task.created_resources[0])
         else:
-            print('WARNING: modifications resulted in no apparent changes', file=sys.stderr)
+            logger.warning('Modification operations resulted in no apparent changes')
 
         return (new_pkgs.values(), pkgs_to_remove.values())
 
@@ -290,6 +309,8 @@ class PulpRpmClient:
         relative_path = os.path.basename(file_path)
         upload_task_href = self._rpm_packages_api.create(
             relative_path, file=file_path).task
+        logger.debug(
+            "Upload task for '%s': %s" % (os.path.basename(file_path), upload_task_href))
         upload_task = self._wait_for_task(upload_task_href)
 
         return self._rpm_packages_api.read(upload_task.created_resources[0])

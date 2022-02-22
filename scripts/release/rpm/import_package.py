@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import argparse
+import logging
 import sys
 
 from ros_buildfarm.argument import add_argument_dry_run
@@ -30,6 +31,9 @@ from ros_buildfarm.pulp import PulpRpmClient
 
 
 def main(argv=sys.argv[1:]):
+    logging.basicConfig(
+        level=logging.DEBUG, format='%(name)s %(levelname)s %(asctime)s: %(message)s')
+
     parser = argparse.ArgumentParser(
         description='Import packages into a repository and publish it')
     parser.add_argument(
