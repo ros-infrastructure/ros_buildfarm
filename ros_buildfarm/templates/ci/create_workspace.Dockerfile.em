@@ -100,6 +100,8 @@ cmds = [
     ' --workspace-root ' + workspace_root[-1] + \
     ' --repos-file-urls ' + ' '.join('file:///tmp/%s' % repos_file for repos_file in repos_file_names) + \
     ' --repository-names ' + ' '.join(repository_names) + \
+    ((' --package-names ' + ' '.join(package_names)) if package_names else '') + \
+    (' --package-dependencies' if package_dependencies else '') + \
     ' --test-branch "%s"' % (test_branch),
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \

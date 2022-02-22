@@ -76,6 +76,8 @@ cmds = [
     ' --dockerfile-dir /tmp/docker_create_workspace' + \
     ' --repos-file-urls ' + ' '.join('file:///tmp/%s' % repos_file for repos_file in repos_file_names) + \
     ' --repository-names ' + ' '.join(repository_names) + \
+    ((' --package-names ' + ' '.join(package_names)) if package_names else '') + \
+    (' --package-dependencies' if package_dependencies else '') + \
     ' --test-branch "%s"' % (test_branch) + \
     ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) + \
     ' --package-selection-args ' + ' '.join(package_selection_args),

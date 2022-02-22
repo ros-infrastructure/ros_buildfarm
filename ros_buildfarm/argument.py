@@ -309,11 +309,19 @@ def add_argument_dry_run(parser):
         help='Only show the changes without apply them to Jenkins')
 
 
-def add_argument_package_names(parser):
+def add_argument_package_names(parser, optional=False):
     parser.add_argument(
         '--package-names',
-        nargs='+',
+        nargs='*' if optional else '+',
         help='A space separated list of package names')
+
+
+def add_argument_package_dependencies(parser):
+    parser.add_argument(
+        '--package-dependencies',
+        action='store_true',
+        help='Also include recursive dependencies of packages specified in '
+             '--package-names.')
 
 
 def add_argument_repository_names(parser, optional=False):

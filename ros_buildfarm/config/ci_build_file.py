@@ -87,6 +87,15 @@ class CIBuildFile(BuildFile):
             self.repository_names = data['repository_names']
             assert isinstance(self.repository_names, list)
 
+        self.package_names = []
+        if 'package_names' in data:
+            self.package_names = data['package_names']
+            assert isinstance(self.package_names, list)
+
+        self.package_dependencies = None
+        if 'package_dependencies' in data:
+            self.package_dependencies = bool(data['package_dependencies'])
+
         self.skip_rosdep_keys = []
         if 'skip_rosdep_keys' in data:
             self.skip_rosdep_keys = data['skip_rosdep_keys']

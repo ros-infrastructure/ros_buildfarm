@@ -19,6 +19,8 @@ import os
 import sys
 from urllib.request import urlretrieve
 
+from ros_buildfarm.argument import add_argument_package_dependencies
+from ros_buildfarm.argument import add_argument_package_names
 from ros_buildfarm.argument import add_argument_repos_file_urls
 from ros_buildfarm.argument import add_argument_repository_names
 from ros_buildfarm.argument import add_argument_rosdistro_name
@@ -26,9 +28,10 @@ from ros_buildfarm.argument import add_argument_test_branch
 from ros_buildfarm.common import Scope
 from ros_buildfarm.vcs import export_repositories, import_repositories
 from ros_buildfarm.workspace import ensure_workspace_exists
-from rosdistro import get_distribution
+from rosdistro import get_cached_distribution
 from rosdistro import get_index
 from rosdistro import get_index_url
+from rosdistro.dependency_walker import DependencyWalker
 import yaml
 
 
@@ -38,6 +41,8 @@ def main(argv=sys.argv[1:]):
     add_argument_rosdistro_name(parser)
     add_argument_repos_file_urls(parser)
     add_argument_repository_names(parser, optional=True)
+    add_argument_package_names(parser, optional=True)
+    add_argument_package_dependencies(parser)
     add_argument_test_branch(parser)
     parser.add_argument(
         '--workspace-root',
@@ -45,17 +50,17 @@ def main(argv=sys.argv[1:]):
         required=True)
     args = parser.parse_args(argv)
 
-    assert args.repos_file_urls or args.repository_names
+    assert args.repos_file_urls or args.repository_names or args.package_names
 
     ensure_workspace_exists(args.workspace_root)
 
     repos_files = []
-    if args.repository_names:
+    if args.repository_names or args.package_names:
         with Scope('SUBSECTION', 'get repository information from rosdistro'):
             index = get_index(get_index_url())
-            dist = get_distribution(index, args.rosdistro_name)
+            dist = get_cached_distribution(index, args.rosdistro_name)
             data = {}
-            for repo_name in args.repository_names:
+            for repo_name in args.repository_names or ():
                 repo = dist.repositories[repo_name]
                 src_repo = repo.source_repository
                 repo_data = {
@@ -65,6 +70,29 @@ def main(argv=sys.argv[1:]):
                 if src_repo.version is not None:
                     repo_data['version'] = src_repo.version
                 data[repo_name] = repo_data
+            if args.package_dependencies and args.package_names:
+                walker = DependencyWalker(dist)
+                additional_package_names = set()
+                for pkg_name in args.package_names:
+                    additional_package_names |= walker.get_recursive_depends(
+                        pkg_name,
+                        ['buildtool', 'buildtool_export', 'build', 'build_export', 'run', 'test'],
+                        ros_packages_only=True)
+                additional_package_names.difference_update(args.package_names)
+                args.package_names.extend(additional_package_names)
+            for pkg_name in args.package_names or ():
+                pkg = dist.release_packages[pkg_name]
+                repo = dist.repositories[pkg.repository_name]
+                rel_repo = repo.release_repository
+                repo_data = {
+                    'type': 'git',
+                    'url': rel_repo.url,
+                    'version': rel_repo.tags['release'].format_map({
+                        'package': pkg_name,
+                        'version': rel_repo.version,
+                    }),
+                }
+                data[pkg_name] = repo_data
             repos_file = os.path.join(args.workspace_root, 'repositories-from-rosdistro.repos')
             with open(repos_file, 'w') as h:
                 h.write(yaml.safe_dump({'repositories': data}, default_flow_style=False))
