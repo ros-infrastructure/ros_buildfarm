@@ -340,6 +340,7 @@ jobs:
           ros_distro: rolling
           os_code_name: jammy
           repo: rcl
+          output_directory: ws/docs_output
 
   ros2_prerelease:
     name: ROS 2 Prerelease
