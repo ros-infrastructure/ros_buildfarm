@@ -191,7 +191,7 @@ parameters = [
         'echo "# BEGIN SECTION: Generate Dockerfile - CI tasks"',
         'export TZ="%s"' % timezone,
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-	'if [ "$package_dependencies" = "true" ]; then package_dependencies_arg=--package-dependencies; fi',
+        'if [ "$package_dependencies" = "true" ]; then package_dependencies_arg=--package-dependencies; fi',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/run_ci_job.py' +
         ' ' + rosdistro_name +
         ' ' + os_name +
