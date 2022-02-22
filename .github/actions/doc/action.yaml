@@ -27,6 +27,10 @@ inputs:
   repo:
     description: Name of the package repository to build
     required: true
+  output_directory:
+    description: Directory to scan for generated output
+    required: true
+    default: generated_documentation/api_rosdoc
 
 runs:
   using: composite
@@ -49,5 +53,5 @@ runs:
         echo ::endgroup::
 
         echo ::group::Show results
-        ls -alR generated_documentation/api_rosdoc
+        ls -alR ${{inputs.output_directory}}
         echo ::endgroup::
