@@ -664,11 +664,12 @@ def get_package_manifests(dist):
 
 
 def get_implicitly_ignored_package_names(cached_pkgs, explicitly_ignored_pkg_names):
+    pkg_names = set(explicitly_ignored_pkg_names).union(cached_pkgs.keys())
     # get direct dependencies from distro cache for each package
     direct_dependencies = {}
     for pkg_name in cached_pkgs.keys():
         direct_dependencies[pkg_name] = get_direct_dependencies(
-            pkg_name, cached_pkgs, cached_pkgs) or set([])
+            pkg_name, cached_pkgs, pkg_names) or set([])
 
     # find recursive downstream deps for all explicitly ignored packages
     ignored_pkg_names = set(explicitly_ignored_pkg_names)
