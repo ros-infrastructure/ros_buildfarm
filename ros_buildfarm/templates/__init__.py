@@ -86,9 +86,9 @@ def expand_template(template_name, data, options=None):
             '%Y-%m-%d %H:%M:%S %z', now)
         data['today_str'] = time.strftime(
             '%Y-%m-%d (%z)', now)
-        data['timezone'] = '%s%s%02d' % (
-            time.tzname[0], '-' if time.timezone < 0 else '+',
-            abs(time.timezone / 60 / 60))
+        data['timezone'] = '%s%+03d' % (
+            time.tzname[0], time.timezone / 60 / 60)
+        
         data['wrapper_scripts'] = get_wrapper_scripts()
 
         _add_helper_functions(data)
