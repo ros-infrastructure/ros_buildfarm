@@ -94,6 +94,7 @@ def configure_release_jobs(
     explicitly_ignored_pkg_names = \
         set(pkg_names) - set(filtered_pkg_names) - explicitly_ignored_without_recursion_pkg_names
 
+    # Get package names for which the release version is missing, indicating the release has been "disabled" in the distribution file.
     upstream_disabled_pkg_names = set(
         p for r in dist_file.repositories.values()
         if r.release_repository and not r.release_repository.version
