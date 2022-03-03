@@ -252,7 +252,8 @@ def configure_devel_job(
         build_targets=None,
         dry_run=False,
         run_abichecker=None,
-        require_gpu_support=None):
+        require_gpu_support=None,
+        custom_rosdep_update_options=None):
     """
     Configure a single Jenkins devel job.
 
@@ -332,7 +333,8 @@ def configure_devel_job(
         build_file, os_name, os_code_name, arch, source_repository,
         repo_name, pull_request, job_name, dist_cache=dist_cache,
         is_disabled=is_disabled, run_abichecker=run_abichecker,
-        require_gpu_support=require_gpu_support)
+        require_gpu_support=require_gpu_support,
+        custom_rosdep_update_options=custom_rosdep_update_options)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
@@ -353,7 +355,7 @@ def _get_devel_job_config(
         build_file, os_name, os_code_name, arch, source_repo_spec,
         repo_name, pull_request, job_name, dist_cache=None,
         is_disabled=False, run_abichecker=None,
-        require_gpu_support=None):
+        require_gpu_support=None, custom_rosdep_update_options=None):
     template_name = 'devel/devel_job.xml.em'
 
     repository_args, script_generating_key_files = \
@@ -425,6 +427,7 @@ def _get_devel_job_config(
         'build_tool_test_args': build_file.build_tool_test_args,
         'ros_version': ros_version,
         'build_environment_variables': build_environment_variables,
+        'custom_rosdep_update_options': custom_rosdep_update_options,
 
         'run_abichecker': run_abichecker,
         'require_gpu_support': require_gpu_support,

@@ -150,6 +150,7 @@ if pull_request:
         ' --ros-version ' + str(ros_version) +
         (' --run-abichecker' if run_abichecker else '') +
         (' --require-gpu-support' if require_gpu_support else '') +
+        (' --custom-rosdep-update-options="' + ' '.join(custom_rosdep_update_options) + '"' if custom_rosdep_update_options else '') +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_dockers' +
         ' --build-tool-args $build_tool_args' +
