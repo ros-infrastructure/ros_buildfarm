@@ -33,6 +33,7 @@ from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.argument import add_argument_shared_ccache
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.config import get_source_build_files
@@ -54,6 +55,7 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
     add_argument_build_tool(parser)
+    add_argument_shared_ccache(parser)
     add_argument_custom_rosdep_update_options(parser)
     add_argument_output_dir(parser, required=True)
 
@@ -225,7 +227,8 @@ def main(argv=sys.argv[1:]):
         index=index, dist_file=dist_file, dist_cache=dist_cache,
         jenkins=False, views=False,
         source_repository=source_repository,
-        build_targets=release_targets_combined)
+        build_targets=release_targets_combined,
+        shared_ccache=args.shared_ccache)
 
     templates.template_hooks = None
 
