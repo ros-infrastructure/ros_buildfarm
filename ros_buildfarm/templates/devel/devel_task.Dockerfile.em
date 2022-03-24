@@ -66,9 +66,6 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pi
 @# pytest-rerunfailures enables usage of --retest-until-pass
 RUN pip3 install -U setuptools pytest-rerunfailures
 @[end if]@
-@[if ros_version == 2]@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ros-@(rosdistro_name)-ros-workspace
-@[end if]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
 @[if run_abichecker]@
