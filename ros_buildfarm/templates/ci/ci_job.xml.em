@@ -451,7 +451,7 @@ parameters = [
 @(SNIPPET(
     'publisher_warnings',
     build_tool=build_tool,
-    unstable_threshold='',
+    unstable_threshold='1',
 ))@
 @(SNIPPET(
     'archive_artifacts',
