@@ -124,6 +124,8 @@ def main(argv=sys.argv[1:]):
         ]
     elif 'catkin' not in pkg_names:
         debian_pkg_names += resolve_names(['catkin'], **context)
+    if args.ros_version == 2:
+        debian_pkg_names += resolve_names(['ros_workspace'], **context)
     print('Always install the following generic dependencies:')
     for debian_pkg_name in sorted(debian_pkg_names):
         print('  -', debian_pkg_name)
