@@ -362,10 +362,14 @@ parameters = [
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Compress install space"',
-        'tar -cjf $WORKSPACE/ros%d-%s-linux-%s-%s-ci.tar.bz2 ' % (ros_version, rosdistro_name, os_code_name, arch) +
-        ' -C $WORKSPACE/ws' +
+        'cd $WORKSPACE',
+        'tar -cjf ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name, os_code_name, arch) +
+        ' -C ws' +
         ' --transform "s/^install_isolated/ros%d-linux/"' % (ros_version) +
         ' install_isolated',
+        'sha256sum -b ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name, os_code_name, arch) +
+        ' > ros%d-%s-linux-%s-%s-ci-CHECKSUM' % (ros_version, rosdistro_name, os_code_name, arch),
+        'cd -',
         'echo "# END SECTION"',
     ]),
 ))@
@@ -457,6 +461,7 @@ parameters = [
     'archive_artifacts',
     artifacts=[
       'ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name, os_code_name, arch),
+      'ros%d-%s-linux-%s-%s-ci-CHECKSUM' % (ros_version, rosdistro_name, os_code_name, arch),
     ] + archive_files + [
       image for images in show_images.values() for image in images
     ],
@@ -468,6 +473,7 @@ parameters = [
     remote_directory=upload_directory,
     source_files=[
         'ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name, os_code_name, arch),
+        'ros%d-%s-linux-%s-%s-ci-CHECKSUM' % (ros_version, rosdistro_name, os_code_name, arch),
     ],
     remove_prefix=None,
 ))@
