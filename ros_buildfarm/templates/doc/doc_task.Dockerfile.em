@@ -60,9 +60,10 @@ RUN echo "@today_str"
 ))@
 
 @[if build_tool == 'colcon']@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pip
 @# colcon-core.package_identification.python needs at least version 30.3.0
-RUN pip3 install -U setuptools
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pip python3-setuptools
+@# use pip to upgrade if necessary
+RUN pip3 install 'setuptools>=30.3.0,<60.0.0'
 @[end if]@
 
 @(TEMPLATE(
