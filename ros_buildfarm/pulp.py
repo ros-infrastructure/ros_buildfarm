@@ -186,7 +186,7 @@ class PulpRpmClient:
         unused_repo_vers = []
         current_repo_ver = all_repo_vers.get(
             all_repo_vers[publication.repository_version].base_version)
-        while current_repo_ver:
+        while current_repo_ver and current_repo_ver.number:
             unused_repo_vers.append(current_repo_ver.pulp_href)
             current_repo_ver = all_repo_vers.get(current_repo_ver.base_version)
 
@@ -349,9 +349,6 @@ class PulpRpmClient:
         unused_repo_vers.reverse()
 
         for repo_ver in unused_repo_vers:
-            if repo_ver.endswith('/0/'):
-                logger.debug("Skipping repository version 0, which can't be deleted")
-                continue
             if dry_run:
                 logger.debug('Removing %s (dry-run)' % (repo_ver,))
                 continue
