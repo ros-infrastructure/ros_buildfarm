@@ -54,6 +54,9 @@ class PulpPageIterator:
         self._page = self._get_next(self._offset)
         self._offset += len(self._page.results)
         self._iter = iter(self._page.results)
+        logger.debug(
+            'Fetched a page of %d results (%d%%)' % (
+                len(self._page.results), 100.0 * self._offset / self._page.count))
 
     def __iter__(self):
         # Make sure we're at the beginning
@@ -95,6 +98,7 @@ class PulpRpmClient:
         # Core APIs
         self._core_client = pulpcore.ApiClient(self._config)
         self._core_tasks_api = pulpcore.TasksApi(self._core_client)
+        self._core_orphans_api = pulpcore.OrphansApi(self._core_client)
 
         # RPM APIs
         self._rpm_client = pulp_rpm.ApiClient(self._config)
@@ -103,6 +107,7 @@ class PulpRpmClient:
         self._rpm_publications_api = pulp_rpm.PublicationsRpmApi(self._rpm_client)
         self._rpm_remotes_api = pulp_rpm.RemotesRpmApi(self._rpm_client)
         self._rpm_repos_api = pulp_rpm.RepositoriesRpmApi(self._rpm_client)
+        self._rpm_repo_vers_api = pulp_rpm.RepositoriesRpmVersionsApi(self._rpm_client)
 
     def _wait_for_task(self, task_href):
         task = self._core_tasks_api.read(task_href)
@@ -163,6 +168,33 @@ class PulpRpmClient:
 
     def enumerate_remotes(self):
         return PulpPageIterator(self._rpm_remotes_api.list)
+
+    def enumerate_unused_repo_vers(self, distribution_name):
+        distribution = self._rpm_distributions_api.list(
+            name=distribution_name).results[0]
+        publication = self._rpm_publications_api.read(distribution.publication)
+        all_repo_vers = {
+            repo_ver.pulp_href: repo_ver for repo_ver in
+            PulpPageIterator(
+                self._rpm_repo_vers_api.list, rpm_rpm_repository_href=publication.repository,
+                limit=500)}
+
+        logger.debug(
+            'Fetched %d total repository versions for %s' % (
+                len(all_repo_vers), distribution_name))
+
+        unused_repo_vers = []
+        current_repo_ver = all_repo_vers.get(
+            all_repo_vers[publication.repository_version].base_version)
+        while current_repo_ver:
+            unused_repo_vers.append(current_repo_ver.pulp_href)
+            current_repo_ver = all_repo_vers.get(current_repo_ver.base_version)
+
+        logger.debug(
+            'Found %d ancestors of %s' % (
+                len(unused_repo_vers), publication.repository_version))
+
+        return unused_repo_vers
 
     def import_and_invalidate(
             self, distribution_name, packages_to_add,
@@ -304,6 +336,28 @@ class PulpRpmClient:
 
         if sync_task.created_resources:
             self._publish_and_distribute(distribution, sync_task.created_resources[0])
+
+    def remove_unused_content(self):
+        delete_task_href = self._core_orphans_api.delete().task
+        delete_task = self._wait_for_task(delete_task_href)
+        print('%s' % (delete_task,))
+
+    def remove_unused_repo_vers(self, distribution_name, dry_run=False):
+        unused_repo_vers = self.enumerate_unused_repo_vers(distribution_name)
+
+        # Start removing the oldest ones first
+        unused_repo_vers.reverse()
+
+        for repo_ver in unused_repo_vers:
+            if repo_ver.endswith('/0/'):
+                logger.debug("Skipping repository version 0, which can't be deleted")
+                continue
+            if dry_run:
+                logger.debug('Removing %s (dry-run)' % (repo_ver,))
+                continue
+            logger.debug('Removing %s' % (repo_ver,))
+            delete_task_href = self._rpm_repo_vers_api.delete(repo_ver).task
+            self._wait_for_task(delete_task_href)
 
     def upload_pkg(self, file_path):
         relative_path = os.path.basename(file_path)
