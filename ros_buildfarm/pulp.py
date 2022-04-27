@@ -54,9 +54,10 @@ class PulpPageIterator:
         self._page = self._get_next(self._offset)
         self._offset += len(self._page.results)
         self._iter = iter(self._page.results)
-        logger.debug(
-            'Fetched a page of %d results (%d%%)' % (
-                len(self._page.results), 100.0 * self._offset / self._page.count))
+        if self._page.count:
+            logger.debug(
+                'Fetched a page of %d results (%d%%)' % (
+                    len(self._page.results), 100.0 * self._offset / self._page.count))
 
     def __iter__(self):
         # Make sure we're at the beginning
