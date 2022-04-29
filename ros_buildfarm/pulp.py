@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 class PulpTaskError(RuntimeError):
 
-    def __init__(self, task, state):
+    def __init__(self, task, state):  # noqa: D107
         super().__init__("Pulp task '%s' did not complete (%s)" % (task.pulp_href, state))
         self.task = task
 
