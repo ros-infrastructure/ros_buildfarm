@@ -23,6 +23,13 @@ from pulpcore.client import pulpcore
 logger = logging.getLogger(__name__)
 
 
+class PulpTaskError(RuntimeError):
+
+    def __init__(self, task, state):
+        super().__init__("Pulp task '%s' did not complete (%s)" % (task.pulp_href, state))
+        self.task = task
+
+
 def format_pkg_ver(pkg):
     return '%s%s-%s' % (
         (pkg.epoch + ':') if pkg.epoch != '0' else '',
@@ -116,8 +123,7 @@ class PulpRpmClient:
         timeout = self._task_timeout
         while task.state != 'completed':
             if task.state in ['failed', 'canceled']:
-                raise RuntimeError(
-                    "Pulp task '%s' did not complete (%s)" % (task.pulp_href, task.state))
+                raise PulpTaskError(task, task.state)
             logger.debug(
                 "Pulp task '%s' is '%s': checking again in %ds" % (
                     task.pulp_href, task.state, self._task_polling_interval))
@@ -127,8 +133,7 @@ class PulpRpmClient:
                 task_cancel = pulpcore.PatchedTaskCancel('canceled')
                 task = self._core_tasks_api.tasks_cancel(task.pulp_href, task_cancel)
                 if task.state != 'completed':
-                    raise RuntimeError(
-                        "Pulp task '%s' did not complete (timed out)" % task.pulp_href)
+                    raise PulpTaskError(task, 'timed out')
 
             task = self._core_tasks_api.read(task.pulp_href)
 
