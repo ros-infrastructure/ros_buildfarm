@@ -203,6 +203,7 @@ if pull_request:
         'echo "# BEGIN SECTION: Run Dockerfile - build and install"',
     ] + ([
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
+        'if [ ! -d "$HOME/.ccache/' + job_name +'" ]; then mkdir "$HOME/.ccache/' + job_name + '"; fi',
     ]  if shared_ccache else []) + [
         ('if [ ! -c /dev/nvidia[0-9] ]; then echo "--require-gpu-support is enabled but can not detect nvidia support installed" && exit 1; fi' if require_gpu_support else ''),
         'docker run' +
@@ -212,7 +213,7 @@ if pull_request:
         ' -e=TRAVIS=$TRAVIS' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/ws:/tmp/ws' +
-        (' -v $HOME/.ccache:/home/buildfarm/.ccache' if shared_ccache else '') +
+        (' -v "$HOME/.ccache/' + job_name + '":/home/buildfarm/.ccache' if shared_ccache else '') +
         ' devel_build_and_install.%s_%s' % (rosdistro_name, source_repo_spec.name.lower()),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
@@ -237,6 +238,7 @@ if pull_request:
         '',
     ] + ([
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
+        'if [ ! -d "$HOME/.ccache/' + job_name +'" ]; then mkdir "$HOME/.ccache/' + job_name + '"; fi',
     ] if shared_ccache else []) + [
         'docker run' +
         (' --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw  --gpus all' if require_gpu_support else '') +
@@ -245,7 +247,7 @@ if pull_request:
         ' -e=TRAVIS=$TRAVIS' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/ws:/tmp/ws' +
-        (' -v $HOME/.ccache:/home/buildfarm/.ccache' if shared_ccache else '') +
+        (' -v "$HOME/.ccache/' + job_name + '":/home/buildfarm/.ccache' if shared_ccache else '') +
         ' devel_build_and_test.%s_%s' % (rosdistro_name, source_repo_spec.name.lower()),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
