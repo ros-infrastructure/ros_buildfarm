@@ -41,8 +41,13 @@ kwargs = {
         'pyflakes'],
     'author': 'Dirk Thomas',
     'author_email': 'dthomas@osrfoundation.org',
-    'maintainer': 'Dirk Thomas',
-    'maintainer_email': 'dthomas@osrfoundation.org',
+    'maintainer': 'ROS Infrastructure Team',
+    'project_urls': {
+        'Source code':
+        'https://github.com/ros-infrastructure/ros_buildfarm',
+        'Issue tracker':
+        'https://github.com/ros-infrastructure/ros_buildfarm/issues',
+    },
     'url': 'https://github.com/ros-infrastructure/ros_buildfarm',
     'keywords': ['ROS', 'buildfarm', 'catkin'],
     'classifiers': [
