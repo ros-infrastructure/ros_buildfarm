@@ -125,12 +125,24 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'echo "# BEGIN SECTION: Upload sourcerpm"',
+        'echo "# BEGIN SECTION: Upload sourcerpm to Pulp"',
         'export TZ="%s"' % timezone,
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
         ' --pulp-resource-record sourcepkg/upload_record.txt' +
         ' sourcepkg/*.src.rpm',
+        'echo "# END SECTION"',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: Upload sourcerpm"',
+        'find sourcepkg -mindepth 1 -maxdepth 1 -type f -name "*.src.rpm" -fprint sourcepkg/rpm_upload_args.txt -fprintf sourcepkg/rpm_import_args.txt "--import=/tmp/upload-${BUILD_TAG}/%f\\n"',
+        'ssh repo.test.ros2.org -- mkdir -p /tmp/upload-${BUILD_TAG}/',
+        'xargs -a sourcepkg/rpm_upload_args.txt -I % scp % repo.test.ros2.org:/tmp/upload-${BUILD_TAG}/',
+        'xargs -a sourcepkg/rpm_import_args.txt ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s_cra/building/%s/' % (os_name, os_code_name),
+        'ssh repo.test.ros2.org -- rmdir /tmp/upload-${BUILD_TAG}/',
         'echo "# END SECTION"',
     ]),
 ))@
@@ -194,6 +206,10 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @[end if]@
 @(SNIPPET(
     'build-wrapper_timestamper',
+))@
+@(SNIPPET(
+    'build-wrapper_ssh-agent',
+    credential_ids=[credential_id_cra],
 ))@
   </buildWrappers>
 </project>

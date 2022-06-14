@@ -237,6 +237,10 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``upload_credential_id``: the ID of the credential to upload the built
   packages to the repository host.
 
+* ``upload_credential_id_cra``: the ID of the credential to upload the built
+  packages to the repository host for createrepo-agent.
+  At present, this value is only used for RPM jobs.
+
 * ``package_dependecy_behavior``: a dictionary with the following optional
   keys:
 

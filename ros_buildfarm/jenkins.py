@@ -39,6 +39,7 @@ class JenkinsProxy(Jenkins):
         requester_kwargs = copy.copy(kwargs)
         requester_kwargs['baseurl'] = args[0]
         kwargs['requester'] = CrumbRequester(**requester_kwargs)
+        kwargs['timeout'] = 120
         super(JenkinsProxy, self).__init__(*args, **kwargs)
         self.__jobs = None
 
