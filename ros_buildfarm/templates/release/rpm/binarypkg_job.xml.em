@@ -169,7 +169,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'find binarypkg -mindepth 1 -maxdepth 1 -type f -name "*.rpm" -not -name "*.src.rpm" -fprint binarypkg/rpm_upload_args.txt -fprintf binarypkg/rpm_import_args.txt "--import=/tmp/upload-${BUILD_TAG}/%f\\n"',
         'ssh repo.test.ros2.org -- mkdir -p /tmp/upload-${BUILD_TAG}/',
         'xargs -a binarypkg/rpm_upload_args.txt -I % scp % repo.test.ros2.org:/tmp/upload-${BUILD_TAG}/',
-        'xargs -a binarypkg/rpm_import_args.txt ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s_cra/building/%s/ --arch %s' % (os_name, os_code_name, arch),
+        'xargs -a binarypkg/rpm_import_args.txt ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s_cra/building/%s/ --arch %s --invalidate-family --invalidate-dependants' % (os_name, os_code_name, arch),
         'ssh repo.test.ros2.org -- rmdir /tmp/upload-${BUILD_TAG}/',
         'echo "# END SECTION"',
     ]),
