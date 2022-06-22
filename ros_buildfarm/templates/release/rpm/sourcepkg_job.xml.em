@@ -125,44 +125,13 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'echo "# BEGIN SECTION: Upload sourcerpm to Pulp"',
-        'export TZ="%s"' % timezone,
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
-        ' --pulp-resource-record sourcepkg/upload_record.txt' +
-        ' sourcepkg/*.src.rpm',
-        'echo "# END SECTION"',
-    ]),
-))@
-@(SNIPPET(
-    'builder_shell',
-    script='\n'.join([
         'echo "# BEGIN SECTION: Upload sourcerpm"',
         'find sourcepkg -mindepth 1 -maxdepth 1 -type f -name "*.src.rpm" -fprint sourcepkg/rpm_upload_args.txt -fprintf sourcepkg/rpm_import_args.txt "--import=/tmp/upload-${BUILD_TAG}/%f\\n"',
         'ssh repo.test.ros2.org -- mkdir -p /tmp/upload-${BUILD_TAG}/',
         'xargs -a sourcepkg/rpm_upload_args.txt -I % scp % repo.test.ros2.org:/tmp/upload-${BUILD_TAG}/',
-        'xargs -a sourcepkg/rpm_import_args.txt ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s_cra/building/%s/' % (os_name, os_code_name),
+        'xargs -a sourcepkg/rpm_import_args.txt ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s/building/%s/' % (os_name, os_code_name),
         'ssh repo.test.ros2.org -- rm -fr /tmp/upload-${BUILD_TAG}/',
         'echo "# END SECTION"',
-    ]),
-))@
-@(SNIPPET(
-    'builder_parameterized-trigger',
-    project=import_package_job_name,
-    parameters='\n'.join([
-        'DISTRIBUTION_NAME=ros-building-%s-%s-SRPMS' % (
-            os_name, os_code_name)]),
-    parameter_files=['sourcepkg/upload_record.txt'],
-    continue_on_failure=True,
-))@
-@(SNIPPET(
-    'builder_shell',
-    script='\n'.join([
-        'if [ "$skip_cleanup" = "false" ]; then',
-        'echo "# BEGIN SECTION: Clean up to save disk space on agents"',
-        'rm -fr sourcepkg',
-        'echo "# END SECTION"',
-        'fi',
     ]),
 ))@
 @(SNIPPET(
@@ -193,11 +162,6 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
   </publishers>
   <buildWrappers>
-@(SNIPPET(
-    'pulp_credentials',
-    credential_id=credential_id,
-    dest_credential_id=dest_credential_id,
-))@
 @[if timeout_minutes is not None]@
 @(SNIPPET(
     'build-wrapper_build-timeout',
