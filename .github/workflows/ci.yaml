@@ -15,8 +15,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Install dependencies
         run: |
-          python -m pip install -U catkin-pkg EmPy jenkinsapi PyYAML rosdistro vcstool
-          python -m pip install -U flake8 flake8-class-newline flake8-docstrings flake8-import-order pep8 pyflakes pytest
+          python -m pip install -U -e .[test]
       - name: Run tests
         run: |
           python -m pytest -s test

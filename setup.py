@@ -32,13 +32,16 @@ kwargs = {
     'install_requires': [
         'empy',
         'PyYAML'],
-    'tests_require': [
-        'flake8 >= 3.7',
-        'flake8-class-newline',
-        'flake8_docstrings',
-        'flake8-import-order',
-        'pep8',
-        'pyflakes'],
+    'extras_require': {
+        'test': [
+            'flake8 >= 3.7',
+            'flake8-class-newline',
+            'flake8_docstrings',
+            'flake8-import-order',
+            'pep8',
+            'pyflakes',
+            'pytest'],
+    },
     'author': 'Dirk Thomas',
     'author_email': 'dthomas@osrfoundation.org',
     'maintainer': 'ROS Infrastructure Team',
