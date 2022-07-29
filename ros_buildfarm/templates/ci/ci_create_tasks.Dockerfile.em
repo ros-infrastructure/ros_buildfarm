@@ -11,6 +11,8 @@ VOLUME ["/var/cache/apt/archives"]
 
 ENV DEBIAN_FRONTEND noninteractive
 
+@(TEMPLATE('snippet/disable_phased_updates.Dockerfile.em'))@
+
 @(TEMPLATE(
     'snippet/setup_locale.Dockerfile.em',
     timezone=timezone,
