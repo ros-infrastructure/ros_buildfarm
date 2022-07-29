@@ -11,7 +11,7 @@ VOLUME ["/var/cache/apt/archives"]
 
 ENV DEBIAN_FRONTEND noninteractive
 
-@(TEMPLATE('snippet/disable_phased_updates.Dockerfile.em'))@
+@(TEMPLATE('snippet/phased_updates.Dockerfile.em'))@
 
 @(TEMPLATE(
     'snippet/old_release_set.Dockerfile.em',
