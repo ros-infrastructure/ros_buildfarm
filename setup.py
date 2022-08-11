@@ -34,12 +34,13 @@ kwargs = {
         'PyYAML'],
     'extras_require': {
         'test': [
-            'flake8 >= 3.7',
+            'flake8 >= 3.7, < 5',
             'flake8-class-newline',
             'flake8_docstrings',
             'flake8-import-order',
             'pep8',
-            'pyflakes',
+            'pycodestyle < 2.9.0',
+            'pyflakes < 2.5.0',
             'pytest'],
     },
     'author': 'Dirk Thomas',
