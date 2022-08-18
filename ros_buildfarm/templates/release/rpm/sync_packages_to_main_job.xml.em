@@ -46,7 +46,7 @@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'echo "# BEGIN SECTION: sync packages to main repos"',
+        'echo "# BEGIN SECTION: sync packages to main repos in Pulp"',
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/sync_repo.py' +
         ' --distribution-source-expression "^ros-testing-([^-]*-[^-]*-[^-]*(-debug)?)$"' +
@@ -70,6 +70,14 @@
         'rsync --recursive --times --delete --itemize-changes rsync://127.0.0.1:1234/ros-main-%s-%s-%s-debug/ /var/repos/%s/main/%s/%s/debug/' % (os_name, os_code_name, arch, os_name, os_code_name, arch)
         for os_name, os_code_name, arch in sync_targets
     ] + [
+        'echo "# END SECTION"',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: sync packages to main repos"',
+        'ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s_cra/main/%s/ --sync=/var/repos/%s_cra/testing/%s/ --arch=SRPMS --arch=%s --sync-pattern="ros-%s-.*" --invalidate-family' % (os_name, os_code_name, os_name, os_code_name, arch, rosdistro_name),
         'echo "# END SECTION"',
     ]),
 ))@

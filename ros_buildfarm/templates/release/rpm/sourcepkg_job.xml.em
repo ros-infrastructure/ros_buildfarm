@@ -142,7 +142,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'ssh repo.test.ros2.org -- mkdir -p /tmp/upload-${BUILD_TAG}/',
         'xargs -a sourcepkg/rpm_upload_args.txt -I % scp % repo.test.ros2.org:/tmp/upload-${BUILD_TAG}/',
         'xargs -a sourcepkg/rpm_import_args.txt ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s_cra/building/%s/' % (os_name, os_code_name),
-        'ssh repo.test.ros2.org -- rmdir /tmp/upload-${BUILD_TAG}/',
+        'ssh repo.test.ros2.org -- rm -fr /tmp/upload-${BUILD_TAG}/',
         'echo "# END SECTION"',
     ]),
 ))@
