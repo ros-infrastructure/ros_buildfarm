@@ -73,11 +73,25 @@
         'echo "# END SECTION"',
     ]),
 ))@
+@{
+target_map = {}
+for os_name, os_code_name, arch in sync_targets:
+    target_map.setdefault(os_name, {})
+    target_map[os_name].setdefault(os_code_name, set())
+    target_map[os_name][os_code_name].add(arch)
+cra_sync_targets = []
+for os_name, os_code_names in target_map.items():
+    for os_code_name, arches in os_code_names.items():
+        cra_sync_targets.append((os_name, os_code_name, rosdistro_name, arches))
+}@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: sync packages to main repos"',
-        'ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s_cra/main/%s/ --sync=/var/repos/%s_cra/testing/%s/ --arch=SRPMS --arch=%s --sync-pattern="ros-%s-.*" --invalidate-family' % (os_name, os_code_name, os_name, os_code_name, arch, rosdistro_name),
+    ] + [
+        'ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s_cra/main/%s/ --sync=/var/repos/%s_cra/testing/%s/ --arch=SRPMS --arch=%s --sync-pattern="ros-%s-.*" --invalidate-family' % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(arches), rosdistro_name)
+        for os_name, os_code_name, rosdistro_name, arches in cra_sync_targets
+    ] + [
         'echo "# END SECTION"',
     ]),
 ))@
