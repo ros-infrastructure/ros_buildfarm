@@ -859,8 +859,6 @@ def _get_sync_packages_to_testing_job_config(
             rosdistro_name, package_format),
 
         'notify_emails': build_file.notify_emails,
-        'credential_id': build_file.upload_credential_id,
-        'credential_id_cra': build_file.upload_credential_id_cra,
         'dest_credential_id': build_file.upload_destination_credential_id,
     }
     job_config = expand_template(template_name, job_data)
@@ -918,8 +916,6 @@ def _get_sync_packages_to_main_job_config(rosdistro_name, build_file, package_fo
         'sync_targets': sync_targets,
 
         'notify_emails': build_file.notify_emails,
-        'credential_id': build_file.upload_credential_id,
-        'credential_id_cra': build_file.upload_credential_id_cra,
         'dest_credential_id': build_file.upload_destination_credential_id,
     }
     job_config = expand_template(template_name, job_data)
