@@ -118,7 +118,7 @@
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: sync packages to testing repos"',
-        'ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s_cra/testing/%s/ --sync=/var/repos/%s_cra/building/%s/ --arch=SRPMS --arch=%s --sync-pattern="ros-%s-.*" --invalidate-family' % (os_name, os_code_name, os_name, os_code_name, arch, rosdistro_name),
+        'createrepo-agent /var/repos/%s_cra/testing/%s/ --sync=/var/repos/%s_cra/building/%s/ --arch=SRPMS --arch=%s --sync-pattern="ros-%s-.*" --invalidate-family' % (os_name, os_code_name, os_name, os_code_name, arch, rosdistro_name),
         'echo "# END SECTION"',
     ]),
 ))@

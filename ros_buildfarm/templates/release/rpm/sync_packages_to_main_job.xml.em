@@ -89,7 +89,7 @@ for os_name, os_code_names in target_map.items():
     script='\n'.join([
         'echo "# BEGIN SECTION: sync packages to main repos"',
     ] + [
-        'ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s_cra/main/%s/ --sync=/var/repos/%s_cra/testing/%s/ --arch=SRPMS --arch=%s --sync-pattern="ros-%s-.*" --invalidate-family' % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(arches), rosdistro_name)
+        'createrepo-agent /var/repos/%s_cra/main/%s/ --sync=/var/repos/%s_cra/testing/%s/ --arch=SRPMS --arch=%s --sync-pattern="ros-%s-.*" --invalidate-family' % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(arches), rosdistro_name)
         for os_name, os_code_name, rosdistro_name, arches in cra_sync_targets
     ] + [
         'echo "# END SECTION"',
