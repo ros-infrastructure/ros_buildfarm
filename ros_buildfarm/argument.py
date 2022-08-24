@@ -426,7 +426,7 @@ def add_argument_pulp_resource_record(parser):
 def add_argument_pulp_task_timeout(parser):
     return parser.add_argument(
         '--pulp-task-timeout',
-        default=60.0,
+        type=float, default=60.0,
         help='Duration to wait (in seconds) for a pulp task to complete')
 
 
