@@ -35,6 +35,9 @@ logger = logging.getLogger(__name__)
 
 
 def load_yaml(url):
+    # Resolve relative file paths from CWD
+    url = urljoin('file://' + os.getcwd() + '/', url)
+
     class SafeLoaderWithInclude(yaml.SafeLoader):
 
         def include(self, node):
