@@ -127,10 +127,10 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     script='\n'.join([
         'echo "# BEGIN SECTION: Upload sourcerpm"',
         'find sourcepkg -mindepth 1 -maxdepth 1 -type f -name "*.src.rpm" -fprint sourcepkg/rpm_upload_args.txt -fprintf sourcepkg/rpm_import_args.txt "--import=/tmp/upload-${BUILD_TAG}/%f\\n"',
-        'ssh repo.test.ros2.org -- mkdir -p /tmp/upload-${BUILD_TAG}/',
-        'xargs -a sourcepkg/rpm_upload_args.txt -I % scp % repo.test.ros2.org:/tmp/upload-${BUILD_TAG}/',
-        'xargs -a sourcepkg/rpm_import_args.txt ssh repo.test.ros2.org -- createrepo-agent /var/repos/%s/building/%s/' % (os_name, os_code_name),
-        'ssh repo.test.ros2.org -- rm -fr /tmp/upload-${BUILD_TAG}/',
+        'ssh $UPLOAD_HOST -- mkdir -p /tmp/upload-${BUILD_TAG}/',
+        'xargs -a sourcepkg/rpm_upload_args.txt -I % scp % $UPLOAD_HOST:/tmp/upload-${BUILD_TAG}/',
+        'xargs -a sourcepkg/rpm_import_args.txt ssh $UPLOAD_HOST -- createrepo-agent /var/repos/%s/building/%s/' % (os_name, os_code_name),
+        'ssh $UPLOAD_HOST -- rm -fr /tmp/upload-${BUILD_TAG}/',
         'echo "# END SECTION"',
     ]),
 ))@
@@ -162,6 +162,16 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
   </publishers>
   <buildWrappers>
+@(SNIPPET(
+    'credentials_binding',
+    bindings=[
+        {
+            'id': dest_credential_id,
+            'type': 'string',
+            'var': 'UPLOAD_HOST',
+        },
+    ],
+))@
 @[if timeout_minutes is not None]@
 @(SNIPPET(
     'build-wrapper_build-timeout',
@@ -173,7 +183,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
 @(SNIPPET(
     'build-wrapper_ssh-agent',
-    credential_ids=[credential_id_cra],
+    credential_ids=[credential_id],
 ))@
   </buildWrappers>
 </project>
