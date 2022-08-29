@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2019 Open Source Robotics Foundation, Inc.
+# Copyright 2022 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,35 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
-import sys
-
-from ros_buildfarm.argument import add_argument_build_name
-from ros_buildfarm.argument import add_argument_config_url
-from ros_buildfarm.argument import add_argument_dry_run
-from ros_buildfarm.argument import add_argument_groovy_script
-from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.ci_job import configure_ci_jobs
-
-
-def main(argv=sys.argv[1:]):
-    parser = argparse.ArgumentParser(
-        description="Generate the 'CI' jobs on Jenkins")
-
-    # Positional
-    add_argument_config_url(parser)
-    add_argument_rosdistro_name(parser)
-    add_argument_build_name(parser, 'ci', nargs='*')
-
-    add_argument_dry_run(parser)
-    add_argument_groovy_script(parser)
-    args = parser.parse_args(argv)
-
-    return configure_ci_jobs(
-        args.config_url, args.rosdistro_name,
-        ci_build_names=args.ci_build_name,
-        groovy_script=args.groovy_script, dry_run=args.dry_run)
+from runpy import run_module
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    run_module('ros_buildfarm.scripts.ci.generate_ci_jobs', run_name='__main__')
