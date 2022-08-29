@@ -127,11 +127,42 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     script='\n'.join([
         'echo "# BEGIN SECTION: Upload sourcerpm"',
         'find sourcepkg -mindepth 1 -maxdepth 1 -type f -name "*.src.rpm" -fprint sourcepkg/rpm_upload_args.txt -fprintf sourcepkg/rpm_import_args.txt "--import=/tmp/upload-${BUILD_TAG}/%f\\n"',
-        'ssh $UPLOAD_HOST -- mkdir -p /tmp/upload-${BUILD_TAG}/',
-        'xargs -a sourcepkg/rpm_upload_args.txt -I % scp % $UPLOAD_HOST:/tmp/upload-${BUILD_TAG}/',
-        'xargs -a sourcepkg/rpm_import_args.txt ssh $UPLOAD_HOST -- createrepo-agent /var/repos/%s/building/%s/' % (os_name, os_code_name),
-        'ssh $UPLOAD_HOST -- rm -fr /tmp/upload-${BUILD_TAG}/',
+        'ssh %s -- mkdir -p /tmp/upload-${BUILD_TAG}/' % (upload_host,),
+        'xargs -a sourcepkg/rpm_upload_args.txt -I @ scp @ %s:/tmp/upload-${BUILD_TAG}/' % (upload_host,),
+        'xargs -a sourcepkg/rpm_import_args.txt ssh %s -- createrepo-agent /var/repos/%s/building/%s/' % (upload_host, os_name, os_code_name),
+        'ssh %s -- rm -fr /tmp/upload-${BUILD_TAG}/' % (upload_host,),
         'echo "# END SECTION"',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: Upload sourcerpm to Pulp"',
+        'export TZ="%s"' % timezone,
+        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
+        ' --pulp-resource-record sourcepkg/upload_record.txt' +
+        ' sourcepkg/*.src.rpm',
+        'echo "# END SECTION"',
+    ]),
+))@
+@(SNIPPET(
+    'builder_parameterized-trigger',
+    project=import_package_job_name,
+    parameters='\n'.join([
+        'DISTRIBUTION_NAME=ros-building-%s-%s-SRPMS' % (
+            os_name, os_code_name)]),
+    parameter_files=['sourcepkg/upload_record.txt'],
+    continue_on_failure=True,
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'if [ "$skip_cleanup" = "false" ]; then',
+        'echo "# BEGIN SECTION: Clean up to save disk space on agents"',
+        'rm -fr sourcepkg',
+        'echo "# END SECTION"',
+        'fi',
     ]),
 ))@
 @(SNIPPET(
@@ -163,14 +194,9 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
   </publishers>
   <buildWrappers>
 @(SNIPPET(
-    'credentials_binding',
-    bindings=[
-        {
-            'id': dest_credential_id,
-            'type': 'string',
-            'var': 'UPLOAD_HOST',
-        },
-    ],
+    'pulp_credentials',
+    credential_id=credential_id_pulp,
+    dest_credential_id=dest_credential_id,
 ))@
 @[if timeout_minutes is not None]@
 @(SNIPPET(
