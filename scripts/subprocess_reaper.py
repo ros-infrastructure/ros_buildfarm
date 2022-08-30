@@ -18,12 +18,11 @@ import os
 from runpy import run_module
 import sys
 
-try:
-    from ros_buildfarm import __version__  # noqa: F401
-except ImportError:
-    sys.path.insert(
-        0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-
 
 if __name__ == '__main__':
-    run_module('ros_buildfarm.scripts.subprocess_reaper', run_name='__main__')
+    try:
+        run_module('ros_buildfarm.scripts.subprocess_reaper', run_name='__main__')
+    except ImportError:
+        sys.path.insert(
+            0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        run_module('ros_buildfarm.scripts.subprocess_reaper', run_name='__main__')
