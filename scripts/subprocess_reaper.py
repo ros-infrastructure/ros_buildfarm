@@ -14,7 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from runpy import run_module
+import sys
+
+try:
+    from ros_buildfarm import __version__
+except ImportError:
+    sys.path.insert(
+        0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 
 if __name__ == '__main__':
