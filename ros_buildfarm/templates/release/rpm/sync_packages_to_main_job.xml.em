@@ -72,7 +72,7 @@
     script='\n'.join([
         'echo "# BEGIN SECTION: mirror main Pulp repository content to disk"',
     ] + [
-        'rsync --recursive --times --delete --itemize-changes rsync://127.0.0.1:1234/ros-main-%s-%s-SRPMS/ /var/repos_pulp/%s/main/%s/SRPMS/' % (os_name, os_code_name, os_name, os_code_name)
+        'rsync --recursive --times --delete --itemize-changes rsync://127.0.0.1:1234/ros-main-%s-%s-SRPMS/ /var/repos/%s_pulp/main/%s/SRPMS/' % (os_name, os_code_name, os_name, os_code_name)
         for os_name, os_versions in sync_targets.items() for os_code_name in os_versions
     ] + [
         'rsync --recursive --times --delete --exclude=debug --itemize-changes rsync://127.0.0.1:1234/ros-main-%s-%s-%s/ /var/repos/%s_pulp/main/%s/%s/' % (os_name, os_code_name, arch, os_name, os_code_name, arch)
