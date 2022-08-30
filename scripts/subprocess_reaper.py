@@ -23,6 +23,8 @@ if __name__ == '__main__':
     try:
         run_module('ros_buildfarm.scripts.subprocess_reaper', run_name='__main__')
     except ImportError:
+        # If the ros_buildfarm is not on the current PYTHONPATH add it using
+        # the current script path as an anchor.
         sys.path.insert(
             0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
         run_module('ros_buildfarm.scripts.subprocess_reaper', run_name='__main__')
