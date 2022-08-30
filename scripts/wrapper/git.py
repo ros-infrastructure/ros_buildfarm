@@ -19,7 +19,7 @@ from runpy import run_module
 import sys
 
 try:
-    from ros_buildfarm import __version__
+    from ros_buildfarm import __version__  # noqa: F401
 except ImportError:
     sys.path.insert(
         0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
