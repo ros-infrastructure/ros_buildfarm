@@ -237,6 +237,13 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``upload_credential_id``: the ID of the credential to upload the built
   packages to the repository host.
 
+* ``upload_credential_id_pulp``: the ID of the credential to upload the built
+  RPM packages to the repository host instance of Pulp.
+
+* ``upload_host``: the hostname of the repository host where built packages
+  shoudl be uploaded to.
+  Only affects RPM builds at present.
+
 * ``package_dependecy_behavior``: a dictionary with the following optional
   keys:
 
