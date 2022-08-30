@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright 2014-2016 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -169,4 +167,4 @@ def call_apt(argv, known_error_strings):
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()
