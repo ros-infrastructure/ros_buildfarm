@@ -904,19 +904,13 @@ def get_sync_packages_to_main_job_name(rosdistro_name, package_format):
 
 
 def _get_sync_packages_to_main_job_config(rosdistro_name, build_file, package_format):
-    sync_targets = set()
-    for os_name, os_versions in build_file.targets.items():
-        for os_code_name, os_arches in os_versions.items():
-            for os_arch in os_arches.keys():
-                sync_targets.add((os_name, os_code_name, os_arch))
-
     template_name = 'release/%s/sync_packages_to_main_job.xml.em' % package_format
     job_data = {
         'ros_buildfarm_repository': get_repository(),
         'rosdistro_name': rosdistro_name,
 
         'deb_sync_to_main_job_name': get_sync_packages_to_main_job_name(rosdistro_name, 'deb'),
-        'sync_targets': sync_targets,
+        'sync_targets': build_file.targets,
 
         'notify_emails': build_file.notify_emails,
         'credential_id_pulp': build_file.upload_credential_id_pulp,

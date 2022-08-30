@@ -43,24 +43,13 @@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
-@{
-target_map = {}
-for os_name, os_code_name, arch in sync_targets:
-    target_map.setdefault(os_name, {})
-    target_map[os_name].setdefault(os_code_name, set())
-    target_map[os_name][os_code_name].add(arch)
-cra_sync_targets = []
-for os_name, os_code_names in target_map.items():
-    for os_code_name, arches in os_code_names.items():
-        cra_sync_targets.append((os_name, os_code_name, rosdistro_name, arches))
-}@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: sync packages to main repos"',
     ] + [
         'createrepo-agent /var/repos/%s/main/%s/ --sync=/var/repos/%s/testing/%s/ --arch=SRPMS --arch=%s --sync-pattern="ros-%s-.*" --invalidate-family' % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(arches), rosdistro_name)
-        for os_name, os_code_name, rosdistro_name, arches in cra_sync_targets
+        for rosdistro_name, sync_targets in ((rosdistro_name, sync_targets),) for os_name, os_versions in sync_targets.items() for os_code_name, arches in os_versions.items()
     ] + [
         'echo "# END SECTION"',
     ]),
@@ -84,13 +73,13 @@ for os_name, os_code_names in target_map.items():
         'echo "# BEGIN SECTION: mirror main Pulp repository content to disk"',
     ] + [
         'rsync --recursive --times --delete --itemize-changes rsync://127.0.0.1:1234/ros-main-%s-%s-SRPMS/ /var/repos_pulp/%s/main/%s/SRPMS/' % (os_name, os_code_name, os_name, os_code_name)
-        for os_name, os_code_name in set((os_name, os_code_name) for os_name, os_code_name, _ in sync_targets)
+        for os_name, os_versions in sync_targets.items() for os_code_name in os_versions
     ] + [
         'rsync --recursive --times --delete --exclude=debug --itemize-changes rsync://127.0.0.1:1234/ros-main-%s-%s-%s/ /var/repos/%s_pulp/main/%s/%s/' % (os_name, os_code_name, arch, os_name, os_code_name, arch)
-        for os_name, os_code_name, arch in sync_targets
+        for os_name, os_versions in sync_targets.items() for os_code_name, arches in os_versions.items() for arch in arches
     ] + [
         'rsync --recursive --times --delete --itemize-changes rsync://127.0.0.1:1234/ros-main-%s-%s-%s-debug/ /var/repos/%s_pulp/main/%s/%s/debug/' % (os_name, os_code_name, arch, os_name, os_code_name, arch)
-        for os_name, os_code_name, arch in sync_targets
+        for os_name, os_versions in sync_targets.items() for os_code_name, arches in os_versions.items() for arch in arches
     ] + [
         'echo "# END SECTION"',
     ]),

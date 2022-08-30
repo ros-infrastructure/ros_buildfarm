@@ -23,6 +23,12 @@
     parameters=[
         {
             'type': 'string',
+            'name': 'repo_list_file',
+            'description': 'A specific text file or files containing RPM base URLs to import from. The default is the ros_bootstrap repository.',
+            'default_value': '/home/jenkins-agent/ros_bootstrap_rpm_urls.txt',
+        },
+        {
+            'type': 'string',
             'name': 'REMOTE_SOURCE_EXPRESSION',
             'description': 'Expression to match pulp remote repositories',
             'default_value': '^ros-upstream-[^-]+-([^-]+-[^-]+-[^-]+(-debug)?)$',
@@ -61,6 +67,25 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: import upstream packages"',
+        'for f in $repo_list_file; do',
+    ] + [
+        "  sed 's/$distname/%s/g;s/$releasever/%s/g' $f | xargs -L1 createrepo-agent /var/repos/%s/building/%s/ --invalidate-family --arch=SRPMS --arch=%s --sync" % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(arches))
+        for os_name, os_versions in import_targets.items() for os_code_name, arches in os_versions.items()
+    ] + [
+        "  sed 's/$distname/%s/g;s/$releasever/%s/g' $f | xargs -L1 createrepo-agent /var/repos/%s/testing/%s/ --invalidate-family --arch=SRPMS --arch=%s --sync" % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(arches))
+        for os_name, os_versions in import_targets.items() for os_code_name, arches in os_versions.items()
+    ] + [
+        "  sed 's/$distname/%s/g;s/$releasever/%s/g' $f | xargs -L1 createrepo-agent /var/repos/%s/main/%s/ --invalidate-family --arch=SRPMS --arch=%s --sync" % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(arches))
+        for os_name, os_versions in import_targets.items() for os_code_name, arches in os_versions.items()
+    ] + [
+        'done',
+        'echo "# END SECTION"',
+    ]),
+))@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
