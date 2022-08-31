@@ -67,7 +67,7 @@ def get_distribution_file(index, rosdistro_name, build_file):
 def get_ci_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'ci_builds')
     build_files = {}
-    for (k, url), v in data.items():
+    for k, (url, v) in data.items():
         build_files[k] = CIBuildFile(k, v)
         build_files[k].url = url
     return build_files
@@ -76,7 +76,7 @@ def get_ci_build_files(index, dist_name):
 def get_release_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'release_builds')
     build_files = {}
-    for (k, url), v in data.items():
+    for k, (url, v) in data.items():
         build_files[k] = ReleaseBuildFile(k, v)
         build_files[k].url = url
     return build_files
@@ -85,7 +85,7 @@ def get_release_build_files(index, dist_name):
 def get_source_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'source_builds')
     build_files = {}
-    for (k, url), v in data.items():
+    for k, (url, v) in data.items():
         build_files[k] = SourceBuildFile(k, v)
         build_files[k].url = url
     return build_files
@@ -94,7 +94,7 @@ def get_source_build_files(index, dist_name):
 def get_doc_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'doc_builds')
     build_files = {}
-    for (k, url), v in data.items():
+    for k, (url, v) in data.items():
         build_files[k] = DocBuildFile(k, v)
         build_files[k].url = url
     return build_files
@@ -129,5 +129,5 @@ def _load_build_file_data(entries):
 
     data = {}
     for k, v in entries.items():
-        data[(k, v)] = _load_yaml_data(v)
+        data[k] = (v, _load_yaml_data(v))
     return data
