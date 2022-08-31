@@ -103,7 +103,7 @@ def get_doc_build_files(index, dist_name):
 def get_global_doc_build_files(index):
     data = _load_build_file_data(index.doc_builds)
     build_files = {}
-    for (k, url), v in data.items():
+    for k, (url, v) in data.items():
         build_files[k] = DocBuildFile(k, v)
         build_files[k].url = url
     return build_files
