@@ -126,6 +126,18 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Upload sourcerpm"',
+        'find sourcepkg -mindepth 1 -maxdepth 1 -type f -name "*.src.rpm" -fprint sourcepkg/rpm_upload_args.txt -fprintf sourcepkg/rpm_import_args.txt "--import=/tmp/upload-${BUILD_TAG}/%f\\n"',
+        'ssh %s -- mkdir -p /tmp/upload-${BUILD_TAG}/' % (upload_host,),
+        'xargs -a sourcepkg/rpm_upload_args.txt -I @ scp @ %s:/tmp/upload-${BUILD_TAG}/' % (upload_host,),
+        'xargs -a sourcepkg/rpm_import_args.txt ssh %s -- createrepo-agent /var/repos/%s/building/%s/' % (upload_host, os_name, os_code_name),
+        'ssh %s -- rm -fr /tmp/upload-${BUILD_TAG}/' % (upload_host,),
+        'echo "# END SECTION"',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: Upload sourcerpm to Pulp"',
         'export TZ="%s"' % timezone,
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
@@ -183,7 +195,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
   <buildWrappers>
 @(SNIPPET(
     'pulp_credentials',
-    credential_id=credential_id,
+    credential_id=credential_id_pulp,
     dest_credential_id=dest_credential_id,
 ))@
 @[if timeout_minutes is not None]@
@@ -194,6 +206,10 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @[end if]@
 @(SNIPPET(
     'build-wrapper_timestamper',
+))@
+@(SNIPPET(
+    'build-wrapper_ssh-agent',
+    credential_ids=[credential_id],
 ))@
   </buildWrappers>
 </project>

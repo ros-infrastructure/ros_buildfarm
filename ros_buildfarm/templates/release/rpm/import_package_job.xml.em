@@ -97,7 +97,7 @@
   <buildWrappers>
 @(SNIPPET(
     'pulp_credentials',
-    credential_id=credential_id,
+    credential_id=credential_id_pulp,
     dest_credential_id=dest_credential_id,
 ))@
 @(SNIPPET(

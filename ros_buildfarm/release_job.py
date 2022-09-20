@@ -655,7 +655,9 @@ def _get_sourcedeb_job_config(
 
         'timeout_minutes': build_file.jenkins_source_job_timeout,
 
+        'upload_host': build_file.upload_host,
         'credential_id': build_file.upload_credential_id,
+        'credential_id_pulp': build_file.upload_credential_id_pulp,
         'dest_credential_id': build_file.upload_destination_credential_id,
 
         'git_ssh_credential_id': config.git_ssh_credential_id,
@@ -742,7 +744,9 @@ def _get_binarydeb_job_config(
 
         'timeout_minutes': build_file.jenkins_binary_job_timeout,
 
+        'upload_host': build_file.upload_host,
         'credential_id': build_file.upload_credential_id,
+        'credential_id_pulp': build_file.upload_credential_id_pulp,
         'dest_credential_id': build_file.upload_destination_credential_id,
 
         'shared_ccache': build_file.shared_ccache,
@@ -791,7 +795,7 @@ def _get_import_package_job_config(build_file, package_format):
         'abi_incompatibility_assumed': build_file.abi_incompatibility_assumed,
         'notify_emails': build_file.notify_emails,
         'ros_buildfarm_repository': get_repository(),
-        'credential_id': build_file.upload_credential_id,
+        'credential_id_pulp': build_file.upload_credential_id_pulp,
         'dest_credential_id': build_file.upload_destination_credential_id,
     }
     job_config = expand_template(template_name, job_data)
@@ -857,7 +861,7 @@ def _get_sync_packages_to_testing_job_config(
             rosdistro_name, package_format),
 
         'notify_emails': build_file.notify_emails,
-        'credential_id': build_file.upload_credential_id,
+        'credential_id_pulp': build_file.upload_credential_id_pulp,
         'dest_credential_id': build_file.upload_destination_credential_id,
     }
     job_config = expand_template(template_name, job_data)
@@ -900,22 +904,16 @@ def get_sync_packages_to_main_job_name(rosdistro_name, package_format):
 
 
 def _get_sync_packages_to_main_job_config(rosdistro_name, build_file, package_format):
-    sync_targets = set()
-    for os_name, os_versions in build_file.targets.items():
-        for os_code_name, os_arches in os_versions.items():
-            for os_arch in os_arches.keys():
-                sync_targets.add((os_name, os_code_name, os_arch))
-
     template_name = 'release/%s/sync_packages_to_main_job.xml.em' % package_format
     job_data = {
         'ros_buildfarm_repository': get_repository(),
         'rosdistro_name': rosdistro_name,
 
         'deb_sync_to_main_job_name': get_sync_packages_to_main_job_name(rosdistro_name, 'deb'),
-        'sync_targets': sync_targets,
+        'sync_targets': build_file.targets,
 
         'notify_emails': build_file.notify_emails,
-        'credential_id': build_file.upload_credential_id,
+        'credential_id_pulp': build_file.upload_credential_id_pulp,
         'dest_credential_id': build_file.upload_destination_credential_id,
     }
     job_config = expand_template(template_name, job_data)
