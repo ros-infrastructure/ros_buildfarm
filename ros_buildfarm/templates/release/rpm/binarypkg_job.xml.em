@@ -158,46 +158,6 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'echo "# BEGIN SECTION: Upload binaryrpm to Pulp"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        "ls binarypkg/*.rpm | grep -v -e 'src\.rpm$' -e '-debug\(info\|source\)-' > binarypkg/upload_list.txt && " +
-        'xargs -a binarypkg/upload_list.txt' +
-        ' python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
-        ' --pulp-resource-record binarypkg/upload_record.txt',
-        'echo "# END SECTION"',
-        'echo "# BEGIN SECTION: Upload debug symbols"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        "ls binarypkg/*.rpm | grep -e '-debug\(info\|source\)-' > binarypkg/upload_list_debug.txt && " +
-        'xargs -a binarypkg/upload_list_debug.txt' +
-        ' python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
-        ' --pulp-resource-record binarypkg/upload_record_debug.txt',
-        'echo "# END SECTION"',
-    ]),
-))@
-@(SNIPPET(
-    'builder_parameterized-trigger',
-    project=import_package_job_name,
-    parameters='\n'.join([
-        'DISTRIBUTION_NAME=ros-building-%s-%s-%s' % (
-            os_name, os_code_name, arch),
-        'INVALIDATE_DOWNSTREAM=true']),
-    parameter_files=['binarypkg/upload_record.txt'],
-    continue_on_failure=False,
-))@
-@(SNIPPET(
-    'builder_parameterized-trigger',
-    project=import_package_job_name,
-    parameters='\n'.join([
-        'DISTRIBUTION_NAME=ros-building-%s-%s-%s-debug' % (
-            os_name, os_code_name, arch),
-        'INVALIDATE_DOWNSTREAM=false']),
-    parameter_files=['binarypkg/upload_record_debug.txt'],
-    continue_on_failure=False,
-    missing_parameter_files_skip=True,
-))@
-@(SNIPPET(
-    'builder_shell',
-    script='\n'.join([
         'if [ "$skip_cleanup" = "false" ]; then',
         'echo "# BEGIN SECTION: Clean up to save disk space on agents"',
         'rm -f binarypkg/*.rpm binarypkg/source/*.rpm',
@@ -230,11 +190,6 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
   </publishers>
   <buildWrappers>
-@(SNIPPET(
-    'pulp_credentials',
-    credential_id=credential_id_pulp,
-    dest_credential_id=dest_credential_id,
-))@
 @[if timeout_minutes is not None]@
 @(SNIPPET(
     'build-wrapper_build-timeout',
