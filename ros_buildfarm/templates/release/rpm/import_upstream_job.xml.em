@@ -27,24 +27,6 @@
             'description': 'A specific text file or files containing RPM base URLs to import from. The default is the ros_bootstrap repository.',
             'default_value': '/home/jenkins-agent/ros_bootstrap_rpm_urls.txt',
         },
-        {
-            'type': 'string',
-            'name': 'REMOTE_SOURCE_EXPRESSION',
-            'description': 'Expression to match pulp remote repositories',
-            'default_value': '^ros-upstream-[^-]+-([^-]+-[^-]+-[^-]+(-debug)?)$',
-        },
-        {
-            'type': 'string',
-            'name': 'DISTRIBUTION_DEST_EXPRESSION',
-            'description': 'Expression to transform source remote to destination pulp distribution',
-            'default_value': '^ros-(building|testing|main)-\\1$',
-        },
-        {
-            'type': 'boolean',
-            'name': 'EXECUTE_IMPORT',
-            'description': 'If this is not true, it will only do a dry run and print the expect import, but not execute.',
-            'default_value': 'false',
-        },
     ],
 ))@
 @(SNIPPET(
@@ -86,26 +68,6 @@
         'echo "# END SECTION"',
     ]),
 ))@
-@(SNIPPET(
-    'builder_shell',
-    script='\n'.join([
-        'echo "# BEGIN SECTION: mirror repositories to pulp"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/mirror_repo.py' +
-        ' --remote-source-expression $REMOTE_SOURCE_EXPRESSION' +
-        ' --distribution-dest-expression "^\\g<0>$"',
-        'echo "# END SECTION"',
-        '',
-        'echo "# BEGIN SECTION: sync packages from mirrors to repos"',
-        'if [ "$EXECUTE_IMPORT" != "true" ]; then DRY_RUN_ARG="--dry-run"; fi',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/sync_repo.py' +
-        ' --distribution-source-expression $REMOTE_SOURCE_EXPRESSION' +
-        ' --distribution-dest-expression $DISTRIBUTION_DEST_EXPRESSION' +
-        ' $DRY_RUN_ARG',
-        'echo "# END SECTION"',
-    ]),
-))@
   </builders>
   <publishers>
 @(SNIPPET(
@@ -116,11 +78,6 @@
 ))@
   </publishers>
   <buildWrappers>
-@(SNIPPET(
-    'pulp_credentials',
-    credential_id=credential_id_pulp,
-    dest_credential_id=dest_credential_id,
-))@
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@

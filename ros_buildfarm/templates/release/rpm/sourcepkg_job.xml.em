@@ -137,27 +137,6 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
-        'echo "# BEGIN SECTION: Upload sourcerpm to Pulp"',
-        'export TZ="%s"' % timezone,
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
-        ' --pulp-resource-record sourcepkg/upload_record.txt' +
-        ' sourcepkg/*.src.rpm',
-        'echo "# END SECTION"',
-    ]),
-))@
-@(SNIPPET(
-    'builder_parameterized-trigger',
-    project=import_package_job_name,
-    parameters='\n'.join([
-        'DISTRIBUTION_NAME=ros-building-%s-%s-SRPMS' % (
-            os_name, os_code_name)]),
-    parameter_files=['sourcepkg/upload_record.txt'],
-    continue_on_failure=True,
-))@
-@(SNIPPET(
-    'builder_shell',
-    script='\n'.join([
         'if [ "$skip_cleanup" = "false" ]; then',
         'echo "# BEGIN SECTION: Clean up to save disk space on agents"',
         'rm -fr sourcepkg',
@@ -193,11 +172,6 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
   </publishers>
   <buildWrappers>
-@(SNIPPET(
-    'pulp_credentials',
-    credential_id=credential_id_pulp,
-    dest_credential_id=dest_credential_id,
-))@
 @[if timeout_minutes is not None]@
 @(SNIPPET(
     'build-wrapper_build-timeout',
