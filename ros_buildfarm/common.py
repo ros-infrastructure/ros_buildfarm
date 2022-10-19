@@ -623,7 +623,10 @@ def get_xunit_publisher_types_and_patterns(
     return types
 
 
-def get_direct_dependencies(pkg_name, cached_pkgs, pkg_names, include_test_deps=True):
+def get_direct_dependencies(
+    pkg_name, cached_pkgs, pkg_names, include_test_deps=True,
+    include_group_deps=False,
+):
     if pkg_name not in cached_pkgs:
         return None
     pkg = cached_pkgs[pkg_name]
@@ -638,6 +641,10 @@ def get_direct_dependencies(pkg_name, cached_pkgs, pkg_names, include_test_deps=
         d.name for d in pkg_deps
         if d.name in pkg_names and
         d.evaluated_condition is not False])
+    if include_group_deps:
+        depends.update(
+            m for group_dep in pkg.group_depends for m in group_dep.members if
+            group_dep.evaluated_condition is not False)
     return depends
 
 
