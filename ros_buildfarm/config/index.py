@@ -126,6 +126,6 @@ class Index(object):
 
 def _resolve_url(base_url, value):
     parts = urlparse(value)
-    if not parts[0]:  # schema
+    if base_url and not parts[0]:  # schema
         value = base_url + '/' + value
     return value
