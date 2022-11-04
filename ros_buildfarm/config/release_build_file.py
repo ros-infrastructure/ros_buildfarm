@@ -121,10 +121,14 @@ class ReleaseBuildFile(BuildFile):
         if 'upload_host' in data:
             self.upload_host = data['upload_host']
 
+        self.include_group_dependencies = False
         self.include_test_dependencies = True
         self.run_package_tests = True
         if data.get('package_dependency_behavior'):
             assert isinstance(data['package_dependency_behavior'], dict)
+            if 'include_group_dependencies' in data['package_dependency_behavior']:
+                self.include_group_dependencies = \
+                    bool(data['package_dependency_behavior']['include_group_dependencies'])
             if 'include_test_dependencies' in data['package_dependency_behavior']:
                 self.include_test_dependencies = \
                     bool(data['package_dependency_behavior']['include_test_dependencies'])
