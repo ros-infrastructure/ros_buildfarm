@@ -288,4 +288,4 @@ def resolve_names(rosdep_keys, os_name, os_code_name, view, installer):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

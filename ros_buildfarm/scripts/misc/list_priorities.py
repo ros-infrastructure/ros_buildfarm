@@ -59,4 +59,4 @@ def _process_priorities(priorities, configs):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

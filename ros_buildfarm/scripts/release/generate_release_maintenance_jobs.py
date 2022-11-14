@@ -178,4 +178,4 @@ def _get_trigger_broken_with_non_broken_upstream_job_config(
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

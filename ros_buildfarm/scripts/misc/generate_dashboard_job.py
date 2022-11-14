@@ -52,4 +52,4 @@ def get_job_config(notification_emails):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

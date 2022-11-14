@@ -91,4 +91,4 @@ def get_reconfigure_jobs_job_config(args, config, build_files):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

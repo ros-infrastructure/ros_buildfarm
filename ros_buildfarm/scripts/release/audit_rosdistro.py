@@ -143,4 +143,4 @@ def run_audit(config_url, rosdistro_name, cache_dir):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

@@ -87,4 +87,4 @@ def call_docker_pull(base_image, known_error_strings):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

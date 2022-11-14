@@ -331,4 +331,4 @@ def _repository_name_and_type_and_url_and_branch(arg):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

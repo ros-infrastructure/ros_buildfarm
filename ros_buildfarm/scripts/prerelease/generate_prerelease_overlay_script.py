@@ -128,4 +128,4 @@ def get_repository_specification_for_released_package(dist_file, pkg_name):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

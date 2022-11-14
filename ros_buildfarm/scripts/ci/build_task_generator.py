@@ -156,4 +156,4 @@ def write_install_list(install_list_path, debian_pkg_names, apt_cache):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
