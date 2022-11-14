@@ -128,4 +128,4 @@ def get_status_page_data(repo_urls, targets_by_repo):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

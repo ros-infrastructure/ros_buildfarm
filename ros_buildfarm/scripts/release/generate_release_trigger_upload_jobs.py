@@ -98,4 +98,4 @@ def get_upstream_job_names(config, repo):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

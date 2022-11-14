@@ -211,4 +211,4 @@ def get_build_depends(dsc_file, build_profiles=()):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

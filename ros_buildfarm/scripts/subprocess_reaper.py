@@ -168,4 +168,4 @@ if __name__ == '__main__':
     # ignore SIGTERM so that if the parent process is killed
     # and forwards the signal, this script does not die
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
-    main()
+    sys.exit(main())

@@ -301,4 +301,4 @@ def order_dependencies(binary_package_names):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

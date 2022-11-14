@@ -205,4 +205,4 @@ def add_canonical_link(base_path, base_link):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

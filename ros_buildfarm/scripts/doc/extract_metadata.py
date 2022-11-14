@@ -183,4 +183,4 @@ def write_manifest_yaml(manifest_yaml, data):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

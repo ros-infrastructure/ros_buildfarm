@@ -111,4 +111,4 @@ def get_trigger_jobs_job_config(group_name, build_file):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

@@ -55,4 +55,4 @@ def get_job_config(ros_distro):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
