@@ -74,4 +74,4 @@ def call_git(argv, known_error_strings):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
