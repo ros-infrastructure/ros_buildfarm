@@ -167,4 +167,4 @@ def call_apt(argv, known_error_strings):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
