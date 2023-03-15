@@ -18,6 +18,12 @@ FROM @(os_name):@(os_code_name)
 @[end if]@
 
 RUN @(package_manager) update -y
+
+@[if os_name in ['rhel']]@
+# Enable CRB on RHEL
+RUN crb enable
+@[end if]@
+
 RUN @(package_manager) install -y dnf{,-command\(download\)} mock{,-{core-configs,scm}} python@(python3_pkgversion){,-{catkin_pkg,empy,rosdistro,yaml}}
 
 RUN useradd -u @(uid) -l -m buildfarm
