@@ -534,7 +534,7 @@ def topological_order_packages(packages):
             d.name for d in all_depends if d.name in decorators_by_name.keys() and
             d.evaluated_condition is not False])
         unique_depend_names.update([
-            m for d in decorator.package.group_depends for m in d.members if
+            m for d in decorator.package.group_depends for m in (d.members or ()) if
             d.evaluated_condition is not False])
         for name in unique_depend_names:
             if name in decorator.depends_for_topological_order:
