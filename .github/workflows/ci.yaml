@@ -404,7 +404,7 @@ jobs:
           config_name: rhel
           ros_distro: rolling
           os_name: rhel
-          os_code_name: 8
+          os_code_name: 9
           arch: x86_64
           pkg_name: rcutils
 
@@ -438,7 +438,7 @@ jobs:
           config_name: rhel
           ros_distro: rolling
           os_name: rhel
-          os_code_name: 8
+          os_code_name: 9
           arch: x86_64
 
   ros2_trigger:
