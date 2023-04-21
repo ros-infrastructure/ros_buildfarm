@@ -124,8 +124,6 @@ def get_import_upstream_job_config(args, config, build_file, package_format):
     data = {
         'import_targets': build_file.targets,
         'credential_id': build_file.upload_credential_id,
-        'credential_id_pulp': build_file.upload_credential_id_pulp,
-        'dest_credential_id': build_file.upload_destination_credential_id,
     }
     return _get_job_config(
         args, config, config.notify_emails, template_name,
