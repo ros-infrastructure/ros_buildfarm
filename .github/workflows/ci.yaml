@@ -22,7 +22,7 @@ jobs:
 
   ros1_audit:
     name: ROS 1 Audit
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         python: ['2.7', '3.6']
@@ -43,7 +43,7 @@ jobs:
 
   ros1_config:
     name: ROS 1 Config Validation
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -54,10 +54,10 @@ jobs:
 
   ros1_devel:
     name: ROS 1 Devel
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['2.7', '3.5', '3.6']
         build_tool: [null]
         include:
           - python: '3.6'
@@ -81,10 +81,10 @@ jobs:
 
   ros1_doc:
     name: ROS 1 Doc
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['2.7', '3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -103,10 +103,10 @@ jobs:
 
   ros1_prerelease:
     name: ROS 1 Prerelease
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['2.7', '3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -126,10 +126,10 @@ jobs:
 
   ros1_prerelease_external:
     name: ROS 1 Prerelease (External)
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['2.7', '3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -154,10 +154,10 @@ jobs:
 
   ros1_release:
     name: ROS 1 Release
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['2.7', '3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -176,10 +176,10 @@ jobs:
 
   ros1_release_reconfigure:
     name: ROS 1 Release Reconfigure
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['2.7', '3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -197,10 +197,10 @@ jobs:
 
   ros1_status_pages:
     name: ROS 1 Status Pages
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['2.7', '3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -217,10 +217,10 @@ jobs:
 
   ros1_sync_criteria_check:
     name: ROS 1 Sync Criteria Check
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['2.7', '3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -234,10 +234,10 @@ jobs:
 
   ros1_trigger:
     name: ROS 1 Trigger
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['2.7', '3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
