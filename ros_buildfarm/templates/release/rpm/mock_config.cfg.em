@@ -41,6 +41,15 @@ config_opts['macros']['%_without_weak_deps'] = '1'
 config_opts['chroot_setup_cmd'] += ' gcc-c++ make'
 @[end if]@
 
+@[if os_name == 'rhel' and os_code_name == '9']@
+# Pin RHEL 9 to 9.1 everywhere except EPEL
+import re
+config_opts[f'{config_opts.package_manager}.conf'] = re.sub(
+    r'(?<!(epel|EPEL)-)\$releasever',
+    '9.1',
+    config_opts[f'{config_opts.package_manager}.conf'])
+@[end if]@
+
 config_opts[f'{config_opts.package_manager}.conf'] += """
 @[for i, url in enumerate(distribution_repository_urls)]@
 [ros-buildfarm-@(i)]
