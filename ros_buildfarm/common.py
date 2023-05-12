@@ -631,9 +631,10 @@ def get_direct_dependencies(
         return None
     pkg = cached_pkgs[pkg_name]
     pkg_deps = (pkg.buildtool_depends + pkg.build_depends +
-                pkg.buildtool_export_depends + pkg.build_export_depends)
+                pkg.buildtool_export_depends + pkg.build_export_depends +
+                pkg.exec_depends)
     if include_test_deps:
-        pkg_deps += pkg.exec_depends + pkg.test_depends
+        pkg_deps += pkg.test_depends
     # test dependencies are treated similar to build dependencies by bloom
     # so if configured to include test dependencies, we need them here to
     # ensure that all dependencies are available before starting a build
