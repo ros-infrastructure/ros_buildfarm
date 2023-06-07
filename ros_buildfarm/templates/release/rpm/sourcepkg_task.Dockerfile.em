@@ -25,6 +25,9 @@ RUN crb enable
 @[end if]@
 
 RUN @(package_manager) install -y dnf{,-command\(download\)} mock{,-{core-configs,scm}} python@(python3_pkgversion){,-{catkin_pkg,empy,rosdistro,yaml}}
+@[if os_name == 'rhel']@
+RUN @(package_manager) update -y mock{,-{core-configs,scm}} --enablerepo=epel-testing
+@[end if]@
 
 RUN useradd -u @(uid) -l -m buildfarm
 RUN usermod -a -G mock buildfarm
