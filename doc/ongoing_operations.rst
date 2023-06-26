@@ -81,34 +81,72 @@ Perform action on a set of jobs
 -------------------------------
 
 Sometimes you want to do bulk actions like disable or delete all jobs of a specific distro or just one target.
-We recommend running a Groovy scripts using the script console.
+We recommend running a Groovy script using the script console.
+
+You can change the distro letter or add or remove prefixes from the list in order to reduce the scope of targeted jobs.
+
+Some operations take time and an HTTP timeout creates performance issues with dangling script runs.
+To prevent them the example script uses a ``BATCH_SIZE`` constant to control how many jobs to change before returning.
+You can leave the default, fairly conservative batch size or increase that constant steadily until results are no longer instantaneous and then adjusting back down.
+Running the script repeatedly until there are no longer any remaining jobs to process will work as long as non-destructive changes, like enabling or disabling jobs, are properly skipped.
 
 The following Groovy script is a good starting point for various actions:
 
 .. code-block:: groovy
 
-   import hudson.model.Cause
+   DISTRO_LETTER = "F"
+   PREFIXES = ["ci_", "dev_", "pr_", "rel", "src_", "bin_"].collect({pre -> DISTRO_LETTER + pre})
 
-   for (p in Jenkins.instance.allItems) {
-     if (
-       p.name.startsWith("PREFIX1__") ||
-       p.name.startsWith("PREFIX2__") ||
-       ... ||
-       p.name.startsWith("PREFIXn__"))
-     {
-       println(p.name)
-
-       // p.disable()
-       // p.enable()
-
-       // p.scheduleBuild(new Cause.UserIdCause())
-
-       // p.delete()
+   def starts_with_any_prefix(name) {
+     for (prefix in PREFIXES) {
+       if (name.startsWith(prefix)) {
+         return true
+       }
      }
+     return false
+   }
+
+
+   /* Some operations take time and an http timeout
+    * creates performance issues with dangling script
+    * runs.
+    * To prevent them use a batch size that returns
+    * fairly instant results and run the script multiple
+    * times
+    */
+   BATCH_SIZE = 100
+
+   count = 0
+   for (job in Jenkins.get().getItems({job -> starts_with_any_prefix(job.name)}))
+   {
+     if (count >= BATCH_SIZE)
+     {
+       println("Reached ${BATCH_SIZE} limit before processing ${job.name}.")
+       break
+     }
+
+     /* Disable a job if it is not already disabled */
+     // if (job.isDisabled()) { continue }
+     // job.disable()
+
+     /* Enable a job if it is currently disabled */
+     // if (!job.isDisabled()) { continue }
+     // job.enable()
+
+     /* Delete a job! This action is irreversable! */
+     // job.delete()
+
+     /* Increase count for batch processing. */
+     count++
+   }
+
+   if (count <= BATCH_SIZE)
+   {
+     println("Completed execution of the last batch.")
    }
 
 This script will print only the matched job names.
-You can uncomment any of the actions to disable, enable, trigger or delete these projects.
+You can uncomment any of the actions to disable, enable, or delete these projects.
 
 To run a Groovy script:
 
