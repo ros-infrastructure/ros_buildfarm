@@ -117,7 +117,7 @@ The following Groovy script is a good starting point for various actions:
    BATCH_SIZE = 100
 
    count = 0
-   for (job in Jenkins.get().getItems({job -> starts_with_any_prefix(job.name)}))
+   for (job in Jenkins.get().getItems({j -> starts_with_any_prefix(j.name)}))
    {
      if (count >= BATCH_SIZE)
      {
