@@ -136,6 +136,8 @@ The following Groovy script is a good starting point for various actions:
      /* Delete a job! This action is irreversable! */
      // job.delete()
 
+ println(job.name)
+ 
      /* Increase count for batch processing. */
      count++
    }
