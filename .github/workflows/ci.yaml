@@ -38,8 +38,8 @@ jobs:
       - name: Run job
         uses: ./.github/actions/audit
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
 
   ros1_config:
     name: ROS 1 Config Validation
@@ -74,8 +74,8 @@ jobs:
       - name: Run job
         uses: ./.github/actions/devel
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
           build_tool: ${{matrix.build_tool}}
           repo: roscpp_core
 
@@ -97,8 +97,8 @@ jobs:
       - name: Run job
         uses: ./.github/actions/doc
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
           repo: roscpp_core
 
   ros1_prerelease:
@@ -119,8 +119,8 @@ jobs:
       - name: Run job
         uses: ./.github/actions/prerelease
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
           overlay_pkg: roscpp
           underlay_repos: roscpp_core
 
@@ -148,8 +148,8 @@ jobs:
       - name: Run job
         uses: ./.github/actions/prerelease
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
           source_dir: ${{github.workspace}}/dummy_package
 
   ros1_release:
@@ -170,8 +170,8 @@ jobs:
       - name: Run job
         uses: ./.github/actions/release
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
           pkg_name: rostime
 
   ros1_release_reconfigure:
@@ -192,7 +192,7 @@ jobs:
       - name: Run job
         uses: ./.github/actions/release_reconfigure
         with:
-          ros_distro: melodic
+          ros_distro: noetic
           pkg_names: rostime
 
   ros1_status_pages:
@@ -213,7 +213,7 @@ jobs:
       - name: Run job
         uses: ./.github/actions/status_pages
         with:
-          ros_distro: melodic
+          ros_distro: noetic
 
   ros1_sync_criteria_check:
     name: ROS 1 Sync Criteria Check
@@ -229,8 +229,8 @@ jobs:
       - name: Run job
         uses: ./.github/actions/sync_criteria_check
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
 
   ros1_trigger:
     name: ROS 1 Trigger
@@ -246,7 +246,7 @@ jobs:
       - name: Run job
         uses: ./.github/actions/trigger
         with:
-          ros_distro: melodic
+          ros_distro: noetic
 
   ros2_audit:
     name: ROS 2 Audit
