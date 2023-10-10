@@ -133,6 +133,16 @@ def build_binarydeb(rosdistro_name, package_name, sourcepkg_dir, skip_tests=Fals
         # This setting should filter out Build-Depends marked with <!nocheck>
         env['DEB_BUILD_PROFILES'] = (env.get('DEB_BUILD_PROFILES', '') + ' nocheck').lstrip()
 
+    if env.get('DEB_CFLAGS_MAINT_APPEND'):
+        env['DEB_CFLAGS_MAINT_APPEND'] += ' '
+    else:
+        env['DEB_CFLAGS_MAINT_APPEND'] = '-mno-avx512f'
+
+    if env.get('DEB_CXXFLAGS_MAINT_APPEND'):
+        env['DEB_CXXFLAGS_MAINT_APPEND'] += ' '
+    else:
+        env['DEB_CXXFLAGS_MAINT_APPEND'] = '-mno-avx512f'
+
     source, version = dpkg_parsechangelog(
         source_dir, ['Source', 'Version'])
     # output package version for job description
