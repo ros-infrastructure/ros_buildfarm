@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.6']
+        python: ['3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.5', '3.6']
+        python: ['3.5', '3.6']
         build_tool: [null]
         include:
           - python: '3.6'
@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.5', '3.6']
+        python: ['3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -106,7 +106,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.5', '3.6']
+        python: ['3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -129,7 +129,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.5', '3.6']
+        python: ['3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -157,7 +157,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.5', '3.6']
+        python: ['3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -179,7 +179,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.5', '3.6']
+        python: ['3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -200,7 +200,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.5', '3.6']
+        python: ['3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -220,7 +220,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.5', '3.6']
+        python: ['3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -237,7 +237,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.5', '3.6']
+        python: ['3.5', '3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
