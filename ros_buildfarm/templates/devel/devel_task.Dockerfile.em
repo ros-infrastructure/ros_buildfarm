@@ -69,7 +69,6 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pi
 @(TEMPLATE(
     'snippet/install_pytest-rerunfailures.Dockerfile.em',
     os_name=os_name,
-    os_code_name=os_code_name,
 ))@
 RUN pip3 install -U setuptools==59.6.0
 @[end if]@
