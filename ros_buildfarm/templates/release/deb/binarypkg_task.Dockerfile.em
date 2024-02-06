@@ -66,11 +66,13 @@ RUN . /etc/os-release && test "$VERSION_ID" = "20.04" && test "$(uname -m)" = "a
     os_code_name=os_code_name,
 ))@
 
+@[if install_ccache]@
 @(TEMPLATE(
     'snippet/install_ccache.Dockerfile.em',
     os_name=os_name,
     os_code_name=os_code_name,
 ))@
+@[endif]
 
 @(TEMPLATE(
     'snippet/set_environment_variables.Dockerfile.em',

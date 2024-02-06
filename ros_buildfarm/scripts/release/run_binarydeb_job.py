@@ -16,7 +16,7 @@ import argparse
 import copy
 import sys
 
-from ros_buildfarm.argument import add_argument_append_timestamp
+from ros_buildfarm.argument import add_argument_append_timestamp, add_argument_install_ccache
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_binarypkg_dir
 from ros_buildfarm.argument import \
@@ -55,6 +55,7 @@ def main(argv=sys.argv[1:]):
     add_argument_append_timestamp(parser)
     add_argument_env_vars(parser)
     add_argument_skip_tests(parser)
+    add_argument_install_ccache(parser)
     args = parser.parse_args(argv)
 
     data = copy.deepcopy(args.__dict__)
@@ -69,6 +70,7 @@ def main(argv=sys.argv[1:]):
 
         'skip_download_sourcepkg': args.skip_download_sourcepkg,
         'skip_tests': args.skip_tests,
+        'install_ccache': args.install_ccache,
 
         'binarypkg_dir': '/tmp/binarydeb',
         'build_environment_variables': ['%s=%s' % key_value for key_value in args.env_vars.items()],
