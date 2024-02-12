@@ -16,7 +16,7 @@ import argparse
 import copy
 import sys
 
-from ros_buildfarm.argument import add_argument_append_timestamp, add_argument_install_ccache
+from ros_buildfarm.argument import add_argument_append_timestamp
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_binarypkg_dir
 from ros_buildfarm.argument import \
@@ -24,6 +24,7 @@ from ros_buildfarm.argument import \
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
+from ros_buildfarm.argument import add_argument_install_ccache
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
