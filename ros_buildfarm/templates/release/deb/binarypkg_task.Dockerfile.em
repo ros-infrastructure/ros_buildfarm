@@ -72,7 +72,7 @@ RUN . /etc/os-release && test "$VERSION_ID" = "20.04" && test "$(uname -m)" = "a
     os_name=os_name,
     os_code_name=os_code_name,
 ))@
-@[endif]
+@[end if]@
 
 @(TEMPLATE(
     'snippet/set_environment_variables.Dockerfile.em',
