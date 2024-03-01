@@ -105,7 +105,7 @@ cmds.append(
     ' --binarypkg-dir ' + binarypkg_dir +
     ' --env-vars ' + ' '.join(build_environment_variables) +
     ' --dockerfile-dir ' + dockerfile_dir +
-    (' --install-ccache ' if install_ccache else '')) +
+    (' --install-ccache ' if install_ccache else '') +
     (' --skip-tests' if skip_tests else ''))
 }@
 CMD ["@(' && '.join(cmds))"]
