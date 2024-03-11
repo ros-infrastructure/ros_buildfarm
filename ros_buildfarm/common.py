@@ -175,6 +175,8 @@ def get_binary_package_versions(apt_cache, debian_pkg_names):
         pkg = apt_cache.get(debian_pkg_name)
         if not pkg:
             prov = apt_cache.get_providing_packages(debian_pkg_name)
+            if not prov:
+                raise KeyError("No packages available for '%s'" % (debian_pkg_name,))
             assert len(prov) == 1
             pkg = apt_cache[prov[0]]
         versions[debian_pkg_name] = max(pkg.versions).version
