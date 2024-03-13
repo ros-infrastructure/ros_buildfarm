@@ -172,7 +172,13 @@ def get_distribution_repository_keys(urls, key_files):
 def get_binary_package_versions(apt_cache, debian_pkg_names):
     versions = {}
     for debian_pkg_name in debian_pkg_names:
-        pkg = apt_cache[debian_pkg_name]
+        pkg = apt_cache.get(debian_pkg_name)
+        if not pkg:
+            prov = apt_cache.get_providing_packages(debian_pkg_name)
+            if not prov:
+                raise KeyError("No packages available for '%s'" % (debian_pkg_name,))
+            assert len(prov) == 1
+            pkg = apt_cache[prov[0]]
         versions[debian_pkg_name] = max(pkg.versions).version
     return versions
 
@@ -318,6 +324,7 @@ def get_short_os_code_name(os_code_name):
         'focal': 'F',
         'jammy': 'J',
         'jessie': 'J',
+        'noble': 'N',
         'saucy': 'S',
         'stretch': 'S',
         'trusty': 'T',
