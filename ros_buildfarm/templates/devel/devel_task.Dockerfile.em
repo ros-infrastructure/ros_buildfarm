@@ -70,7 +70,11 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pi
     'snippet/install_pytest-rerunfailures.Dockerfile.em',
     os_name=os_name,
 ))@
+@[ if os_code_name == 'noble']@
+RUN pip3 install -U setuptools==59.6.0 --break-system-packages
+@[ else]@
 RUN pip3 install -U setuptools==59.6.0
+@[ end if]@
 @[end if]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
