@@ -337,7 +337,7 @@ jobs:
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
           ros_distro: rolling
-          os_code_name: jammy
+          os_code_name: noble
           repo: rcl
           output_directory: ws/docs_output
 
@@ -371,7 +371,7 @@ jobs:
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
           ros_distro: rolling
-          os_code_name: jammy
+          os_code_name: noble
           pkg_name: rcutils
 
   ros2_release_reconfigure:
@@ -421,7 +421,7 @@ jobs:
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
           ros_distro: rolling
-          os_code_name: jammy
+          os_code_name: noble
 
   ros2_sync_criteria_check_rpm:
     name: ROS 2 Sync Criteria Check (RPM)
