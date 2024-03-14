@@ -63,14 +63,11 @@ RUN echo "@today_str"
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-yaml
 
 @[if build_tool == 'colcon']@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pip
-@# colcon-core.package_identification.python needs at least setuptools 30.3.0
 @# pytest-rerunfailures enables usage of --retest-until-pass
 @(TEMPLATE(
     'snippet/install_pytest-rerunfailures.Dockerfile.em',
     os_name=os_name,
 ))@
-RUN pip3 install -U setuptools==59.6.0
 @[end if]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
