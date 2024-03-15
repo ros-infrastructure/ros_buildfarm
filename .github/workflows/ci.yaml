@@ -52,33 +52,6 @@ jobs:
       - name: Validate configration
         run: validate_config_index.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
 
-  ros1_devel:
-    name: ROS 1 Devel
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        python: ['3.5', '3.6']
-        build_tool: [null]
-        include:
-          - python: '3.6'
-            build_tool: colcon
-    steps:
-      - name: Check out project
-        uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{matrix.python}}
-      - name: Install dependencies
-        uses: ./.github/actions/setup
-      - name: Run job
-        uses: ./.github/actions/devel
-        with:
-          ros_distro: noetic
-          os_code_name: focal
-          build_tool: ${{matrix.build_tool}}
-          repo: roscpp_core
-
   ros1_doc:
     name: ROS 1 Doc
     runs-on: ubuntu-20.04
