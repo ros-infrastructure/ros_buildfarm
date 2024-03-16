@@ -49,6 +49,7 @@ def main(argv=sys.argv[1:]):
                                   '-m',
                                   'pip',
                                   'install',
+                                  '--break-system-packages',
                                   '.'],
                                  cwd=args.rosdoc2_dir)
         if pip_rc:
