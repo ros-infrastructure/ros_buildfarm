@@ -178,7 +178,7 @@ else:
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_doc/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/rosdoc2:/tmp/rosdoc2:ro' +
+        ' -v $WORKSPACE/rosdoc2:/tmp/rosdoc2' +
         ' -v $WORKSPACE/ws:/tmp/ws' +
         ' rosdoc2.%s_%s' % (rosdistro_name, doc_repo_spec.name.lower()),
         'echo "# END SECTION"',
