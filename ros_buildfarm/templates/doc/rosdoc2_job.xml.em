@@ -167,6 +167,8 @@ else:
         'sleep 1',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - doc"',
+	'# copy rosdoc2 into image build context directory',
+	'cp -r $WORKSPACE/rosdoc2 $WORKSPACE/docker_doc/rosdoc2',
         '# build and run build_and_install Dockerfile',
         'cd $WORKSPACE/docker_doc',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
@@ -178,7 +180,6 @@ else:
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_doc/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/rosdoc2:/tmp/rosdoc2:ro' +
         ' -v $WORKSPACE/ws:/tmp/ws' +
         ' rosdoc2.%s_%s' % (rosdistro_name, doc_repo_spec.name.lower()),
         'echo "# END SECTION"',

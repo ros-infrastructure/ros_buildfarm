@@ -44,6 +44,7 @@ RUN echo "@today_str"
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y -o Debug::pkgProblemResolver=yes build-essential python3-catkin-pkg-modules doxygen graphviz openssh-client python3 python3-yaml python3-pip rsync
 
 USER buildfarm
+COPY rosdoc2 /tmp/rosdoc2
 ENTRYPOINT ["sh", "-c"]
 @{
 cmd = 'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
