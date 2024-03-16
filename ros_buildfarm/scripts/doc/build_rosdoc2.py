@@ -63,7 +63,7 @@ def main(argv=sys.argv[1:]):
             env['PATH'] = ''
         else:
             env['PATH'] += ':'
-        env['PATH'] += '/home/buildfarm/.local/bin'
+        env['PATH'] += os.path.join(env['HOME'], '.local/bin')
 
         source_space = os.path.join(args.workspace_root, 'src')
         print("Crawling for packages in workspace '%s'" % (source_space))
