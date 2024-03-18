@@ -172,7 +172,13 @@ def get_distribution_repository_keys(urls, key_files):
 def get_binary_package_versions(apt_cache, debian_pkg_names):
     versions = {}
     for debian_pkg_name in debian_pkg_names:
-        pkg = apt_cache[debian_pkg_name]
+        pkg = apt_cache.get(debian_pkg_name)
+        if not pkg:
+            prov = apt_cache.get_providing_packages(debian_pkg_name)
+            if not prov:
+                raise KeyError("No packages available for '%s'" % (debian_pkg_name,))
+            assert len(prov) == 1
+            pkg = apt_cache[prov[0]]
         versions[debian_pkg_name] = max(pkg.versions).version
     return versions
 
@@ -318,6 +324,7 @@ def get_short_os_code_name(os_code_name):
         'focal': 'F',
         'jammy': 'J',
         'jessie': 'J',
+        'noble': 'N',
         'saucy': 'S',
         'stretch': 'S',
         'trusty': 'T',
@@ -631,9 +638,10 @@ def get_direct_dependencies(
         return None
     pkg = cached_pkgs[pkg_name]
     pkg_deps = (pkg.buildtool_depends + pkg.build_depends +
-                pkg.buildtool_export_depends + pkg.build_export_depends)
+                pkg.buildtool_export_depends + pkg.build_export_depends +
+                pkg.exec_depends)
     if include_test_deps:
-        pkg_deps += pkg.exec_depends + pkg.test_depends
+        pkg_deps += pkg.test_depends
     # test dependencies are treated similar to build dependencies by bloom
     # so if configured to include test dependencies, we need them here to
     # ensure that all dependencies are available before starting a build
