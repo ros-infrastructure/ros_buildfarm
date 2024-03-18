@@ -168,7 +168,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_binarydeb/docker.cid' +
-        ' -e=HOME=' +
+        ' -e=HOME=/home/buildfarm' +
         ' -e=TRAVIS=$TRAVIS' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
