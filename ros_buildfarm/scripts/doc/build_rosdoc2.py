@@ -49,8 +49,7 @@ def main(argv=sys.argv[1:]):
                                   '-m',
                                   'pip',
                                   'install',
-                                  '--no-warn-script-location',
-                                  '--use-deprecated=out-of-tree-build',
+                                  '--break-system-packages',
                                   '.'],
                                  cwd=args.rosdoc2_dir)
         if pip_rc:
