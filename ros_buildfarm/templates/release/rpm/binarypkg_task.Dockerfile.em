@@ -11,7 +11,9 @@ FROM @(os_name):@(os_code_name)
 
 RUN dnf update --refresh -y
 
-RUN dnf install --refresh -y --setopt=install_weak_deps=False dnf{,-command\(download\)} git mock{,-{core-configs,scm}} python3{,-{catkin_pkg,empy,rosdistro,yaml}}
+RUN dnf install --refresh -y --setopt=install_weak_deps=False dnf{,-command\(download\)} git mock{,-{core-configs,scm}} python3{,-{catkin_pkg,empy,rosdep,rosdistro,yaml}}
+
+RUN rosdep init
 
 @(TEMPLATE(
     'snippet/setup_bazel_single_thread_builds.Dockerfile.em',
@@ -32,6 +34,7 @@ RUN echo -e "@('\\n'.join(key.splitlines()))" > /etc/pki/mock/RPM-GPG-KEY-ros-bu
 COPY mock_config.cfg /etc/mock/ros_buildfarm.cfg
 
 USER buildfarm
+RUN env ROSDISTRO_INDEX_URL=@(rosdistro_index_url) rosdep update --rosdistro=@(rosdistro_name)
 ENTRYPOINT ["sh", "-c"]
 @{
 cmds = [
