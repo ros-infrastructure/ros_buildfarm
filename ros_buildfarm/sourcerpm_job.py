@@ -21,6 +21,13 @@ from ros_buildfarm.common import get_os_package_name
 def _get_source_tag(
         rosdistro_name, pkg_name, pkg_version, os_name, os_code_name):
     assert os_name in ['fedora', 'rhel']
+    assert os_code_name.isdigit()
+    if (
+        (os_name == 'fedora' and int(os_code_name) >= 39) or
+        (os_name == 'rhel' and int(os_code_name) >= 10)
+    ):
+        return 'dynrpm/%s-%s' % (
+            get_os_package_name(rosdistro_name, pkg_name), pkg_version)
     return 'rpm/%s-%s_%s' % (
         get_os_package_name(rosdistro_name, pkg_name),
         pkg_version, os_code_name)
