@@ -81,6 +81,7 @@
         'echo "# BEGIN SECTION: Run Dockerfile - rosdistro cache"',
         'rm -fr $WORKSPACE/rosdistro_cache',
         'mkdir -p $WORKSPACE/rosdistro_cache',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_rosdistro_cache/docker.cid' +

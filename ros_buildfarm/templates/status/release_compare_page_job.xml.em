@@ -83,6 +83,7 @@
         'echo "# BEGIN SECTION: Run Dockerfile - compare page"',
         'rm -fr $WORKSPACE/compare_page',
         'mkdir -p $WORKSPACE/compare_page',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_compare_page/docker.cid' +
