@@ -120,9 +120,16 @@ Another job type can be used locally which is not offered on the build farm.
 * `prerelease jobs <jobs/prerelease_jobs.rst>`_ build and test ROS
   repositories as well as build and test released ROS packages depending on them
 
+
 Optimization
 ------------
 
 If you are going to be running one or more jobs on any machine we recommend `using squid-in-a-can <https://github.com/jpetazzo/squid-in-a-can>`_ to cache downloads.
 It can greatly speed up download times and saves a lot of bandwidth.
 It's used by all our developers as well as on all the build machines.
+
+
+Software required to execute jobs
+---------------------------------
+Beyond the administrative requirements for generating jobs, the only noteworth software for executing jobs whether locally or via Jenkins is a container engine compatible with the Docker client CLI.
+Currently, the only engines tested with ``ros_buildfarm`` are the Docker CE or rootless Podman.

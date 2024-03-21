@@ -141,6 +141,8 @@ else:
         'echo "# BEGIN SECTION: Run Dockerfile - generating doc task"',
         'rm -fr $WORKSPACE/docker_doc',
         'mkdir -p $WORKSPACE/docker_doc',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
@@ -174,6 +176,8 @@ else:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - doc"',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_doc/docker.cid' +

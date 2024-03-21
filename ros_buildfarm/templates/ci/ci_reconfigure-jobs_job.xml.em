@@ -111,6 +111,8 @@ if (repository_names) {
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - reconfigure jobs for %s"' % (ci_build_name),
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         '# -e=GIT_BRANCH= is required since Jenkins leaves the wc in detached state',
         'docker run' +
         ' --rm ' +
