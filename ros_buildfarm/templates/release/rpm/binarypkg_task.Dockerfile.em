@@ -24,7 +24,9 @@ RUN @(package_manager) update -y
 RUN crb enable
 @[end if]@
 
-RUN @(package_manager) install -y dnf{,-command\(download\)} mock{,-{core-configs,scm}} python@(python3_pkgversion){,-{catkin_pkg,empy,rosdistro,yaml}}
+RUN @(package_manager) install -y dnf{,-command\(download\)} mock{,-{core-configs,scm}} python@(python3_pkgversion){,-{catkin_pkg,empy,rosdep,rosdistro,yaml}}
+
+RUN rosdep init
 
 RUN useradd -u @(uid) -l -m buildfarm
 RUN usermod -a -G mock buildfarm
@@ -50,6 +52,7 @@ RUN echo -e "@('\\n'.join(key.splitlines()))" > /etc/pki/mock/RPM-GPG-KEY-ros-bu
 COPY mock_config.cfg /etc/mock/ros_buildfarm.cfg
 
 USER buildfarm
+RUN env ROSDISTRO_INDEX_URL=@(rosdistro_index_url) rosdep update --rosdistro=@(rosdistro_name)
 ENTRYPOINT ["sh", "-c"]
 @{
 cmds = [

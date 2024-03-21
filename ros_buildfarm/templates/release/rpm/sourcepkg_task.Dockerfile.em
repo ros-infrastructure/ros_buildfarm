@@ -24,7 +24,9 @@ RUN @(package_manager) update -y
 RUN crb enable
 @[end if]@
 
-RUN @(package_manager) install -y dnf{,-command\(download\)} mock{,-{core-configs,scm}} python@(python3_pkgversion){,-{catkin_pkg,empy,rosdistro,yaml}}
+RUN @(package_manager) install -y dnf{,-command\(download\)} mock{,-{core-configs,scm}} python@(python3_pkgversion){,-{catkin_pkg,empy,rosdep,rosdistro,yaml}}
+
+RUN rosdep init
 
 RUN useradd -u @(uid) -l -m buildfarm
 RUN usermod -a -G mock buildfarm
