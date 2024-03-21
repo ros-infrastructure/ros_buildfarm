@@ -110,6 +110,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'echo "# BEGIN SECTION: Run Dockerfile - generate sourcedeb"',
         'rm -fr $WORKSPACE/sourcedeb',
         'mkdir -p $WORKSPACE/sourcedeb/source',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_sourcedeb/docker.cid' +

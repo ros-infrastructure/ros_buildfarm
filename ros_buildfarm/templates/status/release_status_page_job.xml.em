@@ -85,6 +85,7 @@
         'rm -fr $WORKSPACE/status_page',
         'mkdir -p $WORKSPACE/package_repo_cache',
         'mkdir -p $WORKSPACE/status_page',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_status_page/docker.cid' +
