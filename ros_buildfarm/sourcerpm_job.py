@@ -70,7 +70,6 @@ def build_sourcerpm(
         '--scm-option', 'spec=rpm/%s.spec' % os_pkg_name,
         '--scm-enable',
         '--enable-network',
-        '--disable-plugin', 'root_cache',
         '--resultdir', '%s' % sources_dir,
         '--no-cleanup-after',
         '--postinstall',

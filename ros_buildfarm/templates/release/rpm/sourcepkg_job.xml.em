@@ -104,7 +104,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'echo "# BEGIN SECTION: Build Dockerfile - generate sourcerpm"',
         'cd $WORKSPACE/docker_sourcerpm',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t sourcerpm.%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, pkg_name),
+        'docker build --cap-add=SYS_ADMIN --force-rm --net=host -t sourcerpm.%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generate sourcerpm"',
@@ -112,7 +112,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'mkdir -p $WORKSPACE/sourcepkg',
         'docker run' +
         ' --rm' +
-        ' --privileged' +
+        ' --cap-add=SYS_ADMIN' +
         ' --cidfile=$WORKSPACE/docker_sourcerpm/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
         ' --net=host' +

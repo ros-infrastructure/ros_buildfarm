@@ -185,9 +185,10 @@ def add_argument_distribution_repository_key_files(parser):
              'corresponding URLs')
 
 
-def add_argument_target_repository(parser):
+def add_argument_target_repository(parser, required=True):
     parser.add_argument(
         '--target-repository',
+        required=required,
         help='The target repository where generated packages are pushed to')
 
 

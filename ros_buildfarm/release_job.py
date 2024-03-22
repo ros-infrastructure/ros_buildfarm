@@ -608,6 +608,9 @@ def _get_sourcedeb_job_config(
 
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(build_file=build_file)
+    if package_format not in ('deb',):
+        repository_args.append(
+            '--target-repository ' + build_file.target_repository)
 
     sourcedeb_files = [
         'sourcedeb/*.debian.tar.gz',
