@@ -27,6 +27,7 @@ from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_index_url
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_sourcepkg_dir
+from ros_buildfarm.argument import add_argument_target_repository
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
@@ -44,6 +45,7 @@ def main(argv=sys.argv[1:]):
     add_argument_dockerfile_dir(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
+    add_argument_target_repository(parser, required=False)
     add_argument_sourcepkg_dir(parser)
     args = parser.parse_args(argv)
 
@@ -53,7 +55,10 @@ def main(argv=sys.argv[1:]):
         'distribution_repository_keys': get_distribution_repository_keys(
             args.distribution_repository_urls,
             args.distribution_repository_key_files),
-        'target_repository': None,
+        'target_repository': (
+            os.path.join(args.target_repository, args.os_code_name, 'SRPMS')
+            if args.target_repository else None
+        ),
 
         'uid': get_user_id(),
         'env_vars': {},

@@ -50,6 +50,7 @@ RUN echo -e "include('templates/almalinux-8.tpl')\ninclude('templates/epel-8.tpl
 RUN echo -e "@('\\n'.join(key.splitlines()))" > /etc/pki/mock/RPM-GPG-KEY-ros-buildfarm-@(i)
 @[end for]@
 COPY mock_config.cfg /etc/mock/ros_buildfarm.cfg
+RUN mock -r ros_buildfarm --init && mock -r ros_buildfarm --clean
 
 USER buildfarm
 RUN env ROSDISTRO_INDEX_URL=@(rosdistro_index_url) rosdep update --rosdistro=@(rosdistro_name)
