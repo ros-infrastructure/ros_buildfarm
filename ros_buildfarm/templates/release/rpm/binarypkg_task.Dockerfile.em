@@ -26,6 +26,11 @@ RUN crb enable
 
 RUN @(package_manager) install -y dnf{,-command\(download\)} mock{,-{core-configs,scm}} python@(python3_pkgversion){,-{catkin_pkg,empy,rosdistro,yaml}}
 
+@(TEMPLATE(
+    'snippet/setup_bazel_single_thread_builds.Dockerfile.em',
+    bazelrc_dir='/etc',
+))@
+
 RUN useradd -u @(uid) -l -m buildfarm
 RUN usermod -a -G mock buildfarm
 
