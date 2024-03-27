@@ -141,6 +141,7 @@ else:
         'echo "# BEGIN SECTION: Run Dockerfile - generating doc task"',
         'rm -fr $WORKSPACE/docker_doc',
         'mkdir -p $WORKSPACE/docker_doc',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
@@ -174,6 +175,7 @@ else:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - doc"',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_doc/docker.cid' +

@@ -82,6 +82,7 @@
         'echo "# BEGIN SECTION: Run Dockerfile - blocked_releases page"',
         'rm -fr $WORKSPACE/blocked_releases_page',
         'mkdir -p $WORKSPACE/blocked_releases_page',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_blocked_releases_page/docker.cid' +

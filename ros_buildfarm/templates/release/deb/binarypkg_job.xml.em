@@ -131,6 +131,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     ] + ([
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
     ] if shared_ccache else []) + [
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
@@ -165,6 +166,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     ] + ([
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
     ] if shared_ccache else []) + [
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_binarydeb/docker.cid' +
@@ -223,6 +225,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @#         'echo "# END SECTION"',
 @#         '',
 @#         'echo "# BEGIN SECTION: Run Dockerfile - install"',
+@#         'export PODMAN_USERNS=keep-id',
 @#         'docker run' +
 @#         ' --rm ' +
 @#         ' --cidfile=$WORKSPACE/docker_install_binarydeb/docker.cid' +

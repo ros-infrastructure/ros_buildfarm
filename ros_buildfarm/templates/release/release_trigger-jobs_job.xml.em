@@ -122,6 +122,7 @@ if missed_jobs:
         'echo "# BEGIN SECTION: Run Dockerfile - trigger jobs"',
         'rm -fr $WORKSPACE/package_repo_cache',
         'mkdir -p $WORKSPACE/package_repo_cache',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_trigger_jobs/docker.cid' +

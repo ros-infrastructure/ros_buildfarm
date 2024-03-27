@@ -120,6 +120,7 @@ else:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Docker - %s"' % doc_repository_name,
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm' +
         ' --net=host' +
