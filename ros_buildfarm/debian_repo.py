@@ -54,4 +54,17 @@ def get_debian_repo_index(debian_repository_baseurl, target, cache_dir):
 
         package_versions[debian_pkg_name] = PlatformPackageDescriptor(version, source_name)
 
+        prefix = 'Provides: '
+        provides = [line[len(prefix):] for line in lines if line.startswith(prefix)]
+        provides = [provide.strip() for line in provides for provide in line.split(',')]
+
+        for provide in provides:
+            provide_version = None
+            if ' ' in provide:
+                provide, provide_spec = provide.split(' ', 1)
+                if provide_spec.startswith('(=') and provide_spec.endswith(')'):
+                    provide_version = provide_spec[2:-1].strip()
+
+            package_versions[provide] = PlatformPackageDescriptor(provide_version, source_name)
+
     return package_versions
