@@ -173,13 +173,6 @@ Description of common options
   master which is commonly used to upload artifacts to another host.
   This credential id is set in the buildfarm_deployment.
 
-* **Upload destination credential ID**: the ID of the credential entry managed
-  on the Jenkins master which contains the destination information used to
-  upload artifacts to another host.
-  This credential id is set in the buildfarm_deployment.
-  At present, this value is only used for RPM jobs.
-
-
 Specific options in release build files
 ---------------------------------------
 
@@ -236,9 +229,6 @@ The following options are valid in version ``2`` (beside the generic options):
 
 * ``upload_credential_id``: the ID of the credential to upload the built
   packages to the repository host.
-
-* ``upload_credential_id_pulp``: the ID of the credential to upload the built
-  RPM packages to the repository host instance of Pulp.
 
 * ``upload_host``: the hostname of the repository host where built packages
   shoudl be uploaded to.
