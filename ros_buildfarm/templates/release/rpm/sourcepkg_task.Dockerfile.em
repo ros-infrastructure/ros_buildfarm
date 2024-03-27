@@ -21,9 +21,6 @@ RUN echo "@(today_str)"
 
 RUN dnf update --refresh -y
 
-# Workaround for broken mock configs for EPEL 8
-RUN echo -e "include('templates/almalinux-8.tpl')\ninclude('templates/epel-8.tpl')\n\nconfig_opts['root'] = 'epel-8-x86_64'\nconfig_opts['target_arch'] = 'x86_64'\nconfig_opts['legal_host_arches'] = ('x86_64',)" > /etc/mock/epel-8-x86_64.cfg
-
 @[for i, key in enumerate(distribution_repository_keys)]@
 RUN echo -e "@('\\n'.join(key.splitlines()))" > /etc/pki/mock/RPM-GPG-KEY-ros-buildfarm-@(i)
 @[end for]@
