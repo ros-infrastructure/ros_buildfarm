@@ -297,8 +297,8 @@ jobs:
           os_code_name: jammy
           repo: rcutils
 
-  ros2_doc:
-    name: ROS 2 Doc
+  ros2_doc_noble:
+    name: ROS 2 Doc (Noble)
     runs-on: ubuntu-20.04
     steps:
       - name: Check out project
@@ -311,6 +311,23 @@ jobs:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
           ros_distro: rolling
           os_code_name: noble
+          repo: rcl
+          output_directory: ws/docs_output
+
+  ros2_doc_jammy:
+    name: ROS 2 Doc (Jammy)
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/doc
+        with:
+          config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+          ros_distro: humble
+          os_code_name: jammy
           repo: rcl
           output_directory: ws/docs_output
 
