@@ -139,11 +139,14 @@ def configure_release_jobs(
     all_view_configs = {}
     all_job_configs = OrderedDict()
 
-    job_name, job_config = configure_import_package_job(
-        config_url, rosdistro_name, release_build_name,
-        config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
-    if not jenkins:
-        all_job_configs[job_name] = job_config
+    for os_name, _ in platforms:
+        if package_format_mapping[os_name] not in ('rpm',):
+            job_name, job_config = configure_import_package_job(
+                config_url, rosdistro_name, release_build_name,
+                config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
+            if not jenkins:
+                all_job_configs[job_name] = job_config
+            break
 
     job_name, job_config = configure_sync_packages_to_main_job(
         config_url, rosdistro_name, release_build_name,
@@ -390,7 +393,7 @@ def configure_release_job(
         config=None, build_file=None,
         index=None, dist_file=None, cached_pkgs=None,
         jenkins=None, views=None,
-        generate_import_package_job=True,
+        generate_import_package_job=None,
         generate_sync_packages_jobs=True,
         is_disabled=False, other_build_files_same_platform=None,
         groovy_script=None,
@@ -408,6 +411,8 @@ def configure_release_job(
     if build_file is None:
         build_files = get_release_build_files(config, rosdistro_name)
         build_file = build_files[release_build_name]
+    if generate_import_package_job is None:
+        generate_import_package_job = package_format_mapping[os_name] not in ('rpm',)
 
     if index is None:
         index = get_index(config.rosdistro_index_url)
@@ -664,8 +669,6 @@ def _get_sourcedeb_job_config(
 
         'upload_host': build_file.upload_host,
         'credential_id': build_file.upload_credential_id,
-        'credential_id_pulp': build_file.upload_credential_id_pulp,
-        'dest_credential_id': build_file.upload_destination_credential_id,
 
         'git_ssh_credential_id': config.git_ssh_credential_id,
     }
@@ -753,8 +756,6 @@ def _get_binarydeb_job_config(
 
         'upload_host': build_file.upload_host,
         'credential_id': build_file.upload_credential_id,
-        'credential_id_pulp': build_file.upload_credential_id_pulp,
-        'dest_credential_id': build_file.upload_destination_credential_id,
 
         'shared_ccache': build_file.shared_ccache,
     }
@@ -802,8 +803,6 @@ def _get_import_package_job_config(build_file, package_format):
         'abi_incompatibility_assumed': build_file.abi_incompatibility_assumed,
         'notify_emails': build_file.notify_emails,
         'ros_buildfarm_repository': get_repository(),
-        'credential_id_pulp': build_file.upload_credential_id_pulp,
-        'dest_credential_id': build_file.upload_destination_credential_id,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
@@ -868,8 +867,6 @@ def _get_sync_packages_to_testing_job_config(
             rosdistro_name, package_format),
 
         'notify_emails': build_file.notify_emails,
-        'credential_id_pulp': build_file.upload_credential_id_pulp,
-        'dest_credential_id': build_file.upload_destination_credential_id,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
@@ -920,8 +917,6 @@ def _get_sync_packages_to_main_job_config(rosdistro_name, build_file, package_fo
         'sync_targets': build_file.targets,
 
         'notify_emails': build_file.notify_emails,
-        'credential_id_pulp': build_file.upload_credential_id_pulp,
-        'dest_credential_id': build_file.upload_destination_credential_id,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
