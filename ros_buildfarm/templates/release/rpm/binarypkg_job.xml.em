@@ -173,7 +173,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
 @(SNIPPET(
     'publisher_description-setter',
-    regexp="Package '[^']+' version: (\S+)",
+    regexp=r"Package '[^']+' version: (\S+)",
     # to prevent overwriting the description of failed builds
     regexp_for_failed='ThisRegExpShouldNeverMatch',
 ))@
