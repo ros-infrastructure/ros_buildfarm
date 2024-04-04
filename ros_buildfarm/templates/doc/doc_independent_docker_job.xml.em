@@ -120,6 +120,8 @@ else:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Docker - %s"' % doc_repository_name,
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm' +
         ' --net=host' +

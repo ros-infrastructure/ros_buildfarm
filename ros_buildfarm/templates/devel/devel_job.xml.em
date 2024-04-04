@@ -167,6 +167,8 @@ if pull_request:
         'rm -fr $WORKSPACE/docker_build_and_test',
         'mkdir -p $WORKSPACE/docker_build_and_install',
         'mkdir -p $WORKSPACE/docker_build_and_test',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_dockers/docker.cid' +
@@ -205,6 +207,8 @@ if pull_request:
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
     ]  if shared_ccache else []) + [
         ('if [ ! -c /dev/nvidia[0-9] ]; then echo "--require-gpu-support is enabled but can not detect nvidia support installed" && exit 1; fi' if require_gpu_support else ''),
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         (' --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw --gpus all' if require_gpu_support else '') +
         ' --rm ' +
@@ -238,6 +242,8 @@ if pull_request:
     ] + ([
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
     ] if shared_ccache else []) + [
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         (' --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw  --gpus all' if require_gpu_support else '') +
         ' --rm ' +

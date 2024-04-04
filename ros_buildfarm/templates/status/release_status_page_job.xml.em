@@ -85,6 +85,8 @@
         'rm -fr $WORKSPACE/status_page',
         'mkdir -p $WORKSPACE/package_repo_cache',
         'mkdir -p $WORKSPACE/status_page',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_status_page/docker.cid' +
