@@ -53,7 +53,8 @@ cmds = [
     ' --sourcepkg-dir ' + sourcepkg_dir +
     ' --binarypkg-dir ' + binarypkg_dir +
     (' --append-timestamp' if append_timestamp else '') +
-    (' --skip-tests' if skip_tests else ''),
+    (' --skip-tests' if skip_tests else '') +
+    ((' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys)) if skip_rosdep_keys else ''),
 ]
 }@
 CMD ["@(' && '.join(cmds))"]

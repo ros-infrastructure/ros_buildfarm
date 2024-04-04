@@ -115,7 +115,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --binarypkg-dir /tmp/binarypkg' +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         (' --append-timestamp' if append_timestamp else '') +
-        (' --skip-tests' if skip_tests else ''),
+        (' --skip-tests' if skip_tests else '') +
+        ((' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys)) if skip_rosdep_keys else ''),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - build binaryrpm"',

@@ -530,6 +530,7 @@ def configure_release_job(
     source_job_names.append(source_job_name)
     job_configs[source_job_name] = job_config
 
+    skip_rosdep_keys = None
     dependency_names = []
     if build_file.abi_incompatibility_assumed:
         dependency_names = get_direct_dependencies(
@@ -542,6 +543,7 @@ def configure_release_job(
             print(("Skipping binary jobs for package '%s' because it is not " +
                    "yet in the rosdistro cache") % pkg_name, file=sys.stderr)
             return source_job_names, binary_job_names, job_configs
+        skip_rosdep_keys = dependency_names.intersection(build_file.package_ignore_list)
         dependency_names.difference_update(build_file.package_ignore_list)
 
     # binarydeb jobs
@@ -564,7 +566,7 @@ def configure_release_job(
             config, build_file, os_name, os_code_name, arch,
             pkg_name, repo_name, repo.release_repository,
             cached_pkgs=cached_pkgs, upstream_job_names=upstream_job_names,
-            is_disabled=is_disabled)
+            is_disabled=is_disabled, skip_rosdep_keys=skip_rosdep_keys)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
             configure_job(jenkins, job_name, job_config, dry_run=dry_run)
@@ -686,7 +688,7 @@ def _get_binarydeb_job_config(
         config, build_file, os_name, os_code_name, arch,
         pkg_name, repo_name, release_repository,
         cached_pkgs=None, upstream_job_names=None,
-        is_disabled=False):
+        is_disabled=False, skip_rosdep_keys=None):
     package_format = package_format_mapping[os_name]
     template_name = 'release/%s/binarypkg_job.xml.em' % package_format
 
@@ -755,6 +757,7 @@ def _get_binarydeb_job_config(
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
+        'skip_rosdep_keys': skip_rosdep_keys,
         'skip_tests': not build_file.run_package_tests,
 
         'timeout_minutes': build_file.jenkins_binary_job_timeout,
