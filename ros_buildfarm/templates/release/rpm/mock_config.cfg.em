@@ -10,7 +10,7 @@ config_opts['use_bootstrap'] = False
 config_opts['chroot_setup_cmd'] += ' python3-rpm-macros'
 
 # Install weak dependencies to get group members
-config_opts[f'{config_opts.package_manager}_builddep_opts'] = config_opts.get(f'{config_opts.package_manager}_builddep_opts', []) + ['--setopt=install_weak_deps=True']
+config_opts[f'dnf_builddep_opts'] = config_opts.get(f'dnf_builddep_opts', []) + ['--setopt=install_weak_deps=True']
 
 @[if env_vars]@
 # Set environment vars from the build config
@@ -29,19 +29,10 @@ config_opts['macros']['%__cmake3_in_source_build'] = '1'
 # Required for running mock in Docker
 config_opts['use_nspawn'] = False
 
-@[if os_name == 'rhel' and os_code_name == '7']@
-# Inject g++ 8 into RHEL 7 builds
-config_opts['chroot_setup_cmd'] += ' devtoolset-8-gcc-c++ devtoolset-8-make-nonblocking'
-config_opts['macros']['%_buildshell'] = '/usr/bin/scl enable devtoolset-8 -- /bin/sh'
-
-# Disable weak dependencies on RHEL 7 builds
-config_opts['macros']['%_without_weak_deps'] = '1'
-@[else]@
 # Add g++, which is an assumed dependency in ROS
 config_opts['chroot_setup_cmd'] += ' gcc-c++ make'
-@[end if]@
 
-config_opts[f'{config_opts.package_manager}.conf'] += """
+config_opts[f'dnf.conf'] += """
 @[for i, url in enumerate(distribution_repository_urls)]@
 [ros-buildfarm-@(i)]
 name=ROS Buildfarm Repository @(i) - $basearch

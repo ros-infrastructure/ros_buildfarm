@@ -21,6 +21,8 @@ runs:
   using: composite
   steps:
     - id: ros_buildfarm_job
+      env:
+        PODMAN_USERNS: keep-id
       shell: bash
       run: |
         echo ::group::Generate job

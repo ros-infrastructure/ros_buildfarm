@@ -230,6 +230,8 @@ parameters = [
         'mkdir -p $WORKSPACE/docker_create_workspace',
         'mkdir -p $WORKSPACE/docker_build_and_install',
         'mkdir -p $WORKSPACE/docker_build_and_test',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_dockers/docker.cid' +
@@ -271,6 +273,8 @@ parameters = [
     ] + [
         'mkdir -p %s' % (dir) for dir in underlay_source_paths
     ] + [
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_create_workspace/docker.cid' +
@@ -316,6 +320,8 @@ parameters = [
     ] + ([
         'echo "# BEGIN SECTION: ccache stats (before)"',
         'mkdir -p $HOME/.ccache',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker_ccache_before.cid' +
@@ -331,6 +337,8 @@ parameters = [
         'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, local_ros_version)
         for i, local_ros_version in zip(range(len(underlay_source_jobs)), [ros_version] * len(underlay_source_jobs))
     ] + [
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
@@ -348,6 +356,8 @@ parameters = [
     ] + ([
         '',
         'echo "# BEGIN SECTION: ccache stats (after)"',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker_ccache_after.cid' +
@@ -394,6 +404,8 @@ parameters = [
     ] + ([
         'echo "# BEGIN SECTION: ccache stats (before)"',
         'mkdir -p $HOME/.ccache',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker_ccache_before.cid' +
@@ -411,6 +423,8 @@ parameters = [
     ] + [
         'rm -fr $WORKSPACE/ws/test_results',
         'mkdir -p $WORKSPACE/ws/test_results',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
@@ -428,6 +442,8 @@ parameters = [
     ] + ([
         '',
         'echo "# BEGIN SECTION: ccache stats (after)"',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker_ccache_after.cid' +
