@@ -141,6 +141,8 @@ else:
         'echo "# BEGIN SECTION: Run Dockerfile - generating doc task"',
         'rm -fr $WORKSPACE/docker_doc',
         'mkdir -p $WORKSPACE/docker_doc',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
@@ -174,11 +176,13 @@ else:
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - doc"',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_doc/docker.cid' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
-        ' -v $WORKSPACE/rosdoc2:/tmp/rosdoc2:ro' +
+        ' -v $WORKSPACE/rosdoc2:/tmp/rosdoc2' +
         ' -v $WORKSPACE/ws:/tmp/ws' +
         ' rosdoc2.%s_%s' % (rosdistro_name, doc_repo_spec.name.lower()),
         'echo "# END SECTION"',

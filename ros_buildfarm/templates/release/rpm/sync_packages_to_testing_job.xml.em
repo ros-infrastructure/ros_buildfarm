@@ -82,6 +82,8 @@
         'echo "# BEGIN SECTION: Run Dockerfile - check sync condition"',
         'rm -fr $WORKSPACE/package_repo_cache',
         'mkdir -p $WORKSPACE/package_repo_cache',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_check_sync_criteria/docker.cid' +

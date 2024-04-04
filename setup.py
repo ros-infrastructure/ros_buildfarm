@@ -30,7 +30,7 @@ kwargs = {
     'include_package_data': True,
     'zip_safe': False,
     'install_requires': [
-        'empy',
+        'empy<4',
         'PyYAML'],
     'extras_require': {
         'test': [

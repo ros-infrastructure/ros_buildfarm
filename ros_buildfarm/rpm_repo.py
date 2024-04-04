@@ -66,6 +66,18 @@ def get_rpm_repo_index(rpm_repository_baseurl, target, cache_dir):
             pkg_source_name = None
         package_versions[pkg_name] = PlatformPackageDescriptor(
             pkg_version + '-' + pkg_release, pkg_source_name)
+        pkg_provides = pkg_format.getElementsByTagName('rpm:provides')
+        for provide in pkg_provides:
+            for entry in provide.getElementsByTagName('rpm:entry'):
+                entry_name = entry.getAttribute('name')
+                if entry.getAttribute('flags') == 'EQ':
+                    entry_version = entry.getAttribute('ver')
+                    entry_release = entry.getAttribute('rel')
+                    desc_version = entry_version + '-' + entry_release
+                else:
+                    desc_version = None
+                package_versions[entry_name] = PlatformPackageDescriptor(
+                    desc_version, pkg_source_name)
 
     return package_versions
 

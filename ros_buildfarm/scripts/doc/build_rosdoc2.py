@@ -45,13 +45,17 @@ def main(argv=sys.argv[1:]):
     clean_workspace(args.workspace_root)
 
     with Scope('SUBSECTION', 'Installing rosdoc2'):
+        env = {
+            **os.environ,
+            'PIP_BREAK_SYSTEM_PACKAGES': '1',
+        }
+
         pip_rc = subprocess.call(['python3',
                                   '-m',
                                   'pip',
                                   'install',
-                                  '--no-warn-script-location',
-                                  '--use-deprecated=out-of-tree-build',
                                   '.'],
+                                 env=env,
                                  cwd=args.rosdoc2_dir)
         if pip_rc:
             return pip_rc

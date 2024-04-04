@@ -23,6 +23,11 @@ ENV DEBIAN_FRONTEND noninteractive
     timezone=timezone,
 ))@
 
+@(TEMPLATE(
+    'snippet/setup_bazel_single_thread_builds.Dockerfile.em',
+    bazelrc_dir='/etc',
+))@
+
 RUN useradd -u @uid -l -m buildfarm
 
 @(TEMPLATE(

@@ -83,6 +83,8 @@
         'echo "# BEGIN SECTION: Run Dockerfile - compare page"',
         'rm -fr $WORKSPACE/compare_page',
         'mkdir -p $WORKSPACE/compare_page',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_compare_page/docker.cid' +

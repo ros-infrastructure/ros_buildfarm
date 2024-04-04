@@ -81,6 +81,8 @@
         'echo "# BEGIN SECTION: Run Dockerfile - rosdistro cache"',
         'rm -fr $WORKSPACE/rosdistro_cache',
         'mkdir -p $WORKSPACE/rosdistro_cache',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generate_rosdistro_cache/docker.cid' +
