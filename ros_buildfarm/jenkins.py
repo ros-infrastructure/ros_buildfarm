@@ -57,7 +57,7 @@ _cached_jenkins = None
 
 def connect(jenkins_url):
     global _cached_jenkins
-    if _cached_jenkins and _cached_jenkins.base_server_url() == jenkins_url:
+    if _cached_jenkins is not None and _cached_jenkins.base_server_url() == jenkins_url:
         print("Reusing connection to Jenkins '%s'" % jenkins_url)
         return _cached_jenkins
 
@@ -90,7 +90,7 @@ def configure_view(
     view_config = get_view_config(
         template_name, view_name, include_regex=include_regex,
         filter_queue=filter_queue)
-    if not jenkins:
+    if jenkins is None:
         _cached_views[key] = view_config
         return view_config
     view_type = _get_view_type(view_config)
