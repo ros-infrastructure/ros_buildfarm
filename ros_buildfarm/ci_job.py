@@ -80,7 +80,7 @@ def _configure_ci_jobs(
         ci_view_name: configure_ci_view(
             jenkins, ci_view_name, dry_run=dry_run)
     }
-    if not jenkins:
+    if jenkins is False:
         view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,

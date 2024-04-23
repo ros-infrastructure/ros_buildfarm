@@ -83,7 +83,7 @@ def configure_doc_jobs(
     views = {}
     views[doc_view_name] = configure_doc_view(
         jenkins, doc_view_name, dry_run=dry_run)
-    if not jenkins:
+    if jenkins is False:
         view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,
