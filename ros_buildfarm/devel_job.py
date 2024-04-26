@@ -80,7 +80,7 @@ def configure_devel_jobs(
     # all further configuration will be handled by either the Jenkins API
     # or by a generated groovy script
     from ros_buildfarm.jenkins import connect
-    jenkins = connect(config.jenkins_url) if groovy_script is None else False
+    jenkins = connect(config.jenkins_url) if groovy_script is None else None
 
     view_configs = {}
     views = {}
@@ -90,7 +90,7 @@ def configure_devel_jobs(
     if build_file.test_pull_requests_force is not False:
         views[pull_request_view_name] = configure_devel_view(
             jenkins, pull_request_view_name, dry_run=dry_run)
-    if jenkins is False:
+    if jenkins is None:
         view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,

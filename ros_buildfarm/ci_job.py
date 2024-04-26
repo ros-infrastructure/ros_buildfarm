@@ -73,14 +73,14 @@ def _configure_ci_jobs(
     # all further configuration will be handled by either the Jenkins API
     # or by a generated groovy script
     from ros_buildfarm.jenkins import connect
-    jenkins = connect(config.jenkins_url) if groovy_script is None else False
+    jenkins = connect(config.jenkins_url) if groovy_script is None else None
 
     view_configs = {}
     views = {
         ci_view_name: configure_ci_view(
             jenkins, ci_view_name, dry_run=dry_run)
     }
-    if jenkins is False:
+    if jenkins is None:
         view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,

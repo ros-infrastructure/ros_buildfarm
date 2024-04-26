@@ -131,7 +131,7 @@ def configure_release_jobs(
 
     # all further configuration will be handled by either the Jenkins API
     # or by a generated groovy script
-    jenkins = False
+    jenkins = None
     if groovy_script is None:
         from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
@@ -144,14 +144,14 @@ def configure_release_jobs(
             job_name, job_config = configure_import_package_job(
                 config_url, rosdistro_name, release_build_name,
                 config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
-            if jenkins is False:
+            if jenkins is None:
                 all_job_configs[job_name] = job_config
             break
 
     job_name, job_config = configure_sync_packages_to_main_job(
         config_url, rosdistro_name, release_build_name,
         config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
-    if jenkins is False:
+    if jenkins is None:
         all_job_configs[job_name] = job_config
 
     for os_name, os_code_name in platforms:
@@ -161,7 +161,7 @@ def configure_release_jobs(
                 os_name, os_code_name, arch,
                 config=config, build_file=build_file, jenkins=jenkins,
                 dry_run=dry_run)
-            if jenkins is False:
+            if jenkins is None:
                 all_job_configs[job_name] = job_config
 
     targets = []
@@ -172,7 +172,7 @@ def configure_release_jobs(
     views = configure_release_views(
         jenkins, rosdistro_name, release_build_name, targets,
         dry_run=dry_run)
-    if jenkins is False:
+    if jenkins is None:
         all_view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,
