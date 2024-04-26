@@ -334,7 +334,7 @@ def configure_devel_job(
         is_disabled=is_disabled, run_abichecker=run_abichecker,
         require_gpu_support=require_gpu_support)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object) and jenkins is not False:
+    if isinstance(jenkins, object) and jenkins is not None:
         from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
