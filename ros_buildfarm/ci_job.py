@@ -215,7 +215,7 @@ def configure_ci_job(
         trigger_timer, trigger_jobs,
         is_disabled=is_disabled)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object) and jenkins is not None:
+    if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 

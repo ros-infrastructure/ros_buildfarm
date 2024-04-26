@@ -242,7 +242,7 @@ def configure_doc_job(
         build_file, os_name, os_code_name, arch, doc_repository,
         repo_name, dist_cache=dist_cache, is_disabled=is_disabled)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object) and jenkins is not None:
+    if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
@@ -347,7 +347,7 @@ def configure_doc_metadata_job(
     job_config = _get_doc_metadata_job_config(
         config, config_url, rosdistro_name, doc_build_name, build_file)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object) and jenkins is not None:
+    if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 
@@ -402,7 +402,7 @@ def configure_doc_independent_job(
     job_config = _get_doc_independent_job_config(
         config, config_url, job_name, build_file)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object) and jenkins is not None:
+    if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
 

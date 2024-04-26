@@ -519,7 +519,7 @@ def configure_release_job(
         is_disabled=is_source_disabled,
         other_build_files_same_platform=other_build_files_same_platform)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object) and jenkins is not None:
+    if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, source_job_name, job_config, dry_run=dry_run)
     source_job_names.append(source_job_name)
@@ -561,7 +561,7 @@ def configure_release_job(
             cached_pkgs=cached_pkgs, upstream_job_names=upstream_job_names,
             is_disabled=is_disabled)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-        if isinstance(jenkins, object) and jenkins is not None:
+        if isinstance(jenkins, object) and jenkins is not False:
             configure_job(jenkins, job_name, job_config, dry_run=dry_run)
         binary_job_names.append(job_name)
         job_configs[job_name] = job_config
@@ -784,7 +784,7 @@ def configure_import_package_job(
     job_config = _get_import_package_job_config(build_file, package_format)
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object) and jenkins is not None:
+    if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
     return (job_name, job_config)
@@ -827,7 +827,7 @@ def configure_sync_packages_to_testing_job(
         arch, config, build_file)
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object) and jenkins is not None:
+    if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
     return (job_name, job_config)
@@ -895,7 +895,7 @@ def configure_sync_packages_to_main_job(
         rosdistro_name, build_file, package_format)
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object) and jenkins is not None:
+    if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
         configure_job(jenkins, job_name, job_config, dry_run=dry_run)
     return (job_name, job_config)
