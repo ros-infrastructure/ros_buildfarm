@@ -90,7 +90,7 @@ def configure_view(
     view_config = get_view_config(
         template_name, view_name, include_regex=include_regex,
         filter_queue=filter_queue)
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         _cached_views[key] = view_config
         return view_config
     view_type = _get_view_type(view_config)
