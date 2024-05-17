@@ -251,25 +251,24 @@ else:
     ]),
 ))@
 @(SNIPPET(
-    'builder_publish-over-ssh',
-    config_name='docs',
-    remote_directory=rosdistro_name,
-    source_files=[
-        'generated_documentation/api/**/manifest.yaml',
-        'generated_documentation/api/**/stamp',
-        'generated_documentation/changelogs/**/*.html',
-        'generated_documentation/symbols/*.tag',
-
-        'generated_documentation/deps/*',
-        'generated_documentation/hashes/*',
-        'generated_documentation/locations/*',
-        'generated_documentation/metapackage_deps/*',
-    ],
-    remove_prefix='generated_documentation',
-))@
-@(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'echo "# BEGIN SECTION: Publish package metadata"',
+        'pushd "$WORKSPACE/generated_documentation"',
+        'truncate -s 0 put_metadata',
+        'echo "put api/**/manifest.yaml" >> put_metadata',
+        'echo "put api/**/stamp" >> put_metadata',
+        'echo "put changelogs/**/*.html" >> put_metadata',
+        'echo "put symbols/*.tag" >> put_metadata',
+        'echo "put deps/*" >> put_metadata',
+        'echo "put hashes/*" >> put_metadata',
+        'echo "put locations/*" >> put_metadata',
+        'echo "put metapackage_deps/*" >> put_metadata',
+        'echo "bye" >> put_metadata',
+        'sftp %s@%s:%s -b put_metadata' % \
+          (upload_user, upload_host, os.path.join(upload_root, rosdistro_name)),
+        'popd',
+        'echo "# END SECTION"',
         'if [ -d "$WORKSPACE/generated_documentation/api_rosdoc" ]; then',
         '  echo "# BEGIN SECTION: rsync API documentation to server"',
         '  cd $WORKSPACE/generated_documentation/api_rosdoc',
