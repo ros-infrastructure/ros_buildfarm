@@ -75,7 +75,8 @@
       'rm -fr $WORKSPACE/repositories',
       'mkdir -p $WORKSPACE/repositories',
       'rm -fr $WORKSPACE/docker_generating_docker',
-      'mkdir -p $WORKSPACE/docker_generating_docker'
+      'mkdir -p $WORKSPACE/docker_generating_docker',
+      'rm -f $WORKSPACE/*.cid',
     ])
 ))@
 @(SNIPPET(
