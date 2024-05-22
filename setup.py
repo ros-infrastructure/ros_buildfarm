@@ -28,11 +28,13 @@ kwargs = {
     'packages': find_packages(exclude=['test']),
     'package_data': {
         'ros_buildfarm.templates': [
-            '**/*.css',
-            '**/*.em',
-            '**/*.groovy',
-            '**/*.js',
-            '**/*.parser',
+            '*/*/*.css',
+            '*.em',
+            '*/*.em',
+            '*/*/*.em',
+            '*/*.groovy',
+            '*/*/*.js',
+            '*/*/*.parser',
         ],
     },
     'scripts': scripts,
