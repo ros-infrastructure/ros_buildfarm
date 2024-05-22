@@ -254,7 +254,7 @@ else:
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Publish package metadata"',
-        'pushd "$WORKSPACE/generated_documentation"',
+        'cd "$WORKSPACE/generated_documentation"',
         'truncate -s 0 put_metadata',
         'echo "put api/**/manifest.yaml" >> put_metadata',
         'echo "put api/**/stamp" >> put_metadata',
@@ -267,7 +267,6 @@ else:
         'echo "bye" >> put_metadata',
         'sftp %s@%s:%s -b put_metadata' % \
           (upload_user, upload_host, os.path.join(upload_root, rosdistro_name)),
-        'popd',
         'echo "# END SECTION"',
         'if [ -d "$WORKSPACE/generated_documentation/api_rosdoc" ]; then',
         '  echo "# BEGIN SECTION: rsync API documentation to server"',
