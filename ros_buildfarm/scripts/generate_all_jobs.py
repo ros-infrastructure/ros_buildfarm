@@ -24,7 +24,7 @@ from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.config.doc_build_file import DOC_TYPE_MANIFEST
-from ros_buildfarm.config.doc_build_file import DOC_TYPE_ROSDOC
+from ros_buildfarm.config.doc_build_file import DOC_TYPE_ROSDOC, DOC_TYPE_ROSDOC2
 from ros_buildfarm.jenkins import configure_view
 from ros_buildfarm.jenkins import connect
 
@@ -128,6 +128,10 @@ def main(argv=sys.argv[1:]):
                     dry_run=not args.commit)
             elif doc_build_file.documentation_type == DOC_TYPE_MANIFEST:
                 generate_doc_metadata_job(
+                    args.config_url, ros_distro_name, doc_build_name,
+                    dry_run=not args.commit)
+            elif doc_build_file.documentation_type == DOC_TYPE_ROSDOC2:
+                generate_doc_maintenance_jobs(
                     args.config_url, ros_distro_name, doc_build_name,
                     dry_run=not args.commit)
             else:

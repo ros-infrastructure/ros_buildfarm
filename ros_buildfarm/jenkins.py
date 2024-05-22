@@ -38,6 +38,8 @@ class JenkinsProxy(Jenkins):
     def __init__(self, *args, **kwargs):  # noqa: D107
         requester_kwargs = copy.copy(kwargs)
         requester_kwargs['baseurl'] = args[0]
+        # Don't trigger jenkinsapi poll on initialization
+        kwargs['lazy'] = True
         kwargs['requester'] = CrumbRequester(**requester_kwargs)
         kwargs.setdefault('timeout', 120)
         super(JenkinsProxy, self).__init__(*args, **kwargs)
@@ -88,7 +90,7 @@ def configure_view(
     view_config = get_view_config(
         template_name, view_name, include_regex=include_regex,
         filter_queue=filter_queue)
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         _cached_views[key] = view_config
         return view_config
     view_type = _get_view_type(view_config)

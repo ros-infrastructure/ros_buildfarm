@@ -29,6 +29,7 @@ from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_ci_build_files
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.git import get_repository
+from ros_buildfarm.jenkins import JenkinsProxy
 from ros_buildfarm.templates import expand_template
 from rosdistro import get_index
 
@@ -80,7 +81,7 @@ def _configure_ci_jobs(
         ci_view_name: configure_ci_view(
             jenkins, ci_view_name, dry_run=dry_run)
     }
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,

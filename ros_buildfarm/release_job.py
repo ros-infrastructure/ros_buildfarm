@@ -43,6 +43,7 @@ from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.git import get_repository
+from ros_buildfarm.jenkins import JenkinsProxy
 from ros_buildfarm.package_repo import get_package_repo_data
 from ros_buildfarm.templates import expand_template
 from rosdistro import get_cached_distribution
@@ -144,14 +145,14 @@ def configure_release_jobs(
             job_name, job_config = configure_import_package_job(
                 config_url, rosdistro_name, release_build_name,
                 config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
-            if not jenkins:
+            if not isinstance(jenkins, JenkinsProxy):
                 all_job_configs[job_name] = job_config
             break
 
     job_name, job_config = configure_sync_packages_to_main_job(
         config_url, rosdistro_name, release_build_name,
         config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         all_job_configs[job_name] = job_config
 
     for os_name, os_code_name in platforms:
@@ -161,7 +162,7 @@ def configure_release_jobs(
                 os_name, os_code_name, arch,
                 config=config, build_file=build_file, jenkins=jenkins,
                 dry_run=dry_run)
-            if not jenkins:
+            if not isinstance(jenkins, JenkinsProxy):
                 all_job_configs[job_name] = job_config
 
     targets = []
@@ -172,7 +173,7 @@ def configure_release_jobs(
     views = configure_release_views(
         jenkins, rosdistro_name, release_build_name, targets,
         dry_run=dry_run)
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         all_view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,
