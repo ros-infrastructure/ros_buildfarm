@@ -255,17 +255,18 @@ else:
     script='\n'.join([
         'echo "# BEGIN SECTION: Publish package metadata"',
         'cd "$WORKSPACE/generated_documentation"',
-        'truncate -s 0 put_metadata',
-        'echo "put api/**/manifest.yaml" >> put_metadata',
-        'echo "put api/**/stamp" >> put_metadata',
-        'echo "put changelogs/**/*.html" >> put_metadata',
-        'echo "put symbols/*.tag" >> put_metadata',
-        'echo "put deps/*" >> put_metadata',
-        'echo "put hashes/*" >> put_metadata',
-        'echo "put locations/*" >> put_metadata',
-        'echo "put metapackage_deps/*" >> put_metadata',
-        'echo "bye" >> put_metadata',
-        'sftp %s@%s:%s -b put_metadata' % \
+        "ssh -T %s@%s 'test -d %s  || mkdir %s'" % \
+          (upload_user, upload_host, os.path.join(upload_root, rosdistro_name), os.path.join(upload_root, rosdistro_name)),
+        'tar -cz $(find -regextype posix-egrep' +
+        " -regex '\./api(/.+)?/manifest\.yaml'" +
+        " -o -regex '\./api(/.+)?/stamp'" +
+        " -o -regex '\./changelogs(/.+)?/[^/]+\.html'" +
+        " -o -regex '\./symbols/[^/]+\.tag'" +
+        " -o -regex '\./deps/[^/]+'" +
+        " -o -regex '\./hashes/[^/]+'" +
+        " -o -regex '\./locations/[^/]+'" +
+        " -o -regex '\./metapackage_deps/[^/]+')" +
+        ' | ssh -T %s@%s tar -C %s -xz' % \
           (upload_user, upload_host, os.path.join(upload_root, rosdistro_name)),
         'echo "# END SECTION"',
         'if [ -d "$WORKSPACE/generated_documentation/api_rosdoc" ]; then',
