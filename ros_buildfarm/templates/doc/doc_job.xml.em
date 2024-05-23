@@ -251,25 +251,24 @@ else:
     ]),
 ))@
 @(SNIPPET(
-    'builder_publish-over-ssh',
-    config_name='docs',
-    remote_directory=rosdistro_name,
-    source_files=[
-        'generated_documentation/api/**/manifest.yaml',
-        'generated_documentation/api/**/stamp',
-        'generated_documentation/changelogs/**/*.html',
-        'generated_documentation/symbols/*.tag',
-
-        'generated_documentation/deps/*',
-        'generated_documentation/hashes/*',
-        'generated_documentation/locations/*',
-        'generated_documentation/metapackage_deps/*',
-    ],
-    remove_prefix='generated_documentation',
-))@
-@(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'echo "# BEGIN SECTION: Publish package metadata"',
+        'cd "$WORKSPACE/generated_documentation"',
+        "ssh -T %s@%s 'test -d %s  || mkdir %s'" % \
+          (upload_user, upload_host, os.path.join(upload_root, rosdistro_name), os.path.join(upload_root, rosdistro_name)),
+        'tar -cz $(find -regextype posix-egrep' +
+        " -regex '\./api(/.+)?/manifest\.yaml'" +
+        " -o -regex '\./api(/.+)?/stamp'" +
+        " -o -regex '\./changelogs(/.+)?/[^/]+\.html'" +
+        " -o -regex '\./symbols/[^/]+\.tag'" +
+        " -o -regex '\./deps/[^/]+'" +
+        " -o -regex '\./hashes/[^/]+'" +
+        " -o -regex '\./locations/[^/]+'" +
+        " -o -regex '\./metapackage_deps/[^/]+')" +
+        ' | ssh -T %s@%s tar -C %s -xz' % \
+          (upload_user, upload_host, os.path.join(upload_root, rosdistro_name)),
+        'echo "# END SECTION"',
         'if [ -d "$WORKSPACE/generated_documentation/api_rosdoc" ]; then',
         '  echo "# BEGIN SECTION: rsync API documentation to server"',
         '  cd $WORKSPACE/generated_documentation/api_rosdoc',
