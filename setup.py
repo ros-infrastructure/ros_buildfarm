@@ -26,8 +26,18 @@ kwargs = {
     # - stdeb.cfg
     'version': '3.0.1-master',
     'packages': find_packages(exclude=['test']),
+    'package_data': {
+        'ros_buildfarm.templates': [
+            '*/*/*.css',
+            '*.em',
+            '*/*.em',
+            '*/*/*.em',
+            '*/*.groovy',
+            '*/*/*.js',
+            '*/*/*.parser',
+        ],
+    },
     'scripts': scripts,
-    'include_package_data': True,
     'zip_safe': False,
     'install_requires': [
         'empy<4',
