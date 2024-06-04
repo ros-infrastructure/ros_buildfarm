@@ -289,6 +289,7 @@ def _get_ci_job_config(
         'repository_names': repository_names,
         'package_names': package_names,
         'package_dependencies': package_dependencies,
+        'custom_rosdep_urls': build_file.custom_rosdep_urls,
 
         'skip_rosdep_keys': build_file.skip_rosdep_keys,
         'install_packages': build_file.install_packages,
