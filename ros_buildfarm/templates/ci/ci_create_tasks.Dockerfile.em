@@ -80,6 +80,7 @@ cmds = [
     ' --repository-names ' + ' '.join(repository_names) + \
     ((' --package-names ' + ' '.join(package_names)) if package_names else '') + \
     (' --package-dependencies' if package_dependencies else '') + \
+    ' --custom_rosdep_urls '  + ' '.join(custom_rosdep_urls) + \
     ' --test-branch "%s"' % (test_branch) + \
     ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) + \
     ' --package-selection-args ' + ' '.join(package_selection_args),
