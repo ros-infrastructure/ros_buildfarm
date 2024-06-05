@@ -89,7 +89,8 @@ def configure_release_jobs(
     cached_pkgs = _get_and_parse_distribution_cache(
         index, rosdistro_name, pkg_names,
         include_test_deps=build_file.include_test_dependencies,
-        include_group_deps=build_file.include_group_dependencies)
+        include_group_deps=build_file.include_group_dependencies,
+        disable_groups_workaround=build_file.include_group_dependencies)
     filtered_pkg_names = build_file.filter_packages(pkg_names)
     explicitly_ignored_without_recursion_pkg_names = \
         set(pkg_names) & set(build_file.package_ignore_list)
@@ -346,7 +347,8 @@ def configure_release_jobs(
 
 
 def _get_and_parse_distribution_cache(
-    index, rosdistro_name, pkg_names, include_test_deps, include_group_deps
+    index, rosdistro_name, pkg_names, include_test_deps, include_group_deps,
+    disable_groups_workaround,
 ):
     from catkin_pkg.package import parse_package_string
     from catkin_pkg.package import Dependency
@@ -359,6 +361,8 @@ def _get_and_parse_distribution_cache(
     }
 
     condition_context = get_package_condition_context(index, rosdistro_name)
+    if disable_groups_workaround:
+        condition_context['DISABLE_GROUPS_WORKAROUND'] = '1'
     for pkg in cached_pkgs.values():
         pkg.evaluate_conditions(condition_context)
     for pkg in cached_pkgs.values():
@@ -460,7 +464,8 @@ def configure_release_job(
         cached_pkgs = _get_and_parse_distribution_cache(
             index, rosdistro_name, [pkg_name],
             include_test_deps=build_file.include_test_dependencies,
-            include_group_deps=build_file.include_group_dependencies)
+            include_group_deps=build_file.include_group_dependencies,
+            disable_groups_workaround=build_file.include_group_dependencies)
     if jenkins is None:
         from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
