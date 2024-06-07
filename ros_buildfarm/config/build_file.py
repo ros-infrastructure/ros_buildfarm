@@ -80,7 +80,6 @@ class BuildFile(object):
                     data['targets']['_config']['custom_rosdep_urls']
                 assert isinstance(self.custom_rosdep_urls, list)
 
-
         self.shared_ccache = False
         if 'shared_ccache' in data:
             self.shared_ccache = bool(data['shared_ccache'])
