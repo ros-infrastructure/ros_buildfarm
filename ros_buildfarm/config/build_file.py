@@ -70,12 +70,13 @@ class BuildFile(object):
                     self.custom_rosdep_urls = \
                         data['targets']['_config']['custom_rosdep_urls']
                     assert isinstance(self.custom_rosdep_urls, list)
-            self.targets[os_name] = {}
-            for os_code_name in data['targets'][os_name].keys():
-                self.targets[os_name][os_code_name] = {}
-                for arch in data['targets'][os_name][os_code_name].keys():
-                    self.targets[os_name][os_code_name][arch] = \
-                        data['targets'][os_name][os_code_name][arch]
+            else:
+                self.targets[os_name] = {}
+                for os_code_name in data['targets'][os_name].keys():
+                    self.targets[os_name][os_code_name] = {}
+                    for arch in data['targets'][os_name][os_code_name].keys():
+                        self.targets[os_name][os_code_name][arch] = \
+                            data['targets'][os_name][os_code_name][arch]
 
         self.shared_ccache = False
         if 'shared_ccache' in data:
