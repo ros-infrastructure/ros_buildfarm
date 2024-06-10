@@ -19,9 +19,9 @@ from urllib.request import urlretrieve
 
 from apt import Cache
 from ros_buildfarm.argument import add_argument_arch
+from ros_buildfarm.argument import add_argument_custom_rosdep_urls
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
-from ros_buildfarm.argument import add_argument_custom_rosdep_urls
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
