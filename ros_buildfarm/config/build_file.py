@@ -63,20 +63,15 @@ class BuildFile(object):
             assert isinstance(self.tag_blacklist, list)
 
         self.targets = {}
-        self.custom_rosdep_urls = []
         for os_name in data.get('targets', {}).keys():
             if os_name == '_config':
-                if 'custom_rosdep_urls' in data['targets']['_config']:
-                    self.custom_rosdep_urls = \
-                        data['targets']['_config']['custom_rosdep_urls']
-                    assert isinstance(self.custom_rosdep_urls, list)
-            else:
-                self.targets[os_name] = {}
-                for os_code_name in data['targets'][os_name].keys():
-                    self.targets[os_name][os_code_name] = {}
-                    for arch in data['targets'][os_name][os_code_name].keys():
-                        self.targets[os_name][os_code_name][arch] = \
-                            data['targets'][os_name][os_code_name][arch]
+                continue
+            self.targets[os_name] = {}
+            for os_code_name in data['targets'][os_name].keys():
+                self.targets[os_name][os_code_name] = {}
+                for arch in data['targets'][os_name][os_code_name].keys():
+                    self.targets[os_name][os_code_name][arch] = \
+                        data['targets'][os_name][os_code_name][arch]
 
         self.shared_ccache = False
         if 'shared_ccache' in data:
