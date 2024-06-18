@@ -82,6 +82,8 @@
         'echo "# BEGIN SECTION: Run Dockerfile - check sync condition"',
         'rm -fr $WORKSPACE/package_repo_cache',
         'mkdir -p $WORKSPACE/package_repo_cache',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_check_sync_criteria/docker.cid' +
@@ -95,22 +97,7 @@
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: sync packages to testing repos"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/sync_repo.py' +
-        ' --distribution-source-expression "^ros-building-%s-%s-(SRPMS|%s(-debug)?)$"' % (os_name, os_code_name, arch) +
-        ' --distribution-dest-expression "^ros-testing-%s-%s-\\1$"' % (os_name, os_code_name) +
-        ' --package-name-expression "^ros-%s-.*"' % rosdistro_name +
-        ' --invalidate-expression "^ros-%s-.*"' % rosdistro_name,
-        'echo "# END SECTION"',
-    ]),
-))@
-@(SNIPPET(
-    'builder_shell',
-    script='\n'.join([
-        'echo "# BEGIN SECTION: mirror testing repository content to disk"',
-        'rsync --recursive --times --delete --itemize-changes rsync://127.0.0.1:1234/ros-testing-%s-%s-SRPMS/ /var/repos/%s/testing/%s/SRPMS/' % (os_name, os_code_name, os_name, os_code_name),
-        'rsync --recursive --times --delete --exclude=debug --itemize-changes rsync://127.0.0.1:1234/ros-testing-%s-%s-%s/ /var/repos/%s/testing/%s/%s/' % (os_name, os_code_name, arch, os_name, os_code_name, arch),
-        'rsync --recursive --times --delete --itemize-changes rsync://127.0.0.1:1234/ros-testing-%s-%s-%s-debug/ /var/repos/%s/testing/%s/%s/debug/' % (os_name, os_code_name, arch, os_name, os_code_name, arch),
+        'createrepo-agent /var/repos/%s/testing/%s/ --sync=/var/repos/%s/building/%s/ --arch=SRPMS --arch=%s --sync-pattern="ros-%s-.*" --invalidate-family' % (os_name, os_code_name, os_name, os_code_name, arch, rosdistro_name),
         'echo "# END SECTION"',
     ]),
 ))@
@@ -124,11 +111,6 @@
 ))@
   </publishers>
   <buildWrappers>
-@(SNIPPET(
-    'pulp_credentials',
-    credential_id=credential_id,
-    dest_credential_id=dest_credential_id,
-))@
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@

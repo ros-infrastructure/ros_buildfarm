@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2014 Open Source Robotics Foundation, Inc.
+# Copyright 2022 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,29 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
-import sys
-
-from ros_buildfarm.argument import add_argument_os_code_name
-from ros_buildfarm.argument import add_argument_os_name
-from ros_buildfarm.argument import add_argument_source_dir
-from ros_buildfarm.common import Scope
-from ros_buildfarm.sourcedeb_job import build_sourcedeb
-
-
-def main(argv=sys.argv[1:]):
-    with Scope('SUBSECTION', 'build sourcedeb'):
-        parser = argparse.ArgumentParser(
-            description='Build package sourcedeb')
-        add_argument_os_name(parser)
-        add_argument_os_code_name(parser)
-        add_argument_source_dir(parser)
-        args = parser.parse_args(argv)
-
-        return build_sourcedeb(
-            args.source_dir,
-            os_name=args.os_name, os_code_name=args.os_code_name)
+from runpy import run_module
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    run_module('ros_buildfarm.scripts.release.build_sourcedeb', run_name='__main__')

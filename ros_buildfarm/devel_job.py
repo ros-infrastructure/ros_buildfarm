@@ -33,6 +33,7 @@ from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.git import get_repository
+from ros_buildfarm.jenkins import JenkinsProxy
 from ros_buildfarm.templates import expand_template
 from rosdistro import get_distribution_cache
 from rosdistro import get_index
@@ -90,7 +91,7 @@ def configure_devel_jobs(
     if build_file.test_pull_requests_force is not False:
         views[pull_request_view_name] = configure_devel_view(
             jenkins, pull_request_view_name, dry_run=dry_run)
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,

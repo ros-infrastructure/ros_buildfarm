@@ -366,6 +366,8 @@ def get_regressions(
         debian_pkg_name = package_descriptor.debian_pkg_name
 
         regressions[pkg_name] = {}
+        if not package_descriptor.version:
+            continue
         for target in targets:
             regressions[pkg_name][target] = False
             main_version = \

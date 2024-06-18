@@ -141,7 +141,9 @@ def build_binarydeb(rosdistro_name, package_name, sourcepkg_dir, skip_tests=Fals
     cmd = ['apt-src', 'import', source, '--here', '--version', version]
     subprocess.check_call(cmd, cwd=source_dir, env=env)
 
-    cmd = ['apt-src', 'build', source]
+    cmd = ['dpkg-buildpackage', '-b', '-us', '-uc']
+    if skip_tests:
+        cmd += ['-Pnocheck']
     print("Invoking '%s' in '%s'" % (' '.join(cmd), source_dir))
     try:
         subprocess.check_call(cmd, cwd=source_dir, env=env)

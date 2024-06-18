@@ -122,8 +122,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - binarydeb task"',
-        '# ensure to have write permission before trying to delete the folder',
-        'if [ -f $WORKSPACE/binarydeb ] ; then chmod -R u+w $WORKSPACE/binarydeb ; fi',
+        '# ensure to have write permission before trying to delete the directory',
+        'if [ -d $WORKSPACE/binarydeb ] ; then chmod -R u+w $WORKSPACE/binarydeb ; fi',
         'rm -fr $WORKSPACE/binarydeb',
         'rm -fr $WORKSPACE/docker_build_binarydeb',
         'mkdir -p $WORKSPACE/binarydeb',
@@ -131,6 +131,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     ] + ([
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
     ] if shared_ccache else []) + [
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
@@ -165,10 +167,12 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     ] + ([
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
     ] if shared_ccache else []) + [
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_binarydeb/docker.cid' +
-        ' -e=HOME=' +
+        ' -e=HOME=/home/buildfarm' +
         ' -e=TRAVIS=$TRAVIS' +
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
@@ -223,6 +227,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @#         'echo "# END SECTION"',
 @#         '',
 @#         'echo "# BEGIN SECTION: Run Dockerfile - install"',
+@#         '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+@#         'export PODMAN_USERNS=keep-id',
 @#         'docker run' +
 @#         ' --rm ' +
 @#         ' --cidfile=$WORKSPACE/docker_install_binarydeb/docker.cid' +
@@ -256,7 +262,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
 @(SNIPPET(
     'publisher_description-setter',
-    regexp="Package '[^']+' version: (\S+)",
+    regexp=r"Package '[^']+' version: (\S+)",
     # to prevent overwriting the description of failed builds
     regexp_for_failed='ThisRegExpShouldNeverMatch',
 ))@

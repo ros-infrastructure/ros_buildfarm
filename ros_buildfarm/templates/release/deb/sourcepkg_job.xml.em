@@ -110,6 +110,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'echo "# BEGIN SECTION: Run Dockerfile - generate sourcedeb"',
         'rm -fr $WORKSPACE/sourcedeb',
         'mkdir -p $WORKSPACE/sourcedeb/source',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_sourcedeb/docker.cid' +
@@ -157,7 +159,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
   <publishers>
 @(SNIPPET(
     'publisher_description-setter',
-    regexp="Package '[^']+' version: (\S+)",
+    regexp=r"Package '[^']+' version: (\S+)",
     # to prevent overwriting the description of failed builds
     regexp_for_failed='ThisRegExpShouldNeverMatch',
 ))@

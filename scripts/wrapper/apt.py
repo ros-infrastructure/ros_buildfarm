@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2016 Open Source Robotics Foundation, Inc.
+# Copyright 2022 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,14 +15,16 @@
 # limitations under the License.
 
 import os
+from runpy import run_module
 import sys
 
-try:
-    from ros_buildfarm.wrapper.apt import main
-except ImportError:
-    sys.path.insert(
-        0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-    from ros_buildfarm.wrapper.apt import main
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        run_module('ros_buildfarm.wrapper.apt', run_name='__main__')
+    except ImportError:
+        # If the ros_buildfarm is not on the current PYTHONPATH add it using
+        # the current script path as an anchor.
+        sys.path.insert(
+            0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        run_module('ros_buildfarm.wrapper.apt', run_name='__main__')

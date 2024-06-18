@@ -43,6 +43,7 @@ from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.git import get_repository
+from ros_buildfarm.jenkins import JenkinsProxy
 from ros_buildfarm.package_repo import get_package_repo_data
 from ros_buildfarm.templates import expand_template
 from rosdistro import get_cached_distribution
@@ -87,7 +88,9 @@ def configure_release_jobs(
     pkg_names = dist_file.release_packages.keys()
     cached_pkgs = _get_and_parse_distribution_cache(
         index, rosdistro_name, pkg_names,
-        include_test_deps=build_file.include_test_dependencies)
+        include_test_deps=build_file.include_test_dependencies,
+        include_group_deps=build_file.include_group_dependencies,
+        disable_groups_workaround=build_file.include_group_dependencies)
     filtered_pkg_names = build_file.filter_packages(pkg_names)
     explicitly_ignored_without_recursion_pkg_names = \
         set(pkg_names) & set(build_file.package_ignore_list)
@@ -138,16 +141,19 @@ def configure_release_jobs(
     all_view_configs = {}
     all_job_configs = OrderedDict()
 
-    job_name, job_config = configure_import_package_job(
-        config_url, rosdistro_name, release_build_name,
-        config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
-    if not jenkins:
-        all_job_configs[job_name] = job_config
+    for os_name, _ in platforms:
+        if package_format_mapping[os_name] not in ('rpm',):
+            job_name, job_config = configure_import_package_job(
+                config_url, rosdistro_name, release_build_name,
+                config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
+            if not isinstance(jenkins, JenkinsProxy):
+                all_job_configs[job_name] = job_config
+            break
 
     job_name, job_config = configure_sync_packages_to_main_job(
         config_url, rosdistro_name, release_build_name,
         config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         all_job_configs[job_name] = job_config
 
     for os_name, os_code_name in platforms:
@@ -157,7 +163,7 @@ def configure_release_jobs(
                 os_name, os_code_name, arch,
                 config=config, build_file=build_file, jenkins=jenkins,
                 dry_run=dry_run)
-            if not jenkins:
+            if not isinstance(jenkins, JenkinsProxy):
                 all_job_configs[job_name] = job_config
 
     targets = []
@@ -168,7 +174,7 @@ def configure_release_jobs(
     views = configure_release_views(
         jenkins, rosdistro_name, release_build_name, targets,
         dry_run=dry_run)
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         all_view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,
@@ -340,7 +346,10 @@ def configure_release_jobs(
             view_configs=all_view_configs)
 
 
-def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names, include_test_deps):
+def _get_and_parse_distribution_cache(
+    index, rosdistro_name, pkg_names, include_test_deps, include_group_deps,
+    disable_groups_workaround,
+):
     from catkin_pkg.package import parse_package_string
     from catkin_pkg.package import Dependency
     dist_cache = get_distribution_cache(index, rosdistro_name)
@@ -352,6 +361,8 @@ def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names, include_
     }
 
     condition_context = get_package_condition_context(index, rosdistro_name)
+    if disable_groups_workaround:
+        condition_context['DISABLE_GROUPS_WORKAROUND'] = '1'
     for pkg in cached_pkgs.values():
         pkg.evaluate_conditions(condition_context)
     for pkg in cached_pkgs.values():
@@ -368,7 +379,8 @@ def _get_and_parse_distribution_cache(index, rosdistro_name, pkg_names, include_
         no_ros_workspace_dep = set(['ros_workspace']).union(
             get_direct_dependencies(
                 'ros_workspace', cached_pkgs, pkg_names,
-                include_test_deps=include_test_deps))
+                include_test_deps=include_test_deps,
+                include_group_deps=include_group_deps))
 
         for pkg_name, pkg in cached_pkgs.items():
             if pkg_name not in no_ros_workspace_dep:
@@ -386,7 +398,7 @@ def configure_release_job(
         config=None, build_file=None,
         index=None, dist_file=None, cached_pkgs=None,
         jenkins=None, views=None,
-        generate_import_package_job=True,
+        generate_import_package_job=None,
         generate_sync_packages_jobs=True,
         is_disabled=False, other_build_files_same_platform=None,
         groovy_script=None,
@@ -404,6 +416,8 @@ def configure_release_job(
     if build_file is None:
         build_files = get_release_build_files(config, rosdistro_name)
         build_file = build_files[release_build_name]
+    if generate_import_package_job is None:
+        generate_import_package_job = package_format_mapping[os_name] not in ('rpm',)
 
     if index is None:
         index = get_index(config.rosdistro_index_url)
@@ -449,7 +463,9 @@ def configure_release_job(
              build_file.abi_incompatibility_assumed):
         cached_pkgs = _get_and_parse_distribution_cache(
             index, rosdistro_name, [pkg_name],
-            include_test_deps=build_file.include_test_dependencies)
+            include_test_deps=build_file.include_test_dependencies,
+            include_group_deps=build_file.include_group_dependencies,
+            disable_groups_workaround=build_file.include_group_dependencies)
     if jenkins is None:
         from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
@@ -518,7 +534,9 @@ def configure_release_job(
     dependency_names = []
     if build_file.abi_incompatibility_assumed:
         dependency_names = get_direct_dependencies(
-            pkg_name, cached_pkgs, pkg_names)
+            pkg_name, cached_pkgs, pkg_names,
+            include_test_deps=build_file.include_test_dependencies,
+            include_group_deps=build_file.include_group_dependencies)
         # if dependencies are not yet available in rosdistro cache
         # skip binary jobs
         if dependency_names is None:
@@ -655,8 +673,8 @@ def _get_sourcedeb_job_config(
 
         'timeout_minutes': build_file.jenkins_source_job_timeout,
 
+        'upload_host': build_file.upload_host,
         'credential_id': build_file.upload_credential_id,
-        'dest_credential_id': build_file.upload_destination_credential_id,
 
         'git_ssh_credential_id': config.git_ssh_credential_id,
     }
@@ -742,8 +760,8 @@ def _get_binarydeb_job_config(
 
         'timeout_minutes': build_file.jenkins_binary_job_timeout,
 
+        'upload_host': build_file.upload_host,
         'credential_id': build_file.upload_credential_id,
-        'dest_credential_id': build_file.upload_destination_credential_id,
 
         'shared_ccache': build_file.shared_ccache,
     }
@@ -791,8 +809,6 @@ def _get_import_package_job_config(build_file, package_format):
         'abi_incompatibility_assumed': build_file.abi_incompatibility_assumed,
         'notify_emails': build_file.notify_emails,
         'ros_buildfarm_repository': get_repository(),
-        'credential_id': build_file.upload_credential_id,
-        'dest_credential_id': build_file.upload_destination_credential_id,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
@@ -857,8 +873,6 @@ def _get_sync_packages_to_testing_job_config(
             rosdistro_name, package_format),
 
         'notify_emails': build_file.notify_emails,
-        'credential_id': build_file.upload_credential_id,
-        'dest_credential_id': build_file.upload_destination_credential_id,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
@@ -900,23 +914,15 @@ def get_sync_packages_to_main_job_name(rosdistro_name, package_format):
 
 
 def _get_sync_packages_to_main_job_config(rosdistro_name, build_file, package_format):
-    sync_targets = set()
-    for os_name, os_versions in build_file.targets.items():
-        for os_code_name, os_arches in os_versions.items():
-            for os_arch in os_arches.keys():
-                sync_targets.add((os_name, os_code_name, os_arch))
-
     template_name = 'release/%s/sync_packages_to_main_job.xml.em' % package_format
     job_data = {
         'ros_buildfarm_repository': get_repository(),
         'rosdistro_name': rosdistro_name,
 
         'deb_sync_to_main_job_name': get_sync_packages_to_main_job_name(rosdistro_name, 'deb'),
-        'sync_targets': sync_targets,
+        'sync_targets': build_file.targets,
 
         'notify_emails': build_file.notify_emails,
-        'credential_id': build_file.upload_credential_id,
-        'dest_credential_id': build_file.upload_destination_credential_id,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

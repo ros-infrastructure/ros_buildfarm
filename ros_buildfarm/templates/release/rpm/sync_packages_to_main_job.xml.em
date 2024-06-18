@@ -47,28 +47,9 @@
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: sync packages to main repos"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/sync_repo.py' +
-        ' --distribution-source-expression "^ros-testing-([^-]*-[^-]*-[^-]*(-debug)?)$"' +
-        ' --distribution-dest-expression "^ros-main-\\1$"' +
-        ' --package-name-expression "^ros-%s-.*"' % rosdistro_name +
-        ' --invalidate-expression "^ros-%s-.*"' % rosdistro_name,
-        'echo "# END SECTION"',
-    ]),
-))@
-@(SNIPPET(
-    'builder_shell',
-    script='\n'.join([
-        'echo "# BEGIN SECTION: mirror main repository content to disk"',
     ] + [
-        'rsync --recursive --times --delete --itemize-changes rsync://127.0.0.1:1234/ros-main-%s-%s-SRPMS/ /var/repos/%s/main/%s/SRPMS/' % (os_name, os_code_name, os_name, os_code_name)
-        for os_name, os_code_name in set((os_name, os_code_name) for os_name, os_code_name, _ in sync_targets)
-    ] + [
-        'rsync --recursive --times --delete --exclude=debug --itemize-changes rsync://127.0.0.1:1234/ros-main-%s-%s-%s/ /var/repos/%s/main/%s/%s/' % (os_name, os_code_name, arch, os_name, os_code_name, arch)
-        for os_name, os_code_name, arch in sync_targets
-    ] + [
-        'rsync --recursive --times --delete --itemize-changes rsync://127.0.0.1:1234/ros-main-%s-%s-%s-debug/ /var/repos/%s/main/%s/%s/debug/' % (os_name, os_code_name, arch, os_name, os_code_name, arch)
-        for os_name, os_code_name, arch in sync_targets
+        'createrepo-agent /var/repos/%s/main/%s/ --sync=/var/repos/%s/testing/%s/ --arch=SRPMS --arch=%s --sync-pattern="ros-%s-.*" --invalidate-family' % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(arches), rosdistro_name)
+        for rosdistro_name, sync_targets in ((rosdistro_name, sync_targets),) for os_name, os_versions in sync_targets.items() for os_code_name, arches in os_versions.items()
     ] + [
         'echo "# END SECTION"',
     ]),
@@ -83,11 +64,6 @@
 ))@
   </publishers>
   <buildWrappers>
-@(SNIPPET(
-    'pulp_credentials',
-    credential_id=credential_id,
-    dest_credential_id=dest_credential_id,
-))@
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@

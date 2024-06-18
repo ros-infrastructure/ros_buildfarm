@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2014 Open Source Robotics Foundation, Inc.
+# Copyright 2022 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,28 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
-import sys
-
-from ros_buildfarm.argument import add_argument_package_name
-from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.argument import add_argument_sourcepkg_dir
-from ros_buildfarm.binarydeb_job import append_build_timestamp
-from ros_buildfarm.common import Scope
-
-
-def main(argv=sys.argv[1:]):
-    with Scope('SUBSECTION', 'append build timestamp'):
-        parser = argparse.ArgumentParser(
-            description='Append current timestamp to package version')
-        add_argument_rosdistro_name(parser)
-        add_argument_package_name(parser)
-        add_argument_sourcepkg_dir(parser)
-        args = parser.parse_args(argv)
-
-        return append_build_timestamp(
-            args.rosdistro_name, args.package_name, args.sourcepkg_dir)
+from runpy import run_module
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    run_module('ros_buildfarm.scripts.release.append_build_timestamp', run_name='__main__')

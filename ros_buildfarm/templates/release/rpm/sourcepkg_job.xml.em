@@ -126,22 +126,13 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Upload sourcerpm"',
-        'export TZ="%s"' % timezone,
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
-        ' --pulp-resource-record sourcepkg/upload_record.txt' +
-        ' sourcepkg/*.src.rpm',
+        'find sourcepkg -mindepth 1 -maxdepth 1 -type f -name "*.src.rpm" -fprint sourcepkg/rpm_upload_args.txt -fprintf sourcepkg/rpm_import_args.txt "--import=/tmp/upload-${BUILD_TAG}/%f\\n"',
+        'ssh %s -- mkdir -p /tmp/upload-${BUILD_TAG}/' % (upload_host,),
+        'xargs -a sourcepkg/rpm_upload_args.txt -I @ scp @ %s:/tmp/upload-${BUILD_TAG}/' % (upload_host,),
+        'xargs -a sourcepkg/rpm_import_args.txt ssh %s -- createrepo-agent /var/repos/%s/building/%s/' % (upload_host, os_name, os_code_name),
+        'ssh %s -- rm -fr /tmp/upload-${BUILD_TAG}/' % (upload_host,),
         'echo "# END SECTION"',
     ]),
-))@
-@(SNIPPET(
-    'builder_parameterized-trigger',
-    project=import_package_job_name,
-    parameters='\n'.join([
-        'DISTRIBUTION_NAME=ros-building-%s-%s-SRPMS' % (
-            os_name, os_code_name)]),
-    parameter_files=['sourcepkg/upload_record.txt'],
-    continue_on_failure=True,
 ))@
 @(SNIPPET(
     'builder_shell',
@@ -160,7 +151,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
   <publishers>
 @(SNIPPET(
     'publisher_description-setter',
-    regexp="Package '[^']+' version: (\S+)",
+    regexp=r"Package '[^']+' version: (\S+)",
     # to prevent overwriting the description of failed builds
     regexp_for_failed='ThisRegExpShouldNeverMatch',
 ))@
@@ -181,11 +172,6 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
   </publishers>
   <buildWrappers>
-@(SNIPPET(
-    'pulp_credentials',
-    credential_id=credential_id,
-    dest_credential_id=dest_credential_id,
-))@
 @[if timeout_minutes is not None]@
 @(SNIPPET(
     'build-wrapper_build-timeout',
@@ -194,6 +180,10 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @[end if]@
 @(SNIPPET(
     'build-wrapper_timestamper',
+))@
+@(SNIPPET(
+    'build-wrapper_ssh-agent',
+    credential_ids=[credential_id],
 ))@
   </buildWrappers>
 </project>
