@@ -247,9 +247,12 @@ def _get_ci_job_config(
             '%s=%s' % (var, value)
             for var, value in sorted(build_file.build_environment_variables.items())]
 
-    distribution_type = index.distributions.get(rosdistro_name, {}) \
-        .get('distribution_type', 'ros1')
-    assert distribution_type in (None, 'ros1', 'ros2')
+    if rosdistro_name:
+        distribution_type = index.distributions[rosdistro_name] \
+            .get('distribution_type', 'ros1')
+        assert distribution_type in ('ros1', 'ros2')
+    else:
+        distribution_type = 'global'
     ros_version = 1 if distribution_type == 'ros1' else 2
 
     for index in range(len(underlay_source_jobs)):

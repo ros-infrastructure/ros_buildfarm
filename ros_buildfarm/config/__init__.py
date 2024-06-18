@@ -79,7 +79,7 @@ def get_ci_build_files(index, dist_name):
 def get_global_ci_build_files(index):
     data = _load_build_file_data(index.ci_builds)
     build_files = {}
-    for k, v in data.items():
+    for k, (url, v) in data.items():
         build_files[k] = CIBuildFile(k, v)
     return build_files
 
