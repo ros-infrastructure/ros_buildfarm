@@ -29,6 +29,7 @@ from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_selection_args
 from ros_buildfarm.argument import add_argument_repos_file_urls
+from ros_buildfarm.argument import add_argument_require_gpu_support
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_cleanup
 from ros_buildfarm.argument import add_argument_test_branch
@@ -66,6 +67,7 @@ def main(argv=sys.argv[1:]):
     parser.add_argument(
         '--underlay-source-path', nargs='*', metavar='DIR_NAME',
         help='Path to one or more install spaces to use as an underlay')
+    add_argument_require_gpu_support(parser)
 
     remainder_args = extract_multiple_remainders(argv, (a1, a2, a3))
     args = parser.parse_args(argv)
@@ -144,7 +146,8 @@ def main(argv=sys.argv[1:]):
         args.config_url, args.rosdistro_name, args.ci_build_name,
         args.os_name, args.os_code_name, args.arch,
         config=config, build_file=build_file, jenkins=False, views=False,
-        underlay_source_paths=underlay_source_paths)
+        underlay_source_paths=underlay_source_paths,
+        require_gpu_support=args.require_gpu_support)
 
     templates.template_hooks = None
 

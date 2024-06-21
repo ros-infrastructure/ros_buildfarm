@@ -255,6 +255,9 @@ def _get_ci_job_config(
     for index in range(len(underlay_source_jobs)):
         assert '$UNDERLAY%d_JOB_SPACE' % (index + 1) in underlay_source_paths
 
+    # check for gpu support
+    require_gpu_support = build_file.tests_require_gpu_default
+
     job_data = {
         'job_priority': build_file.jenkins_job_priority,
         'job_weight': build_file.jenkins_job_weight,
@@ -277,6 +280,8 @@ def _get_ci_job_config(
         'build_tool': build_file.build_tool,
         'ros_version': ros_version,
         'build_environment_variables': build_environment_variables,
+
+        'require_gpu_support': require_gpu_support,
 
         'timeout_minutes': build_file.jenkins_job_timeout,
 

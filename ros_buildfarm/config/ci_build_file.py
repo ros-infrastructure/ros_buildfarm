@@ -136,6 +136,11 @@ class CIBuildFile(BuildFile):
                     self.show_plots[plot_group].append(
                         PlotConfig(name, plot_config_data))
 
+        self.tests_require_gpu_default = False
+        if 'tests_require_gpu' in data:
+            self.tests_require_gpu_default = bool(
+                data['tests_require_gpu'])
+
         self.benchmark_patterns = []
         if 'benchmark_patterns' in data:
             self.benchmark_patterns = data['benchmark_patterns']

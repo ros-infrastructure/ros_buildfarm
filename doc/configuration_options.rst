@@ -597,3 +597,6 @@ The following options are valid in version ``1`` (beside the generic options):
   to, if desired.
   By default, the resulting archives are only available to other jobs within
   Jenkins.
+
+* ``tests_require_gpu``: a boolean flag to indicate if software tests needs gpu
+  support to run correctly.
