@@ -37,6 +37,7 @@ from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.ci_job import configure_ci_job
 from ros_buildfarm.common import get_ci_job_name
 from ros_buildfarm.config import get_ci_build_files
+from ros_buildfarm.config import get_global_ci_build_files
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.templates import expand_template
 
@@ -135,7 +136,10 @@ def main(argv=sys.argv[1:]):
     templates.template_hooks = [hook]
 
     config = get_config_index(args.config_url)
-    build_files = get_ci_build_files(config, args.rosdistro_name)
+    if not args.rosdistro_name:
+        build_files = get_global_ci_build_files(config)
+    else:
+        build_files = get_ci_build_files(config, args.rosdistro_name)
     build_file = build_files[args.ci_build_name]
 
     underlay_source_paths = [os.path.abspath(p) for p in args.underlay_source_path or []]

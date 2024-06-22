@@ -190,7 +190,8 @@ def get_ci_job_name(rosdistro_name, os_name, os_code_name, arch, job_type):
 
 
 def get_ci_view_name(rosdistro_name):
-    view_name = '%sci' % rosdistro_name[0].upper()
+    # prefix with first character of rosdistro_name (if not empty)
+    view_name = '%sci' % rosdistro_name[:1].upper()
     return view_name
 
 

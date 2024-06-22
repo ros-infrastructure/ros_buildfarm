@@ -98,7 +98,7 @@ cmds = [
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/create_workspace.py' + \
-    ' ' + rosdistro_name + \
+    ' ' + (rosdistro_name or "''") + \
     ' --workspace-root ' + workspace_root[-1] + \
     ' --repos-file-urls ' + ' '.join('file:///tmp/%s' % repos_file for repos_file in repos_file_names) + \
     ' --repository-names ' + ' '.join(repository_names) + \
@@ -108,7 +108,7 @@ cmds = [
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/generate_install_lists.py' + \
-    ' ' + rosdistro_name + \
+    ' ' + (rosdistro_name or "''") + \
     ' ' + os_name + \
     ' ' + os_code_name + \
     ' --package-root ' + ' '.join(base_paths) + \
