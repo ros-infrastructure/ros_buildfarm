@@ -427,11 +427,11 @@ parameters = [
         'mkdir -p $WORKSPACE/ws/test_results',
         '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
         'export PODMAN_USERNS=keep-id',
-        'echo DEBUG NVIDIA SUPPORT'
+        'echo DEBUG NVIDIA SUPPORT',
         'lsb_release -a',
+        'whoami',
         'echo DISPLAY=$DISPLAY',
-        'apt-get install -y mesa-utils',
-        'glxinfo',
+        'DISPLAY=:0 glxinfo',
         'docker run' +
         (' --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw  --gpus all' if require_gpu_support else '') +
         ' --rm ' +
