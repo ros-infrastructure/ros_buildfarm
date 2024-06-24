@@ -11,7 +11,7 @@
         'docker info',
         'echo "# END SECTION"',
         'echo "# BEGIN SECTION: glxinfo"',
-        'glxinfo',
+        'DISPLAY=:0 glxinfo',
         'echo DISPLAY=$DISPLAY',
         'echo "# END SECTION"',
     ]),
