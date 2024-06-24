@@ -72,7 +72,7 @@ RUN echo "@today_str"
 ))@
 
 # needed for 'vcs custom --git --args merge' invocation
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q --no-install-recommends sudo
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y --no-install-recommends sudo wget
 RUN sudo -H -u buildfarm -- git config --global user.email "jenkins@@ros.invalid" && sudo -H -u buildfarm -- git config --global user.name "Jenkins ROS"
 
 @(TEMPLATE(

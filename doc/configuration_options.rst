@@ -597,3 +597,15 @@ The following options are valid in version ``1`` (beside the generic options):
   to, if desired.
   By default, the resulting archives are only available to other jobs within
   Jenkins.
+
+The following options are valid as keys in the ``_config`` dict under
+``targets``:
+
+* ``custom_rosdep_urls``: a list of URLs containing rosdep sources.list.d entry
+  files that are downloaded into /etc/ros/rosdep/sources.list.d at the beginning
+  of the doc job after running *rosdep init*.
+  Note that *rosdep init* will add the 20-default.list file from the public
+  rosdistro by default.
+  To override this, add an entry to this list corresponding to the
+  20-default.list file from your forked rosdistro repository.
+
