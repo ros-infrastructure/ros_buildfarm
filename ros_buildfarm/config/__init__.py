@@ -38,16 +38,22 @@ def load_yaml(url):
     # Resolve relative file paths from CWD
     url = urljoin('file://' + os.getcwd() + '/', url)
 
-    class SafeLoaderWithInclude(yaml.SafeLoader):
+    class BuildfarmConfigSafeLoader(yaml.SafeLoader):
 
         def include(self, node):
-            include_url = urljoin(url, self.construct_scalar(node))
+            include_url = self.relative_url(node)
             return load_yaml(include_url)
 
-    SafeLoaderWithInclude.add_constructor('!include', SafeLoaderWithInclude.include)
+        def relative_url(self, node):
+            return urljoin(url, self.construct_scalar(node))
+
+    BuildfarmConfigSafeLoader.add_constructor(
+        '!include', BuildfarmConfigSafeLoader.include)
+    BuildfarmConfigSafeLoader.add_constructor(
+        '!relative_url', BuildfarmConfigSafeLoader.relative_url)
 
     yaml_str = load_url(url)
-    return yaml.load(yaml_str, SafeLoaderWithInclude)
+    return yaml.load(yaml_str, BuildfarmConfigSafeLoader)
 
 
 def get_index(url):
