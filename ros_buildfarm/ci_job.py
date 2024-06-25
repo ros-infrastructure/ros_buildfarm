@@ -20,7 +20,6 @@ import sys
 from ros_buildfarm.common import get_ci_job_name
 from ros_buildfarm.common import get_ci_view_name
 from ros_buildfarm.common import get_default_node_label
-from ros_buildfarm.config import get_global_ci_build_files
 from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common \
     import get_repositories_and_script_generating_key_files
@@ -28,6 +27,7 @@ from ros_buildfarm.common import get_xunit_publisher_types_and_patterns
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_ci_build_files
+from ros_buildfarm.config import get_global_ci_build_files
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.git import get_repository
 from ros_buildfarm.jenkins import JenkinsProxy
