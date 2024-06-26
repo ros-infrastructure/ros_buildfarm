@@ -112,6 +112,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --dockerfile-dir $WORKSPACE/docker_generating_docker' +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         (' --append-timestamp' if append_timestamp else '') +
+        (' --install-ccache' if shared_ccache else '') +
         (' --skip-tests' if skip_tests else ''),
         'echo "# END SECTION"',
         '',
