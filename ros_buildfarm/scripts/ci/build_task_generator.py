@@ -60,7 +60,6 @@ def main(argv=sys.argv[1:]):
     add_argument_install_packages(parser)
     add_argument_ros_version(parser)
     add_argument_run_abichecker(parser)
-    add_argument_require_gpu_support(parser)
     add_argument_testing(parser)
     parser.add_argument(
         '--workspace-root', nargs='+',
