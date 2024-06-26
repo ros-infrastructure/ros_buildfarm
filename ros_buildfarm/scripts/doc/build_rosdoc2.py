@@ -54,6 +54,7 @@ def main(argv=sys.argv[1:]):
                                   '-m',
                                   'pip',
                                   'install',
+                                  '--no-warn-script-location',
                                   '.'],
                                  env=env,
                                  cwd=args.rosdoc2_dir)
