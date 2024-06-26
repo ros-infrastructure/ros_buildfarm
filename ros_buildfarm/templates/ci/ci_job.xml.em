@@ -214,7 +214,7 @@ parameters = [
         ]) +
         ' --package-selection-args $package_selection_args' +
         ' --build-tool-args $build_tool_args' +
-        ' --build-tool-test-args $build_tool_test_args' +
+        ' --build-tool-test-args $build_tool_test_args',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - generating CI tasks"',
