@@ -29,7 +29,6 @@ from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_install_packages
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
-from ros_buildfarm.argument import add_argument_require_gpu_support
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_run_abichecker
@@ -132,7 +131,6 @@ def main(argv=sys.argv[1:]):
 
         'testing': args.testing,
         'run_abichecker': args.run_abichecker,
-        'require_gpu_support': args.require_gpu_support,
         'workspace_root': mapped_workspaces[-1][1],
         'parent_result_space': [mapping[1] for mapping in mapped_workspaces[:-1]],
     }

@@ -150,8 +150,7 @@ def main(argv=sys.argv[1:]):
         args.config_url, args.rosdistro_name, args.ci_build_name,
         args.os_name, args.os_code_name, args.arch,
         config=config, build_file=build_file, jenkins=False, views=False,
-        underlay_source_paths=underlay_source_paths,
-        require_gpu_support=args.require_gpu_support)
+        underlay_source_paths=underlay_source_paths)
 
     templates.template_hooks = None
 
