@@ -19,7 +19,6 @@ import sys
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
 from ros_buildfarm.argument import add_argument_build_tool_test_args
-from ros_buildfarm.argument import add_argument_require_gpu_support
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import Scope
@@ -58,7 +57,6 @@ def main(argv=sys.argv[1:]):
         action='store_true',
         help='The flag if the workspace should be cleaned after the '
              'invocation')
-    add_argument_require_gpu_support(parser)
 
     remainder_args = extract_multiple_remainders(argv, (a1, a2))
     args = parser.parse_args(argv)
