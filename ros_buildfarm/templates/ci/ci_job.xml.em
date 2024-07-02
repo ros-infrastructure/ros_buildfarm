@@ -421,11 +421,13 @@ parameters = [
         'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, local_ros_version)
         for i, local_ros_version in zip(range(len(underlay_source_jobs)), [ros_version] * len(underlay_source_jobs))
     ] + [
+        ('if [ ! -c /dev/nvidia[0-9] ]; then echo "--require-gpu-support is enabled but can not detect nvidia support installed" && exit 1; fi' if require_gpu_support else ''),
         'rm -fr $WORKSPACE/ws/test_results',
         'mkdir -p $WORKSPACE/ws/test_results',
         '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
         'export PODMAN_USERNS=keep-id',
         'docker run' +
+        (' --env=DISPLAY=:0.0 --env=QT_X11_NO_MITSHM=1 --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw  --gpus all' if require_gpu_support else '') +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
         ((' -e CCACHE_DIR=/home/buildfarm/.ccache' +
