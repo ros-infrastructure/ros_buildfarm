@@ -24,7 +24,10 @@ ENV DEBIAN_FRONTEND noninteractive
     timezone=timezone,
 ))@
 
-RUN useradd -u @uid -l -m buildfarm
+@(TEMPLATE(
+    'snippet/add_buildfarm_user.Dockerfile.em',
+    uid=uid,
+))@
 
 @(TEMPLATE(
     'snippet/setup_nvidia_docker2.Dockerfile.em'
