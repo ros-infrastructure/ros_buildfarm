@@ -199,6 +199,11 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``jenkins_source_job_priority``: the job priority of *source* jobs.
 * ``jenkins_source_job_timeout``: the job timeout for *source* jobs.
 
+* ``jenkins_binary_job_weight_override``: per-package override of the number of
+  executors on a worker which are required to execute a job.
+  All jobs default to ``1``.
+  Uses the Jenkins Heavy Job plugin.
+
 * ``notifications``: a dictionary with the following keys:
 
   * ``emails``: a list of static email addresses.
