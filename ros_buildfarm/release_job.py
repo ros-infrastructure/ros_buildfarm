@@ -719,6 +719,7 @@ def _get_binarydeb_job_config(
         'github_url': get_github_project_url(release_repository.url),
 
         'job_priority': build_file.jenkins_binary_job_priority,
+        'job_weight': build_file.jenkins_binary_job_weight_overrides.get(pkg_name),
         'node_label': get_node_label(
             build_file.jenkins_binary_job_label,
             get_default_node_label('%s_%s%s_%s' % (
