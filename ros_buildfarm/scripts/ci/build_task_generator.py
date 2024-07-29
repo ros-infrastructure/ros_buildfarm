@@ -29,6 +29,7 @@ from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_install_packages
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
+from ros_buildfarm.argument import add_argument_require_gpu_support
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_run_abichecker
@@ -60,6 +61,7 @@ def main(argv=sys.argv[1:]):
     add_argument_install_packages(parser)
     add_argument_ros_version(parser)
     add_argument_run_abichecker(parser)
+    add_argument_require_gpu_support(parser)
     add_argument_testing(parser)
     parser.add_argument(
         '--workspace-root', nargs='+',
@@ -69,6 +71,12 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
     for k, v in remainder_args.items():
         setattr(args, k, v)
+
+    if args.require_gpu_support:
+        print(
+            'WARNING: using the --require-gpu-support argument is deprecated.'
+            'Can be removed without changing functionality.',
+            file=sys.stderr)
 
     apt_cache = Cache()
 
