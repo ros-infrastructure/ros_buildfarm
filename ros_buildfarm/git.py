@@ -175,6 +175,8 @@ def get_hash(path):
 
 def _get_version_parts():
     version_parts = __version__.split('-', 1)
+    if len(version_parts) < 2:
+        version_parts = __version__.split('+', 1)
     if len(version_parts) == 2:
         return version_parts
     return version_parts[0], None
