@@ -40,6 +40,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
 @(SNIPPET(
     'property_job-weight',
+    weight=job_weight,
 ))@
   </properties>
 @(SNIPPET(
