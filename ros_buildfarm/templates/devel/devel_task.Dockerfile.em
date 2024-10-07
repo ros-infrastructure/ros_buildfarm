@@ -129,8 +129,6 @@ else:
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
         ' --rosdistro-name %s' % (rosdistro_name or "''") + \
         ' --ros-version ' + str(ros_version)
-    if require_gpu_support:
-        cmd += ' --require-gpu-support'
 cmd += \
     ' --build-tool ' + build_tool + \
     ' --workspace-root ' + workspace_root + \
