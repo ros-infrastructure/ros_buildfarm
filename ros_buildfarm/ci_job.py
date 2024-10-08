@@ -27,6 +27,7 @@ from ros_buildfarm.common import get_xunit_publisher_types_and_patterns
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_ci_build_files
+from ros_buildfarm.config import get_global_ci_build_files
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.git import get_repository
 from ros_buildfarm.jenkins import JenkinsProxy
@@ -39,7 +40,10 @@ def configure_ci_jobs(
         groovy_script=None, dry_run=False):
     """Configure all Jenkins CI jobs."""
     config = get_config_index(config_url)
-    build_files = get_ci_build_files(config, rosdistro_name)
+    if not rosdistro_name:
+        build_files = get_global_ci_build_files(config)
+    else:
+        build_files = get_ci_build_files(config, rosdistro_name)
 
     if not ci_build_names:
         ci_build_names = build_files.keys()
@@ -146,7 +150,10 @@ def configure_ci_job(
     if config is None:
         config = get_config_index(config_url)
     if build_file is None:
-        build_files = get_ci_build_files(config, rosdistro_name)
+        if not rosdistro_name:
+            build_files = get_global_ci_build_files(config)
+        else:
+            build_files = get_ci_build_files(config, rosdistro_name)
         build_file = build_files[ci_build_name]
     # Overwrite build_file.targets if build_targets is specified
     if build_targets is not None:

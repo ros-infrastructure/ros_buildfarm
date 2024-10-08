@@ -69,6 +69,11 @@ class ReleaseBuildFile(BuildFile):
             self.jenkins_source_job_timeout = \
                 int(data['jenkins_source_job_timeout'])
 
+        self.jenkins_binary_job_weight_overrides = {}
+        if 'jenkins_binary_job_weight_overrides' in data:
+            self.jenkins_binary_job_weight_overrides = data['jenkins_binary_job_weight_overrides']
+            assert isinstance(self.jenkins_binary_job_weight_overrides, dict)
+
         self.package_whitelist = []
         if 'package_whitelist' in data and data['package_whitelist']:
             self.package_whitelist = data['package_whitelist']
