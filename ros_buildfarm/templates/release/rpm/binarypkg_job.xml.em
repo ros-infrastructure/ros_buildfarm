@@ -139,6 +139,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarypkg:/tmp/binarypkg' +
         (' -v $HOME/.ccache:/home/buildfarm/.ccache' if shared_ccache else '') +
+        (' ' + ' '.join(docker_run_args) if docker_run_args else '') +
         ' binaryrpm.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),
