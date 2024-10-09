@@ -122,6 +122,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         (' -v $HOME/.ssh/known_hosts:/etc/ssh/ssh_known_hosts:ro' +
          ' -v $SSH_AUTH_SOCK:/tmp/ssh_auth_sock' +
          ' -e SSH_AUTH_SOCK=/tmp/ssh_auth_sock' if git_ssh_credential_id else '') +
+        (' ' + ' '.join(docker_run_args) if docker_run_args else '') +
         ' sourcedeb.%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, pkg_name),
         'echo "# END SECTION"',
     ]),

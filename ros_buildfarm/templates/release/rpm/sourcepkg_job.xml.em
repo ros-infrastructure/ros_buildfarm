@@ -118,6 +118,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --net=host' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/sourcepkg:/tmp/sourcepkg' +
+        (' ' + ' '.join(docker_run_args) if docker_run_args else '') +
         ' sourcerpm.%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, pkg_name),
         'echo "# END SECTION"',
     ]),

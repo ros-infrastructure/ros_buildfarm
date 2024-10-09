@@ -403,7 +403,8 @@ def configure_release_job(
         is_disabled=False, other_build_files_same_platform=None,
         groovy_script=None,
         filter_arches=None,
-        dry_run=False):
+        dry_run=False,
+        docker_run_args=None):
     """
     Configure a Jenkins release job.
 
@@ -523,7 +524,8 @@ def configure_release_job(
         config, build_file, os_name, os_code_name,
         pkg_name, repo_name, repo.release_repository, cached_pkgs=cached_pkgs,
         is_disabled=is_source_disabled,
-        other_build_files_same_platform=other_build_files_same_platform)
+        other_build_files_same_platform=other_build_files_same_platform,
+        docker_run_args=docker_run_args)
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
         from ros_buildfarm.jenkins import configure_job
@@ -565,7 +567,7 @@ def configure_release_job(
             config, build_file, os_name, os_code_name, arch,
             pkg_name, repo_name, repo.release_repository,
             cached_pkgs=cached_pkgs, upstream_job_names=upstream_job_names,
-            is_disabled=is_disabled)
+            is_disabled=is_disabled, docker_run_args=docker_run_args)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
             configure_job(jenkins, job_name, job_config, dry_run=dry_run)
@@ -601,7 +603,8 @@ def _get_sourcedeb_job_config(
         config_url, rosdistro_name, release_build_name,
         config, build_file, os_name, os_code_name,
         pkg_name, repo_name, release_repository, cached_pkgs=None,
-        is_disabled=False, other_build_files_same_platform=None):
+        is_disabled=False, other_build_files_same_platform=None,
+        docker_run_args=None):
     package_format = package_format_mapping[os_name]
     template_name = 'release/%s/sourcepkg_job.xml.em' % package_format
 
@@ -677,6 +680,8 @@ def _get_sourcedeb_job_config(
         'credential_id': build_file.upload_credential_id,
 
         'git_ssh_credential_id': config.git_ssh_credential_id,
+
+        'docker_run_args': docker_run_args,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
@@ -687,7 +692,7 @@ def _get_binarydeb_job_config(
         config, build_file, os_name, os_code_name, arch,
         pkg_name, repo_name, release_repository,
         cached_pkgs=None, upstream_job_names=None,
-        is_disabled=False):
+        is_disabled=False, docker_run_args=None):
     package_format = package_format_mapping[os_name]
     template_name = 'release/%s/binarypkg_job.xml.em' % package_format
 
@@ -765,6 +770,8 @@ def _get_binarydeb_job_config(
         'credential_id': build_file.upload_credential_id,
 
         'shared_ccache': build_file.shared_ccache,
+
+        'docker_run_args': docker_run_args,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

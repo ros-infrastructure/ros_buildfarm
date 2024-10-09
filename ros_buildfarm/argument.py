@@ -160,6 +160,13 @@ def add_argument_dockerfile_dir(parser):
         help="The directory where the 'Dockerfile' will be generated")
 
 
+def add_argument_docker_run_args(parser):
+    parser.add_argument(
+        '--docker-run-args',
+        nargs=argparse.REMAINDER,
+        help="Arbitrary arguments passed to 'docker run' invocations.")
+
+
 def add_argument_debian_repository_urls(parser, nargs='+'):
     parser.add_argument(
         'debian_repository_urls',

@@ -143,6 +143,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         ' -v $WORKSPACE/docker_build_binarydeb:/tmp/docker_build_binarydeb' +
         (' -v $HOME/.ccache:/home/buildfarm/.ccache' if shared_ccache else '') +
+        (' ' + ' '.join(docker_run_args) if docker_run_args else '') +
         ' binarydeb_task_generation.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),
@@ -179,6 +180,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
         (' -v $HOME/.ccache:/home/buildfarm/.ccache' if shared_ccache else '') +
+        (' ' + ' '.join(docker_run_args) if docker_run_args else '') +
         ' binarydeb_build.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
     ]),
@@ -235,6 +237,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @#         ' --cidfile=$WORKSPACE/docker_install_binarydeb/docker.cid' +
 @#         ' -e=TRAVIS=$TRAVIS' +
 @#         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb:ro' +
+@#         (' ' + ' '.join(docker_run_args) if docker_run_args else '') +
 @#         ' binarydeb_install.%s_%s_%s_%s_%s' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
 @#         'echo "# END SECTION"',
 @#     ]),

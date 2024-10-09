@@ -21,6 +21,7 @@ from em import Hook
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.argument import add_argument_docker_run_args
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
@@ -46,6 +47,7 @@ def main(argv=sys.argv[1:]):
         '--skip-install',
         action='store_true',
         help='Skip trying to install binarydeb')
+    add_argument_docker_run_args(parser)
     args = parser.parse_args(argv)
 
     package_format = package_format_mapping[args.os_name]
@@ -90,7 +92,8 @@ def main(argv=sys.argv[1:]):
         args.config_url, args.rosdistro_name, args.release_build_name,
         args.package_name, args.os_name, args.os_code_name,
         jenkins=False, views=[], generate_import_package_job=False,
-        generate_sync_packages_jobs=False, filter_arches=args.arch)
+        generate_sync_packages_jobs=False, filter_arches=args.arch,
+        docker_run_args=args.docker_run_args)
 
     templates.template_hooks = None
 
