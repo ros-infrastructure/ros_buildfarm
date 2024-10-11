@@ -26,23 +26,42 @@ kwargs = {
     # - stdeb.cfg
     'version': '3.0.1-master',
     'packages': find_packages(exclude=['test']),
+    'package_data': {
+        'ros_buildfarm.templates': [
+            '*/*/*.css',
+            '*.em',
+            '*/*.em',
+            '*/*/*.em',
+            '*/*.groovy',
+            '*/*/*.js',
+            '*/*/*.parser',
+        ],
+    },
     'scripts': scripts,
-    'include_package_data': True,
     'zip_safe': False,
     'install_requires': [
-        'empy',
+        'empy<4',
         'PyYAML'],
-    'tests_require': [
-        'flake8 >= 3.7',
-        'flake8-class-newline',
-        'flake8_docstrings',
-        'flake8-import-order',
-        'pep8',
-        'pyflakes'],
+    'extras_require': {
+        'test': [
+            'flake8 >= 3.7, < 5',
+            'flake8-class-newline',
+            'flake8_docstrings',
+            'flake8-import-order',
+            'pep8',
+            'pycodestyle < 2.9.0',
+            'pyflakes < 2.5.0',
+            'pytest'],
+    },
     'author': 'Dirk Thomas',
     'author_email': 'dthomas@osrfoundation.org',
-    'maintainer': 'Dirk Thomas',
-    'maintainer_email': 'dthomas@osrfoundation.org',
+    'maintainer': 'ROS Infrastructure Team',
+    'project_urls': {
+        'Source code':
+        'https://github.com/ros-infrastructure/ros_buildfarm',
+        'Issue tracker':
+        'https://github.com/ros-infrastructure/ros_buildfarm/issues',
+    },
     'url': 'https://github.com/ros-infrastructure/ros_buildfarm',
     'keywords': ['ROS', 'buildfarm', 'catkin'],
     'classifiers': [
@@ -63,6 +82,6 @@ elif 'SKIP_PYTHON_SCRIPTS' in os.environ:
     kwargs['scripts'] = []
 else:
     kwargs['install_requires'] += [
-        'catkin_pkg >= 0.2.6', 'jenkinsapi', 'rosdistro >= 0.4.0', 'vcstool >= 0.1.37']
+        'catkin_pkg >= 0.2.6', 'jenkinsapi', 'rosdistro >= 1.0.0', 'vcstool >= 0.1.37']
 
 setup(**kwargs)

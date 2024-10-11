@@ -147,41 +147,13 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Upload binaryrpm"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        "ls binarypkg/*.rpm | grep -v -e 'src\.rpm$' -e '-debug\(info\|source\)-' > binarypkg/upload_list.txt && " +
-        'xargs -a binarypkg/upload_list.txt' +
-        ' python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
-        ' --pulp-resource-record binarypkg/upload_record.txt',
-        'echo "# END SECTION"',
-        'echo "# BEGIN SECTION: Upload debug symbols"',
-        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
-        "ls binarypkg/*.rpm | grep -e '-debug\(info\|source\)-' > binarypkg/upload_list_debug.txt && " +
-        'xargs -a binarypkg/upload_list_debug.txt' +
-        ' python3 -u $WORKSPACE/ros_buildfarm/scripts/release/rpm/upload_package.py' +
-        ' --pulp-resource-record binarypkg/upload_record_debug.txt',
+        'find binarypkg -mindepth 1 -maxdepth 1 -type f -name "*.rpm" -not -name "*.src.rpm" -fprint binarypkg/rpm_upload_args.txt -fprintf binarypkg/rpm_import_args.txt "--import=/tmp/upload-${BUILD_TAG}/%f\\n"',
+        'ssh %s -- mkdir -p /tmp/upload-${BUILD_TAG}/' % (upload_host,),
+        'xargs -a binarypkg/rpm_upload_args.txt -I @ scp @ %s:/tmp/upload-${BUILD_TAG}/' % (upload_host,),
+        'xargs -a binarypkg/rpm_import_args.txt ssh %s -- createrepo-agent /var/repos/%s/building/%s/ --arch %s --invalidate-family --invalidate-dependants' % (upload_host, os_name, os_code_name, arch),
+        'ssh %s -- rm -fr /tmp/upload-${BUILD_TAG}/' % (upload_host,),
         'echo "# END SECTION"',
     ]),
-))@
-@(SNIPPET(
-    'builder_parameterized-trigger',
-    project=import_package_job_name,
-    parameters='\n'.join([
-        'DISTRIBUTION_NAME=ros-building-%s-%s-%s' % (
-            os_name, os_code_name, arch),
-        'INVALIDATE_DOWNSTREAM=true']),
-    parameter_files=['binarypkg/upload_record.txt'],
-    continue_on_failure=False,
-))@
-@(SNIPPET(
-    'builder_parameterized-trigger',
-    project=import_package_job_name,
-    parameters='\n'.join([
-        'DISTRIBUTION_NAME=ros-building-%s-%s-%s-debug' % (
-            os_name, os_code_name, arch),
-        'INVALIDATE_DOWNSTREAM=false']),
-    parameter_files=['binarypkg/upload_record_debug.txt'],
-    continue_on_failure=False,
-    missing_parameter_files_skip=True,
 ))@
 @(SNIPPET(
     'builder_shell',
@@ -201,7 +173,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
 @(SNIPPET(
     'publisher_description-setter',
-    regexp="Package '[^']+' version: (\S+)",
+    regexp=r"Package '[^']+' version: (\S+)",
     # to prevent overwriting the description of failed builds
     regexp_for_failed='ThisRegExpShouldNeverMatch',
 ))@
@@ -218,11 +190,6 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 ))@
   </publishers>
   <buildWrappers>
-@(SNIPPET(
-    'pulp_credentials',
-    credential_id=credential_id,
-    dest_credential_id=dest_credential_id,
-))@
 @[if timeout_minutes is not None]@
 @(SNIPPET(
     'build-wrapper_build-timeout',
@@ -231,6 +198,10 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @[end if]@
 @(SNIPPET(
     'build-wrapper_timestamper',
+))@
+@(SNIPPET(
+    'build-wrapper_ssh-agent',
+    credential_ids=[credential_id],
 ))@
   </buildWrappers>
 </project>

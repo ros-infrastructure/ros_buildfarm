@@ -19,6 +19,7 @@ try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
+import warnings
 
 
 package_format_mapping = {
@@ -172,7 +173,13 @@ def get_distribution_repository_keys(urls, key_files):
 def get_binary_package_versions(apt_cache, debian_pkg_names):
     versions = {}
     for debian_pkg_name in debian_pkg_names:
-        pkg = apt_cache[debian_pkg_name]
+        pkg = apt_cache.get(debian_pkg_name)
+        if not pkg:
+            prov = apt_cache.get_providing_packages(debian_pkg_name)
+            if not prov:
+                raise KeyError("No packages available for '%s'" % (debian_pkg_name,))
+            assert len(prov) == 1
+            pkg = apt_cache[prov[0]]
         versions[debian_pkg_name] = max(pkg.versions).version
     return versions
 
@@ -184,7 +191,8 @@ def get_ci_job_name(rosdistro_name, os_name, os_code_name, arch, job_type):
 
 
 def get_ci_view_name(rosdistro_name):
-    view_name = '%sci' % rosdistro_name[0].upper()
+    # prefix with first character of rosdistro_name (if not empty)
+    view_name = '%sci' % rosdistro_name[:1].upper()
     return view_name
 
 
@@ -318,6 +326,7 @@ def get_short_os_code_name(os_code_name):
         'focal': 'F',
         'jammy': 'J',
         'jessie': 'J',
+        'noble': 'N',
         'saucy': 'S',
         'stretch': 'S',
         'trusty': 'T',
@@ -534,7 +543,7 @@ def topological_order_packages(packages):
             d.name for d in all_depends if d.name in decorators_by_name.keys() and
             d.evaluated_condition is not False])
         unique_depend_names.update([
-            m for d in decorator.package.group_depends for m in d.members if
+            m for d in decorator.package.group_depends for m in (d.members or ()) if
             d.evaluated_condition is not False])
         for name in unique_depend_names:
             if name in decorator.depends_for_topological_order:
@@ -623,14 +632,18 @@ def get_xunit_publisher_types_and_patterns(
     return types
 
 
-def get_direct_dependencies(pkg_name, cached_pkgs, pkg_names, include_test_deps=True):
+def get_direct_dependencies(
+    pkg_name, cached_pkgs, pkg_names, include_test_deps=True,
+    include_group_deps=False,
+):
     if pkg_name not in cached_pkgs:
         return None
     pkg = cached_pkgs[pkg_name]
     pkg_deps = (pkg.buildtool_depends + pkg.build_depends +
-                pkg.buildtool_export_depends + pkg.build_export_depends)
+                pkg.buildtool_export_depends + pkg.build_export_depends +
+                pkg.exec_depends)
     if include_test_deps:
-        pkg_deps += pkg.exec_depends + pkg.test_depends
+        pkg_deps += pkg.test_depends
     # test dependencies are treated similar to build dependencies by bloom
     # so if configured to include test dependencies, we need them here to
     # ensure that all dependencies are available before starting a build
@@ -638,6 +651,10 @@ def get_direct_dependencies(pkg_name, cached_pkgs, pkg_names, include_test_deps=
         d.name for d in pkg_deps
         if d.name in pkg_names and
         d.evaluated_condition is not False])
+    if include_group_deps:
+        depends.update(
+            m for group_dep in pkg.group_depends for m in group_dep.members if
+            group_dep.evaluated_condition is not False)
     return depends
 
 
@@ -664,11 +681,12 @@ def get_package_manifests(dist):
 
 
 def get_implicitly_ignored_package_names(cached_pkgs, explicitly_ignored_pkg_names):
+    pkg_names = set(explicitly_ignored_pkg_names).union(cached_pkgs.keys())
     # get direct dependencies from distro cache for each package
     direct_dependencies = {}
     for pkg_name in cached_pkgs.keys():
         direct_dependencies[pkg_name] = get_direct_dependencies(
-            pkg_name, cached_pkgs, cached_pkgs) or set([])
+            pkg_name, cached_pkgs, pkg_names) or set([])
 
     # find recursive downstream deps for all explicitly ignored packages
     ignored_pkg_names = set(explicitly_ignored_pkg_names)
@@ -725,6 +743,10 @@ def filter_buildfile_packages_recursively(package_names, buildfile, rosdistro_na
 
 
 def get_package_condition_context(index, rosdistro_name):
+    warnings.warn(
+        'ros_buildfarm.common.get_package_condition_context is deprecated, '
+        'use rosdistro.get_package_condition_context instead.',
+        DeprecationWarning, stacklevel=2)
     python_version = index.distributions[rosdistro_name].get('python_version')
     ros_version = {
         'ros1': '1',

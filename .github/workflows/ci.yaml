@@ -15,18 +15,17 @@ jobs:
         uses: actions/checkout@v2
       - name: Install dependencies
         run: |
-          python -m pip install -U catkin-pkg EmPy jenkinsapi PyYAML rosdistro vcstool
-          python -m pip install -U flake8 flake8-class-newline flake8-docstrings flake8-import-order pep8 pyflakes pytest
+          python -m pip install -U -e .[test]
       - name: Run tests
         run: |
           python -m pytest -s test
 
   ros1_audit:
     name: ROS 1 Audit
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.6']
+        python: ['3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -39,12 +38,12 @@ jobs:
       - name: Run job
         uses: ./.github/actions/audit
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
 
   ros1_config:
     name: ROS 1 Config Validation
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -53,39 +52,12 @@ jobs:
       - name: Validate configration
         run: validate_config_index.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
 
-  ros1_devel:
-    name: ROS 1 Devel
-    runs-on: ubuntu-18.04
-    strategy:
-      matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
-        build_tool: [null]
-        include:
-          - python: '3.6'
-            build_tool: colcon
-    steps:
-      - name: Check out project
-        uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{matrix.python}}
-      - name: Install dependencies
-        uses: ./.github/actions/setup
-      - name: Run job
-        uses: ./.github/actions/devel
-        with:
-          ros_distro: melodic
-          os_code_name: bionic
-          build_tool: ${{matrix.build_tool}}
-          repo: roscpp_core
-
   ros1_doc:
     name: ROS 1 Doc
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -98,16 +70,16 @@ jobs:
       - name: Run job
         uses: ./.github/actions/doc
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
           repo: roscpp_core
 
   ros1_prerelease:
     name: ROS 1 Prerelease
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -120,17 +92,17 @@ jobs:
       - name: Run job
         uses: ./.github/actions/prerelease
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
           overlay_pkg: roscpp
           underlay_repos: roscpp_core
 
   ros1_prerelease_external:
     name: ROS 1 Prerelease (External)
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -149,16 +121,16 @@ jobs:
       - name: Run job
         uses: ./.github/actions/prerelease
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
           source_dir: ${{github.workspace}}/dummy_package
 
   ros1_release:
     name: ROS 1 Release
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -171,16 +143,16 @@ jobs:
       - name: Run job
         uses: ./.github/actions/release
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
           pkg_name: rostime
 
   ros1_release_reconfigure:
     name: ROS 1 Release Reconfigure
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -193,15 +165,15 @@ jobs:
       - name: Run job
         uses: ./.github/actions/release_reconfigure
         with:
-          ros_distro: melodic
+          ros_distro: noetic
           pkg_names: rostime
 
   ros1_status_pages:
     name: ROS 1 Status Pages
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -214,14 +186,14 @@ jobs:
       - name: Run job
         uses: ./.github/actions/status_pages
         with:
-          ros_distro: melodic
+          ros_distro: noetic
 
   ros1_sync_criteria_check:
     name: ROS 1 Sync Criteria Check
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -230,15 +202,15 @@ jobs:
       - name: Run job
         uses: ./.github/actions/sync_criteria_check
         with:
-          ros_distro: melodic
-          os_code_name: bionic
+          ros_distro: noetic
+          os_code_name: focal
 
   ros1_trigger:
     name: ROS 1 Trigger
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['2.7', '3.4', '3.5', '3.6']
+        python: ['3.6']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -247,7 +219,7 @@ jobs:
       - name: Run job
         uses: ./.github/actions/trigger
         with:
-          ros_distro: melodic
+          ros_distro: noetic
 
   ros2_audit:
     name: ROS 2 Audit
@@ -261,8 +233,8 @@ jobs:
         uses: ./.github/actions/audit
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
-          ros_distro: foxy
-          os_code_name: focal
+          ros_distro: humble
+          os_code_name: jammy
 
   ros2_ci:
     name: ROS 2 CI
@@ -277,24 +249,24 @@ jobs:
         uses: ./.github/actions/ci
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
-          ros_distro: foxy
-          os_code_name: focal
+          ros_distro: humble
+          os_code_name: jammy
           package_selection_args: --packages-up-to ament_flake8
       - name: Run job 2
         id: underlay2
         uses: ./.github/actions/ci
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
-          ros_distro: foxy
-          os_code_name: focal
+          ros_distro: humble
+          os_code_name: jammy
           underlay_dirs: ${{steps.underlay1.outputs.install_dir}}
           package_selection_args: --packages-skip-up-to ament_flake8 --packages-up-to ament_pep257
       - name: Run job 3
         uses: ./.github/actions/ci
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
-          ros_distro: foxy
-          os_code_name: focal
+          ros_distro: humble
+          os_code_name: jammy
           underlay_dirs: ${{steps.underlay1.outputs.install_dir}} ${{steps.underlay2.outputs.install_dir}}
           package_selection_args: --packages-skip-up-to ament_flake8 ament_pep257 --packages-up-to ament_cmake_ros
 
@@ -321,9 +293,43 @@ jobs:
         uses: ./.github/actions/devel
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
-          ros_distro: foxy
-          os_code_name: focal
+          ros_distro: humble
+          os_code_name: jammy
           repo: rcutils
+
+  ros2_doc_noble:
+    name: ROS 2 Doc (Noble)
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/doc
+        with:
+          config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+          ros_distro: rolling
+          os_code_name: noble
+          repo: rcl
+          output_directory: ws/docs_output
+
+  ros2_doc_jammy:
+    name: ROS 2 Doc (Jammy)
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Run job
+        uses: ./.github/actions/doc
+        with:
+          config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
+          ros_distro: humble
+          os_code_name: jammy
+          repo: rcl
+          output_directory: ws/docs_output
 
   ros2_prerelease:
     name: ROS 2 Prerelease
@@ -337,8 +343,8 @@ jobs:
         uses: ./.github/actions/prerelease
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
-          ros_distro: foxy
-          os_code_name: focal
+          ros_distro: humble
+          os_code_name: jammy
           overlay_pkg: rcutils
           underlay_repos: ament_cmake_ros
 
@@ -355,7 +361,7 @@ jobs:
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
           ros_distro: rolling
-          os_code_name: jammy
+          os_code_name: noble
           pkg_name: rcutils
 
   ros2_release_reconfigure:
@@ -388,7 +394,7 @@ jobs:
           config_name: rhel
           ros_distro: rolling
           os_name: rhel
-          os_code_name: 8
+          os_code_name: 9
           arch: x86_64
           pkg_name: rcutils
 
@@ -405,7 +411,7 @@ jobs:
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
           ros_distro: rolling
-          os_code_name: jammy
+          os_code_name: noble
 
   ros2_sync_criteria_check_rpm:
     name: ROS 2 Sync Criteria Check (RPM)
@@ -422,7 +428,7 @@ jobs:
           config_name: rhel
           ros_distro: rolling
           os_name: rhel
-          os_code_name: 8
+          os_code_name: 9
           arch: x86_64
 
   ros2_trigger:

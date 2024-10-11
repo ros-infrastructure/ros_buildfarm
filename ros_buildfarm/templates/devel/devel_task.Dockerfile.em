@@ -11,6 +11,8 @@ VOLUME ["/var/cache/apt/archives"]
 
 ENV DEBIAN_FRONTEND noninteractive
 
+@(TEMPLATE('snippet/phased_updates.Dockerfile.em'))@
+
 @(TEMPLATE(
     'snippet/old_release_set.Dockerfile.em',
     os_name=os_name,
@@ -61,13 +63,11 @@ RUN echo "@today_str"
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-yaml
 
 @[if build_tool == 'colcon']@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-pip
-@# colcon-core.package_identification.python needs at least setuptools 30.3.0
 @# pytest-rerunfailures enables usage of --retest-until-pass
-RUN pip3 install -U setuptools pytest-rerunfailures
-@[end if]@
-@[if ros_version == 2]@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ros-@(rosdistro_name)-ros-workspace
+@(TEMPLATE(
+    'snippet/install_pytest-rerunfailures.Dockerfile.em',
+    os_name=os_name,
+))@
 @[end if]@
 RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
 
@@ -119,7 +119,7 @@ cmd = \
 if not testing:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_install.py' + \
-        ' --rosdistro-name ' + rosdistro_name + \
+        ' --rosdistro-name ' + (rosdistro_name or "''") + \
         ' --ros-version ' + str(ros_version) + \
         ' --clean-before'
     if run_abichecker:
@@ -127,7 +127,7 @@ if not testing:
 else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
-        ' --rosdistro-name %s' % rosdistro_name + \
+        ' --rosdistro-name %s' % (rosdistro_name or "''") + \
         ' --ros-version ' + str(ros_version)
     if require_gpu_support:
         cmd += ' --require-gpu-support'

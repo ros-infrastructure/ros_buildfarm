@@ -27,8 +27,10 @@ from ros_buildfarm.common import get_xunit_publisher_types_and_patterns
 from ros_buildfarm.common import JobValidationError
 from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_ci_build_files
+from ros_buildfarm.config import get_global_ci_build_files
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.git import get_repository
+from ros_buildfarm.jenkins import JenkinsProxy
 from ros_buildfarm.templates import expand_template
 from rosdistro import get_index
 
@@ -38,7 +40,10 @@ def configure_ci_jobs(
         groovy_script=None, dry_run=False):
     """Configure all Jenkins CI jobs."""
     config = get_config_index(config_url)
-    build_files = get_ci_build_files(config, rosdistro_name)
+    if not rosdistro_name:
+        build_files = get_global_ci_build_files(config)
+    else:
+        build_files = get_ci_build_files(config, rosdistro_name)
 
     if not ci_build_names:
         ci_build_names = build_files.keys()
@@ -80,7 +85,7 @@ def _configure_ci_jobs(
         ci_view_name: configure_ci_view(
             jenkins, ci_view_name, dry_run=dry_run)
     }
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,
@@ -145,7 +150,10 @@ def configure_ci_job(
     if config is None:
         config = get_config_index(config_url)
     if build_file is None:
-        build_files = get_ci_build_files(config, rosdistro_name)
+        if not rosdistro_name:
+            build_files = get_global_ci_build_files(config)
+        else:
+            build_files = get_ci_build_files(config, rosdistro_name)
         build_file = build_files[ci_build_name]
     # Overwrite build_file.targets if build_targets is specified
     if build_targets is not None:
@@ -246,9 +254,12 @@ def _get_ci_job_config(
             '%s=%s' % (var, value)
             for var, value in sorted(build_file.build_environment_variables.items())]
 
-    distribution_type = index.distributions[rosdistro_name] \
-        .get('distribution_type', 'ros1')
-    assert distribution_type in ('ros1', 'ros2')
+    if rosdistro_name:
+        distribution_type = index.distributions[rosdistro_name] \
+            .get('distribution_type', 'ros1')
+        assert distribution_type in ('ros1', 'ros2')
+    else:
+        distribution_type = 'global'
     ros_version = 1 if distribution_type == 'ros1' else 2
 
     for index in range(len(underlay_source_jobs)):
@@ -260,7 +271,7 @@ def _get_ci_job_config(
         'node_label': get_node_label(
             build_file.jenkins_job_label,
             get_default_node_label('%s_%s' % (
-                rosdistro_name, 'ci'))),
+                rosdistro_name or 'global', 'ci'))),
 
         'disabled': is_disabled,
 
@@ -283,6 +294,7 @@ def _get_ci_job_config(
         'repository_names': repository_names,
         'package_names': package_names,
         'package_dependencies': package_dependencies,
+        'custom_rosdep_urls': build_file.custom_rosdep_urls,
 
         'skip_rosdep_keys': build_file.skip_rosdep_keys,
         'install_packages': build_file.install_packages,

@@ -193,7 +193,7 @@ parameters = [
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'if [ "$package_dependencies" = "true" ]; then package_dependencies_arg=--package-dependencies; fi',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/run_ci_job.py' +
-        ' ' + rosdistro_name +
+        ' ' + (rosdistro_name or "''") +
         ' ' + os_name +
         ' ' + os_code_name +
         ' ' + arch +
@@ -220,7 +220,7 @@ parameters = [
         'echo "# BEGIN SECTION: Build Dockerfile - generating CI tasks"',
         'cd $WORKSPACE/docker_generating_dockers',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_task_generation.%s .' % (rosdistro_name),
+        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_task_generation.%s .' % (rosdistro_name or 'global'),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generating CI tasks"',
@@ -230,6 +230,8 @@ parameters = [
         'mkdir -p $WORKSPACE/docker_create_workspace',
         'mkdir -p $WORKSPACE/docker_build_and_install',
         'mkdir -p $WORKSPACE/docker_build_and_test',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_dockers/docker.cid' +
@@ -238,7 +240,7 @@ parameters = [
         ' -v $WORKSPACE/docker_create_workspace:/tmp/docker_create_workspace' +
         ' -v $WORKSPACE/docker_build_and_install:/tmp/docker_build_and_install' +
         ' -v $WORKSPACE/docker_build_and_test:/tmp/docker_build_and_test' +
-        ' $DOCKER_IMAGE_PREFIX.ci_task_generation.%s' % (rosdistro_name),
+        ' $DOCKER_IMAGE_PREFIX.ci_task_generation.%s' % (rosdistro_name or 'global'),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
     ]),
@@ -258,7 +260,7 @@ parameters = [
         '# build and run create_workspace Dockerfile',
         'cd $WORKSPACE/docker_create_workspace',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_create_workspace.%s .' % (rosdistro_name),
+        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_create_workspace.%s .' % (rosdistro_name or 'global'),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - create workspace"',
@@ -271,6 +273,8 @@ parameters = [
     ] + [
         'mkdir -p %s' % (dir) for dir in underlay_source_paths
     ] + [
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_create_workspace/docker.cid' +
@@ -280,7 +284,7 @@ parameters = [
             for i, space in enumerate(underlay_source_paths, 1)
         ]) +
         ' -v $WORKSPACE/ws:/tmp/ws%s' % (len(underlay_source_paths) + 1 if len(underlay_source_paths) else '') +
-        ' $DOCKER_IMAGE_PREFIX.ci_create_workspace.%s' % (rosdistro_name),
+        ' $DOCKER_IMAGE_PREFIX.ci_create_workspace.%s' % (rosdistro_name or 'global'),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
     ]),
@@ -310,18 +314,20 @@ parameters = [
         '# build and run build and install Dockerfile',
         'cd $WORKSPACE/docker_build_and_install',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s .' % (rosdistro_name),
+        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s .' % (rosdistro_name or 'global'),
         'echo "# END SECTION"',
         '',
     ] + ([
         'echo "# BEGIN SECTION: ccache stats (before)"',
         'mkdir -p $HOME/.ccache',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker_ccache_before.cid' +
         ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
         ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
-        ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name) +
+        ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name or 'global') +
         ' "ccache -s"',
         'echo "# END SECTION"',
         '',
@@ -331,6 +337,8 @@ parameters = [
         'export UNDERLAY%d_JOB_SPACE=$WORKSPACE/underlay%d/ros%d-linux' % (i + 1, i + 1, local_ros_version)
         for i, local_ros_version in zip(range(len(underlay_source_jobs)), [ros_version] * len(underlay_source_jobs))
     ] + [
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker.cid' +
@@ -342,18 +350,20 @@ parameters = [
             for i, space in enumerate(underlay_source_paths, 1)
         ]) +
         ' -v $WORKSPACE/ws:/tmp/ws%s' % (len(underlay_source_paths) + 1 if len(underlay_source_paths) else '') +
-        ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name),
+        ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name or 'global'),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
     ] + ([
         '',
         'echo "# BEGIN SECTION: ccache stats (after)"',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_install/docker_ccache_after.cid' +
         ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
         ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
-        ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name) +
+        ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name or 'global') +
         ' "ccache -s"',
         'echo "# END SECTION"',
     ] if shared_ccache else [])),
@@ -362,10 +372,14 @@ parameters = [
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Compress install space"',
-        'tar -cjf $WORKSPACE/ros%d-%s-linux-%s-%s-ci.tar.bz2 ' % (ros_version, rosdistro_name, os_code_name, arch) +
-        ' -C $WORKSPACE/ws' +
+        'cd $WORKSPACE',
+        'tar -cjf ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name or 'global', os_code_name, arch) +
+        ' -C ws' +
         ' --transform "s/^install_isolated/ros%d-linux/"' % (ros_version) +
         ' install_isolated',
+        'sha256sum -b ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name or 'global', os_code_name, arch) +
+        ' > ros%d-%s-linux-%s-%s-ci-CHECKSUM' % (ros_version, rosdistro_name or 'global', os_code_name, arch),
+        'cd -',
         'echo "# END SECTION"',
     ]),
 ))@
@@ -384,18 +398,20 @@ parameters = [
         '# build and run build and test Dockerfile',
         'cd $WORKSPACE/docker_build_and_test',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s .' % (rosdistro_name),
+        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s .' % (rosdistro_name or 'global'),
         'echo "# END SECTION"',
         '',
     ] + ([
         'echo "# BEGIN SECTION: ccache stats (before)"',
         'mkdir -p $HOME/.ccache',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker_ccache_before.cid' +
         ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
         ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
-        ' $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s' % (rosdistro_name) +
+        ' $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s' % (rosdistro_name or 'global') +
         ' "ccache -s"',
         'echo "# END SECTION"',
         '',
@@ -407,6 +423,8 @@ parameters = [
     ] + [
         'rm -fr $WORKSPACE/ws/test_results',
         'mkdir -p $WORKSPACE/ws/test_results',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker.cid' +
@@ -418,18 +436,20 @@ parameters = [
             for i, space in enumerate(underlay_source_paths, 1)
         ]) +
         ' -v $WORKSPACE/ws:/tmp/ws%s' % (len(underlay_source_paths) + 1 if len(underlay_source_paths) else '') +
-        ' $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s' % (rosdistro_name),
+        ' $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s' % (rosdistro_name or 'global'),
         'cd -',  # restore pwd when used in scripts
         'echo "# END SECTION"',
     ] + ([
         '',
         'echo "# BEGIN SECTION: ccache stats (after)"',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_build_and_test/docker_ccache_after.cid' +
         ' -e CCACHE_DIR=/home/buildfarm/.ccache' +
         ' -v $HOME/.ccache:/home/buildfarm/.ccache' +
-        ' $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s' % (rosdistro_name) +
+        ' $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s' % (rosdistro_name or 'global') +
         ' "ccache -s"',
         'echo "# END SECTION"',
     ] if shared_ccache else [])),
@@ -451,12 +471,13 @@ parameters = [
 @(SNIPPET(
     'publisher_warnings',
     build_tool=build_tool,
-    unstable_threshold='',
+    unstable_threshold='1',
 ))@
 @(SNIPPET(
     'archive_artifacts',
     artifacts=[
-      'ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name, os_code_name, arch),
+      'ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name or 'global', os_code_name, arch),
+      'ros%d-%s-linux-%s-%s-ci-CHECKSUM' % (ros_version, rosdistro_name or 'global', os_code_name, arch),
     ] + archive_files + [
       image for images in show_images.values() for image in images
     ],
@@ -467,7 +488,8 @@ parameters = [
     config_name='ci_archives',
     remote_directory=upload_directory,
     source_files=[
-        'ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name, os_code_name, arch),
+        'ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name or 'global', os_code_name, arch),
+        'ros%d-%s-linux-%s-%s-ci-CHECKSUM' % (ros_version, rosdistro_name or 'global', os_code_name, arch),
     ],
     remove_prefix=None,
 ))@

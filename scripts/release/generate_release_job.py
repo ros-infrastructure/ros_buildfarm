@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2014-2015 Open Source Robotics Foundation, Inc.
+# Copyright 2022 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,37 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
-import sys
-
-from ros_buildfarm.argument import add_argument_arch
-from ros_buildfarm.argument import add_argument_build_name
-from ros_buildfarm.argument import add_argument_config_url
-from ros_buildfarm.argument import add_argument_dry_run
-from ros_buildfarm.argument import add_argument_os_code_name
-from ros_buildfarm.argument import add_argument_os_name
-from ros_buildfarm.argument import add_argument_package_name
-from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.release_job import configure_release_job
-
-
-def main(argv=sys.argv[1:]):
-    parser = argparse.ArgumentParser(
-        description="Generate a 'release' job on Jenkins")
-    add_argument_config_url(parser)
-    add_argument_rosdistro_name(parser)
-    add_argument_build_name(parser, 'release')
-    add_argument_package_name(parser)
-    add_argument_os_name(parser)
-    add_argument_os_code_name(parser)
-    add_argument_arch(parser)
-    add_argument_dry_run(parser)
-    args = parser.parse_args(argv)
-
-    configure_release_job(
-        args.config_url, args.rosdistro_name, args.release_build_name,
-        args.package_name, args.os_name, args.os_code_name, dry_run=args.dry_run)
+from runpy import run_module
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    run_module('ros_buildfarm.scripts.release.generate_release_job', run_name='__main__')

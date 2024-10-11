@@ -92,6 +92,13 @@ class Index(object):
 
         # rosdistro-independent configurations go here
 
+        self.ci_builds = {}
+        if 'ci_builds' in data and data['ci_builds']:
+            assert isinstance(data['ci_builds'], dict)
+            for k, v in data['ci_builds'].items():
+                v = _resolve_url(base_url, v)
+                self.ci_builds[k] = v
+
         self.doc_builds = {}
         if 'doc_builds' in data and data['doc_builds']:
             assert isinstance(data['doc_builds'], dict)
@@ -126,6 +133,6 @@ class Index(object):
 
 def _resolve_url(base_url, value):
     parts = urlparse(value)
-    if not parts[0]:  # schema
+    if base_url and not parts[0]:  # schema
         value = base_url + '/' + value
     return value

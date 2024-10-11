@@ -69,6 +69,11 @@ class ReleaseBuildFile(BuildFile):
             self.jenkins_source_job_timeout = \
                 int(data['jenkins_source_job_timeout'])
 
+        self.jenkins_binary_job_weight_overrides = {}
+        if 'jenkins_binary_job_weight_overrides' in data:
+            self.jenkins_binary_job_weight_overrides = data['jenkins_binary_job_weight_overrides']
+            assert isinstance(self.jenkins_binary_job_weight_overrides, dict)
+
         self.package_whitelist = []
         if 'package_whitelist' in data and data['package_whitelist']:
             self.package_whitelist = data['package_whitelist']
@@ -109,14 +114,18 @@ class ReleaseBuildFile(BuildFile):
         assert 'upload_credential_id' in data
         self.upload_credential_id = data['upload_credential_id']
 
-        self.upload_destination_credential_id = None
-        if 'upload_destination_credential_id' in data:
-            self.upload_destination_credential_id = data['upload_destination_credential_id']
+        self.upload_host = None
+        if 'upload_host' in data:
+            self.upload_host = data['upload_host']
 
+        self.include_group_dependencies = False
         self.include_test_dependencies = True
         self.run_package_tests = True
         if data.get('package_dependency_behavior'):
             assert isinstance(data['package_dependency_behavior'], dict)
+            if 'include_group_dependencies' in data['package_dependency_behavior']:
+                self.include_group_dependencies = \
+                    bool(data['package_dependency_behavior']['include_group_dependencies'])
             if 'include_test_dependencies' in data['package_dependency_behavior']:
                 self.include_test_dependencies = \
                     bool(data['package_dependency_behavior']['include_test_dependencies'])

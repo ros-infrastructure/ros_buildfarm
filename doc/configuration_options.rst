@@ -10,6 +10,20 @@ example and can be found on
 `GitHub (ros-infrastructure/ros_buildfarm_config) <https://github.com/ros-infrastructure/ros_buildfarm_config>`_.
 
 
+Special YAML tags
+-----------------
+
+YAML tags can be used to treat certain data in the configuration different.
+
+The following special tags are available in ROS build farm configuration
+files:
+
+* ``!include``: parse the YAML file at the given relative URL and include it
+  under the node where the tag was found.
+* ``!relative_url``: resolve the given relative URL to an absolute URL based
+  from the file in which the tag was found.
+
+
 Entry point yaml
 ----------------
 
@@ -173,13 +187,6 @@ Description of common options
   master which is commonly used to upload artifacts to another host.
   This credential id is set in the buildfarm_deployment.
 
-* **Upload destination credential ID**: the ID of the credential entry managed
-  on the Jenkins master which contains the destination information used to
-  upload artifacts to another host.
-  This credential id is set in the buildfarm_deployment.
-  At present, this value is only used for RPM jobs.
-
-
 Specific options in release build files
 ---------------------------------------
 
@@ -205,6 +212,11 @@ The following options are valid in version ``2`` (beside the generic options):
   (default: ``buildagent || <ROSDISTRO_NAME>_sourcedeb``).
 * ``jenkins_source_job_priority``: the job priority of *source* jobs.
 * ``jenkins_source_job_timeout``: the job timeout for *source* jobs.
+
+* ``jenkins_binary_job_weight_override``: per-package override of the number of
+  executors on a worker which are required to execute a job.
+  All jobs default to ``1``.
+  Uses the Jenkins Heavy Job plugin.
 
 * ``notifications``: a dictionary with the following keys:
 
@@ -237,8 +249,16 @@ The following options are valid in version ``2`` (beside the generic options):
 * ``upload_credential_id``: the ID of the credential to upload the built
   packages to the repository host.
 
+* ``upload_host``: the hostname of the repository host where built packages
+  shoudl be uploaded to.
+  Only affects RPM builds at present.
+
 * ``package_dependecy_behavior``: a dictionary with the following optional
   keys:
+
+  * ``include_group_dependencies``: a boolean flag indicating whether group
+    dependencies should be included in the package dependencies for each
+    binary job (default: ``false``).
 
   * ``include_test_dependencies``: a boolean flag indicating whether test and
     exec dependencies should be included in the package dependencies for each
@@ -596,3 +616,15 @@ The following options are valid in version ``1`` (beside the generic options):
   to, if desired.
   By default, the resulting archives are only available to other jobs within
   Jenkins.
+
+The following options are valid as keys in the ``_config`` dict under
+``targets``:
+
+* ``custom_rosdep_urls``: a list of URLs containing rosdep sources.list.d entry
+  files that are downloaded into /etc/ros/rosdep/sources.list.d at the beginning
+  of the doc job after running *rosdep init*.
+  Note that *rosdep init* will add the 20-default.list file from the public
+  rosdistro by default.
+  To override this, add an entry to this list corresponding to the
+  20-default.list file from your forked rosdistro repository.
+

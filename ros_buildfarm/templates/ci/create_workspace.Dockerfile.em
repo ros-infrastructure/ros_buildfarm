@@ -15,6 +15,8 @@ VOLUME ["/var/cache/apt/archives"]
 
 ENV DEBIAN_FRONTEND noninteractive
 
+@(TEMPLATE('snippet/phased_updates.Dockerfile.em'))@
+
 @(TEMPLATE(
     'snippet/old_release_set.Dockerfile.em',
     os_name=os_name,
@@ -70,7 +72,7 @@ RUN echo "@today_str"
 ))@
 
 # needed for 'vcs custom --git --args merge' invocation
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q --no-install-recommends sudo
+RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y --no-install-recommends sudo wget
 RUN sudo -H -u buildfarm -- git config --global user.email "jenkins@@ros.invalid" && sudo -H -u buildfarm -- git config --global user.name "Jenkins ROS"
 
 @(TEMPLATE(
@@ -96,7 +98,7 @@ cmds = [
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/create_workspace.py' + \
-    ' ' + rosdistro_name + \
+    ' ' + (rosdistro_name or "''") + \
     ' --workspace-root ' + workspace_root[-1] + \
     ' --repos-file-urls ' + ' '.join('file:///tmp/%s' % repos_file for repos_file in repos_file_names) + \
     ' --repository-names ' + ' '.join(repository_names) + \
@@ -106,7 +108,7 @@ cmds = [
 
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/generate_install_lists.py' + \
-    ' ' + rosdistro_name + \
+    ' ' + (rosdistro_name or "''") + \
     ' ' + os_name + \
     ' ' + os_code_name + \
     ' --package-root ' + ' '.join(base_paths) + \

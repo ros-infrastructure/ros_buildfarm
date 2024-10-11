@@ -35,16 +35,25 @@ logger = logging.getLogger(__name__)
 
 
 def load_yaml(url):
-    class SafeLoaderWithInclude(yaml.SafeLoader):
+    # Resolve relative file paths from CWD
+    url = urljoin('file://' + os.getcwd() + '/', url)
+
+    class BuildfarmConfigSafeLoader(yaml.SafeLoader):
 
         def include(self, node):
-            include_url = urljoin(url, self.construct_scalar(node))
+            include_url = self.relative_url(node)
             return load_yaml(include_url)
 
-    SafeLoaderWithInclude.add_constructor('!include', SafeLoaderWithInclude.include)
+        def relative_url(self, node):
+            return urljoin(url, self.construct_scalar(node))
+
+    BuildfarmConfigSafeLoader.add_constructor(
+        '!include', BuildfarmConfigSafeLoader.include)
+    BuildfarmConfigSafeLoader.add_constructor(
+        '!relative_url', BuildfarmConfigSafeLoader.relative_url)
 
     yaml_str = load_url(url)
-    return yaml.load(yaml_str, SafeLoaderWithInclude)
+    return yaml.load(yaml_str, BuildfarmConfigSafeLoader)
 
 
 def get_index(url):
@@ -67,7 +76,16 @@ def get_distribution_file(index, rosdistro_name, build_file):
 def get_ci_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'ci_builds')
     build_files = {}
-    for k, v in data.items():
+    for k, (url, v) in data.items():
+        build_files[k] = CIBuildFile(k, v)
+        build_files[k].url = url
+    return build_files
+
+
+def get_global_ci_build_files(index):
+    data = _load_build_file_data(index.ci_builds)
+    build_files = {}
+    for k, (url, v) in data.items():
         build_files[k] = CIBuildFile(k, v)
     return build_files
 
@@ -75,32 +93,36 @@ def get_ci_build_files(index, dist_name):
 def get_release_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'release_builds')
     build_files = {}
-    for k, v in data.items():
+    for k, (url, v) in data.items():
         build_files[k] = ReleaseBuildFile(k, v)
+        build_files[k].url = url
     return build_files
 
 
 def get_source_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'source_builds')
     build_files = {}
-    for k, v in data.items():
+    for k, (url, v) in data.items():
         build_files[k] = SourceBuildFile(k, v)
+        build_files[k].url = url
     return build_files
 
 
 def get_doc_build_files(index, dist_name):
     data = _get_build_file_data(index, dist_name, 'doc_builds')
     build_files = {}
-    for k, v in data.items():
+    for k, (url, v) in data.items():
         build_files[k] = DocBuildFile(k, v)
+        build_files[k].url = url
     return build_files
 
 
 def get_global_doc_build_files(index):
     data = _load_build_file_data(index.doc_builds)
     build_files = {}
-    for k, v in data.items():
+    for k, (url, v) in data.items():
         build_files[k] = DocBuildFile(k, v)
+        build_files[k].url = url
     return build_files
 
 
@@ -124,5 +146,5 @@ def _load_build_file_data(entries):
 
     data = {}
     for k, v in entries.items():
-        data[k] = _load_yaml_data(v)
+        data[k] = (v, _load_yaml_data(v))
     return data
