@@ -41,7 +41,6 @@ from ros_buildfarm.common import get_devel_job_urls
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_doc_job_url
 from ros_buildfarm.common import get_os_package_name
-from ros_buildfarm.common import get_package_condition_context
 from ros_buildfarm.common import get_release_job_urls
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.common import Scope
@@ -62,6 +61,7 @@ from rosdep2.catkin_support import get_catkin_view
 from rosdep2.catkin_support import resolve_for_os
 from rosdistro import get_distribution_file
 from rosdistro import get_index
+from rosdistro import get_package_condition_context
 import yaml
 
 
