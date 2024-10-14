@@ -19,6 +19,7 @@ try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
+import warnings
 
 
 package_format_mapping = {
@@ -742,6 +743,10 @@ def filter_buildfile_packages_recursively(package_names, buildfile, rosdistro_na
 
 
 def get_package_condition_context(index, rosdistro_name):
+    warnings.warn(
+        'ros_buildfarm.common.get_package_condition_context is deprecated, '
+        'use rosdistro.get_package_condition_context instead.',
+        DeprecationWarning, stacklevel=2)
     python_version = index.distributions[rosdistro_name].get('python_version')
     ros_version = {
         'ros1': '1',
