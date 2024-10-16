@@ -25,6 +25,7 @@ kwargs = {
     # - ros_buildfarm/__init__.py
     # - stdeb.cfg
     'version': '3.0.1-master',
+    'python_requires': '>=3.6',
     'packages': find_packages(exclude=['test']),
     'package_data': {
         'ros_buildfarm.templates': [
@@ -71,9 +72,6 @@ kwargs = {
     'long_description': long_description,
     'license': 'Apache 2.0',
 }
-
-if os.sys.version_info[0] == 2:
-    kwargs['install_requires'].append('configparser')
 
 if 'SKIP_PYTHON_MODULES' in os.environ:
     kwargs['packages'] = []
