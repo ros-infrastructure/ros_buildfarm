@@ -130,6 +130,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     ] + ([
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
     ] if shared_ccache else []) + [
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm' +
         ' --privileged' +
