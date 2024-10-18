@@ -30,6 +30,7 @@ RUN dnf update --refresh -y
 RUN echo -e "@('\\n'.join(key.splitlines()))" > /etc/pki/mock/RPM-GPG-KEY-ros-buildfarm-@(i)
 @[end for]@
 COPY mock_config.cfg /etc/mock/ros_buildfarm.cfg
+RUN chmod 644 /etc/mock/ros_buildfarm.cfg
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
