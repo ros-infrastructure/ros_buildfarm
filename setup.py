@@ -24,7 +24,7 @@ kwargs = {
     # same version as in:
     # - ros_buildfarm/__init__.py
     # - stdeb.cfg
-    'version': '3.0.1-master',
+    'version': '3.0.1+colcon-ros-buildfarm',
     'packages': find_packages(exclude=['test']),
     'package_data': {
         'ros_buildfarm.templates': [
