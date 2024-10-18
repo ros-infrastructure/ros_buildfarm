@@ -119,7 +119,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'echo "# BEGIN SECTION: Build Dockerfile - binarydeb task"',
         'cd $WORKSPACE/docker_generating_docker',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t binarydeb_task_generation.%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        'docker build --network=host --force-rm -t binarydeb_task_generation.%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - binarydeb task"',
@@ -138,6 +138,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --rm ' +
         ' --cidfile=$WORKSPACE/docker_generating_docker/docker.cid' +
         ' -e=TRAVIS=$TRAVIS' +
+        ' --net=host' +
         ' -e=ROS_BUILDFARM_PULL_REQUEST_BRANCH=$ROS_BUILDFARM_PULL_REQUEST_BRANCH' +
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/binarydeb:/tmp/binarydeb' +
@@ -159,7 +160,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         '# build and run build_binarydeb Dockerfile',
         'cd $WORKSPACE/docker_build_binarydeb',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t binarydeb_build.%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        'docker build --network=host --force-rm -t binarydeb_build.%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build binarydeb"',
@@ -224,7 +225,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
 @#         'echo "# BEGIN SECTION: Build Dockerfile - install"',
 @#         'cd $WORKSPACE/docker_install_binarydeb',
 @#         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-@#         'docker build --force-rm -t binarydeb_install.%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+@#         'docker build --network=host --force-rm -t binarydeb_install.%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
 @#         'echo "# END SECTION"',
 @#         '',
 @#         'echo "# BEGIN SECTION: Run Dockerfile - install"',
