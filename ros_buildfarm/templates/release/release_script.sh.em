@@ -45,6 +45,7 @@ echo "Using workspace for binary: $WORKSPACE"
 mkdir -p $WORKSPACE
 cd $WORKSPACE
 
+@[if source_scripts]@
 echo ""
 echo "Get artifacts from source job"
 @[if package_format == 'deb']@
@@ -55,6 +56,7 @@ mkdir -p $WORKSPACE/binarypkg/source
 (set -x; cp $BASEPATH/source/sourcepkg/*.src.rpm $WORKSPACE/binarypkg/source/)
 @[else]@
 @{assert False, "Unsupported packaging format '%s'" % package_format}@
+@[end if]@
 @[end if]@
 
 @(TEMPLATE(
