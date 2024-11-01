@@ -582,16 +582,15 @@ def _version_is_gt_other(version, other_version):
 def _get_comparable_loose_versions(version_str1, version_str2):
     loose_version1 = LooseVersion(version_str1)
     loose_version2 = LooseVersion(version_str2)
-    if sys.version_info[0] > 2:
-        # might raise TypeError in Python 3: http://bugs.python.org/issue14894
-        version_parts1 = loose_version1.version
-        version_parts2 = loose_version2.version
-        for i in range(min(len(version_parts1), len(version_parts2))):
-            try:
-                version_parts1[i] < version_parts2[i]
-            except TypeError:
-                version_parts1[i] = str(version_parts1[i])
-                version_parts2[i] = str(version_parts2[i])
+    # might raise TypeError in Python 3: http://bugs.python.org/issue14894
+    version_parts1 = loose_version1.version
+    version_parts2 = loose_version2.version
+    for i in range(min(len(version_parts1), len(version_parts2))):
+        try:
+            version_parts1[i] < version_parts2[i]
+        except TypeError:
+            version_parts1[i] = str(version_parts1[i])
+            version_parts2[i] = str(version_parts2[i])
     return loose_version1, loose_version2
 
 

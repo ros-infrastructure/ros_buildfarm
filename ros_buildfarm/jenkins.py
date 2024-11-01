@@ -274,9 +274,8 @@ def _diff_configs(remote_config, new_config, context_lines):
     if ElementTree.tostring(remote_root) == ElementTree.tostring(new_root):
         return []
 
-    encoding_type = 'utf-8' if sys.version_info[0] < 3 else 'unicode'
-    xml1 = ElementTree.tostring(remote_root, encoding=encoding_type)
-    xml2 = ElementTree.tostring(new_root, encoding=encoding_type)
+    xml1 = ElementTree.tostring(remote_root, encoding='unicode')
+    xml2 = ElementTree.tostring(new_root, encoding='unicode')
     lines1 = xml1.splitlines()
     lines2 = xml2.splitlines()
 

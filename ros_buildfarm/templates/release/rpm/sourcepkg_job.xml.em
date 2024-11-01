@@ -110,6 +110,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'echo "# BEGIN SECTION: Run Dockerfile - generate sourcerpm"',
         'rm -fr $WORKSPACE/sourcepkg',
         'mkdir -p $WORKSPACE/sourcepkg',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm' +
         ' --privileged' +
