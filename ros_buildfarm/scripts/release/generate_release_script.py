@@ -16,7 +16,17 @@ import argparse
 import re
 import sys
 
-from em import BANGPATH_OPT
+try:
+    # Import bangpath option name from EmPy v3
+    from em import BANGPATH_OPT
+    BANGPATH_VALUE = False
+except ImportError:
+    # EmPy 4 does not define an import-able constant for the updated bangpath
+    # option and inverts its meaning.
+    BANGPATH_OPT = 'ignoreBangpaths'
+    BANGPATH_VALUE = True
+
+
 from em import Hook
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
@@ -151,7 +161,7 @@ def main(argv=sys.argv[1:]):
             'source_scripts': source_scripts,
             'binary_scripts': binary_scripts,
             'package_format': package_format},
-        options={BANGPATH_OPT: False})
+        options={BANGPATH_OPT: BANGPATH_VALUE})
     value = re.sub(r'(^| )python3 ', r'\1' + sys.executable + ' ', value, flags=re.M)
     print(value)
 
