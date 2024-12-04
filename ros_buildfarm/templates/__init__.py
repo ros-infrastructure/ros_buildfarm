@@ -34,7 +34,13 @@ except ImportError:
     BANGPATH_OPT = 'ignoreBangpaths'
     BANGPATH_VALUE = True
 
-from em import Hook
+try:
+    # EmPy v3
+    from em import Hook
+except ImportError:
+    # EmPy v4
+    from emlib import Hook
+
 from em import Interpreter
 
 template_prefix_path = [os.path.abspath(os.path.dirname(__file__))]
