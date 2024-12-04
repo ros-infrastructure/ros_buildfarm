@@ -27,7 +27,12 @@ except ImportError:
     BANGPATH_VALUE = True
 
 
-from em import Hook
+try:
+    from em import Hook
+except:
+    from emlib import Hook
+
+
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
