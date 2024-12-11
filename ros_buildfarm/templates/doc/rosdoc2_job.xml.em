@@ -184,6 +184,7 @@ else:
         ' -v $WORKSPACE/ros_buildfarm:/tmp/ros_buildfarm:ro' +
         ' -v $WORKSPACE/rosdoc2:/tmp/rosdoc2' +
         ' -v $WORKSPACE/ws:/tmp/ws' +
+        ' -e ROS_DISTRO=%s' % (rosdistro_name) +
         ' rosdoc2.%s_%s' % (rosdistro_name, doc_repo_spec.name.lower()),
         'echo "# END SECTION"',
     ]),
