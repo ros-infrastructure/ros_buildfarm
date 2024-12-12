@@ -129,6 +129,7 @@ else:
         ' ' + os_code_name +
         ' ' + arch +
         ' ' + ' '.join(repository_args) +
+        ' --env-vars ' + ' '.join([v.replace('$', '\\$',) for v in build_environment_variables]) +
         ' --dockerfile-dir $WORKSPACE/docker_generating_docker',
         'echo "# END SECTION"',
         '',
