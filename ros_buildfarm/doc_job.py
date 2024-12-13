@@ -269,6 +269,12 @@ def _get_doc_job_config(
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(build_file=build_file)
 
+    build_environment_variables = []
+    if build_file.build_environment_variables:
+        build_environment_variables = [
+            '%s=%s' % (var, value)
+            for var, value in sorted(build_file.build_environment_variables.items())]
+
     maintainer_emails = set([])
     if build_file.notify_maintainers and dist_cache and repo_name and \
             repo_name in dist_cache.distribution_file.repositories:
@@ -311,6 +317,7 @@ def _get_doc_job_config(
         'arch': arch,
         'build_tool': build_file.build_tool,
         'repository_args': repository_args,
+        'build_environment_variables': build_environment_variables,
 
         'upload_user': build_file.upload_user,
         'upload_host': build_file.upload_host,

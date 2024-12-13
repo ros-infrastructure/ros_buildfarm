@@ -22,6 +22,11 @@ ENV DEBIAN_FRONTEND noninteractive
 ))@
 
 @(TEMPLATE(
+    'snippet/set_environment_variables.Dockerfile.em',
+    environment_variables=environment_variables,
+))@
+
+@(TEMPLATE(
     'snippet/add_distribution_repositories.Dockerfile.em',
     distribution_repository_keys=distribution_repository_keys,
     distribution_repository_urls=distribution_repository_urls,

@@ -76,6 +76,7 @@ cmds = [
     ' --vcs-info "%s"' % vcs_info + \
     ' --distribution-repository-urls ' + ' '.join(distribution_repository_urls) + \
     ' --distribution-repository-key-files ' + ' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))]) + \
+    ' --env-vars ' + ' ' .join(['%s=%s' % key_value for key_value in env_vars.items()]) + \
     (' --force' if force else '') + \
     ' --output-dir /tmp/generated_documentation' + \
     ' --dockerfile-dir /tmp/docker_doc',
