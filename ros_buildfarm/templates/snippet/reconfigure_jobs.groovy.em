@@ -41,6 +41,7 @@ println '# BEGIN SECTION: Groovy script - reconfigure'
 dry_run = @('true' if dry_run else 'false')
 dry_run_suffix = dry_run ? ' (dry run)' : ''
 
+println "User: " + System.getProperty("user.name")
 
 @[if vars().get('expected_num_views')]@
 // reconfigure views
