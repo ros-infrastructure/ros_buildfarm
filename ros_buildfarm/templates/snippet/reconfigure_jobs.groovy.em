@@ -1,4 +1,4 @@
-import difflib.DiffUtils
+import com.github.difflib.DiffUtils
 import groovy.io.FileType
 @@ThreadInterrupt
 import groovy.transform.ThreadInterrupt
