@@ -1,4 +1,5 @@
 import com.github.difflib.DiffUtils
+import com.github.difflib.UnifiedDiffUtils
 import groovy.io.FileType
 @@ThreadInterrupt
 import groovy.transform.ThreadInterrupt
@@ -273,7 +274,7 @@ def diff_configs(current_config, new_config) {
     }
 
     patch = DiffUtils.diff(current_lines, new_lines)
-    return DiffUtils.generateUnifiedDiff('current config', 'new config', current_lines, patch, 0)
+    return UnifiedDiffUtils.generateUnifiedDiff('current config', 'new config', current_lines, patch, 0)
 }
 
 
