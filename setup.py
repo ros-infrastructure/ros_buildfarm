@@ -24,8 +24,8 @@ kwargs = {
     # same version as in:
     # - ros_buildfarm/__init__.py
     # - stdeb.cfg
-    'version': '3.0.1+master',
     'python_requires': '>=3.6',
+    'version': '4.0.0',
     'packages': find_packages(exclude=['test']),
     'package_data': {
         'ros_buildfarm.templates': [
