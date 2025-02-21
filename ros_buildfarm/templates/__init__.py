@@ -88,13 +88,24 @@ def expand_template(
             BANGPATH_OPT: False,
         }
 
+    template_path = get_template_path(template_name)
+
     output = StringIO()
     try:
+        from em import Configuration
+    except ImportError:
         interpreter = CachingInterpreter(output=output, options=options)
+    else:
+        interpreter = CachingInterpreter(
+            output=output,
+            config=Configuration(
+                **(options or {}),
+                defaultRoot=str(template_path)),
+            dispatcher=False)
+    try:
         for template_hook in template_hooks or []:
             assert isinstance(template_hook, Hook)
             interpreter.addHook(template_hook)
-        template_path = get_template_path(template_name)
         # create copy before manipulating
         data = dict(data)
         # add some generic information to context
@@ -115,7 +126,7 @@ def expand_template(
             content = h.read()
             interpreter.invoke(
                 'beforeFile', name=template_name, file=h, locals=data)
-        interpreter.string(content, template_path, locals=data)
+        interpreter.string(content, locals=data)
         interpreter.invoke('afterFile')
 
         value = output.getvalue()
@@ -165,7 +176,7 @@ def _expand_template(template_name, **kwargs):
         interpreter.invoke('beforeInclude', name=template_path, file=h, locals=kwargs)
         content = h.read()
     try:
-        interpreter.string(content, template_path, kwargs)
+        interpreter.string(content, locals=kwargs)
     except Exception as e:
         print(
             "%s in template '%s': %s" %
