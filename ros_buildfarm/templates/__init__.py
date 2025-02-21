@@ -79,7 +79,7 @@ def expand_template(template_name, data, options=None):
         interpreter = CachingInterpreter(
             output=output,
             config=Configuration(
-                **options,
+                **(options or {}),
                 defaultRoot=str(template_path)),
             dispatcher=False)
     except ImportError:
