@@ -71,12 +71,22 @@ def expand_template(template_name, data, options=None):
     global interpreter
     global template_hooks
 
+    template_path = get_template_path(template_name)
+
     output = StringIO()
     try:
+        from em import Configuration
+        interpreter = CachingInterpreter(
+            output=output,
+            config=Configuration(
+                **options,
+                defaultRoot=str(template_path)),
+            dispatcher=False)
+    except ImportError:
         interpreter = CachingInterpreter(output=output, options=options)
+    try:
         for template_hook in template_hooks or []:
             interpreter.addHook(template_hook)
-        template_path = get_template_path(template_name)
         # create copy before manipulating
         data = dict(data)
         # add some generic information to context
@@ -97,7 +107,7 @@ def expand_template(template_name, data, options=None):
             content = h.read()
             interpreter.invoke(
                 'beforeFile', name=template_name, file=h, locals=data)
-        interpreter.string(content, template_path, locals=data)
+        interpreter.string(content, locals=data)
         interpreter.invoke('afterFile')
 
         value = output.getvalue()
