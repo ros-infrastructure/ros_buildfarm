@@ -26,12 +26,10 @@ except ImportError:
     BANGPATH_OPT = 'ignoreBangpaths'
     BANGPATH_VALUE = True
 
-
 try:
     from em import Hook
-except:
+except ImportError:
     from emlib import Hook
-
 
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
