@@ -53,7 +53,9 @@ skipped_views = 0
 
 view_config_dir = build.getWorkspace().toString() + '/reconfigure_jobs/view_configs'
 
+println "View Config dir:" + view_config_dir
 def view_dir = new File(view_config_dir)
+println "Views: " + view_dir.listFiles()
 def views = view_dir.listFiles() ?: []
 views.sort()
 
