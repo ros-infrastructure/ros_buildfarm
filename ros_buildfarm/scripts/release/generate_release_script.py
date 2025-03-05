@@ -17,7 +17,6 @@ import re
 import sys
 
 from em import BANGPATH_OPT
-from em import Hook
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
@@ -30,6 +29,7 @@ from ros_buildfarm.common import get_sourcedeb_job_name
 from ros_buildfarm.common import package_format_mapping
 from ros_buildfarm.release_job import configure_release_job
 from ros_buildfarm.templates import expand_template
+from ros_buildfarm.templates import Hook
 
 
 def main(argv=sys.argv[1:]):
