@@ -24,7 +24,16 @@ import time
 import warnings
 from xml.sax.saxutils import escape
 
-from em import BANGPATH_OPT
+try:
+    # Import bangpath option name from EmPy v3
+    from em import BANGPATH_OPT
+    BANGPATH_VALUE = False
+except ImportError:
+    # EmPy 4 does not define an import-able constant for the updated bangpath
+    # option and inverts its meaning.
+    BANGPATH_OPT = 'ignoreBangpaths'
+    BANGPATH_VALUE = True
+
 from em import Hook
 from em import Interpreter
 
@@ -85,7 +94,7 @@ def expand_template(
     if ignore_bangpath:
         options = {
             **(options or {}),
-            BANGPATH_OPT: False,
+            BANGPATH_OPT: BANGPATH_VALUE,
         }
 
     template_path = get_template_path(template_name)
