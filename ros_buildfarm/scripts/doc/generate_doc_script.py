@@ -16,7 +16,6 @@ import argparse
 import re
 import sys
 
-from em import Hook
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
@@ -30,6 +29,7 @@ from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_index
 from ros_buildfarm.doc_job import configure_doc_job
 from ros_buildfarm.templates import expand_template
+from ros_buildfarm.templates import Hook
 
 
 def main(argv=sys.argv[1:]):

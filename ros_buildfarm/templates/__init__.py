@@ -25,6 +25,7 @@ import warnings
 from xml.sax.saxutils import escape
 
 from em import BANGPATH_OPT
+from em import Hook
 from em import Interpreter
 
 template_prefix_path = [os.path.abspath(os.path.dirname(__file__))]
@@ -91,6 +92,7 @@ def expand_template(
     try:
         interpreter = CachingInterpreter(output=output, options=options)
         for template_hook in template_hooks or []:
+            assert isinstance(template_hook, Hook)
             interpreter.addHook(template_hook)
         template_path = get_template_path(template_name)
         # create copy before manipulating
