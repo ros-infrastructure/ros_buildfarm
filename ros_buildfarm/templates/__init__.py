@@ -21,8 +21,10 @@ except ImportError:
 import os
 import sys
 import time
+import warnings
 from xml.sax.saxutils import escape
 
+from em import BANGPATH_OPT
 from em import Hook
 from em import Interpreter
 
@@ -68,9 +70,23 @@ class CachingInterpreter(Interpreter):
             token.run(self, locals)
 
 
-def expand_template(template_name, data, options=None):
+def expand_template(
+    template_name, data, options=None, *, ignore_bangpath=None,
+):
     global interpreter
     global template_hooks
+
+    if options is not None:
+        warnings.warn(
+            "The 'options' argument is deprecated",
+            category=DeprecationWarning,
+            stacklevel=2)
+
+    if ignore_bangpath:
+        options = {
+            **(options or {}),
+            BANGPATH_OPT: False,
+        }
 
     output = StringIO()
     try:

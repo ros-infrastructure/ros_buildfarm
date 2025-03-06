@@ -16,7 +16,6 @@ import argparse
 import re
 import sys
 
-from em import BANGPATH_OPT
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
@@ -140,7 +139,7 @@ def main(argv=sys.argv[1:]):
             'scms': hook.scms,
             'scripts': hook.scripts,
             'build_tool': args.build_tool or build_file.build_tool},
-        options={BANGPATH_OPT: False})
+        ignore_bangpath=True)
     value = re.sub(r'(^| )python3 ', r'\1' + sys.executable + ' ', value, flags=re.M)
     print(value)
 
