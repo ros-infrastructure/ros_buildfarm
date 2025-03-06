@@ -62,27 +62,46 @@ cached_tokens = {}
 
 
 class CachingInterpreter(Interpreter):
+    """Interpreter for EmPy which caches parsed tokens."""
 
-    def parse(self, scanner, locals=None):
-        global cached_tokens
-        data = scanner.buffer
-        # try to use cached tokens
-        tokens = cached_tokens.get(data)
-        if tokens is None:
-            # collect tokens and cache them
-            tokens = []
-            while True:
-                token = scanner.one()
-                if token is None:
-                    break
-                tokens.append(token)
-            cached_tokens[data] = tokens
+    class _CachingScannerDecorator:
 
-        # reimplement the parse method using the (cached) tokens
-        self.invoke('atParse', scanner=scanner, locals=locals)
-        for token in tokens:
-            self.invoke('atToken', token=token)
-            token.run(self, locals)
+        def __init__(self, decoree, cache):
+            self.__dict__.update({
+                '_cache': cache,
+                '_decoree': decoree,
+                '_idx': 0,
+            })
+
+        def __getattr__(self, name):
+            return getattr(self.__dict__['_decoree'], name)
+
+        def __setattr__(self, name, value):
+            if name in self.__dict__:
+                self.__dict__[name] = value
+            else:
+                setattr(self.__dict__['_decoree'], name, value)
+
+        def one(self, *args, **kwargs):
+            if self._idx < len(self._cache):
+                token, count = self._cache[self._idx]
+                self.advance(count)
+                self.sync()
+            else:
+                count = len(self._decoree)
+                token = self._decoree.one(*args, **kwargs)
+                count -= len(self._decoree)
+                self._cache.append((token, count))
+
+            self._idx += 1
+            return token
+
+    def parse(self, scanner, *args, **kwargs):  # noqa: A002 D102
+        cache = cached_tokens.setdefault(scanner.buffer, [])
+        return super().parse(
+            CachingInterpreter._CachingScannerDecorator(scanner, cache),
+            *args,
+            **kwargs)
 
 
 def expand_template(
