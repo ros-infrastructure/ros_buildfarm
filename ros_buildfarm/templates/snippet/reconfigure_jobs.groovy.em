@@ -1,4 +1,5 @@
-import difflib.DiffUtils
+import com.github.difflib.DiffUtils
+import com.github.difflib.UnifiedDiffUtils
 import groovy.io.FileType
 @@ThreadInterrupt
 import groovy.transform.ThreadInterrupt
@@ -41,6 +42,7 @@ println '# BEGIN SECTION: Groovy script - reconfigure'
 dry_run = @('true' if dry_run else 'false')
 dry_run_suffix = dry_run ? ' (dry run)' : ''
 
+println "User: " + System.getProperty("user.name")
 
 @[if vars().get('expected_num_views')]@
 // reconfigure views
@@ -51,7 +53,9 @@ skipped_views = 0
 
 view_config_dir = build.getWorkspace().toString() + '/reconfigure_jobs/view_configs'
 
+println "View Config dir:" + view_config_dir
 def view_dir = new File(view_config_dir)
+println "Views: " + view_dir.listFiles()
 def views = view_dir.listFiles() ?: []
 views.sort()
 
@@ -272,7 +276,7 @@ def diff_configs(current_config, new_config) {
     }
 
     patch = DiffUtils.diff(current_lines, new_lines)
-    return DiffUtils.generateUnifiedDiff('current config', 'new config', current_lines, patch, 0)
+    return UnifiedDiffUtils.generateUnifiedDiff('current config', 'new config', current_lines, patch, 0)
 }
 
 
