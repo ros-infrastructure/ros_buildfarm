@@ -39,7 +39,35 @@ try:
     from em import Hook
 except ImportError:
     # EmPy v4
-    from emlib import Hook
+    from emlib import Hook as _Hook
+
+    class Hook(_Hook):
+        """Hook implementation with compatibility back to EmPy v3."""
+
+        def beforeFileLines(self, file, locals, *args, **kwargs):
+            return self.beforeFile(None, file, locals)
+
+        def afterFileLines(self):
+            return self.afterFile()
+
+        def beforeFileChunks(self, file, bufferSize, locals, *args, **kwargs):
+            return self.beforeFile(None, file, locals)
+
+        def afterFileChunks(self):
+            return self.afterFile()
+
+        def beforeFileFull(self, file, locals, *args, **kwargs):
+            return self.beforeFile(None, file, locals)
+
+        def afterFileFull(self):
+            return self.afterFile()
+
+        def beforeFile(self, name, file, locals):
+            pass
+
+        def afterFile(self):
+            pass
+
 
 from em import Interpreter
 
@@ -138,7 +166,6 @@ def expand_template(
             dispatcher=False)
     try:
         for template_hook in template_hooks or []:
-            assert isinstance(template_hook, Hook)
             interpreter.addHook(template_hook)
         # create copy before manipulating
         data = dict(data)
