@@ -42,8 +42,6 @@ println '# BEGIN SECTION: Groovy script - reconfigure'
 dry_run = @('true' if dry_run else 'false')
 dry_run_suffix = dry_run ? ' (dry run)' : ''
 
-println "User: " + System.getProperty("user.name")
-
 @[if vars().get('expected_num_views')]@
 // reconfigure views
 println '# BEGIN SUBSECTION: reconfigure @(expected_num_views) views'
@@ -53,9 +51,7 @@ skipped_views = 0
 
 view_config_dir = build.getWorkspace().toString() + '/reconfigure_jobs/view_configs'
 
-println "View Config dir:" + view_config_dir
 def view_dir = new File(view_config_dir)
-println "Views: " + view_dir.listFiles()
 def views = view_dir.listFiles() ?: []
 views.sort()
 
