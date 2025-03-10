@@ -41,7 +41,7 @@ kwargs = {
     'scripts': scripts,
     'zip_safe': False,
     'install_requires': [
-        'empy<4',
+        'empy',
         'PyYAML'],
     'extras_require': {
         'test': [
