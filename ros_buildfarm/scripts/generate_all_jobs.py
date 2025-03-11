@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import argparse
-import imp
+from importlib.machinery import SourceFileLoader
 import os
 import sys
 
@@ -355,7 +355,7 @@ def _check_call(cmd):
     print('')
     basepath = os.path.dirname(__file__)
     cmd[0] = os.path.join(basepath, cmd[0])
-    module = imp.load_source('script', cmd[0])
+    module = SourceFileLoader('script', cmd[0]).load_module()
     rc = module.main(cmd[1:])
     if rc:
         sys.exit(rc)
