@@ -2,6 +2,20 @@
 Changelog for package ros_buildfarm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.0 (2025-03-13)
+------------------
+
+* Improvements
+
+  * Add support for EmPy v4 (`#1086 <https://github.com/ros-infrastructure/ros_buildfarm/pull/1086>`_) (`#1087 <https://github.com/ros-infrastructure/ros_buildfarm/pull/1087>`_) (`#1089 <https://github.com/ros-infrastructure/ros_buildfarm/pull/1089>`_) (`#1088 <https://github.com/ros-infrastructure/ros_buildfarm/pull/1088>`_) (`#1090 <https://github.com/ros-infrastructure/ros_buildfarm/pull/1090>`_)
+  * Add pytest 'linter' mark to other linter tests (`#1083 <https://github.com/ros-infrastructure/ros_buildfarm/pull/1083>`_)
+  * Initial customization for reprepro-updater (`#1080 <https://github.com/ros-infrastructure/ros_buildfarm/pull/1080>`_)
+
+* Changes
+
+  * Deprecate 'options' argument to 'expand_template' (`#1085 <https://github.com/ros-infrastructure/ros_buildfarm/pull/1085>`_)
+  * 24.04 compatibility (`#1084 <https://github.com/ros-infrastructure/ros_buildfarm/pull/1084>`_)
+
 4.0.0 (2025-02-07)
 ------------------
 
