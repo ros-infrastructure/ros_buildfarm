@@ -1,5 +1,4 @@
-import com.github.difflib.DiffUtils
-import com.github.difflib.UnifiedDiffUtils
+import difflib.DiffUtils
 import groovy.io.FileType
 @@ThreadInterrupt
 import groovy.transform.ThreadInterrupt
@@ -41,6 +40,7 @@ add_job_prefixes_and_names_@(job_type)_@(int(i / group_size) + 1)(job_prefixes_a
 println '# BEGIN SECTION: Groovy script - reconfigure'
 dry_run = @('true' if dry_run else 'false')
 dry_run_suffix = dry_run ? ' (dry run)' : ''
+
 
 @[if vars().get('expected_num_views')]@
 // reconfigure views
@@ -272,7 +272,7 @@ def diff_configs(current_config, new_config) {
     }
 
     patch = DiffUtils.diff(current_lines, new_lines)
-    return UnifiedDiffUtils.generateUnifiedDiff('current config', 'new config', current_lines, patch, 0)
+    return DiffUtils.generateUnifiedDiff('current config', 'new config', current_lines, patch, 0)
 }
 
 
