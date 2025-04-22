@@ -1,4 +1,4 @@
-<htmlpublisher.HtmlPublisher plugin="htmlpublisher@@1.21">
+<htmlpublisher.HtmlPublisher plugin="htmlpublisher@@1.37">
   <reportTargets>
     <htmlpublisher.HtmlPublisherTarget>
       <reportName>API_ABI report</reportName>

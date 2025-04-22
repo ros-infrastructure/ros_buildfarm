@@ -1,7 +1,7 @@
 @{
 import html
 }@
-    <hudson.plugins.plot.PlotPublisher plugin="plot@@2.1.6">
+    <hudson.plugins.plot.PlotPublisher plugin="plot@@2.2.0">
       <plots>
 @[for plot_group, plot_list in sorted(plots.items())]@
 @[for plot in plot_list]@
