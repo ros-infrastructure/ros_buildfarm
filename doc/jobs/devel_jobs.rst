@@ -133,6 +133,39 @@ The task performs the following steps:
   The XUnit test results for each package will be created in the subfolder
   *test_results* in the workspace and be shown by Jenkins.
 
+Enable Pull Request Jobs
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+To enable pull request testing on packages in a repository you must do so in the rosdistro entry. `pull_request_testing: true` and you have to provide the buildfarm with the webhooks necessary to get callbacks.
+
+The ROS Buildfarm is configured to automatically create the webhooks using the user `@ros-pull-request-builder` if you grant that bot admin rights on your repository it will setup the hooks automatically.
+
+Alternatively you can setup the webhook manually for each repository to avoid the need for administrative rights on the org unit (or if the repository is not in an organization and thus you don't have the ability to give "Admin" access). Then the Jenkins user only needs write permissions.
+
+1. Use the above procedure to grant "Write" access instead of "Admin", or if the repository is not part of an organization, add as a collaborator without selecting anything from a nonexistent dropdown.)
+
+1. Go to "https://github.com/%YOUR_ORG%/%YOUR_REPO%/settings/hooks/new", then on the same page:
+
+1. Enter the "Payload URL" "https://build.ros.org/ghprbhook/"
+
+1. Check the following:
+
+* "Let me select individual events."
+
+ * "Issue comment"
+
+ * "Pull request"
+
+Update Rosdistro reference
+--------------------------
+
+You must add the test_pull_requests flag for the source entry of a specific repository in the distribution file and set it to true. E.g. see the Indigo distribution file. The configuration option is documented in REP 143.
+
+If you use bloom to make a new release of your software, there's an option to set this while running it.
+
+Note that after the pull request has been added, the job will usually not be created until the nightly Jenkins reconfiguration.
 
 Known limitations
 ^^^^^^^^^^^^^^^^^
