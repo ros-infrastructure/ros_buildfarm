@@ -10,6 +10,20 @@ example and can be found on
 `GitHub (ros-infrastructure/ros_buildfarm_config) <https://github.com/ros-infrastructure/ros_buildfarm_config>`_.
 
 
+Special YAML tags
+-----------------
+
+YAML tags can be used to treat certain data in the configuration different.
+
+The following special tags are available in ROS build farm configuration
+files:
+
+* ``!include``: parse the YAML file at the given relative URL and include it
+  under the node where the tag was found.
+* ``!relative_url``: resolve the given relative URL to an absolute URL based
+  from the file in which the tag was found.
+
+
 Entry point yaml
 ----------------
 
@@ -198,6 +212,11 @@ The following options are valid in version ``2`` (beside the generic options):
   (default: ``buildagent || <ROSDISTRO_NAME>_sourcedeb``).
 * ``jenkins_source_job_priority``: the job priority of *source* jobs.
 * ``jenkins_source_job_timeout``: the job timeout for *source* jobs.
+
+* ``jenkins_binary_job_weight_override``: per-package override of the number of
+  executors on a worker which are required to execute a job.
+  All jobs default to ``1``.
+  Uses the Jenkins Heavy Job plugin.
 
 * ``notifications``: a dictionary with the following keys:
 

@@ -26,7 +26,6 @@ from ros_buildfarm.common import get_github_project_url
 from ros_buildfarm.common import get_implicitly_ignored_package_names
 from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common import get_os_package_name
-from ros_buildfarm.common import get_package_condition_context
 from ros_buildfarm.common import get_package_manifests
 from ros_buildfarm.common import get_release_binary_view_name
 from ros_buildfarm.common import get_release_job_prefix
@@ -50,6 +49,7 @@ from rosdistro import get_cached_distribution
 from rosdistro import get_distribution_cache
 from rosdistro import get_distribution_file as rosdistro_get_distribution_file
 from rosdistro import get_index
+from rosdistro import get_package_condition_context
 
 
 def configure_release_jobs(
@@ -719,6 +719,7 @@ def _get_binarydeb_job_config(
         'github_url': get_github_project_url(release_repository.url),
 
         'job_priority': build_file.jenkins_binary_job_priority,
+        'job_weight': build_file.jenkins_binary_job_weight_overrides.get(pkg_name),
         'node_label': get_node_label(
             build_file.jenkins_binary_job_label,
             get_default_node_label('%s_%s%s_%s' % (

@@ -165,7 +165,7 @@ if regressions and True in regressions[pkg.name].values():
 @# package status
 @
 @[if has_status_column]@
-<td><span class="@pkg.status"@((' title="%s"' % pkg.status_description) if pkg.status_description else '')/></td>@
+<td><span class="@pkg.status"@( (' title="%s"' % pkg.status_description) if pkg.status_description else '' )/></td>@
 @[end if]@
 @
 @# package maintainers

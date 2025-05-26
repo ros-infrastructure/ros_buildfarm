@@ -19,7 +19,6 @@ import json
 import sys
 
 from catkin_pkg.packages import find_packages
-from em import BANGPATH_OPT
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_os_code_name
@@ -111,7 +110,7 @@ def main(argv=sys.argv[1:]):
         value = expand_template(
             'prerelease/prerelease_overlay_script.sh.em', {
                 'scms': scms},
-            options={BANGPATH_OPT: False})
+            ignore_bangpath=True)
         print(value)
 
 

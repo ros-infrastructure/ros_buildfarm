@@ -24,7 +24,8 @@ kwargs = {
     # same version as in:
     # - ros_buildfarm/__init__.py
     # - stdeb.cfg
-    'version': '3.0.1-master',
+    'python_requires': '>=3.6',
+    'version': '4.1.1+master',
     'packages': find_packages(exclude=['test']),
     'package_data': {
         'ros_buildfarm.templates': [
@@ -40,17 +41,16 @@ kwargs = {
     'scripts': scripts,
     'zip_safe': False,
     'install_requires': [
-        'empy<4',
+        'empy',
         'PyYAML'],
     'extras_require': {
         'test': [
-            'flake8 >= 3.7, < 5',
+            'flake8 >= 3.7',
             'flake8-class-newline',
             'flake8_docstrings',
             'flake8-import-order',
             'pep8',
-            'pycodestyle < 2.9.0',
-            'pyflakes < 2.5.0',
+            'pyflakes',
             'pytest'],
     },
     'author': 'Dirk Thomas',
@@ -72,9 +72,6 @@ kwargs = {
     'license': 'Apache 2.0',
 }
 
-if os.sys.version_info[0] == 2:
-    kwargs['install_requires'].append('configparser')
-
 if 'SKIP_PYTHON_MODULES' in os.environ:
     kwargs['packages'] = []
 elif 'SKIP_PYTHON_SCRIPTS' in os.environ:
@@ -82,6 +79,6 @@ elif 'SKIP_PYTHON_SCRIPTS' in os.environ:
     kwargs['scripts'] = []
 else:
     kwargs['install_requires'] += [
-        'catkin_pkg >= 0.2.6', 'jenkinsapi', 'rosdistro >= 0.4.0', 'vcstool >= 0.1.37']
+        'catkin_pkg >= 0.2.6', 'jenkinsapi', 'rosdistro >= 1.0.0', 'vcstool >= 0.1.37']
 
 setup(**kwargs)

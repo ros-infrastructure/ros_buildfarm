@@ -16,8 +16,6 @@ import argparse
 import re
 import sys
 
-from em import BANGPATH_OPT
-from em import Hook
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
@@ -30,6 +28,7 @@ from ros_buildfarm.common import get_sourcedeb_job_name
 from ros_buildfarm.common import package_format_mapping
 from ros_buildfarm.release_job import configure_release_job
 from ros_buildfarm.templates import expand_template
+from ros_buildfarm.templates import Hook
 
 
 def main(argv=sys.argv[1:]):
@@ -43,9 +42,17 @@ def main(argv=sys.argv[1:]):
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
     parser.add_argument(
+        '--skip-binary',
+        action='store_true',
+        help='Skip the entire binary package build process')
+    parser.add_argument(
         '--skip-install',
         action='store_true',
         help='Skip trying to install binarydeb')
+    parser.add_argument(
+        '--skip-source',
+        action='store_true',
+        help='Skip the entire source package build process')
     args = parser.parse_args(argv)
 
     package_format = package_format_mapping[args.os_name]
@@ -103,28 +110,29 @@ def main(argv=sys.argv[1:]):
         args.package_name, args.os_name, args.os_code_name, args.arch)
 
     separator_index = hook.scripts.index('--')
-    source_scripts = hook.scripts[:separator_index]
-    binary_scripts = hook.scripts[separator_index + 1:]
+    source_scripts = [] if args.skip_source else hook.scripts[:separator_index]
+    binary_scripts = [] if args.skip_binary else hook.scripts[separator_index + 1:]
 
-    # inject additional argument to skip fetching sourcedeb from repo
-    script_name = '/run_binary%s_job.py ' % deb_or_pkg
-    additional_argument = '--skip-download-sourcepkg '
-    for i, script in enumerate(binary_scripts):
-        offset = script.find(script_name)
-        if offset != -1:
-            offset += len(script_name)
-            script = script[:offset] + additional_argument + script[offset:]
-            binary_scripts[i] = script
-            break
+    if source_scripts:
+        # inject additional argument to skip fetching sourcedeb from repo
+        script_name = '/run_binary%s_job.py ' % deb_or_pkg
+        additional_argument = '--skip-download-sourcepkg '
+        for i, script in enumerate(binary_scripts):
+            offset = script.find(script_name)
+            if offset != -1:
+                offset += len(script_name)
+                script = script[:offset] + additional_argument + script[offset:]
+                binary_scripts[i] = script
+                break
 
-    # remove rm command for sourcedeb location
-    rm_command = 'rm -fr $WORKSPACE/binary%s' % deb_or_pkg
-    for i, script in enumerate(binary_scripts):
-        offset = script.find(rm_command)
-        if offset != -1:
-            script = script[:offset] + script[offset + len(rm_command):]
-            binary_scripts[i] = script
-            break
+        # remove rm command for sourcedeb location
+        rm_command = 'rm -fr $WORKSPACE/binary%s' % deb_or_pkg
+        for i, script in enumerate(binary_scripts):
+            offset = script.find(rm_command)
+            if offset != -1:
+                script = script[:offset] + script[offset + len(rm_command):]
+                binary_scripts[i] = script
+                break
 
     if args.skip_install:
         # remove install step
@@ -142,7 +150,7 @@ def main(argv=sys.argv[1:]):
             'source_scripts': source_scripts,
             'binary_scripts': binary_scripts,
             'package_format': package_format},
-        options={BANGPATH_OPT: False})
+        ignore_bangpath=True)
     value = re.sub(r'(^| )python3 ', r'\1' + sys.executable + ' ', value, flags=re.M)
     print(value)
 

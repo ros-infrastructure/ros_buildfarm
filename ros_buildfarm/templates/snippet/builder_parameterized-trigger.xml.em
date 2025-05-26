@@ -1,4 +1,4 @@
-    <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@@2.40">
+    <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@@806.vf6fff3e28c3e">
       <configs>
         <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
 @[if parameters]@
@@ -10,7 +10,7 @@
 @[if parameter_files]@
             <hudson.plugins.parameterizedtrigger.FileBuildParameters>
               <propertiesFile>@(','.join(ESCAPE(parameter_files)))</propertiesFile>
-              <failTriggerOnMissing>@(vars().get('missing_parameter_files_skip', False) ? 'true' : 'false')</failTriggerOnMissing>
+              <failTriggerOnMissing>@('true' if vars().get('missing_parameter_files_skip', False) else 'false')</failTriggerOnMissing>
               <textParamValueOnNewLine>false</textParamValueOnNewLine>
               <useMatrixChild>false</useMatrixChild>
               <onlyExactRuns>false</onlyExactRuns>

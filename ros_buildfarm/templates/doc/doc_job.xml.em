@@ -168,6 +168,7 @@ else:
         ' ' + os_code_name +
         ' ' + arch +
         ' --build-tool ' + build_tool +
+        ' --env-vars ' + ' '.join([v.replace('$', '\\$',) for v in build_environment_variables]) +
         ' --vcs-info "%s %s %s"' % (doc_repo_spec.type, doc_repo_spec.version if doc_repo_spec.version is not None else '', doc_repo_spec.url) +
         ' ' + ' '.join(repository_args) +
         ' $FORCE_FLAG' +
