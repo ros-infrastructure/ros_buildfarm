@@ -61,15 +61,15 @@ in the rosdistro repository.
 Example invocation
 ^^^^^^^^^^^^^^^^^^
 
-The following commands run a *prerelease* job for ROS *Indigo* for Ubuntu
-*Trusty* *amd64*.
-The repositories in the *underlay* workspace are: *roscpp_core* and *std_msgs*
-The packages defining the *overlay* workspace are: *roscpp*
+The following commands run a *prerelease* job for ROS *humble* for Ubuntu
+*Jammy* *amd64*.
+The repositories in the *underlay* workspace are: *rcutils* and *test_msgs*
+The packages defining the *overlay* workspace are: *rclcpp*
 
 .. code:: sh
 
   mkdir /tmp/prerelease_job
-  generate_prerelease_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default ubuntu trusty amd64 roscpp_core std_msgs --pkg roscpp --output-dir /tmp/prerelease_job
+  generate_prerelease_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/refs/heads/ros2/index.yaml humble default ubuntu jammy amd64 rcutils test_msgs --pkg rclcpp --output-dir /tmp/prerelease_job
   cd /tmp/prerelease_job
   ./prerelease.sh
 
@@ -80,8 +80,8 @@ custom branch or tag name need to be passed, e.g.:
 
 .. code:: sh
 
-  generate_prerelease_script.py ... roscpp_core std_msgs ... --custom-branch \
-    roscpp_core:mybranch std_msgs:mytag
+  generate_prerelease_script.py ... test_msgs ... --custom-branch \
+    rcutils:feature_branch
 
 Instead of specifying the packages in the *overlay* workspace *by name* the
 script also supports passing a dependency depth (``--level N``) and / or
