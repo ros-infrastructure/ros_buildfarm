@@ -156,4 +156,4 @@ The following commands are all it takes to run a prerelease job for a custom rep
   ./prerelease.sh -y
 
 The git clone command is just an example.
-It can be substituted with any other commands to populate the workspaces (e.g. `wstool`, `vcstool`).
+It can be substituted with any other commands to populate the workspaces (e.g. `wstool`, `vcs2l`).
