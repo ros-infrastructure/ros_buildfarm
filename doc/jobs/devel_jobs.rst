@@ -189,6 +189,14 @@ The return code of the invocation of ``catkin_tests_results`` /
 ``colcon test-result``is then available in the environment variable
 ``test_result_RC``.
 
+Run the *devel* job on external CI
+-------------------------------
+
+Since it is easy to run a *devel* job locally it can also be run on an external CI
+runner (like GitHub actions) to either test every commit or pull request.
+The setup and invocation is the same as locally.
+An example can be found in the `.github/actions/devel/action.yaml <https://github.com/ros-infrastructure/ros_buildfarm/blob/master/.github/actions/devel/action.yaml>`_ file of the *ros_buildfarm* repository.
+
 Run for "custom" repositories
 -----------------------------
 
