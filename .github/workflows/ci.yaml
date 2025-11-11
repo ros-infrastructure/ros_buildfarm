@@ -9,7 +9,7 @@ on:
 jobs:
   pytest:
     name: Pytest
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -22,10 +22,10 @@ jobs:
 
   ros1_audit:
     name: ROS 1 Audit
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python: ['3.6']
+        python: ['3.7']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -38,26 +38,28 @@ jobs:
       - name: Run job
         uses: ./.github/actions/audit
         with:
+          config_url: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/df26b6f0e16a62ffbf0cf25c6e4d3f103e274e3f/index.yaml
           ros_distro: noetic
           os_code_name: focal
 
   ros1_config:
     name: ROS 1 Config Validation
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
       - name: Install dependencies
         uses: ./.github/actions/setup
       - name: Validate configration
-        run: validate_config_index.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+        run: validate_config_index.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/df26b6f0e16a62ffbf0cf25c6e4d3f103e274e3f/index.yaml
 
   ros1_doc:
     name: ROS 1 Doc
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    if: false  # ROS 1 repository key has expired
     strategy:
       matrix:
-        python: ['3.6']
+        python: ['3.7']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -70,16 +72,18 @@ jobs:
       - name: Run job
         uses: ./.github/actions/doc
         with:
+          config_url: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/df26b6f0e16a62ffbf0cf25c6e4d3f103e274e3f/index.yaml
           ros_distro: noetic
           os_code_name: focal
           repo: roscpp_core
 
   ros1_prerelease:
     name: ROS 1 Prerelease
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    if: false  # ROS 1 repository key has expired
     strategy:
       matrix:
-        python: ['3.6']
+        python: ['3.7']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -92,6 +96,7 @@ jobs:
       - name: Run job
         uses: ./.github/actions/prerelease
         with:
+          config_url: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/df26b6f0e16a62ffbf0cf25c6e4d3f103e274e3f/index.yaml
           ros_distro: noetic
           os_code_name: focal
           overlay_pkg: roscpp
@@ -99,10 +104,11 @@ jobs:
 
   ros1_prerelease_external:
     name: ROS 1 Prerelease (External)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    if: false  # ROS 1 repository key has expired
     strategy:
       matrix:
-        python: ['3.6']
+        python: ['3.7']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -121,16 +127,18 @@ jobs:
       - name: Run job
         uses: ./.github/actions/prerelease
         with:
+          config_url: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/df26b6f0e16a62ffbf0cf25c6e4d3f103e274e3f/index.yaml
           ros_distro: noetic
           os_code_name: focal
           source_dir: ${{github.workspace}}/dummy_package
 
   ros1_release:
     name: ROS 1 Release
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    if: false  # ROS 1 repository key has expired
     strategy:
       matrix:
-        python: ['3.6']
+        python: ['3.7']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -143,16 +151,17 @@ jobs:
       - name: Run job
         uses: ./.github/actions/release
         with:
+          config_url: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/df26b6f0e16a62ffbf0cf25c6e4d3f103e274e3f/index.yaml
           ros_distro: noetic
           os_code_name: focal
           pkg_name: rostime
 
   ros1_release_reconfigure:
     name: ROS 1 Release Reconfigure
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python: ['3.6']
+        python: ['3.7']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -165,15 +174,16 @@ jobs:
       - name: Run job
         uses: ./.github/actions/release_reconfigure
         with:
+          config_url: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/df26b6f0e16a62ffbf0cf25c6e4d3f103e274e3f/index.yaml
           ros_distro: noetic
           pkg_names: rostime
 
   ros1_status_pages:
     name: ROS 1 Status Pages
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python: ['3.6']
+        python: ['3.7']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -186,14 +196,15 @@ jobs:
       - name: Run job
         uses: ./.github/actions/status_pages
         with:
+          config_url: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/df26b6f0e16a62ffbf0cf25c6e4d3f103e274e3f/index.yaml
           ros_distro: noetic
 
   ros1_sync_criteria_check:
     name: ROS 1 Sync Criteria Check
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python: ['3.6']
+        python: ['3.7']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -202,15 +213,16 @@ jobs:
       - name: Run job
         uses: ./.github/actions/sync_criteria_check
         with:
+          config_url: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/df26b6f0e16a62ffbf0cf25c6e4d3f103e274e3f/index.yaml
           ros_distro: noetic
           os_code_name: focal
 
   ros1_trigger:
     name: ROS 1 Trigger
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python: ['3.6']
+        python: ['3.7']
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -219,11 +231,12 @@ jobs:
       - name: Run job
         uses: ./.github/actions/trigger
         with:
+          config_url: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/df26b6f0e16a62ffbf0cf25c6e4d3f103e274e3f/index.yaml
           ros_distro: noetic
 
   ros2_audit:
     name: ROS 2 Audit
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -238,7 +251,7 @@ jobs:
 
   ros2_ci:
     name: ROS 2 CI
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -272,7 +285,7 @@ jobs:
 
   ros2_config:
     name: ROS 2 Config Validation
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -283,7 +296,7 @@ jobs:
 
   ros2_devel:
     name: ROS 2 Devel
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -299,7 +312,7 @@ jobs:
 
   ros2_doc_noble:
     name: ROS 2 Doc (Noble)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -316,7 +329,7 @@ jobs:
 
   ros2_doc_jammy:
     name: ROS 2 Doc (Jammy)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -333,7 +346,7 @@ jobs:
 
   ros2_prerelease:
     name: ROS 2 Prerelease
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -350,7 +363,7 @@ jobs:
 
   ros2_release:
     name: ROS 2 Release
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -366,7 +379,7 @@ jobs:
 
   ros2_release_reconfigure:
     name: ROS 2 Release Reconfigure
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -381,7 +394,7 @@ jobs:
 
   ros2_release_rpm:
     name: ROS 2 Release (RPM)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -400,7 +413,7 @@ jobs:
 
   ros2_sync_criteria_check:
     name: ROS 2 Sync Criteria Check
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -415,7 +428,7 @@ jobs:
 
   ros2_sync_criteria_check_rpm:
     name: ROS 2 Sync Criteria Check (RPM)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
@@ -433,7 +446,7 @@ jobs:
 
   ros2_trigger:
     name: ROS 2 Trigger
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out project
         uses: actions/checkout@v2
