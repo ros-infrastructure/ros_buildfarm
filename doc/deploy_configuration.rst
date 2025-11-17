@@ -79,5 +79,4 @@ repositories and remove obsolete jobs for removed packages and repositories.
 But you might want to trigger all ``*_reconfigure-jobs`` manually to ensure
 that they succeed and generate the desired jobs.
 
-Note that the job reconfiguration takes a significant amount of time (e.g. for
-Indigo on the ROS build farm roughly 45 minutes).
+Note that the job reconfiguration takes a significant amount of time.

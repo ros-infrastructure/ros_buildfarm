@@ -88,16 +88,16 @@ custom fork you must also import the current snapshot of available packages
 from the official repositories.
 
 To do this you will need to create an import config file.
-Create a file like ``import_indigo.yaml`` on the repository machine and invoke
+Create a file like ``import_rolling.yaml`` on the repository machine and invoke
 the ``import_upstream`` job with the absolute path to this yaml file as the
 parameter::
 
     name: backfill-ros
     method: http://packages.ros.org/ros/ubuntu/
-    suites: [trusty]
+    suites: [noble]
     component: main
     architectures: [amd64, source]
-    filter_formula: Package (% ros-indigo-* )
+    filter_formula: Package (% ros-rolling-* )
 
 
 Use the forked rosdep database or keep using the official one?
