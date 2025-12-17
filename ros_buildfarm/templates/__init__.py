@@ -78,7 +78,6 @@ template_hooks = None
 
 
 def get_template_path(template_name):
-    global template_prefix_path
     for basepath in template_prefix_path:
         template_path = os.path.join(basepath, template_name)
         if os.path.exists(template_path):
@@ -136,7 +135,6 @@ def expand_template(
     template_name, data, options=None, *, ignore_bangpath=None,
 ):
     global interpreter
-    global template_hooks
 
     if options is not None:
         warnings.warn(
@@ -230,7 +228,6 @@ def _expand_snippet(snippet_name, **kwargs):
 
 
 def _expand_template(template_name, **kwargs):
-    global interpreter
     template_path = get_template_path(template_name)
     _add_helper_functions(kwargs)
     with open(template_path, 'r') as h:
