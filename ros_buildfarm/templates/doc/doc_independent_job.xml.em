@@ -22,6 +22,7 @@
 ))@
 @(SNIPPET(
     'property_job-weight',
+    weight=job_weight,
 ))@
   </properties>
 @(SNIPPET(
