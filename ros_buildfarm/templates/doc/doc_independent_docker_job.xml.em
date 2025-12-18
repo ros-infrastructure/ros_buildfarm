@@ -22,6 +22,7 @@
 ))@
 @(SNIPPET(
     'property_job-weight',
+    weight=job_weight,
 ))@
   </properties>
 @[if upload_repository_url is not None]@
