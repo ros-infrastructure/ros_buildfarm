@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from datetime import datetime
 import glob
 import os
 import subprocess
@@ -69,7 +70,8 @@ def build_binaryrpm(
         '--rebuild', source_packages[0]]
 
     if append_timestamp:
-        cmd += ['--define', 'release_suffix .%(date -u +%%Y%%m%%d.%%H%%M%%S)']
+        release_suffix = datetime.utcnow().strftime('.%Y%m%d.%H%M%S')
+        cmd += ['--define', 'release_suffix ' + release_suffix]
 
     if skip_tests:
         cmd += ['--without', 'tests']

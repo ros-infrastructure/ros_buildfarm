@@ -61,15 +61,15 @@ in the rosdistro repository.
 Example invocation
 ^^^^^^^^^^^^^^^^^^
 
-The following commands run a *prerelease* job for ROS *Indigo* for Ubuntu
-*Trusty* *amd64*.
-The repositories in the *underlay* workspace are: *roscpp_core* and *std_msgs*
-The packages defining the *overlay* workspace are: *roscpp*
+The following commands run a *prerelease* job for ROS *Rolling* for Ubuntu
+*Noble* *amd64*.
+The repositories in the *underlay* workspace are: *rclcpp* and *std_msgs*
+The packages defining the *overlay* workspace are: *rclcpp*
 
 .. code:: sh
 
   mkdir /tmp/prerelease_job
-  generate_prerelease_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default ubuntu trusty amd64 roscpp_core std_msgs --pkg roscpp --output-dir /tmp/prerelease_job
+  generate_prerelease_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml rolling default ubuntu noble amd64 rclcpp std_msgs --pkg rclcpp --output-dir /tmp/prerelease_job
   cd /tmp/prerelease_job
   ./prerelease.sh
 
@@ -80,8 +80,8 @@ custom branch or tag name need to be passed, e.g.:
 
 .. code:: sh
 
-  generate_prerelease_script.py ... roscpp_core std_msgs ... --custom-branch \
-    roscpp_core:mybranch std_msgs:mytag
+  generate_prerelease_script.py ... rclcpp std_msgs ... --custom-branch \
+    rclcpp:mybranch std_msgs:mytag
 
 Instead of specifying the packages in the *overlay* workspace *by name* the
 script also supports passing a dependency depth (``--level N``) and / or
@@ -115,13 +115,6 @@ scripts which can be invoked manually in the same order:
   ``colcon test-result --all`` to output a summary of all tests in the overlay
   workspace.
 
-Run the *prerelease* job on Travis
-----------------------------------
-
-Since it is easy to run a *prerelease* job locally it can also be run on Travis to either test every commit or pull request.
-The setup and invocation is the same as locally.
-The `.travis.yml <https://github.com/ros-infrastructure/ros_buildfarm/blob/master/.travis.yml>`_ file of the *ros_buildfarm* repository is a good starting point.
-
 Run for "custom" repositories
 -----------------------------
 
@@ -138,7 +131,7 @@ repository type, the repository URL, the branch or tag name, e.g.:
 .. code:: sh
 
   generate_prerelease_script.py ... --custom-repo \
-    my_repo_name:git:https://github.com/dirk-thomas/roscpp_core.git:mybranch
+    my_repo_name:git:https://github.com/dirk-thomas/rclcpp.git:mybranch
 
 If the ROS packages in a repository depend on other packages not available in
 the ROS distribution the repositories containing them need to be listed too.
@@ -151,9 +144,9 @@ The following commands are all it takes to run a prerelease job for a custom rep
 
   mkdir /tmp/prerelease && cd /tmp/prerelease
   git clone -b dummy_package https://github.com/ros-infrastructure/ros_buildfarm ws/src/ros_buildfarm
-  generate_prerelease_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml kinetic default ubuntu xenial amd64 --output-dir .
+  generate_prerelease_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml rolling default ubuntu noble amd64 --output-dir .
   # the argument -y suppresses the question if you want to continue with content already present in the workspace
   ./prerelease.sh -y
 
 The git clone command is just an example.
-It can be substituted with any other commands to populate the workspaces (e.g. `wstool`, `vcs2l`).
+It can be substituted with any other commands to populate the workspaces (e.g. `vcs2l`).

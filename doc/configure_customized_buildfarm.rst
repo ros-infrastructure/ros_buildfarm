@@ -33,7 +33,7 @@ Change which targets are being built
 
 Modify the targets listed in the build files.
 The targets are defined as nested dictionaries of the OS name
-(e.g. ``ubuntu``), the OS code name (e.g. ``trusty``) and the architecture
+(e.g. ``ubuntu``), the OS code name (e.g. ``noble``) and the architecture
 (e.g. ``amd64``)::
 
     targets:
