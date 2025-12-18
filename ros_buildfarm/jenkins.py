@@ -81,7 +81,6 @@ _cached_views = {}
 def configure_view(
         jenkins, view_name, include_regex=None, filter_queue=True,
         template_name='generic_view.xml.em', dry_run=False, context_lines=0):
-    global _cached_views
     key = (view_name, include_regex, filter_queue, template_name, dry_run)
     if key in _cached_views:
         print("Skipped view '%s' as it has been configured before" % view_name)
@@ -180,7 +179,6 @@ _cached_jobs = {}
 
 
 def configure_job(jenkins, job_name, job_config, view=None, dry_run=False, context_lines=0):
-    global _cached_jobs
     key = (job_name, job_config, view, dry_run)
     if key in _cached_jobs:
         print("Skipped job '%s' as it has been configured before" % job_name)

@@ -453,7 +453,6 @@ def _strip_version_suffix(version):
     >>> strip_version_suffix('1.2.3-foo')
     '1.2.3'
     """
-    global version_regex
     if not version:
         return version
     match = version_regex.search(version)
