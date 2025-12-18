@@ -120,7 +120,7 @@ class DocBuildFile(BuildFile):
             self.jenkins_job_label = data['jenkins_job_label']
         self.jenkins_job_weight = None
         if 'jenkins_job_weight' in data:
-            self.jenkins_job_weight = int(data['jenkins_job_weight'])       
+            self.jenkins_job_weight = int(data['jenkins_job_weight'])
         self.jenkins_job_priority = None 
         if 'jenkins_job_priority' in data:
             self.jenkins_job_priority = int(data['jenkins_job_priority'])
