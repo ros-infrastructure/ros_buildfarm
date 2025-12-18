@@ -134,12 +134,12 @@ task in a Docker container.
 Example invocation
 ^^^^^^^^^^^^^^^^^^
 
-The following commands run the *doc* job for the *roscpp_core* repository from
-ROS *Indigo* for Ubuntu *Trusty* *amd64*:
+The following commands run the *doc* job for the *rclcpp* repository from
+ROS *Rolling* for Ubuntu *Noble* *amd64*:
 
 .. code:: sh
 
   mkdir /tmp/doc_job
-  generate_doc_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default roscpp_core ubuntu trusty amd64 > /tmp/doc_job/doc_job_indigo_roscpp_core.sh
+  generate_doc_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml rolling default rclcpp ubuntu noble amd64 > /tmp/doc_job/doc_job_rolling_rclcpp.sh
   cd /tmp/doc_job
-  sh doc_job_indigo_roscpp_core.sh
+  sh doc_job_rolling_rclcpp.sh
