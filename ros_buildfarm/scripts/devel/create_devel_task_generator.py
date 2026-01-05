@@ -118,6 +118,7 @@ def main(argv=sys.argv[1:]):
             'python3-colcon-output',
             'python3-colcon-parallel-executor',
             'python3-colcon-ros',
+            'python3-colcon-ros-domain-id-coordinator',
             'python3-colcon-test-result',
         ]
     elif 'catkin' not in pkg_names:
