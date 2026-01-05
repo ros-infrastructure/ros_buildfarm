@@ -327,6 +327,7 @@ def get_short_os_code_name(os_code_name):
         'jammy': 'J',
         'jessie': 'J',
         'noble': 'N',
+        'resolute': 'R',
         'saucy': 'S',
         'stretch': 'S',
         'trusty': 'T',
