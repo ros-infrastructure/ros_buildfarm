@@ -116,7 +116,7 @@ def call_build_tool(
                         os.remove(cache_file)
 
         elif build_tool == 'colcon':
-            cmd.append('--cmake-force-reconfigure')
+            cmd.append('--cmake-clean-cache')
 
     if install and build_tool == 'catkin_make_isolated':
         cmd.append('--install')
