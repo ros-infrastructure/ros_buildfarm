@@ -85,6 +85,7 @@ def main(argv=sys.argv[1:]):
         'python3-colcon-package-selection',
         'python3-colcon-recursive-crawl',
         'python3-colcon-ros',
+        'python3-colcon-ros-domain-id-coordinator',
         'python3-rosdep',
         'python3-vcstool',
     ]
