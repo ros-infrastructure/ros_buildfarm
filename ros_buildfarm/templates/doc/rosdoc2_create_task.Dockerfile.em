@@ -57,7 +57,7 @@ cmds = [
     ' --os-code-name ' + os_code_name + \
     ' --arch ' + arch + \
     ' --distribution-repository-urls ' + ' '.join(distribution_repository_urls) + \
-    ' --distribution-repository-key-files ' + ' ' .join(['/etc/apt/keyrings/ros-buildfarm-%d.key' % i for i in range(len(distribution_repository_keys))]) + \
+    ' --distribution-repository-key-files ' + ' ' .join(['/etc/apt/keyrings/ros-buildfarm-%d.asc' % i for i in range(len(distribution_repository_keys))]) + \
     ' --env-vars ' + ' ' .join(['%s=%s' % key_value for key_value in env_vars.items()]) + \
     ' --dockerfile-dir /tmp/docker_doc',
 ]

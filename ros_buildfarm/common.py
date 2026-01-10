@@ -135,9 +135,9 @@ def get_repositories_and_script_generating_key_files(
         script_generating_key_files.append("mkdir -p $WORKSPACE/keys")
         script_generating_key_files.append("rm -fr $WORKSPACE/keys/*")
         for i, repository_key in enumerate(unique_repository_keys):
-            repository_args.append('$WORKSPACE/keys/%d.key' % i)
+            repository_args.append('$WORKSPACE/keys/%d.asc' % i)
             script_generating_key_files.append(
-                'echo "%s" > $WORKSPACE/keys/%d.key' % (repository_key, i))
+                'echo "%s" > $WORKSPACE/keys/%d.asc' % (repository_key, i))
 
     if custom_rosdep_urls:
         repository_args.append('--custom-rosdep-urls')
