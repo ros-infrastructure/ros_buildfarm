@@ -104,7 +104,7 @@ cmds.append(
     ' ' + os_code_name +
     ' ' + arch +
     ' --distribution-repository-urls ' + ' '.join(distribution_repository_urls) +
-    ' --distribution-repository-key-files ' + ' ' .join(['/etc/apt/keyrings/ros-buildfarm-%d.key' % i for i in range(len(distribution_repository_keys))]) +
+    ' --distribution-repository-key-files ' + ' ' .join(['/etc/apt/keyrings/ros-buildfarm-%d.asc' % i for i in range(len(distribution_repository_keys))]) +
     ' --binarypkg-dir ' + binarypkg_dir +
     ' --env-vars ' + ' '.join(build_environment_variables) +
     ' --dockerfile-dir ' + dockerfile_dir +
