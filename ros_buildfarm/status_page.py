@@ -124,6 +124,7 @@ def build_release_status_page(
     template_name = 'status/release_status_page.html.em'
     data = {
         'title': 'ROS packages for %s' % rosdistro_name.capitalize(),
+        'rosdistro_name': rosdistro_name,
         'start_time': start_time,
         'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),
 
@@ -235,6 +236,7 @@ def build_repos_status_page(
     data = {
         'title': 'All packages for %s targets' % rosdistro_name.capitalize(),
         'start_time': start_time,
+        'rosdistro_name': rosdistro_name,
         'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),
 
         'resource_hashes': get_resource_hashes(),
