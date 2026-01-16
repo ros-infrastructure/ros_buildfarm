@@ -120,7 +120,7 @@
 @
 <td>@
 @ <div>@
-@ @ <a href="https://index.ros.org/p/@pkg.url#@rosdistro_name">@pkg.name</a>
+@ @ <a href="https://index.ros.org/p/@pkg.name#@rosdistro_name">@pkg.name</a>@
 @ </div>@
 @{
 hidden_texts = []
