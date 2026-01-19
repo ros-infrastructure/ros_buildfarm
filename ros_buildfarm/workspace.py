@@ -48,7 +48,8 @@ def clean_workspace(workspace_root):
 def call_build_tool(
     build_tool, rosdistro_name, workspace_root, cmake_args=None,
     force_cmake=False, cmake_clean_cache=False, install=False, make_args=None,
-    args=None, parent_result_spaces=None, env=None, colcon_verb='build'
+    args=None, parent_result_spaces=None, env=None, colcon_verb='build',
+    test_executor='parallel'
 ):
     # command to run
     assert build_tool in ('catkin_make_isolated', 'colcon')
@@ -84,9 +85,18 @@ def call_build_tool(
         # process packages sequentially assuming tests from different packages
         # can't be executed in parallel
         if colcon_verb == 'test':
-            cmd += [
-                '--event-handlers', 'console_direct+',
-                '--executor', 'sequential']
+            if test_executor == 'parallel':
+                cmd += [
+                    '--event-handlers', 'console_cohesion+']
+            elif test_executor == 'sequential':
+                cmd += [
+                    '--event-handlers', 'console_direct+',
+                    '--executor', 'sequential']
+            else:
+                print("Using executor: '%s'" % test_executor)
+                cmd += [
+                    '--event-handlers', 'console_direct+',
+                    '--executor', test_executor]
 
             # In Foxy and prior, xunit2 format is needed to make Jenkins xunit plugin 2.x happy
             # After Foxy, we introduced per-package changes to make local builds and CI
