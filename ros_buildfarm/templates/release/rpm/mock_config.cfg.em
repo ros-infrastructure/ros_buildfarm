@@ -36,10 +36,11 @@ config_opts['environment']['@env_key'] = '@env_val'
 config_opts['macros']['%_empty_manifest_terminate_build'] = '%{nil}'
 config_opts['macros']['%_missing_build_ids_terminate_build'] = '%{nil}'
 
+@[if os_name in ['rhel'] and os_code_name in ['8', '9']]@
 # Disable automatic out-of-source CMake builds
 config_opts['macros']['%__cmake_in_source_build'] = '1'
 config_opts['macros']['%__cmake3_in_source_build'] = '1'
-
+@[end if]@
 # Required for running mock in Docker
 config_opts['use_nspawn'] = False
 
