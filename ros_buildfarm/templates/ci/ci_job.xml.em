@@ -372,6 +372,7 @@ parameters = [
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Compress install space"',
+        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/create_workspace_archive.py' +
         ' ' + (rosdistro_name or "''") +
         ' ' + os_code_name +
