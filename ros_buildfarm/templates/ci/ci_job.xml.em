@@ -372,20 +372,13 @@ parameters = [
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Compress install space"',
-        'cd $WORKSPACE && python3 -c "'
-        'import hashlib; '
-        'import tarfile; '
-        'archive = \'ros%d-%s-linux-%s-%s-ci.tar.bz2\'; '
-        't = tarfile.open(archive, \'w:bz2\'); '
-        't.add(\'ws/install_isolated\', arcname=\'ros%d-linux\'); '
-        't.close(); '
-        'h = hashlib.sha256(); '
-        'h.update(open(archive, \'rb\').read()); '
-        'open(archive.replace(\'.tar.bz2\', \'-CHECKSUM\'), \'w\').write(h.hexdigest() + \' *\' + archive + \'\\\\n\')"' % (
-          ros_version, rosdistro_name or 'global', os_code_name, arch,
-          ros_version
-        ),
-        'cd -',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/create_workspace_archive.py' +
+        ' ' + (rosdistro_name or "''") +
+        ' ' + os_code_name +
+        ' ' + arch +
+        ' --ros-version ' + str(ros_version) +
+        ' --install-dir $WORKSPACE/ws/install_isolated' +
+        ' --output-dir $WORKSPACE',
         'echo "# END SECTION"',
     ]),
 ))@
