@@ -453,6 +453,12 @@ def add_argument_skip_tests(parser):
         help='Skip execution of tests as part of the package build process.')
 
 
+def add_argument_install_ccache(parser):
+    parser.add_argument(
+        '--install-ccache', action='store_true',
+        help='Install the ccache binary packages in the system.')
+
+
 def check_len_action(minargs, maxargs):
     class CheckLength(argparse.Action):
 
