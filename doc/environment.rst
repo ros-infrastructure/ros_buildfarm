@@ -35,24 +35,36 @@ The following commands can be used on Ubuntu Xenial and newer::
   pip3 install rosdistro
   pip3 install ros_buildfarm
 
+**Note** that the PIP release of ``ros_buildfarm`` might be outdated and give you
+issues. It is recommended to install a later version using the instructions
+detailed in the `section here <#using-a-different-version-of-ros_buildfarm>`_.
+
 
 Provide credentials for Jenkins master
 --------------------------------------
 
 To allow ``ros_buildfarm`` to configure any jobs on the Jenkins master it
-requires credentials.
-Create the `.ini <https://en.wikipedia.org/wiki/INI_file>`_ file ``~/.buildfarm/jenkins.ini`` containing your credentials to log in to the Jenkins master, e.g.::
+requires credentials. Create the
+`.ini <https://en.wikipedia.org/wiki/INI_file>`_ file
+``~/.buildfarm/jenkins.ini`` containing your credentials to log in to the
+Jenkins master, e.g.::
 
   [http://jenkins-instance-url.example.com:8080]
   username=admin
   password=changeme
 
-You can put multiple separate sections for different hosts into the configuration file as well as use a section ``[DEFAULT]`` which is being used if no host specific section is found.
+You can put multiple separate sections for different hosts into the
+configuration file as well as use a section ``[DEFAULT]`` which is
+being used if no host specific section is found.
 
-Instead of putting the plain password in this configuration you can use the *API token* of your Jenkins user.
-To get the API token (or change it) go to the *configure* page of your Jenkins user (http://YOUR-JENKINS/me/configure).
+Instead of putting the plain password in this configuration you can use the
+*API token* of your Jenkins user. To get the API token (or change it) go to
+the *configure* page of your Jenkins user (http://YOUR-JENKINS/me/configure).
 
-If you are using your GitHub account to log in to Jenkins you can use a token instead of your plain text password (see the `GitHub help <https://help.github.com/articles/creating-an-access-token-for-command-line-use/>`_ on how to create a token).
+If you are using your GitHub account to log in to Jenkins you can use a
+token instead of your plain text password (see the
+`GitHub help <https://help.github.com/articles/creating-an-access-token-for-command-line-use/>`_
+on how to create a token).
 
 Using a different version of ros_buildfarm
 ------------------------------------------
@@ -78,6 +90,11 @@ But be aware that some changes in ``ros_buildfarm`` require configured Jenkins
 jobs and the scripts in the ``ros_buildfarm`` repository to be in sync and
 therefore to redeploy the Jenkins jobs.
 
+Alternatively, you can also use PIP to install a specific branch or tag from the
+original repo through its
+`VCS support <https://pip.pypa.io/en/stable/topics/vcs-support/#git>`_::
+
+  pip install https://github.com/ros-infrastructure/ros_buildfarm.git@master
 
 Using forked version of ros_buildfarm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
