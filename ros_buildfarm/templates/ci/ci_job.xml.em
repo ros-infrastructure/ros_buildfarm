@@ -373,17 +373,18 @@ parameters = [
     script='\n'.join([
         'echo "# BEGIN SECTION: Compress install space"',
         'cd $WORKSPACE && python3 -c "'
+        'import hashlib; '
         'import tarfile; '
-        't = tarfile.open('
-        '\'ros%d-%s-linux-%s-%s-ci.tar.bz2\', '
-        '\'w:bz2\'); '
+        'archive = \'ros%d-%s-linux-%s-%s-ci.tar.bz2\'; '
+        't = tarfile.open(archive, \'w:bz2\'); '
         't.add(\'ws/install_isolated\', arcname=\'ros%d-linux\'); '
-        't.close()"' % (
+        't.close(); '
+        'h = hashlib.sha256(); '
+        'h.update(open(archive, \'rb\').read()); '
+        'open(archive.replace(\'.tar.bz2\', \'-CHECKSUM\'), \'w\').write(h.hexdigest() + \' *\' + archive + \'\\\\n\')"' % (
           ros_version, rosdistro_name or 'global', os_code_name, arch,
           ros_version
         ),
-        'sha256sum -b ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name or 'global', os_code_name, arch) +
-        ' > ros%d-%s-linux-%s-%s-ci-CHECKSUM' % (ros_version, rosdistro_name or 'global', os_code_name, arch),
         'cd -',
         'echo "# END SECTION"',
     ]),
