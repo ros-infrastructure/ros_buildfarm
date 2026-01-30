@@ -24,12 +24,17 @@ def main(argv=sys.argv[1:]):
     base_image = get_base_image_from_dockerfile(dockerfile)
     print(base_image)
 
+    platform_flag = None
+    if base_image.startswith('arm64v8/'):
+        platform_flag = 'linux/arm64'
+
     known_error_strings = [
         'Error pulling image',
         'Server error: Status 502 while fetching image layer',
     ]
     max_tries = 10
-    rc, _ = call_docker_pull_repeatedly(base_image, known_error_strings, max_tries)
+    rc, _ = call_docker_pull_repeatedly(
+        base_image, known_error_strings, max_tries, platform_flag=platform_flag)
     return rc
 
 
@@ -46,14 +51,16 @@ def get_base_image_from_dockerfile(dockerfile):
         (from_prefix, dockerfile)
 
 
-def call_docker_pull_repeatedly(base_image, known_error_strings, max_tries):
+def call_docker_pull_repeatedly(
+        base_image, known_error_strings, max_tries, platform_flag=None):
     for i in range(1, max_tries + 1):
         if i > 1:
             sleep_time = 5 + 2 * i
             print("Reinvoke 'docker pull' (%d/%d) after sleeping %s seconds" %
                   (i, max_tries, sleep_time))
             sleep(sleep_time)
-        rc, known_error_conditions = call_docker_pull(base_image, known_error_strings)
+        rc, known_error_conditions = call_docker_pull(
+            base_image, known_error_strings, platform_flag=platform_flag)
         if rc == 0 or not known_error_conditions:
             break
         print('')
@@ -64,10 +71,13 @@ def call_docker_pull_repeatedly(base_image, known_error_strings, max_tries):
     return rc, known_error_conditions
 
 
-def call_docker_pull(base_image, known_error_strings):
+def call_docker_pull(base_image, known_error_strings, platform_flag=None):
     known_error_conditions = []
 
-    cmd = ['docker', 'pull', base_image]
+    cmd = ['docker', 'pull']
+    if platform_flag:
+        cmd.extend(['--platform', platform_flag])
+    cmd.append(base_image)
     print('Check docker base image for updates: %s' % ' '.join(cmd))
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
