@@ -32,6 +32,7 @@ from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_download_sourcepkg
 from ros_buildfarm.argument import add_argument_skip_tests
 from ros_buildfarm.argument import add_argument_target_repository
+from ros_buildfarm.argument import add_argument_use_official_docker_images
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
@@ -55,10 +56,7 @@ def main(argv=sys.argv[1:]):
     add_argument_append_timestamp(parser)
     add_argument_env_vars(parser)
     add_argument_skip_tests(parser)
-    parser.add_argument(
-        '--use-official-docker-images',
-        action='store_true',
-        help='Use official docker images instead of osrf/ wrappers')
+    add_argument_use_official_docker_images(parser)
     args = parser.parse_args(argv)
 
     data = copy.deepcopy(args.__dict__)
