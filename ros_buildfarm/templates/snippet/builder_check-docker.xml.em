@@ -1,7 +1,11 @@
 @{
 # same logic as in from_base_image.Dockerfile.em
-if arch in ['i386', 'armhf', 'arm64']:
+docker_platform_arg = ''
+if arch in ['i386', 'armhf', 'arm64'] and not vars().get('use_official_docker_images', False):
     base_image = 'osrf/%s_%s:%s' % (os_name, arch, os_code_name)
+elif arch == 'arm64' and vars().get('use_official_docker_images', False):
+    base_image = 'arm64v8/%s:%s' % (os_name, os_code_name)
+    docker_platform_arg = '--platform linux/arm64'
 else:
     base_image = '%s:%s' % (os_name, os_code_name)
 }@
@@ -10,7 +14,7 @@ else:
     script='\n'.join([
         'echo "# BEGIN SECTION: Check docker status"',
         'echo "Testing trivial docker invocation..."',
-        'docker run --rm %s true ; echo "\'docker run\' returned $?"' % base_image,
+        'docker run %s --rm %s true ; echo "\'docker run\' returned $?"' % (docker_platform_arg, base_image),
     ]),
 ))@
 @(SNIPPET(

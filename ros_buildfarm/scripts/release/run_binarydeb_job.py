@@ -55,6 +55,10 @@ def main(argv=sys.argv[1:]):
     add_argument_append_timestamp(parser)
     add_argument_env_vars(parser)
     add_argument_skip_tests(parser)
+    parser.add_argument(
+        '--use-official-docker-images',
+        action='store_true',
+        help='Use official docker images instead of osrf/ wrappers')
     args = parser.parse_args(argv)
 
     data = copy.deepcopy(args.__dict__)

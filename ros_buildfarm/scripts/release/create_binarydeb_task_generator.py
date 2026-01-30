@@ -56,6 +56,10 @@ def main(argv=sys.argv[1:]):
     add_argument_dockerfile_dir(parser)
     add_argument_env_vars(parser)
     add_argument_skip_tests(parser)
+    parser.add_argument(
+        '--use-official-docker-images',
+        action='store_true',
+        help='Use official docker images instead of osrf/ wrappers')
     args = parser.parse_args(argv)
 
     debian_package_name = get_os_package_name(
@@ -112,6 +116,7 @@ def main(argv=sys.argv[1:]):
         'rosdistro_name': args.rosdistro_name,
         'package_name': args.package_name,
         'binarypkg_dir': args.binarypkg_dir,
+        'use_official_docker_images': args.use_official_docker_images,
     }
     create_dockerfile(
         'release/deb/binarypkg_task.Dockerfile.em', data, args.dockerfile_dir)

@@ -53,6 +53,10 @@ def main(argv=sys.argv[1:]):
         '--skip-source',
         action='store_true',
         help='Skip the entire source package build process')
+    parser.add_argument(
+        '--use-official-docker-images',
+        action='store_true',
+        help='Use official docker images instead of osrf/ wrappers')
     args = parser.parse_args(argv)
 
     package_format = package_format_mapping[args.os_name]
@@ -97,7 +101,8 @@ def main(argv=sys.argv[1:]):
         args.config_url, args.rosdistro_name, args.release_build_name,
         args.package_name, args.os_name, args.os_code_name,
         jenkins=False, views=[], generate_import_package_job=False,
-        generate_sync_packages_jobs=False, filter_arches=args.arch)
+        generate_sync_packages_jobs=False, filter_arches=args.arch,
+        use_official_docker_images=args.use_official_docker_images)
 
     templates.template_hooks = None
 
