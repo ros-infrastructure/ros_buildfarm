@@ -23,6 +23,7 @@ from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.argument import add_argument_use_official_docker_images
 from ros_buildfarm.common import get_binarydeb_job_name
 from ros_buildfarm.common import get_sourcedeb_job_name
 from ros_buildfarm.common import package_format_mapping
@@ -41,6 +42,7 @@ def main(argv=sys.argv[1:]):
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
+    add_argument_use_official_docker_images(parser)
     parser.add_argument(
         '--skip-binary',
         action='store_true',
@@ -53,10 +55,6 @@ def main(argv=sys.argv[1:]):
         '--skip-source',
         action='store_true',
         help='Skip the entire source package build process')
-    parser.add_argument(
-        '--use-official-docker-images',
-        action='store_true',
-        help='Use official docker images instead of osrf/ wrappers')
     args = parser.parse_args(argv)
 
     package_format = package_format_mapping[args.os_name]
