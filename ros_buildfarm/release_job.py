@@ -404,7 +404,7 @@ def configure_release_job(
         groovy_script=None,
         filter_arches=None,
         dry_run=False,
-        use_official_docker_images=False):
+        docker_image_prefix=None):
     """
     Configure a Jenkins release job.
 
@@ -567,7 +567,7 @@ def configure_release_job(
             pkg_name, repo_name, repo.release_repository,
             cached_pkgs=cached_pkgs, upstream_job_names=upstream_job_names,
             is_disabled=is_disabled,
-            use_official_docker_images=use_official_docker_images)
+            docker_image_prefix=docker_image_prefix)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
             configure_job(jenkins, job_name, job_config, dry_run=dry_run)
@@ -690,7 +690,7 @@ def _get_binarydeb_job_config(
         pkg_name, repo_name, release_repository,
         cached_pkgs=None, upstream_job_names=None,
         is_disabled=False,
-        use_official_docker_images=False):
+        docker_image_prefix=None):
     package_format = package_format_mapping[os_name]
     template_name = 'release/%s/binarypkg_job.xml.em' % package_format
 
@@ -769,7 +769,7 @@ def _get_binarydeb_job_config(
 
         'shared_ccache': build_file.shared_ccache,
 
-        'use_official_docker_images': use_official_docker_images,
+        'docker_image_prefix': docker_image_prefix,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

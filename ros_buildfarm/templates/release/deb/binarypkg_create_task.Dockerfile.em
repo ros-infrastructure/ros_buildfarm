@@ -2,11 +2,11 @@
 
 @(TEMPLATE(
     'snippet/from_base_image.Dockerfile.em',
-    os_name=os_name,
-    os_code_name=os_code_name,
-    arch=arch,
-    use_official_docker_images=vars().get('use_official_docker_images', False),
-))@
+        os_name=os_name,
+        os_code_name=os_code_name,
+        arch=arch,
+        docker_image_prefix=vars().get('docker_image_prefix'),
+    )) @
 
 VOLUME ["/var/cache/apt/archives"]
 
@@ -108,8 +108,8 @@ cmds.append(
     ' --distribution-repository-key-files ' + ' ' .join(['/etc/apt/keyrings/ros-buildfarm-%d.asc' % i for i in range(len(distribution_repository_keys))]) +
     ' --binarypkg-dir ' + binarypkg_dir +
     ' --env-vars ' + ' '.join(build_environment_variables) +
-    ' --dockerfile-dir ' + dockerfile_dir +
-    (' --skip-tests' if skip_tests else '') +
-    (' --use-official-docker-images' if vars().get('use_official_docker_images', False) else ''))
-}@
+        ' --dockerfile-dir ' + dockerfile_dir +
+        (' --skip-tests' if skip_tests else '') +
+        (' --docker-image-prefix ' + docker_image_prefix if vars().get('docker_image_prefix') else ''))
+    } @
 CMD ["@(' && '.join(cmds))"]

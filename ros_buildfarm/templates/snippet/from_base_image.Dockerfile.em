@@ -2,10 +2,10 @@
 FROM @base_image
 @[else]@
 @# same logic as in builder_check-docker.xml.em
-@[  if arch in ['i386', 'armhf', 'arm64'] and not vars().get('use_official_docker_images', False)]@
+@[  if vars().get('docker_image_prefix')]@
+FROM @(docker_image_prefix)@(os_name):@os_code_name
+@[  elif arch in ['i386', 'armhf', 'arm64']]@
 FROM osrf/@(os_name)_@arch:@os_code_name
-@[  elif arch == 'arm64' and vars().get('use_official_docker_images', False)]@
-FROM arm64v8/@(os_name):@os_code_name
 @[  else]@
 FROM @os_name:@os_code_name
 @[  end if]@

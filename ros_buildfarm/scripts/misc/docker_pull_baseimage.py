@@ -24,17 +24,13 @@ def main(argv=sys.argv[1:]):
     base_image = get_base_image_from_dockerfile(dockerfile)
     print(base_image)
 
-    platform_flag = None
-    if base_image.startswith('arm64v8/'):
-        platform_flag = 'linux/arm64'
-
     known_error_strings = [
         'Error pulling image',
         'Server error: Status 502 while fetching image layer',
     ]
     max_tries = 10
     rc, _ = call_docker_pull_repeatedly(
-        base_image, known_error_strings, max_tries, platform_flag=platform_flag)
+        base_image, known_error_strings, max_tries)
     return rc
 
 
@@ -52,7 +48,7 @@ def get_base_image_from_dockerfile(dockerfile):
 
 
 def call_docker_pull_repeatedly(
-        base_image, known_error_strings, max_tries, platform_flag=None):
+        base_image, known_error_strings, max_tries):
     for i in range(1, max_tries + 1):
         if i > 1:
             sleep_time = 5 + 2 * i
@@ -60,7 +56,7 @@ def call_docker_pull_repeatedly(
                   (i, max_tries, sleep_time))
             sleep(sleep_time)
         rc, known_error_conditions = call_docker_pull(
-            base_image, known_error_strings, platform_flag=platform_flag)
+            base_image, known_error_strings)
         if rc == 0 or not known_error_conditions:
             break
         print('')
@@ -71,13 +67,10 @@ def call_docker_pull_repeatedly(
     return rc, known_error_conditions
 
 
-def call_docker_pull(base_image, known_error_strings, platform_flag=None):
+def call_docker_pull(base_image, known_error_strings):
     known_error_conditions = []
 
-    cmd = ['docker', 'pull']
-    if platform_flag:
-        cmd.extend(['--platform', platform_flag])
-    cmd.append(base_image)
+    cmd = ['docker', 'pull', base_image]
     print('Check docker base image for updates: %s' % ' '.join(cmd))
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

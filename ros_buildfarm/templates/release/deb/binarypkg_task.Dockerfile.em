@@ -6,7 +6,7 @@
     os_name=os_name,
     os_code_name=os_code_name,
     arch=arch,
-    use_official_docker_images=vars().get('use_official_docker_images', False),
+    docker_image_prefix=vars().get('docker_image_prefix'),
 ))@
 
 VOLUME ["/var/cache/apt/archives"]
