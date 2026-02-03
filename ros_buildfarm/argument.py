@@ -452,6 +452,10 @@ def add_argument_skip_tests(parser):
         '--skip-tests', action='store_true',
         help='Skip execution of tests as part of the package build process.')
 
+def add_argument_docker_image_prefix(parser):
+    parser.add_argument(
+        '--docker-image-prefix',
+        help='Prefix for the docker image (e.g. "osrf/" or "arm64v8/")')
 
 def check_len_action(minargs, maxargs):
     class CheckLength(argparse.Action):
