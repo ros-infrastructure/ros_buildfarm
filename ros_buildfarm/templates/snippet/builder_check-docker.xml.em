@@ -2,8 +2,6 @@
 # same logic as in from_base_image.Dockerfile.em
 if vars().get('docker_image_prefix'):
     base_image = '%s%s:%s' % (docker_image_prefix, os_name, os_code_name)
-elif arch in ['i386', 'armhf', 'arm64']:
-    base_image = 'osrf/%s_%s:%s' % (os_name, arch, os_code_name)
 else:
     base_image = '%s:%s' % (os_name, os_code_name)
 }@

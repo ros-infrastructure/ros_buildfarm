@@ -4,8 +4,6 @@ FROM @base_image
 @# same logic as in builder_check-docker.xml.em
 @[  if vars().get('docker_image_prefix')]@
 FROM @(docker_image_prefix)@(os_name):@os_code_name
-@[  elif arch in ['i386', 'armhf', 'arm64']]@
-FROM osrf/@(os_name)_@arch:@os_code_name
 @[  else]@
 FROM @os_name:@os_code_name
 @[  end if]@
