@@ -1,6 +1,6 @@
 @{
 # same logic as in from_base_image.Dockerfile.em
-base_image = '%s:%s' % (vars().get('docker_image_prefix', os_name), os_code_name)
+base_image = '%s:%s' % (vars().get('docker_image_prefix', '%s' % os_name), os_code_name)
 }@
 @(SNIPPET(
     'builder_shell',
