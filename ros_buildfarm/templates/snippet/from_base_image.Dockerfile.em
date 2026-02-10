@@ -2,11 +2,7 @@
 FROM @base_image
 @[else]@
 @# same logic as in builder_check-docker.xml.em
-@[  if vars().get('docker_image_prefix')]@
-FROM @(docker_image_prefix)@(os_name):@os_code_name
-@[  else]@
-FROM @os_name:@os_code_name
-@[  end if]@
+FROM vars().get('docker_image_prefix', @os_name):@os_code_name
 @[end if]@
 @[if vars().get('maintainer_name')]@
 LABEL maintainer "@maintainer_name"
