@@ -1,4 +1,4 @@
-@[if 'base_image' not locals()]@
+@[if 'base_image' not in locals()]@
 @{
 base_image = '%s:%s' % (
   vars().get('docker_image_prefix') or (
