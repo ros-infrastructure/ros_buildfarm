@@ -19,11 +19,11 @@ import sys
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
+from ros_buildfarm.argument import add_argument_docker_image_prefix
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
-from ros_buildfarm.argument import add_argument_docker_image_prefix
 from ros_buildfarm.common import get_binarydeb_job_name
 from ros_buildfarm.common import get_sourcedeb_job_name
 from ros_buildfarm.common import package_format_mapping

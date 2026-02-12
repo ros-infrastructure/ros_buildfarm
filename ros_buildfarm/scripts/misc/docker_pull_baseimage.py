@@ -29,8 +29,7 @@ def main(argv=sys.argv[1:]):
         'Server error: Status 502 while fetching image layer',
     ]
     max_tries = 10
-    rc, _ = call_docker_pull_repeatedly(
-        base_image, known_error_strings, max_tries)
+    rc, _ = call_docker_pull_repeatedly(base_image, known_error_strings, max_tries)
     return rc
 
 
@@ -47,16 +46,14 @@ def get_base_image_from_dockerfile(dockerfile):
         (from_prefix, dockerfile)
 
 
-def call_docker_pull_repeatedly(
-        base_image, known_error_strings, max_tries):
+def call_docker_pull_repeatedly(base_image, known_error_strings, max_tries):
     for i in range(1, max_tries + 1):
         if i > 1:
             sleep_time = 5 + 2 * i
             print("Reinvoke 'docker pull' (%d/%d) after sleeping %s seconds" %
                   (i, max_tries, sleep_time))
             sleep(sleep_time)
-        rc, known_error_conditions = call_docker_pull(
-            base_image, known_error_strings)
+        rc, known_error_conditions = call_docker_pull(base_image, known_error_strings)
         if rc == 0 or not known_error_conditions:
             break
         print('')
