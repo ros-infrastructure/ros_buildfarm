@@ -22,6 +22,7 @@ from ros_buildfarm.argument import add_argument_binarypkg_dir
 from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
+from ros_buildfarm.argument import add_argument_docker_image_prefix
 from ros_buildfarm.argument import add_argument_dockerfile_dir
 from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_os_code_name
@@ -55,6 +56,7 @@ def main(argv=sys.argv[1:]):
     add_argument_append_timestamp(parser)
     add_argument_env_vars(parser)
     add_argument_skip_tests(parser)
+    add_argument_docker_image_prefix(parser)
     args = parser.parse_args(argv)
 
     data = copy.deepcopy(args.__dict__)
