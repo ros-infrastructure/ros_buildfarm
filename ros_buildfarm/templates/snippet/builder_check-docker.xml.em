@@ -2,7 +2,7 @@
 # same logic as in from_base_image.Dockerfile.em
 base_image = '%s:%s' % (
     vars().get('docker_image_prefix') or (
-        'osrf/%s_%s' %(os_name, arch)
+        'osrf/%s_%s' % (os_name, arch)
         if arch in ('i386', 'armhf', 'arm64')
         else os_name
     ),
