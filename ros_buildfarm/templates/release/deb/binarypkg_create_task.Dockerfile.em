@@ -5,7 +5,7 @@
     os_name=os_name,
     os_code_name=os_code_name,
     arch=arch,
-    docker_image_prefix=vars().get('docker_image_prefix'),
+    docker_base_image_override=vars().get('docker_base_image_override'),
 ))@
 
 VOLUME ["/var/cache/apt/archives"]
@@ -110,6 +110,6 @@ cmds.append(
     ' --env-vars ' + ' '.join(build_environment_variables) +
     ' --dockerfile-dir ' + dockerfile_dir +
     (' --skip-tests' if skip_tests else '') +
-    (' --docker-image-prefix ' + docker_image_prefix if vars().get('docker_image_prefix') else ''))
+    (' --docker-base-image-override ' + docker_base_image_override if vars().get('docker_base_image_override') else ''))
 }@
 CMD ["@(' && '.join(cmds))"]

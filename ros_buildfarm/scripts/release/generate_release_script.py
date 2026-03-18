@@ -19,7 +19,7 @@ import sys
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_config_url
-from ros_buildfarm.argument import add_argument_docker_image_prefix
+from ros_buildfarm.argument import add_argument_docker_base_image_override
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
 from ros_buildfarm.argument import add_argument_package_name
@@ -42,7 +42,7 @@ def main(argv=sys.argv[1:]):
     add_argument_os_name(parser)
     add_argument_os_code_name(parser)
     add_argument_arch(parser)
-    add_argument_docker_image_prefix(parser)
+    add_argument_docker_base_image_override(parser)
     parser.add_argument(
         '--skip-binary',
         action='store_true',
@@ -100,7 +100,7 @@ def main(argv=sys.argv[1:]):
         args.package_name, args.os_name, args.os_code_name,
         jenkins=False, views=[], generate_import_package_job=False,
         generate_sync_packages_jobs=False, filter_arches=args.arch,
-        docker_image_prefix=args.docker_image_prefix)
+        docker_base_image_override=args.docker_base_image_override)
 
     templates.template_hooks = None
 

@@ -1,7 +1,7 @@
 @[if 'base_image' not in locals()]@
 @{
 base_image = '%s:%s' % (
-  vars().get('docker_image_prefix') or (
+  vars().get('docker_base_image_override') or (
       'osrf/%s_%s' % (os_name, arch)
       if arch in ('i386', 'armhf', 'arm64') and (
             os_code_name in (
