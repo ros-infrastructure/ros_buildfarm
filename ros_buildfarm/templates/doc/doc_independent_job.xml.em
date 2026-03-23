@@ -117,7 +117,7 @@ else:
         'echo "# BEGIN SECTION: Build Dockerfile - doc independent"',
         'cd $WORKSPACE/docker_doc_independent',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t doc_independent .',
+        'docker build --force-rm --platform=linux/amd64 -t doc_independent .',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - doc independent"',

@@ -5,6 +5,7 @@
     os_name=os_name,
     os_code_name=os_code_name,
     arch=arch,
+    docker_base_image_override=vars().get('docker_base_image_override'),
 ))@
 
 VOLUME ["/var/cache/apt/archives"]
@@ -108,6 +109,7 @@ cmds.append(
     ' --binarypkg-dir ' + binarypkg_dir +
     ' --env-vars ' + ' '.join(build_environment_variables) +
     ' --dockerfile-dir ' + dockerfile_dir +
-    (' --skip-tests' if skip_tests else ''))
+    (' --skip-tests' if skip_tests else '') +
+    (' --docker-base-image-override ' + docker_base_image_override if vars().get('docker_base_image_override') else ''))
 }@
 CMD ["@(' && '.join(cmds))"]
