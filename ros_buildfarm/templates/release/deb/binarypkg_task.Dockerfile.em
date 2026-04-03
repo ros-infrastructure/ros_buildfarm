@@ -6,6 +6,7 @@
     os_name=os_name,
     os_code_name=os_code_name,
     arch=arch,
+    docker_base_image_override=docker_base_image_override,
 ))@
 
 VOLUME ["/var/cache/apt/archives"]
@@ -28,7 +29,10 @@ ENV DEBIAN_FRONTEND noninteractive
     bazelrc_dir='/etc',
 ))@
 
-RUN useradd -u @uid -l -m buildfarm
+@(TEMPLATE(
+    'snippet/add_buildfarm_user.Dockerfile.em',
+    uid=uid,
+))@
 
 @(TEMPLATE(
     'snippet/add_distribution_repositories.Dockerfile.em',

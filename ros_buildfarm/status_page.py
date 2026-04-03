@@ -124,6 +124,7 @@ def build_release_status_page(
     template_name = 'status/release_status_page.html.em'
     data = {
         'title': 'ROS packages for %s' % rosdistro_name.capitalize(),
+        'rosdistro_name': rosdistro_name,
         'start_time': start_time,
         'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),
 
@@ -235,6 +236,7 @@ def build_repos_status_page(
     data = {
         'title': 'All packages for %s targets' % rosdistro_name.capitalize(),
         'start_time': start_time,
+        'rosdistro_name': rosdistro_name,
         'start_time_local_str': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(start_time)),
 
         'resource_hashes': get_resource_hashes(),
@@ -453,7 +455,6 @@ def _strip_version_suffix(version):
     >>> strip_version_suffix('1.2.3-foo')
     '1.2.3'
     """
-    global version_regex
     if not version:
         return version
     match = version_regex.search(version)
@@ -582,16 +583,15 @@ def _version_is_gt_other(version, other_version):
 def _get_comparable_loose_versions(version_str1, version_str2):
     loose_version1 = LooseVersion(version_str1)
     loose_version2 = LooseVersion(version_str2)
-    if sys.version_info[0] > 2:
-        # might raise TypeError in Python 3: http://bugs.python.org/issue14894
-        version_parts1 = loose_version1.version
-        version_parts2 = loose_version2.version
-        for i in range(min(len(version_parts1), len(version_parts2))):
-            try:
-                version_parts1[i] < version_parts2[i]
-            except TypeError:
-                version_parts1[i] = str(version_parts1[i])
-                version_parts2[i] = str(version_parts2[i])
+    # might raise TypeError in Python 3: http://bugs.python.org/issue14894
+    version_parts1 = loose_version1.version
+    version_parts2 = loose_version2.version
+    for i in range(min(len(version_parts1), len(version_parts2))):
+        try:
+            version_parts1[i] < version_parts2[i]
+        except TypeError:
+            version_parts1[i] = str(version_parts1[i])
+            version_parts2[i] = str(version_parts2[i])
     return loose_version1, loose_version2
 
 

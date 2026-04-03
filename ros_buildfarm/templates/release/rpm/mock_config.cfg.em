@@ -1,5 +1,13 @@
 include('/etc/mock/default.cfg')
 
+def _expanded(k, opts):
+    """Get a config value and ensure it has been expanded."""
+    exp, opts['__jinja_expand'] = opts.get('__jinja_expand', False), True
+    try:
+        return opts[k]
+    finally:
+        opts['__jinja_expand'] = exp
+
 # Change the root name since we're modifying the chroot
 config_opts['root'] += '-ros-buildfarm'
 
@@ -10,7 +18,13 @@ config_opts['use_bootstrap'] = False
 config_opts['chroot_setup_cmd'] += ' python3-rpm-macros'
 
 # Install weak dependencies to get group members
-config_opts[f'dnf_builddep_opts'] = config_opts.get(f'dnf_builddep_opts', []) + ['--setopt=install_weak_deps=True']
+package_manager = _expanded('package_manager', config_opts)
+additional_opts = ['--setopt=install_weak_deps=True']
+config_opts[f'{package_manager}_builddep_opts'] = config_opts.get(f'{package_manager}_builddep_opts', []) + additional_opts
+
+# Deal with dnf -> dnf4 transition - see rpm-software-management/mock#1496
+if package_manager == 'dnf':
+    config_opts[f'dnf4_builddep_opts'] = config_opts.get(f'dnf4_builddep_opts', []) + additional_opts
 
 @[if env_vars]@
 # Set environment vars from the build config

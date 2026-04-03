@@ -18,7 +18,10 @@ ENV DEBIAN_FRONTEND noninteractive
     timezone=timezone,
 ))@
 
-RUN useradd -u @uid -l -m buildfarm
+@(TEMPLATE(
+    'snippet/add_buildfarm_user.Dockerfile.em',
+    uid=uid,
+))@
 
 @(TEMPLATE(
     'snippet/add_distribution_repositories.Dockerfile.em',
@@ -58,13 +61,13 @@ COPY @repos_file /tmp/@repos_file
 ENTRYPOINT ["sh", "-c"]
 @{
 args = \
-    ' ' + rosdistro_name + \
+    ' ' + (rosdistro_name or "''") + \
     ' ' + os_name + \
     ' ' + os_code_name + \
     ' ' + arch + \
     ' --workspace-root ' + ' '.join(workspace_mount_point) + \
     ' --distribution-repository-urls ' + ' '.join(distribution_repository_urls) + \
-    ' --distribution-repository-key-files ' + ' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))]) + \
+    ' --distribution-repository-key-files ' + ' ' .join(['/etc/apt/keyrings/ros-buildfarm-%d.asc' % i for i in range(len(distribution_repository_keys))]) + \
     ' --env-vars ' + ' ' .join(['%s=%s' % key_value for key_value in env_vars.items()])
 build_args = args + \
     ' --build-tool ' + build_tool + \
@@ -80,6 +83,7 @@ cmds = [
     ' --repository-names ' + ' '.join(repository_names) + \
     ((' --package-names ' + ' '.join(package_names)) if package_names else '') + \
     (' --package-dependencies' if package_dependencies else '') + \
+    ' --custom-rosdep-urls '  + ' '.join(custom_rosdep_urls) + \
     ' --test-branch "%s"' % (test_branch) + \
     ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) + \
     ' --package-selection-args ' + ' '.join(package_selection_args),

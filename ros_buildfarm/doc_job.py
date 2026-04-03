@@ -33,6 +33,7 @@ from ros_buildfarm.config import get_doc_build_files
 from ros_buildfarm.config import get_global_doc_build_files
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.git import get_repository
+from ros_buildfarm.jenkins import JenkinsProxy
 from ros_buildfarm.templates import expand_template
 from rosdistro import get_distribution_cache
 from rosdistro import get_index
@@ -83,7 +84,7 @@ def configure_doc_jobs(
     views = {}
     views[doc_view_name] = configure_doc_view(
         jenkins, doc_view_name, dry_run=dry_run)
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,
@@ -268,6 +269,12 @@ def _get_doc_job_config(
     repository_args, script_generating_key_files = \
         get_repositories_and_script_generating_key_files(build_file=build_file)
 
+    build_environment_variables = []
+    if build_file.build_environment_variables:
+        build_environment_variables = [
+            '%s=%s' % (var, value)
+            for var, value in sorted(build_file.build_environment_variables.items())]
+
     maintainer_emails = set([])
     if build_file.notify_maintainers and dist_cache and repo_name and \
             repo_name in dist_cache.distribution_file.repositories:
@@ -310,6 +317,7 @@ def _get_doc_job_config(
         'arch': arch,
         'build_tool': build_file.build_tool,
         'repository_args': repository_args,
+        'build_environment_variables': build_environment_variables,
 
         'upload_user': build_file.upload_user,
         'upload_host': build_file.upload_host,
@@ -415,6 +423,7 @@ def _get_doc_independent_job_config(
 
     job_data = {
         'job_priority': build_file.jenkins_job_priority,
+        'job_weight': build_file.jenkins_job_weight,
         'node_label': get_node_label(build_file.jenkins_job_label),
 
         'ros_buildfarm_repository': get_repository(),

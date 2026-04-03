@@ -16,7 +16,15 @@ ENV DEBIAN_FRONTEND noninteractive
     timezone=timezone,
 ))@
 
-RUN useradd -u @uid -l -m buildfarm
+@(TEMPLATE(
+    'snippet/add_buildfarm_user.Dockerfile.em',
+    uid=uid,
+))@
+
+@(TEMPLATE(
+    'snippet/set_environment_variables.Dockerfile.em',
+    environment_variables=environment_variables,
+))@
 
 @(TEMPLATE(
     'snippet/add_distribution_repositories.Dockerfile.em',

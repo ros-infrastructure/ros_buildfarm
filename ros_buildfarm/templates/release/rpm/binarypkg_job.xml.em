@@ -121,7 +121,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'echo "# BEGIN SECTION: Build Dockerfile - build binaryrpm"',
         'cd $WORKSPACE/docker_binaryrpm',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t binaryrpm.%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        'docker build --force-rm --platform=linux/%s -t binaryrpm.%s_%s_%s_%s_%s .' % (arch, rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build binaryrpm"',
@@ -130,6 +130,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     ] + ([
         'if [ ! -d "$HOME/.ccache" ]; then mkdir $HOME/.ccache; fi',
     ] if shared_ccache else []) + [
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm' +
         ' --privileged' +

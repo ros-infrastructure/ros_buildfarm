@@ -20,8 +20,6 @@ import os
 import stat
 import sys
 
-from em import BANGPATH_OPT
-from em import Hook
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_name
 from ros_buildfarm.argument import add_argument_build_tool
@@ -37,6 +35,7 @@ from ros_buildfarm.config import get_source_build_files
 from ros_buildfarm.devel_job import configure_devel_job
 from ros_buildfarm.prerelease import add_overlay_arguments
 from ros_buildfarm.templates import expand_template
+from ros_buildfarm.templates import Hook
 from rosdistro import get_distribution_cache
 from rosdistro import get_index
 from rosdistro.repository_specification import RepositorySpecification
@@ -294,7 +293,7 @@ def main(argv=sys.argv[1:]):
             'prerelease_clone_underlay']:
         content = expand_template(
             'prerelease/%s_script.sh.em' % script_name, data,
-            options={BANGPATH_OPT: False})
+            ignore_bangpath=True)
         script_file = os.path.join(args.output_dir, script_name + '.sh')
         with open(script_file, 'w') as h:
             h.write(content)

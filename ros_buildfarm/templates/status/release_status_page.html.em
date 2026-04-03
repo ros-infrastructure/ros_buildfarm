@@ -120,13 +120,7 @@
 @
 <td>@
 @ <div>@
-@ @ @[if pkg.url]@
-@ @ <a href="@pkg.url">@
-@ @ @[end if]@
-@ @ @pkg.name@
-@ @ @[if pkg.url]@
-@ @ </a>@
-@ @ @[end if]@
+@ @ <a href="https://index.ros.org/p/@pkg.name#@rosdistro_name">@pkg.name</a>@
 @ </div>@
 @{
 hidden_texts = []
@@ -165,7 +159,7 @@ if regressions and True in regressions[pkg.name].values():
 @# package status
 @
 @[if has_status_column]@
-<td><span class="@pkg.status"@((' title="%s"' % pkg.status_description) if pkg.status_description else '')/></td>@
+<td><span class="@pkg.status"@( (' title="%s"' % pkg.status_description) if pkg.status_description else '' )/></td>@
 @[end if]@
 @
 @# package maintainers

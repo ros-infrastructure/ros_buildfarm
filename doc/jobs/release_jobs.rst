@@ -148,12 +148,12 @@ architecture).
 Example invocation
 ^^^^^^^^^^^^^^^^^^
 
-The following commands build the *source* and *binary* packages of *roscpp*
-from ROS *Indigo* for Ubuntu *Trusty* *amd64*:
+The following commands build the *source* and *binary* packages of *rclcpp*
+from ROS *Rolling* for Ubuntu *Noble* *amd64*:
 
 .. code:: sh
 
   mkdir /tmp/release_job
-  generate_release_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default roscpp ubuntu trusty amd64 > /tmp/release_job/release_job_indigo_roscpp.sh
+  generate_release_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml rolling default rclcpp ubuntu noble amd64 > /tmp/release_job/release_job_rolling_rclcpp.sh
   cd /tmp/release_job
-  sh release_job_indigo_roscpp.sh
+  sh release_job_rolling_rclcpp.sh

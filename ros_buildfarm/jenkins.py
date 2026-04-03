@@ -38,6 +38,8 @@ class JenkinsProxy(Jenkins):
     def __init__(self, *args, **kwargs):  # noqa: D107
         requester_kwargs = copy.copy(kwargs)
         requester_kwargs['baseurl'] = args[0]
+        # Don't trigger jenkinsapi poll on initialization
+        kwargs['lazy'] = True
         kwargs['requester'] = CrumbRequester(**requester_kwargs)
         kwargs.setdefault('timeout', 120)
         super(JenkinsProxy, self).__init__(*args, **kwargs)
@@ -79,7 +81,6 @@ _cached_views = {}
 def configure_view(
         jenkins, view_name, include_regex=None, filter_queue=True,
         template_name='generic_view.xml.em', dry_run=False, context_lines=0):
-    global _cached_views
     key = (view_name, include_regex, filter_queue, template_name, dry_run)
     if key in _cached_views:
         print("Skipped view '%s' as it has been configured before" % view_name)
@@ -88,7 +89,7 @@ def configure_view(
     view_config = get_view_config(
         template_name, view_name, include_regex=include_regex,
         filter_queue=filter_queue)
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         _cached_views[key] = view_config
         return view_config
     view_type = _get_view_type(view_config)
@@ -178,7 +179,6 @@ _cached_jobs = {}
 
 
 def configure_job(jenkins, job_name, job_config, view=None, dry_run=False, context_lines=0):
-    global _cached_jobs
     key = (job_name, job_config, view, dry_run)
     if key in _cached_jobs:
         print("Skipped job '%s' as it has been configured before" % job_name)
@@ -272,9 +272,8 @@ def _diff_configs(remote_config, new_config, context_lines):
     if ElementTree.tostring(remote_root) == ElementTree.tostring(new_root):
         return []
 
-    encoding_type = 'utf-8' if sys.version_info[0] < 3 else 'unicode'
-    xml1 = ElementTree.tostring(remote_root, encoding=encoding_type)
-    xml2 = ElementTree.tostring(new_root, encoding=encoding_type)
+    xml1 = ElementTree.tostring(remote_root, encoding='unicode')
+    xml2 = ElementTree.tostring(new_root, encoding='unicode')
     lines1 = xml1.splitlines()
     lines2 = xml2.splitlines()
 

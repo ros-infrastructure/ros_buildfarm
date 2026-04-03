@@ -14,11 +14,14 @@
 
 import os
 
-from pep8 import StyleGuide
+import pytest
 
 
+@pytest.mark.linter
 def test_pep8_conformance():
     """Test source code for PEP8 conformance."""
+    from pep8 import StyleGuide
+
     pep8style = StyleGuide(max_line_length=100)
     report = pep8style.options.report
     report.start()

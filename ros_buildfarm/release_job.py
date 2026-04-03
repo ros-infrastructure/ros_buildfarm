@@ -26,7 +26,6 @@ from ros_buildfarm.common import get_github_project_url
 from ros_buildfarm.common import get_implicitly_ignored_package_names
 from ros_buildfarm.common import get_node_label
 from ros_buildfarm.common import get_os_package_name
-from ros_buildfarm.common import get_package_condition_context
 from ros_buildfarm.common import get_package_manifests
 from ros_buildfarm.common import get_release_binary_view_name
 from ros_buildfarm.common import get_release_job_prefix
@@ -43,12 +42,14 @@ from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.git import get_repository
+from ros_buildfarm.jenkins import JenkinsProxy
 from ros_buildfarm.package_repo import get_package_repo_data
 from ros_buildfarm.templates import expand_template
 from rosdistro import get_cached_distribution
 from rosdistro import get_distribution_cache
 from rosdistro import get_distribution_file as rosdistro_get_distribution_file
 from rosdistro import get_index
+from rosdistro import get_package_condition_context
 
 
 def configure_release_jobs(
@@ -88,7 +89,8 @@ def configure_release_jobs(
     cached_pkgs = _get_and_parse_distribution_cache(
         index, rosdistro_name, pkg_names,
         include_test_deps=build_file.include_test_dependencies,
-        include_group_deps=build_file.include_group_dependencies)
+        include_group_deps=build_file.include_group_dependencies,
+        disable_groups_workaround=build_file.include_group_dependencies)
     filtered_pkg_names = build_file.filter_packages(pkg_names)
     explicitly_ignored_without_recursion_pkg_names = \
         set(pkg_names) & set(build_file.package_ignore_list)
@@ -144,14 +146,14 @@ def configure_release_jobs(
             job_name, job_config = configure_import_package_job(
                 config_url, rosdistro_name, release_build_name,
                 config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
-            if not jenkins:
+            if not isinstance(jenkins, JenkinsProxy):
                 all_job_configs[job_name] = job_config
             break
 
     job_name, job_config = configure_sync_packages_to_main_job(
         config_url, rosdistro_name, release_build_name,
         config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         all_job_configs[job_name] = job_config
 
     for os_name, os_code_name in platforms:
@@ -161,7 +163,7 @@ def configure_release_jobs(
                 os_name, os_code_name, arch,
                 config=config, build_file=build_file, jenkins=jenkins,
                 dry_run=dry_run)
-            if not jenkins:
+            if not isinstance(jenkins, JenkinsProxy):
                 all_job_configs[job_name] = job_config
 
     targets = []
@@ -172,7 +174,7 @@ def configure_release_jobs(
     views = configure_release_views(
         jenkins, rosdistro_name, release_build_name, targets,
         dry_run=dry_run)
-    if not jenkins:
+    if not isinstance(jenkins, JenkinsProxy):
         all_view_configs.update(views)
     groovy_data = {
         'dry_run': dry_run,
@@ -345,7 +347,8 @@ def configure_release_jobs(
 
 
 def _get_and_parse_distribution_cache(
-    index, rosdistro_name, pkg_names, include_test_deps, include_group_deps
+    index, rosdistro_name, pkg_names, include_test_deps, include_group_deps,
+    disable_groups_workaround,
 ):
     from catkin_pkg.package import parse_package_string
     from catkin_pkg.package import Dependency
@@ -358,6 +361,8 @@ def _get_and_parse_distribution_cache(
     }
 
     condition_context = get_package_condition_context(index, rosdistro_name)
+    if disable_groups_workaround:
+        condition_context['DISABLE_GROUPS_WORKAROUND'] = '1'
     for pkg in cached_pkgs.values():
         pkg.evaluate_conditions(condition_context)
     for pkg in cached_pkgs.values():
@@ -398,7 +403,8 @@ def configure_release_job(
         is_disabled=False, other_build_files_same_platform=None,
         groovy_script=None,
         filter_arches=None,
-        dry_run=False):
+        dry_run=False,
+        docker_base_image_override=None):
     """
     Configure a Jenkins release job.
 
@@ -459,7 +465,8 @@ def configure_release_job(
         cached_pkgs = _get_and_parse_distribution_cache(
             index, rosdistro_name, [pkg_name],
             include_test_deps=build_file.include_test_dependencies,
-            include_group_deps=build_file.include_group_dependencies)
+            include_group_deps=build_file.include_group_dependencies,
+            disable_groups_workaround=build_file.include_group_dependencies)
     if jenkins is None:
         from ros_buildfarm.jenkins import connect
         jenkins = connect(config.jenkins_url)
@@ -559,7 +566,8 @@ def configure_release_job(
             config, build_file, os_name, os_code_name, arch,
             pkg_name, repo_name, repo.release_repository,
             cached_pkgs=cached_pkgs, upstream_job_names=upstream_job_names,
-            is_disabled=is_disabled)
+            is_disabled=is_disabled,
+            docker_base_image_override=docker_base_image_override)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
             configure_job(jenkins, job_name, job_config, dry_run=dry_run)
@@ -681,7 +689,8 @@ def _get_binarydeb_job_config(
         config, build_file, os_name, os_code_name, arch,
         pkg_name, repo_name, release_repository,
         cached_pkgs=None, upstream_job_names=None,
-        is_disabled=False):
+        is_disabled=False,
+        docker_base_image_override=None):
     package_format = package_format_mapping[os_name]
     template_name = 'release/%s/binarypkg_job.xml.em' % package_format
 
@@ -713,6 +722,7 @@ def _get_binarydeb_job_config(
         'github_url': get_github_project_url(release_repository.url),
 
         'job_priority': build_file.jenkins_binary_job_priority,
+        'job_weight': build_file.jenkins_binary_job_weight_overrides.get(pkg_name),
         'node_label': get_node_label(
             build_file.jenkins_binary_job_label,
             get_default_node_label('%s_%s%s_%s' % (
@@ -758,6 +768,8 @@ def _get_binarydeb_job_config(
         'credential_id': build_file.upload_credential_id,
 
         'shared_ccache': build_file.shared_ccache,
+
+        'docker_base_image_override': docker_base_image_override,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

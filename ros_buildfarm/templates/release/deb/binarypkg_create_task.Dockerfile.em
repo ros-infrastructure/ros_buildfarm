@@ -5,6 +5,7 @@
     os_name=os_name,
     os_code_name=os_code_name,
     arch=arch,
+    docker_base_image_override=vars().get('docker_base_image_override'),
 ))@
 
 VOLUME ["/var/cache/apt/archives"]
@@ -23,7 +24,10 @@ ENV DEBIAN_FRONTEND noninteractive
 ))@
 
 
-RUN useradd -u @uid -l -m buildfarm
+@(TEMPLATE(
+    'snippet/add_buildfarm_user.Dockerfile.em',
+    uid=uid,
+))@
 
 @(TEMPLATE(
     'snippet/add_distribution_repositories.Dockerfile.em',
@@ -101,10 +105,11 @@ cmds.append(
     ' ' + os_code_name +
     ' ' + arch +
     ' --distribution-repository-urls ' + ' '.join(distribution_repository_urls) +
-    ' --distribution-repository-key-files ' + ' ' .join(['/tmp/keys/%d.key' % i for i in range(len(distribution_repository_keys))]) +
+    ' --distribution-repository-key-files ' + ' ' .join(['/etc/apt/keyrings/ros-buildfarm-%d.asc' % i for i in range(len(distribution_repository_keys))]) +
     ' --binarypkg-dir ' + binarypkg_dir +
     ' --env-vars ' + ' '.join(build_environment_variables) +
     ' --dockerfile-dir ' + dockerfile_dir +
-    (' --skip-tests' if skip_tests else ''))
+    (' --skip-tests' if skip_tests else '') +
+    (' --docker-base-image-override ' + docker_base_image_override if vars().get('docker_base_image_override') else ''))
 }@
 CMD ["@(' && '.join(cmds))"]

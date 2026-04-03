@@ -15,7 +15,7 @@ try {
   r = build.getLogReader()
   br = new BufferedReader(r)
   pattern = Pattern.compile(".*WARNING:.*")
-  ignore_pattern = Pattern.compile(".*WARNING: (You're not using the default seccomp profile|No swap limit support).*")
+  ignore_pattern = Pattern.compile(".*WARNING: (You're not using the default seccomp profile|daemon is not using the default seccomp profile|No swap limit support).*")
   def warnings = []
   def line
   while ((line = br.readLine()) != null) {

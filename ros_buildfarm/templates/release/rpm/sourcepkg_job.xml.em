@@ -104,12 +104,14 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'echo "# BEGIN SECTION: Build Dockerfile - generate sourcerpm"',
         'cd $WORKSPACE/docker_sourcerpm',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t sourcerpm.%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, pkg_name),
+        'docker build --force-rm --platform=linux/%s -t sourcerpm.%s_%s_%s_%s .' % (arch, rosdistro_name, os_name, os_code_name, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generate sourcerpm"',
         'rm -fr $WORKSPACE/sourcepkg',
         'mkdir -p $WORKSPACE/sourcepkg',
+        '# If using Podman, change the user namespace to preserve UID. No effect if using Docker.',
+        'export PODMAN_USERNS=keep-id',
         'docker run' +
         ' --rm' +
         ' --privileged' +

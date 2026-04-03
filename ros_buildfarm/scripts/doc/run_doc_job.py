@@ -26,6 +26,7 @@ from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
+from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_force
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
@@ -56,6 +57,7 @@ def main(argv=sys.argv[1:]):
     add_argument_custom_rosdep_urls(parser)
     add_argument_custom_rosdep_update_options(parser)
     add_argument_force(parser)
+    add_argument_env_vars(parser)
     add_argument_dockerfile_dir(parser)
     args = parser.parse_args(argv)
 

@@ -15,12 +15,15 @@
 import os
 import sys
 
-from pyflakes.api import checkRecursive
-from pyflakes.reporter import Reporter
+import pytest
 
 
+@pytest.mark.linter
 def test_pyflakes_conformance():
     """Test source code for PyFlakes conformance."""
+    from pyflakes.api import checkRecursive
+    from pyflakes.reporter import Reporter
+
     reporter = Reporter(sys.stdout, sys.stderr)
     base_path = os.path.join(os.path.dirname(__file__), '..')
     paths = [

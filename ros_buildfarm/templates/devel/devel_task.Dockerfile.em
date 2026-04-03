@@ -24,7 +24,10 @@ ENV DEBIAN_FRONTEND noninteractive
     timezone=timezone,
 ))@
 
-RUN useradd -u @uid -l -m buildfarm
+@(TEMPLATE(
+    'snippet/add_buildfarm_user.Dockerfile.em',
+    uid=uid,
+))@
 
 @(TEMPLATE(
     'snippet/setup_nvidia_docker2.Dockerfile.em'
@@ -119,7 +122,7 @@ cmd = \
 if not testing:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_install.py' + \
-        ' --rosdistro-name ' + rosdistro_name + \
+        ' --rosdistro-name ' + (rosdistro_name or "''") + \
         ' --ros-version ' + str(ros_version) + \
         ' --clean-before'
     if run_abichecker:
@@ -127,7 +130,7 @@ if not testing:
 else:
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
-        ' --rosdistro-name %s' % rosdistro_name + \
+        ' --rosdistro-name %s' % (rosdistro_name or "''") + \
         ' --ros-version ' + str(ros_version)
     if require_gpu_support:
         cmd += ' --require-gpu-support'

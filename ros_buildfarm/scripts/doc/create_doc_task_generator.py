@@ -31,6 +31,7 @@ from ros_buildfarm.argument import \
     add_argument_distribution_repository_key_files
 from ros_buildfarm.argument import add_argument_distribution_repository_urls
 from ros_buildfarm.argument import add_argument_dockerfile_dir
+from ros_buildfarm.argument import add_argument_env_vars
 from ros_buildfarm.argument import add_argument_force
 from ros_buildfarm.argument import add_argument_output_dir
 from ros_buildfarm.argument import add_argument_repository_name
@@ -41,7 +42,6 @@ from ros_buildfarm.common import get_devel_job_urls
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_doc_job_url
 from ros_buildfarm.common import get_os_package_name
-from ros_buildfarm.common import get_package_condition_context
 from ros_buildfarm.common import get_release_job_urls
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.common import Scope
@@ -62,6 +62,7 @@ from rosdep2.catkin_support import get_catkin_view
 from rosdep2.catkin_support import resolve_for_os
 from rosdistro import get_distribution_file
 from rosdistro import get_index
+from rosdistro import get_package_condition_context
 import yaml
 
 
@@ -108,6 +109,7 @@ def main(argv=sys.argv[1:]):
     add_argument_vcs_information(parser)
     add_argument_distribution_repository_urls(parser)
     add_argument_distribution_repository_key_files(parser)
+    add_argument_env_vars(parser)
     add_argument_force(parser)
     add_argument_output_dir(parser, required=True)
     add_argument_dockerfile_dir(parser)
@@ -578,6 +580,11 @@ def main(argv=sys.argv[1:]):
                 debian_pkg_names.remove(debian_pkg_name)
             print('# END SUBSECTION')
 
+        env_vars = {
+            **args.env_vars,
+            'ROS_PYTHON_VERSION': condition_context['ROS_PYTHON_VERSION'],
+        }
+
         # generate Dockerfile
         data = {
             'os_name': args.os_name,
@@ -590,8 +597,7 @@ def main(argv=sys.argv[1:]):
                 args.distribution_repository_urls,
                 args.distribution_repository_key_files),
 
-            'environment_variables': [
-                'ROS_PYTHON_VERSION={}'.format(condition_context['ROS_PYTHON_VERSION'])],
+            'environment_variables': ['%s=%s' % key_value for key_value in env_vars.items()],
 
             'rosdistro_name': args.rosdistro_name,
 

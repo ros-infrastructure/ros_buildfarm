@@ -168,6 +168,7 @@ else:
         ' ' + os_code_name +
         ' ' + arch +
         ' --build-tool ' + build_tool +
+        ' --env-vars ' + ' '.join([v.replace('$', '\\$',) for v in build_environment_variables]) +
         ' --vcs-info "%s %s %s"' % (doc_repo_spec.type, doc_repo_spec.version if doc_repo_spec.version is not None else '', doc_repo_spec.url) +
         ' ' + ' '.join(repository_args) +
         ' $FORCE_FLAG' +
@@ -177,7 +178,7 @@ else:
         'echo "# BEGIN SECTION: Build Dockerfile - generating doc task"',
         'cd $WORKSPACE/docker_generating_docker',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t doc_task_generation.%s_%s .' % (rosdistro_name, doc_repo_spec.name.lower()),
+        'docker build --force-rm --platform=linux/%s -t doc_task_generation.%s_%s .' % (arch, rosdistro_name, doc_repo_spec.name.lower()),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generating doc task"',
@@ -217,7 +218,7 @@ else:
         '# build and run build_and_install Dockerfile',
         'cd $WORKSPACE/docker_doc',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t doc.%s_%s .' % (rosdistro_name, doc_repo_spec.name.lower()),
+        'docker build --force-rm --platform=linux/%s -t doc.%s_%s .' % (arch, rosdistro_name, doc_repo_spec.name.lower()),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - doc"',
@@ -251,25 +252,24 @@ else:
     ]),
 ))@
 @(SNIPPET(
-    'builder_publish-over-ssh',
-    config_name='docs',
-    remote_directory=rosdistro_name,
-    source_files=[
-        'generated_documentation/api/**/manifest.yaml',
-        'generated_documentation/api/**/stamp',
-        'generated_documentation/changelogs/**/*.html',
-        'generated_documentation/symbols/*.tag',
-
-        'generated_documentation/deps/*',
-        'generated_documentation/hashes/*',
-        'generated_documentation/locations/*',
-        'generated_documentation/metapackage_deps/*',
-    ],
-    remove_prefix='generated_documentation',
-))@
-@(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'echo "# BEGIN SECTION: Publish package metadata"',
+        'cd "$WORKSPACE/generated_documentation"',
+        "ssh -T %s@%s 'test -d %s  || mkdir %s'" % \
+          (upload_user, upload_host, os.path.join(upload_root, rosdistro_name), os.path.join(upload_root, rosdistro_name)),
+        'tar -cz $(find -regextype posix-egrep' +
+        " -regex '\./api(/.+)?/manifest\.yaml'" +
+        " -o -regex '\./api(/.+)?/stamp'" +
+        " -o -regex '\./changelogs(/.+)?/[^/]+\.html'" +
+        " -o -regex '\./symbols/[^/]+\.tag'" +
+        " -o -regex '\./deps/[^/]+'" +
+        " -o -regex '\./hashes/[^/]+'" +
+        " -o -regex '\./locations/[^/]+'" +
+        " -o -regex '\./metapackage_deps/[^/]+')" +
+        ' | ssh -T %s@%s tar -C %s -xz' % \
+          (upload_user, upload_host, os.path.join(upload_root, rosdistro_name)),
+        'echo "# END SECTION"',
         'if [ -d "$WORKSPACE/generated_documentation/api_rosdoc" ]; then',
         '  echo "# BEGIN SECTION: rsync API documentation to server"',
         '  cd $WORKSPACE/generated_documentation/api_rosdoc',

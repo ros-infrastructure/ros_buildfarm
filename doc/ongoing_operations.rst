@@ -48,12 +48,12 @@ When you are preparing for a sync:
 * Run the ``audit_rosdistro.py`` script in the ``scripts/release`` folder
   It will output text which is appropriate for posting to Discourse as a triage list.
   The ``audit_rosdistro.py`` will report all packages which are failing to build for a whole buildfile.
-  
-  For example: ``./scripts/release/audit_rosdistro.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml kinetic``
+
+  For example: ``./scripts/release/audit_rosdistro.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml rolling``
 
   * If it's failing on specific architectures, ticket it upstream and blacklist it in the config with a cross reference.
   * If it's failing on all platforms, rollback or remove the release from the distro.
-* Check the list of packages comes from the status page, e.g. http://repositories.ros.org/status_page/ros_melodic_default.html
+* Check the list of packages comes from the status page, e.g. http://repo.ros2.org/status_page/ros_rolling_default.html
   Click “REGRESSION” to find the list of regressions, click “SYNC” to see how many packages there are to sync.
   Make sure there are no major regressions and ticket any with the maintainers.
 
@@ -131,24 +131,24 @@ Usually you want to disable the jobs first, wait a little bit in case you need t
 Disable all jobs related to a specific target
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Assuming that the ROS distribution is called ``lunar`` and the platform is ``Ubuntu Yakkety`` you can disable the jobs with the following prefixes:
+Assuming that the ROS distribution is called ``rolling`` and the platform is ``Ubuntu Noble`` you can disable the jobs with the following prefixes:
 
-* ``Lsrc_uY__`` which matches the Lunar source jobs for Ubuntu Yakkety.
-* ``Lbin_uY64__`` which matches the Lunar binary jobs for Ubuntu Yakkety for the ``amd64`` architecture.
-* ``Lrel_sync-packages-to-testing_yakkety_amd64`` which matches the management job to sync Lunar binary packages for Ubuntu Yakkety for the ``amd64`` architecture.
+* ``Rsrc_uY__`` which matches the Rolling source jobs for Ubuntu Noble.
+* ``Rbin_uY64__`` which matches the Rolling binary jobs for Ubuntu Noble for the ``amd64`` architecture.
+* ``Rrel_sync-packages-to-testing_noble_amd64`` which matches the management job to sync Rolling binary packages for Ubuntu Noble for the ``amd64`` architecture.
 * ... add additional prefixes for other architectures.
 
 If the configuration also specifies ``devel``, ``doc`` or ``pull request`` jobs for the specific target they can to be disabled too:
 
-* ``Ldev_<key>__`` which matches the Lunar devel jobs for the given build file key.
-* ``Ldoc_<key>__`` which matches the Lunar doc jobs for the given build file key.
-* ``Lpr_<key>__`` which matches the Lunar PR jobs for the given build file key.
+* ``Rdev_<key>__`` which matches the Rolling devel jobs for the given build file key.
+* ``Rdoc_<key>__`` which matches the Rolling doc jobs for the given build file key.
+* ``Rpr_<key>__`` which matches the Rolling PR jobs for the given build file key.
 
 In the case of deleting the jobs the views with the same names should be empty now and can be deleted as well.
 After going to specific view you can click the ``"Delete *"`` button on the left sidebar.
 
 If your configuration also contains build files specific to the disabled target you should also disable the corresponding management jobs in the ``Manage`` view.
-They will start with ``Ldev_<key>``, ``Ldoc_<key>``, ``Lrel_ <key>`` followed by the key of the build file from your config.
+They will start with ``Rdev_<key>``, ``Rdoc_<key>``, ``Rrel_ <key>`` followed by the key of the build file from your config.
 
 Disable all jobs related to a ROS distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -156,12 +156,12 @@ Disable all jobs related to a ROS distribution
 The process is the same as for for disabling a specific target.
 The prefixes are just slightly more generic to match all targets of that ROS distribution:
 
-* ``Lsrc_`` which matches all Lunar source jobs.
-* ``Lbin_`` which matches all Lunar binary jobs.
-* ``Lrel_`` which matches the Lunar release related management jobs.
-* ``Ldev_`` which matches the Lunar devel jobs as well as the management related jobs.
-* ``Ldoc_`` which matches the Lunar doc jobs as well as the management related jobs.
-* ``Lpr_`` which matches the Lunar PR jobs as well as the management related jobs.
+* ``Rsrc_`` which matches all Rolling source jobs.
+* ``Rbin_`` which matches all Rolling binary jobs.
+* ``Rrel_`` which matches the Rolling release related management jobs.
+* ``Rdev_`` which matches the Rolling devel jobs as well as the management related jobs.
+* ``Rdoc_`` which matches the Rolling doc jobs as well as the management related jobs.
+* ``Rpr_`` which matches the Rolling PR jobs as well as the management related jobs.
 
 Deleting all views related to a ROS distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

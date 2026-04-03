@@ -103,14 +103,14 @@ Example invocation
 ^^^^^^^^^^^^^^^^^^
 
 The following commands run the *CI* job for the *ament_cmake_ros* package
-from ROS *Crystal* for Ubuntu *Bionic* *amd64*:
+from ROS *Rolling* for Ubuntu *Noble* *amd64*:
 
 .. code:: sh
 
   mkdir /tmp/ci_job
-  generate_ci_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml crystal default ubuntu bionic amd64 --package-selection-args --packages-up-to ament_cmake_ros > /tmp/ci_job/ci_job_crystal_ament_cmake_ros.sh
+  generate_ci_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml rolling default ubuntu noble amd64 --package-selection-args --packages-up-to ament_cmake_ros > /tmp/ci_job/ci_job_rolling_ament_cmake_ros.sh
   cd /tmp/ci_job
-  sh ci_job_crystal_ament_cmake_ros.sh
+  sh ci_job_rolling_ament_cmake_ros.sh
 
 Return code
 -----------
@@ -124,67 +124,19 @@ Instead of invoking the generated script it can also be *sourced*:
 
 .. code:: sh
 
-  . ci_job_crystal.sh
+  . ci_job_rolling_ament_cmake_ros.sh
 
 The return code of the invocation of ``catkin_tests_results`` /
 ``colcon test-result`` is then available in the environment variable
 ``test_result_RC``.
 
-Run the *CI* job on Travis
---------------------------
+Run the *CI* job on external CI
+-------------------------------
 
-Since it is easy to run a *CI* job locally it can also be run on Travis to
-either test every commit or pull request.
+Since it is easy to run a *CI* job locally it can also be run on an external CI
+runner (like GitHub actions) to either test every commit or pull request.
 The setup and invocation is the same as locally.
-The following .travis.yml template is a good starting point and is ready to be
-used:
-
-.. code:: yaml
-
-  # while this doesn't require sudo we don't want to run within a Docker container
-  sudo: true
-  dist: trusty
-  language: python
-  python:
-    - "3.4"
-  env:
-    global:
-      - JOB_PATH=/tmp/ci_job
-    matrix:
-      - ROS_DISTRO_NAME=crystal OS_NAME=ubuntu OS_CODE_NAME=trusty ARCH=amd64
-  install:
-    # either install the latest released version of ros_buildfarm
-    - pip install ros_buildfarm
-    # or checkout a specific branch
-    #- git clone -b master https://github.com/ros-infrastructure/ros_buildfarm /tmp/ros_buildfarm
-    #- pip install /tmp/ros_buildfarm
-
-    # use either of the two following options depending on the chosen build tool
-    # checkout catkin for catkin_test_results script
-    - git clone https://github.com/ros/catkin /tmp/catkin
-    # install colcon for test results
-    - pip install colcon-core colcon-test-result
-
-    # run CI job for a ROS repository with the same name as this repo
-    - export PACKAGES_SELECT=`basename $TRAVIS_BUILD_DIR`
-    # use the code already checked out by Travis
-    - mkdir -p $JOB_PATH/ws/src
-    - cp -R $TRAVIS_BUILD_DIR $JOB_PATH/ws/src/
-    # generate the script to run a CI job for that target and repo
-    - generate_ci_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH --package-selection-args --packages-up-to $PACKAGE_SELECT > $JOB_PATH/ci_job.sh
-    - cd $JOB_PATH
-    - cat ci_job.sh
-    # run the actual job which involves Docker
-    - sh ci_job.sh -y
-  script:
-    # get summary of test results
-    # use either of the two following options depending on the chosen build tool
-    - /tmp/catkin/bin/catkin_test_results $JOB_PATH/ws/test_results --all
-    - colcon test-result --test-result-base $JOB_PATH/ws/test_results --all
-  notifications:
-    email: false
-
-An example can be found in the `.travis.yml <https://github.com/ros-infrastructure/ros_buildfarm/blob/master/.travis.yml>`_
+An example can be found in the `.github/actions/ci/action.yaml <https://github.com/ros-infrastructure/ros_buildfarm/blob/master/.github/actions/ci/action.yaml>`_
 file of the *ros_buildfarm* repository.
 
 Run for "custom" repositories

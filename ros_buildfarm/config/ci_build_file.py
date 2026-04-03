@@ -152,3 +152,10 @@ class CIBuildFile(BuildFile):
         self.upload_directory = None
         if 'upload_directory' in data:
             self.upload_directory = data['upload_directory']
+
+        self.custom_rosdep_urls = []
+        if '_config' in data['targets']:
+            if 'custom_rosdep_urls' in data['targets']['_config']:
+                self.custom_rosdep_urls = \
+                    data['targets']['_config']['custom_rosdep_urls']
+                assert isinstance(self.custom_rosdep_urls, list)

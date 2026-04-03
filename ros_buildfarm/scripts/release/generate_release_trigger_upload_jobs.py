@@ -17,12 +17,14 @@ import sys
 
 from ros_buildfarm.argument import add_argument_config_url
 from ros_buildfarm.argument import add_argument_dry_run
-from ros_buildfarm.common import get_release_job_prefix
 from ros_buildfarm.common import JobValidationError
+from ros_buildfarm.common import package_format_mapping
 from ros_buildfarm.config import get_index
 from ros_buildfarm.config import get_release_build_files
 from ros_buildfarm.jenkins import configure_job
 from ros_buildfarm.jenkins import connect
+from ros_buildfarm.release_job import get_sync_packages_to_main_job_name
+from ros_buildfarm.release_job import get_sync_packages_to_testing_job_name
 from ros_buildfarm.templates import expand_template
 
 
@@ -68,32 +70,46 @@ def get_sync_targets(config, repo):
 
 def get_upstream_job_names(config, repo):
     distributions = config.distributions.keys()
+    package_formats_per_rosdistro = {}
+    for rosdistro in distributions:
+        package_formats_per_rosdistro.setdefault(rosdistro, set())
+        build_files = get_release_build_files(config, rosdistro)
+        for build_file in build_files.values():
+            for os_name in build_file.targets.keys():
+                package_formats_per_rosdistro[rosdistro].add(
+                    package_format_mapping[os_name])
+    upstream_job_names = []
     if repo == 'main':
-        upstream_job_names = ['{0}_sync-packages-to-{1}'.format(
-            get_release_job_prefix(rosdistro), repo) for rosdistro in distributions]
+        for rosdistro, package_formats in package_formats_per_rosdistro.items():
+            for package_format in package_formats:
+                upstream_job_names.append(
+                    get_sync_packages_to_main_job_name(rosdistro, package_format))
     elif repo == 'testing':
-        upstream_job_names = []
         for rosdistro in distributions:
-            architectures_by_code_name = {}
+            platforms = {}
             build_files = get_release_build_files(config, rosdistro)
             for build_file in build_files.values():
                 for os_name in build_file.targets.keys():
+                    platforms.setdefault(os_name, {})
                     for code_name, architectures in build_file.targets[os_name].items():
-                        architectures_by_code_name[code_name] = \
-                            architectures_by_code_name.get(code_name, set()) | \
-                            set(architectures.keys())
+                        platforms[os_name].setdefault(code_name, set())
+                        platforms[os_name][code_name].update(architectures.keys())
 
-            for code_name, archs in architectures_by_code_name.items():
-                for arch in archs:
-                    upstream_job_names.append(
-                        '{prefix}_sync-packages-to-{repo}_{code_name}_{arch}'.format(
-                            prefix=get_release_job_prefix(rosdistro),
-                            repo=repo,
-                            code_name=code_name,
-                            arch=arch))
+            for os_name, code_names in platforms.items():
+                for code_name, architectures in code_names.items():
+                    for arch in architectures:
+                        upstream_job_names.append(
+                            get_sync_packages_to_testing_job_name(
+                                rosdistro, os_name, code_name, arch))
     else:
         raise JobValidationError("Unknown upstream jobs for job 'upload_{}'." % repo)
-    upstream_job_names.append('import_upstream')
+    for package_format in set(
+        pf for pfs in package_formats_per_rosdistro.values() for pf in pfs
+    ):
+        if package_format == 'deb':
+            upstream_job_names.append('import_upstream')
+        else:
+            upstream_job_names.append('import_upstream_' + package_format)
     return ','.join(sorted(upstream_job_names))
 
 

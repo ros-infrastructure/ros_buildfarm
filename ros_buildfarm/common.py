@@ -19,6 +19,7 @@ try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
+import warnings
 
 
 package_format_mapping = {
@@ -134,9 +135,9 @@ def get_repositories_and_script_generating_key_files(
         script_generating_key_files.append("mkdir -p $WORKSPACE/keys")
         script_generating_key_files.append("rm -fr $WORKSPACE/keys/*")
         for i, repository_key in enumerate(unique_repository_keys):
-            repository_args.append('$WORKSPACE/keys/%d.key' % i)
+            repository_args.append('$WORKSPACE/keys/%d.asc' % i)
             script_generating_key_files.append(
-                'echo "%s" > $WORKSPACE/keys/%d.key' % (repository_key, i))
+                'echo "%s" > $WORKSPACE/keys/%d.asc' % (repository_key, i))
 
     if custom_rosdep_urls:
         repository_args.append('--custom-rosdep-urls')
@@ -190,7 +191,8 @@ def get_ci_job_name(rosdistro_name, os_name, os_code_name, arch, job_type):
 
 
 def get_ci_view_name(rosdistro_name):
-    view_name = '%sci' % rosdistro_name[0].upper()
+    # prefix with first character of rosdistro_name (if not empty)
+    view_name = '%sci' % rosdistro_name[:1].upper()
     return view_name
 
 
@@ -325,6 +327,7 @@ def get_short_os_code_name(os_code_name):
         'jammy': 'J',
         'jessie': 'J',
         'noble': 'N',
+        'resolute': 'R',
         'saucy': 'S',
         'stretch': 'S',
         'trusty': 'T',
@@ -741,6 +744,10 @@ def filter_buildfile_packages_recursively(package_names, buildfile, rosdistro_na
 
 
 def get_package_condition_context(index, rosdistro_name):
+    warnings.warn(
+        'ros_buildfarm.common.get_package_condition_context is deprecated, '
+        'use rosdistro.get_package_condition_context instead.',
+        DeprecationWarning, stacklevel=2)
     python_version = index.distributions[rosdistro_name].get('python_version')
     ros_version = {
         'ros1': '1',
