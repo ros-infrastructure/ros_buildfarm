@@ -545,7 +545,7 @@ def configure_release_job(
             print(("Skipping binary jobs for package '%s' because it is not " +
                    "yet in the rosdistro cache") % pkg_name, file=sys.stderr)
             return source_job_names, binary_job_names, job_configs
-        skip_rosdep_keys = dependency_names.intersection(build_file.package_ignore_list)
+        skip_rosdep_keys = sorted(dependency_names.intersection(build_file.package_ignore_list))
         dependency_names.difference_update(build_file.package_ignore_list)
 
     # binarydeb jobs
