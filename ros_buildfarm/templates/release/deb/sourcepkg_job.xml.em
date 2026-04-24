@@ -143,14 +143,12 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     source_files=sourcedeb_files,
     remove_prefix='sourcedeb',
 ))@
-TODO change to remotely execute via ssh
 TODO make sure reprepro-updater in available on the building_repository node
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: import debian package"',
-        'export PYTHONPATH=$WORKSPACE/reprepro-updater/src:$PYTHONPATH',
-        f'python3 -u $WORKSPACE/reprepro-updater/scripts/include_folder.py --folder /var/repos/ubuntu/building/queue/%(os_code_name)s/${JOB_NAME}__${BUILD_NUMBER} --package %(debian_package_name)s --delete-folder --commit --invalidate',
+        f'ssh %(upload_host)s -- python3 -u $WORKSPACE/reprepro-updater/scripts/include_folder.py --folder /var/repos/ubuntu/building/queue/%(os_code_name)s/${JOB_NAME}__${BUILD_NUMBER} --package %(debian_package_name)s --delete-folder --commit --invalidate',
         'echo "# END SECTION"',
     ]),
 ))@
