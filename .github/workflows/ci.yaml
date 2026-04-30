@@ -310,7 +310,7 @@ jobs:
           os_code_name: jammy
           repo: rcutils
 
-  ros2_doc_noble:
+  ros2_doc_resolute:
     name: ROS 2 Doc (Noble)
     runs-on: ubuntu-24.04
     steps:
@@ -323,7 +323,7 @@ jobs:
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
           ros_distro: rolling
-          os_code_name: noble
+          os_code_name: resolute
           repo: rcl
           output_directory: ws/docs_output
 
@@ -374,7 +374,7 @@ jobs:
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
           ros_distro: rolling
-          os_code_name: noble
+          os_code_name: resolute
           pkg_name: rcutils
 
   ros2_release_reconfigure:
@@ -407,7 +407,7 @@ jobs:
           config_name: rhel
           ros_distro: rolling
           os_name: rhel
-          os_code_name: 9
+          os_code_name: 10
           arch: x86_64
           pkg_name: rcutils
 
@@ -424,7 +424,7 @@ jobs:
         with:
           config_url: https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml
           ros_distro: rolling
-          os_code_name: noble
+          os_code_name: resolute
 
   ros2_sync_criteria_check_rpm:
     name: ROS 2 Sync Criteria Check (RPM)
@@ -441,7 +441,7 @@ jobs:
           config_name: rhel
           ros_distro: rolling
           os_name: rhel
-          os_code_name: 9
+          os_code_name: 10
           arch: x86_64
 
   ros2_trigger:
