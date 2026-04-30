@@ -22,6 +22,7 @@
                 <usePty>false</usePty>
                 <useAgentForwarding>false</useAgentForwarding>
                 <useSftpForExec>false</useSftpForExec>
+                <keepFilePermissions>false</keepFilePermissions>
               </jenkins.plugins.publish__over__ssh.BapSshTransfer>
             </transfers>
             <useWorkspaceInPromotion>false</useWorkspaceInPromotion>

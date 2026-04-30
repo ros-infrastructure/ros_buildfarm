@@ -2,4 +2,5 @@
       <regexp>@regexp</regexp>
       <regexpForFailed>@regexp_for_failed</regexpForFailed>
       <setForMatrix>false</setForMatrix>
+      <appendMode>false</appendMode>
     </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
