@@ -55,8 +55,8 @@ def main(argv=sys.argv[1:]):
         help='Output overlay information as JSON instead of a shell script'
     )
     group.add_argument(
-        '--vcstool', action='store_true',
-        help='Output overlay information as vcstool repos file'
+        '--vcs2l', action='store_true',
+        help='Output overlay information as vcs2l repos file'
     )
 
     args = parser.parse_args(argv)
@@ -98,7 +98,7 @@ def main(argv=sys.argv[1:]):
 
     if args.json:
         print(json.dumps([vars(r) for r, p in scms], sort_keys=True, indent=2))
-    elif args.vcstool:
+    elif args.vcs2l:
         print('repositories:')
         for r, p in scms:
             print('  %s:' % p)
