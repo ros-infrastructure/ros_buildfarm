@@ -24,7 +24,18 @@ from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.common import Scope
 
 
-def main(argv=sys.argv[1:]):
+def get_file_sha256(path: str, chunk_size: int = 1024 * 1024) -> str:
+    hasher = hashlib.sha256()
+    with open(path, 'rb') as f:
+        while True:
+            chunk = f.read(chunk_size)
+            if not chunk:
+                break
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
+def main(argv=sys.argv[1:]) -> int:
     parser = argparse.ArgumentParser(
         description='Create a compressed archive of the workspace install space.')
     add_argument_rosdistro_name(parser)
@@ -54,15 +65,12 @@ def main(argv=sys.argv[1:]):
 
     with Scope('SUBSECTION', 'create workspace archive'):
         print("Creating archive '%s' from '%s'" % (archive_path, args.install_dir))
-        with tarfile.open(archive_path, 'w:bz2') as t:
-            t.add(args.install_dir, arcname=arcname)
+        with tarfile.open(archive_path, 'w:bz2') as archive:
+            archive.add(args.install_dir, arcname=arcname)
 
         print("Computing SHA256 checksum")
-        h = hashlib.sha256()
-        with open(archive_path, 'rb') as f:
-            h.update(f.read())
-
-        checksum_content = '%s *%s\n' % (h.hexdigest(), archive_name)
+        checksum_content = '%s *%s\n' % (
+            get_file_sha256(archive_path), archive_name)
         print("Writing checksum to '%s'" % checksum_path)
         with open(checksum_path, 'w') as f:
             f.write(checksum_content)
