@@ -1,5 +1,8 @@
 include('/etc/mock/default.cfg')
 
+# Workaround for dnf5 download command (see rpm-software-management/mock#1750)
+config_opts.setdefault("dnf5_avoid_opts", {}).setdefault("download", []).append("--allowerasing")
+
 def _expanded(k, opts):
     """Get a config value and ensure it has been expanded."""
     exp, opts['__jinja_expand'] = opts.get('__jinja_expand', False), True
