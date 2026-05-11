@@ -16,6 +16,7 @@ from datetime import datetime
 import glob
 import os
 import subprocess
+import sys
 
 from ros_buildfarm.common import get_os_package_name
 
@@ -86,13 +87,17 @@ def build_binaryrpm(
         ['mock', '--root', 'ros_buildfarm', '--print-root-path']).decode('utf-8').strip()
     mock_build_path = os.path.join(mock_root_path, 'builddir', 'build', 'BUILD')
     for subdir in os.listdir(mock_build_path):
-        if subdir.endswith('-SPECPARTS'):
+        if any(subdir.endswith(suffix) for suffix in ('-build', '-SPECPARTS')):
             continue
 
         package_root = os.path.join(mock_build_path, subdir)
         break
     else:
-        assert False, "Failed to determine package build root"
+        print(
+            'WARNING: Failed to determine package build root. '
+            'Maintainer E-mail addresses could not be determined.',
+            file=sys.stderr)
+        return
 
     # output package maintainers for job notification
     from catkin_pkg.package import parse_package
