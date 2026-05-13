@@ -1,16 +1,7 @@
 @{
 # same logic as in from_base_image.Dockerfile.em
 base_image = '%s:%s' % (
-    vars().get('docker_base_image_override') or (
-        'osrf/%s_%s' % (os_name, arch)
-        if arch in ('i386', 'armhf', 'arm64') and (
-            os_code_name in (
-                'artful', 'bionic', 'cosmic', 'disco', 'focal',
-                'jammy', 'noble', 'wily', 'xenial', 'yakkety',
-                'zesty')
-        )
-        else os_name
-    ),
+    vars().get('docker_base_image_override') or os_name,
     os_code_name,
 )
 }@
