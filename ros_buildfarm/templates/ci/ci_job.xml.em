@@ -372,14 +372,14 @@ parameters = [
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Compress install space"',
-        'cd $WORKSPACE',
-        'tar -cjf ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name or 'global', os_code_name, arch) +
-        ' -C ws' +
-        ' --transform "s/^install_isolated/ros%d-linux/"' % (ros_version) +
-        ' install_isolated',
-        'sha256sum -b ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name or 'global', os_code_name, arch) +
-        ' > ros%d-%s-linux-%s-%s-ci-CHECKSUM' % (ros_version, rosdistro_name or 'global', os_code_name, arch),
-        'cd -',
+        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/create_workspace_archive.py' +
+        ' ' + (rosdistro_name or "''") +
+        ' ' + os_code_name +
+        ' ' + arch +
+        ' --ros-version ' + str(ros_version) +
+        ' --install-dir $WORKSPACE/ws/install_isolated' +
+        ' --output-dir $WORKSPACE',
         'echo "# END SECTION"',
     ]),
 ))@
