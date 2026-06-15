@@ -89,6 +89,11 @@ parameters = [
         'default_value': build_tool_test_args or '',
         'description': 'Arbitrary arguments passed to the build tool during testing',
     },
+    {
+        'type': 'boolean',
+        'name': 'single_stage',
+        'description': 'If selected, skip the "Build & Install" stage and only run "Build & Test"',
+    },
 ]
 }@
 @(SNIPPET(
@@ -192,6 +197,7 @@ parameters = [
         'export TZ="%s"' % timezone,
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'if [ "$package_dependencies" = "true" ]; then package_dependencies_arg=--package-dependencies; fi',
+        'if [ "$single_stage" = "true" ]; then single_stage_arg=--single-stage; fi',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/run_ci_job.py' +
         ' ' + (rosdistro_name or "''") +
         ' ' + os_name +
@@ -214,7 +220,8 @@ parameters = [
         ]) +
         ' --package-selection-args $package_selection_args' +
         ' --build-tool-args $build_tool_args' +
-        ' --build-tool-test-args $build_tool_test_args',
+        ' --build-tool-test-args $build_tool_test_args' +
+        ' $single_stage_arg',
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - generating CI tasks"',
@@ -302,6 +309,7 @@ parameters = [
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'if [ "$single_stage" != "true" ]; then',
         '# monitor all subprocesses and enforce termination',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ --cid-file $WORKSPACE/docker_build_and_install/docker.cid > $WORKSPACE/docker_build_and_install/subprocess_reaper.log 2>&1 &',
         '# sleep to give python time to startup',
@@ -366,7 +374,9 @@ parameters = [
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name or 'global') +
         ' "ccache -s"',
         'echo "# END SECTION"',
-    ] if shared_ccache else [])),
+    ] if shared_ccache else []) + [
+        'fi',
+    ]),
 ))@
 @(SNIPPET(
     'builder_shell',
