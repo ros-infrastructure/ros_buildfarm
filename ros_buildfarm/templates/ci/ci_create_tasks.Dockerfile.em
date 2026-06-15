@@ -87,19 +87,20 @@ cmds = [
     ' --test-branch "%s"' % (test_branch) + \
     ' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys) + \
     ' --package-selection-args ' + ' '.join(package_selection_args),
-
-    'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
-    ' /tmp/ros_buildfarm/scripts/ci/build_task_generator.py' + \
-    ' --dockerfile-dir /tmp/docker_build_and_install' + \
-    build_args,
-
+]
+if not single_stage:
+    cmds.append(
+        'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
+        ' /tmp/ros_buildfarm/scripts/ci/build_task_generator.py' + \
+        ' --dockerfile-dir /tmp/docker_build_and_install' + \
+        build_args)
+cmds.append(
     'PYTHONPATH=/tmp/ros_buildfarm:$PYTHONPATH python3 -u' + \
     ' /tmp/ros_buildfarm/scripts/ci/build_task_generator.py' + \
     ' --testing' + \
     ' --dockerfile-dir /tmp/docker_build_and_test' + \
     build_args + \
-    ' --build-tool-test-args ' + ' '.join(build_tool_test_args or []),
-]
+    ' --build-tool-test-args ' + ' '.join(build_tool_test_args or []))
 cmd = ' && '.join(cmds).replace('\\', '\\\\').replace('"', '\\"')
 }@
 CMD ["@cmd"]
