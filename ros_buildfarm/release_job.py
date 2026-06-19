@@ -141,14 +141,6 @@ def configure_release_jobs(
     all_view_configs = {}
     all_job_configs = OrderedDict()
 
-    for os_name, _ in platforms:
-        if package_format_mapping[os_name] not in ('rpm',):
-            job_name, job_config = configure_import_package_job(
-                config_url, rosdistro_name, release_build_name,
-                config=config, build_file=build_file, jenkins=jenkins, dry_run=dry_run)
-            if not isinstance(jenkins, JenkinsProxy):
-                all_job_configs[job_name] = job_config
-            break
 
     job_name, job_config = configure_sync_packages_to_main_job(
         config_url, rosdistro_name, release_build_name,
@@ -234,7 +226,6 @@ def configure_release_jobs(
                         index=index, dist_file=dist_file,
                         cached_pkgs=cached_pkgs,
                         jenkins=jenkins, views=views,
-                        generate_import_package_job=False,
                         generate_sync_packages_jobs=False,
                         is_disabled=is_disabled,
                         other_build_files_same_platform=other_build_files_same_platform,
@@ -398,7 +389,6 @@ def configure_release_job(
         config=None, build_file=None,
         index=None, dist_file=None, cached_pkgs=None,
         jenkins=None, views=None,
-        generate_import_package_job=None,
         generate_sync_packages_jobs=True,
         is_disabled=False, other_build_files_same_platform=None,
         groovy_script=None,
@@ -417,8 +407,7 @@ def configure_release_job(
     if build_file is None:
         build_files = get_release_build_files(config, rosdistro_name)
         build_file = build_files[release_build_name]
-    if generate_import_package_job is None:
-        generate_import_package_job = package_format_mapping[os_name] not in ('rpm',)
+
 
     if index is None:
         index = get_index(config.rosdistro_index_url)
@@ -479,11 +468,7 @@ def configure_release_job(
             jenkins, rosdistro_name, release_build_name, targets,
             dry_run=dry_run)
 
-    if generate_import_package_job:
-        configure_import_package_job(
-            config_url, rosdistro_name, release_build_name,
-            config=config, build_file=build_file, jenkins=jenkins,
-            dry_run=dry_run)
+
 
     if generate_sync_packages_jobs:
         configure_sync_packages_to_main_job(
@@ -667,8 +652,7 @@ def _get_sourcedeb_job_config(
 
         'sourcedeb_files': sourcedeb_files,
 
-        'import_package_job_name': get_import_package_job_name(
-            rosdistro_name, package_format),
+
         'debian_package_name': get_os_package_name(
             rosdistro_name, pkg_name),
 
@@ -754,8 +738,7 @@ def _get_binarydeb_job_config(
         'binarydeb_files': binarydeb_files,
         'build_environment_variables': build_environment_variables,
 
-        'import_package_job_name': get_import_package_job_name(
-            rosdistro_name, package_format),
+
         'debian_package_name': get_os_package_name(
             rosdistro_name, pkg_name),
 
@@ -780,49 +763,6 @@ def _get_binarydeb_job_config(
     return job_config
 
 
-def configure_import_package_job(
-        config_url, rosdistro_name, release_build_name,
-        config=None, build_file=None, jenkins=None, dry_run=False):
-    if config is None:
-        config = get_config_index(config_url)
-    if build_file is None:
-        build_files = get_release_build_files(config, rosdistro_name)
-        build_file = build_files[release_build_name]
-    if jenkins is None:
-        from ros_buildfarm.jenkins import connect
-        jenkins = connect(config.jenkins_url)
-
-    package_formats = set(
-        package_format_mapping[os_name] for os_name in build_file.targets.keys())
-    assert len(package_formats) == 1
-    package_format = package_formats.pop()
-
-    job_name = get_import_package_job_name(rosdistro_name, package_format)
-    job_config = _get_import_package_job_config(build_file, package_format)
-
-    # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
-    if isinstance(jenkins, object) and jenkins is not False:
-        from ros_buildfarm.jenkins import configure_job
-        configure_job(jenkins, job_name, job_config, dry_run=dry_run)
-    return (job_name, job_config)
-
-
-def get_import_package_job_name(rosdistro_name, package_format):
-    view_name = get_release_job_prefix(rosdistro_name)
-    return '%s_import-package%s' % (
-        view_name, '' if package_format == 'deb' else '-' + package_format)
-
-
-def _get_import_package_job_config(build_file, package_format):
-    template_name = 'release/%s/import_package_job.xml.em' % package_format
-    job_data = {
-        'target_queue': build_file.target_queue,
-        'abi_incompatibility_assumed': build_file.abi_incompatibility_assumed,
-        'notify_emails': build_file.notify_emails,
-        'ros_buildfarm_repository': get_repository(),
-    }
-    job_config = expand_template(template_name, job_data)
-    return job_config
 
 
 def configure_sync_packages_to_testing_job(
@@ -879,10 +819,6 @@ def _get_sync_packages_to_testing_job_config(
         'os_code_name': os_code_name,
         'arch': arch,
         'repository_args': repository_args,
-
-        'import_package_job_name': get_import_package_job_name(
-            rosdistro_name, package_format),
-
         'notify_emails': build_file.notify_emails,
     }
     job_config = expand_template(template_name, job_data)
