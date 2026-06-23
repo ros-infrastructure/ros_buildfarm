@@ -77,6 +77,31 @@ No arguments means import from the default location(s).
 We do this for things like new releases of the core ROS python tools.
 
 
+Stop package building jobs without blocking package imports
+-----------------------------------------------------------
+
+Package (source and binary) build jobs for deb rely on a subordinate import package job to run on the repo host before the job can complete.
+If the build farm needs to be brought into shutdown the standard shutdown procedure won't work because import package jobs will not be allowed to start.
+In order to do a clean shutdown the build agents must be brought offline while allowing the repo host to continue running. For build farms with fixed agent pools this can be accomplished using the following groovy script
+
+.. code-block:: groovy
+
+    import hudson.model.labels.LabelAtom
+    import hudson.slaves.OfflineCause.UserCause
+
+    cause = new UserCause(Jenkins.get().getUser("nuclearsandwich"), "Allow package imports to catch up")
+
+    label1 = new LabelAtom("buildagent")
+    label2 = new LabelAtom("buildagent_arm64")
+
+    for (comp in Jenkins.get().getComputers()) {
+      if (comp.getAssignedLabels().contains(label1) || comp.getAssignedLabels().contains(label2)) {
+        comp.setTemporarilyOffline(true, cause)
+      }
+    }
+
+Once all source and binary packaging jobs have completed the farm can be put into the standard shutdown mode to complete the process.
+
 Perform action on a set of jobs
 -------------------------------
 
