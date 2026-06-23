@@ -65,6 +65,12 @@ def main(argv=sys.argv[1:]):
     for k, v in remainder_args.items():
         setattr(args, k, v)
 
+    if args.require_gpu_support:
+        print(
+            'WARNING: using the --require-gpu-support argument is deprecated.'
+            'Can be removed without changing functionality.',
+            file=sys.stderr)
+
     ensure_workspace_exists(args.workspace_root)
 
     if args.clean_before:
