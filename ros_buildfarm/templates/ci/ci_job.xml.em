@@ -469,6 +469,23 @@ parameters = [
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'if [ "$single_stage" = "true" ]; then',
+        'echo "# BEGIN SECTION: Compress install space"',
+        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/create_workspace_archive.py' +
+        ' ' + (rosdistro_name or "''") +
+        ' ' + os_code_name +
+        ' ' + arch +
+        ' --ros-version ' + str(ros_version) +
+        ' --install-dir $WORKSPACE/ws/install_isolated' +
+        ' --output-dir $WORKSPACE',
+        'echo "# END SECTION"',
+        'fi',
+    ]),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
         'if [ "$skip_cleanup" = "false" ]; then',
         'echo "# BEGIN SECTION: Clean up to save disk space on agents"',
         'rm -fr ws/build_isolated',
