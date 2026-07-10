@@ -92,6 +92,7 @@ parameters = [
     {
         'type': 'boolean',
         'name': 'single_stage',
+        'default_value': single_stage,
         'description': 'If selected, skip the "Build and Install" stage and only run "Build and Test"',
     },
 ]

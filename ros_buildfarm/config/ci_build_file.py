@@ -153,6 +153,10 @@ class CIBuildFile(BuildFile):
         if 'upload_directory' in data:
             self.upload_directory = data['upload_directory']
 
+        self.single_stage = False
+        if 'single_stage' in data:
+            self.single_stage = bool(data['single_stage'])
+
         self.custom_rosdep_urls = []
         if '_config' in data['targets']:
             if 'custom_rosdep_urls' in data['targets']['_config']:
