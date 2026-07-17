@@ -302,6 +302,7 @@ def _get_ci_job_config(
         'build_tool_args': build_file.build_tool_args,
         'build_tool_test_args': build_file.build_tool_test_args,
         'test_branch': build_file.test_branch,
+        'single_stage': build_file.single_stage,
 
         'underlay_source_jobs': underlay_source_jobs,
         'underlay_source_paths': underlay_source_paths,

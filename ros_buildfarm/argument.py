@@ -426,6 +426,13 @@ def add_argument_skip_rosdep_keys(parser):
              'and not installed.')
 
 
+def add_argument_single_stage(parser):
+    parser.add_argument(
+        '--single-stage',
+        action='store_true',
+        help='Skip the "Build & Install" stage and only run the "Build & Test" stage.')
+
+
 def add_argument_test_branch(parser):
     parser.add_argument(
         '--test-branch', default=None,

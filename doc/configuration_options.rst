@@ -612,6 +612,15 @@ The following options are valid in version ``1`` (beside the generic options):
 * ``underlay_from_ci_jobs``: names of other CI jobs which should be used
   as an underlay to this job.
 
+* ``single_stage``: a boolean flag which, when set to ``true``, skips the
+  *build-and-install* stage and only runs the *build-and-test* stage
+  (default: ``false``).
+  This is useful when the install space is not needed as an underlay for
+  downstream jobs and the goal is solely to verify that packages build and
+  their tests pass.
+  The value serves as the default for the ``single_stage`` Jenkins parameter,
+  which can be overridden per-run from the Jenkins UI.
+
 * ``upload_directory``: a subdirectory name to upload the resulting archive
   to, if desired.
   By default, the resulting archives are only available to other jobs within
