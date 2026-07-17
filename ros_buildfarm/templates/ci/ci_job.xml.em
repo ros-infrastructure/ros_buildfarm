@@ -15,6 +15,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     'property_log-rotator',
     days_to_keep=730,
     num_to_keep=100,
+    artifact_days_to_keep=730,
     artifact_num_to_keep=30,
 ))@
 @[if job_priority is not None]@
