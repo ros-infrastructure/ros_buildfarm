@@ -55,14 +55,9 @@
         'echo "# BEGIN SECTION: import upstream packages"',
         'for f in $repo_list_file; do',
     ] + [
-        "  sed 's/$distname/%s/g;s/$releasever/%s/g' $f | xargs -L1 createrepo-agent /var/repos/%s/building/%s/ --invalidate-family --arch=SRPMS --arch=%s --sync" % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(arches))
+        "  sed 's/$distname/%s/g;s/$releasever/%s/g' $f | xargs -L1 createrepo-agent /var/repos/%s/%s/%s/ --invalidate-family --arch=SRPMS --arch=%s --sync" % (os_name, os_code_name, os_name, repo, os_code_name, ' --arch='.join(arches))
         for os_name, os_versions in import_targets.items() for os_code_name, arches in os_versions.items()
-    ] + [
-        "  sed 's/$distname/%s/g;s/$releasever/%s/g' $f | xargs -L1 createrepo-agent /var/repos/%s/testing/%s/ --invalidate-family --arch=SRPMS --arch=%s --sync" % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(arches))
-        for os_name, os_versions in import_targets.items() for os_code_name, arches in os_versions.items()
-    ] + [
-        "  sed 's/$distname/%s/g;s/$releasever/%s/g' $f | xargs -L1 createrepo-agent /var/repos/%s/main/%s/ --invalidate-family --arch=SRPMS --arch=%s --sync" % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(arches))
-        for os_name, os_versions in import_targets.items() for os_code_name, arches in os_versions.items()
+        for repo in ('building', 'testing', 'main')
     ] + [
         'done',
         'echo "# END SECTION"',
