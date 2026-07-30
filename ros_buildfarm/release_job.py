@@ -113,7 +113,9 @@ def configure_release_jobs(
             print('  -', pkg_name)
 
         implicitly_ignored_pkg_names = get_implicitly_ignored_package_names(
-            cached_pkgs, explicitly_ignored_pkg_names)
+            cached_pkgs, explicitly_ignored_pkg_names,
+            include_test_deps=build_file.include_test_dependencies,
+            include_group_deps=build_file.include_group_dependencies)
         if implicitly_ignored_pkg_names:
             print(('The following packages are being %s because their ' +
                    'dependencies are being ignored:') % ('ignored'
