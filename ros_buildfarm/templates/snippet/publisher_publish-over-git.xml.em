@@ -1,4 +1,4 @@
-    <hudson.plugins.git.GitPublisher plugin="git@@5.6.0">
+    <hudson.plugins.git.GitPublisher plugin="git@@5.10.1">
       <configVersion>2</configVersion>
       <pushMerge>false</pushMerge>
       <pushOnlyIfSuccess>true</pushOnlyIfSuccess>
