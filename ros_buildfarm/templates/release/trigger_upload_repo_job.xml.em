@@ -3,7 +3,7 @@
   <description/>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <jenkins.advancedqueue.priority.strategy.PriorityJobProperty plugin="PrioritySorter@@5.2.0">
+    <jenkins.advancedqueue.priority.strategy.PriorityJobProperty plugin="PrioritySorter@@936.937.v5581d0b_2ccb_a_">
       <useJobPriority>false</useJobPriority>
       <priority>-1</priority>
     </jenkins.advancedqueue.priority.strategy.PriorityJobProperty>

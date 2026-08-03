@@ -1,4 +1,4 @@
-    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@376.v8933585c69d3">
+    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@405.v67cc4f9764d0">
       <credentialIds>
 @[for credential_id in credential_ids]@
         <string>@credential_id</string>
