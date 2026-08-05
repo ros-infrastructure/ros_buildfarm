@@ -32,7 +32,6 @@ try {
       // mark agent as offline and log event
       def computer = node.toComputer()
       def disk_space = new DiskSpace(root_path.getRemote(), usable_disk_space)
-      disk_space.setTriggered(node_monitor.getClass(), true);
       if (node_monitor.getDescriptor().markOffline(computer, disk_space)) {
         def logger = Logger.getLogger(AbstractDiskSpaceMonitor.class.getName())
         logger.warning(Messages.DiskSpaceMonitor_MarkedOffline(computer.getName()))
