@@ -11,7 +11,9 @@ FROM @(os_name):@(os_code_name)
 
 RUN dnf update --refresh -y
 
-RUN dnf install --refresh -y --setopt=install_weak_deps=False dnf{,-command\(download\)} git mock{,-{core-configs,scm}} python3{,-{catkin_pkg,empy,rosdistro,yaml}}
+RUN dnf install --refresh -y --setopt=install_weak_deps=False dnf{,-command\(download\)} git mock{,-{core-configs,scm}} python3{,-{catkin_pkg,empy,rosdep,rosdistro,yaml}}
+
+RUN rosdep init
 
 RUN useradd -u @(uid) -l -m buildfarm
 RUN usermod -a -G mock buildfarm

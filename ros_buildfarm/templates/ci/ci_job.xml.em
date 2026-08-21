@@ -15,6 +15,8 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
     'property_log-rotator',
     days_to_keep=730,
     num_to_keep=100,
+    artifact_days_to_keep=730,
+    artifact_num_to_keep=30,
 ))@
 @[if job_priority is not None]@
 @(SNIPPET(
@@ -88,6 +90,12 @@ parameters = [
         'name': 'build_tool_test_args',
         'default_value': build_tool_test_args or '',
         'description': 'Arbitrary arguments passed to the build tool during testing',
+    },
+    {
+        'type': 'boolean',
+        'name': 'single_stage',
+        'default_value': single_stage,
+        'description': 'If selected, skip the "Build and Install" stage and only run "Build and Test"',
     },
 ]
 }@
@@ -192,6 +200,7 @@ parameters = [
         'export TZ="%s"' % timezone,
         'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
         'if [ "$package_dependencies" = "true" ]; then package_dependencies_arg=--package-dependencies; fi',
+        'if [ "$single_stage" = "true" ]; then single_stage_arg=--single-stage; fi',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/run_ci_job.py' +
         ' ' + (rosdistro_name or "''") +
         ' ' + os_name +
@@ -212,6 +221,7 @@ parameters = [
         ' --workspace-mount-point /tmp/ws' + ''.join([
             ' /tmp/ws%d' % (i + 2) for i in range(len(underlay_source_paths))
         ]) +
+        ' $single_stage_arg' +
         ' --package-selection-args $package_selection_args' +
         ' --build-tool-args $build_tool_args' +
         ' --build-tool-test-args $build_tool_test_args',
@@ -220,7 +230,7 @@ parameters = [
         'echo "# BEGIN SECTION: Build Dockerfile - generating CI tasks"',
         'cd $WORKSPACE/docker_generating_dockers',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_task_generation.%s .' % (rosdistro_name or 'global'),
+        'docker build --force-rm --platform=linux/%s -t $DOCKER_IMAGE_PREFIX.ci_task_generation.%s .' % (arch, rosdistro_name or 'global'),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generating CI tasks"',
@@ -260,7 +270,7 @@ parameters = [
         '# build and run create_workspace Dockerfile',
         'cd $WORKSPACE/docker_create_workspace',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_create_workspace.%s .' % (rosdistro_name or 'global'),
+        'docker build --force-rm --platform=linux/%s -t $DOCKER_IMAGE_PREFIX.ci_create_workspace.%s .' % (arch, rosdistro_name or 'global'),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - create workspace"',
@@ -302,6 +312,7 @@ parameters = [
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'if [ "$single_stage" != "true" ]; then',
         '# monitor all subprocesses and enforce termination',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/subprocess_reaper.py $$ --cid-file $WORKSPACE/docker_build_and_install/docker.cid > $WORKSPACE/docker_build_and_install/subprocess_reaper.log 2>&1 &',
         '# sleep to give python time to startup',
@@ -314,7 +325,7 @@ parameters = [
         '# build and run build and install Dockerfile',
         'cd $WORKSPACE/docker_build_and_install',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s .' % (rosdistro_name or 'global'),
+        'docker build --force-rm --platform=linux/%s -t $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s .' % (arch, rosdistro_name or 'global'),
         'echo "# END SECTION"',
         '',
     ] + ([
@@ -366,21 +377,25 @@ parameters = [
         ' $DOCKER_IMAGE_PREFIX.ci_build_and_install.%s' % (rosdistro_name or 'global') +
         ' "ccache -s"',
         'echo "# END SECTION"',
-    ] if shared_ccache else [])),
+    ] if shared_ccache else []) + [
+        'fi',
+    ]),
 ))@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
+        'if [ "$single_stage" != "true" ]; then',
         'echo "# BEGIN SECTION: Compress install space"',
-        'cd $WORKSPACE',
-        'tar -cjf ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name or 'global', os_code_name, arch) +
-        ' -C ws' +
-        ' --transform "s/^install_isolated/ros%d-linux/"' % (ros_version) +
-        ' install_isolated',
-        'sha256sum -b ros%d-%s-linux-%s-%s-ci.tar.bz2' % (ros_version, rosdistro_name or 'global', os_code_name, arch) +
-        ' > ros%d-%s-linux-%s-%s-ci-CHECKSUM' % (ros_version, rosdistro_name or 'global', os_code_name, arch),
-        'cd -',
+        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/create_workspace_archive.py' +
+        ' ' + (rosdistro_name or "''") +
+        ' ' + os_code_name +
+        ' ' + arch +
+        ' --ros-version ' + str(ros_version) +
+        ' --install-dir $WORKSPACE/ws/install_isolated' +
+        ' --output-dir $WORKSPACE',
         'echo "# END SECTION"',
+        'fi',
     ]),
 ))@
 @(SNIPPET(
@@ -398,7 +413,7 @@ parameters = [
         '# build and run build and test Dockerfile',
         'cd $WORKSPACE/docker_build_and_test',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s .' % (rosdistro_name or 'global'),
+        'docker build --force-rm --platform=linux/%s -t $DOCKER_IMAGE_PREFIX.ci_build_and_test.%s .' % (arch, rosdistro_name or 'global'),
         'echo "# END SECTION"',
         '',
     ] + ([
@@ -455,6 +470,23 @@ parameters = [
         ' "ccache -s"',
         'echo "# END SECTION"',
     ] if shared_ccache else [])),
+))@
+@(SNIPPET(
+    'builder_shell',
+    script='\n'.join([
+        'if [ "$single_stage" = "true" ]; then',
+        'echo "# BEGIN SECTION: Compress install space"',
+        'export PYTHONPATH=$WORKSPACE/ros_buildfarm:$PYTHONPATH',
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/ci/create_workspace_archive.py' +
+        ' ' + (rosdistro_name or "''") +
+        ' ' + os_code_name +
+        ' ' + arch +
+        ' --ros-version ' + str(ros_version) +
+        ' --install-dir $WORKSPACE/ws/install_isolated' +
+        ' --output-dir $WORKSPACE',
+        'echo "# END SECTION"',
+        'fi',
+    ]),
 ))@
 @(SNIPPET(
     'builder_shell',

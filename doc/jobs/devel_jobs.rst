@@ -163,15 +163,15 @@ Additionally it invokes the tool ``catkin_test_results --all`` /
 Example invocation
 ^^^^^^^^^^^^^^^^^^
 
-The following commands run the *devel* job for the *roscpp_core* repository
-from ROS *Indigo* for Ubuntu *Trusty* *amd64*:
+The following commands run the *devel* job for the *rclcpp* repository
+from ROS *Rolling* for Ubuntu *Noble* *amd64*:
 
 .. code:: sh
 
   mkdir /tmp/devel_job
-  generate_devel_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml indigo default roscpp_core ubuntu trusty amd64 > /tmp/devel_job/devel_job_indigo_roscpp_core.sh
+  generate_devel_script.py https://raw.githubusercontent.com/ros2/ros_buildfarm_config/ros2/index.yaml rolling default rclcpp ubuntu noble amd64 > /tmp/devel_job/devel_job_rolling_rclcpp.sh
   cd /tmp/devel_job
-  sh devel_job_indigo_roscpp_core.sh
+  sh devel_job_rolling_rclcpp.sh
 
 Return code
 -----------
@@ -183,67 +183,19 @@ Instead of invoking the generated script it can also be *sourced*:
 
 .. code:: sh
 
-  . devel_job_indigo_roscpp_core.sh
+  . devel_job_rolling_rclcpp.sh
 
 The return code of the invocation of ``catkin_tests_results`` /
 ``colcon test-result``is then available in the environment variable
 ``test_result_RC``.
 
-Run the *devel* job on Travis
------------------------------
+Run the *devel* job on external CI
+-------------------------------
 
-Since it is easy to run a *devel* job locally it can also be run on Travis to either test every commit or pull request.
+Since it is easy to run a *devel* job locally it can also be run on an external CI
+runner (like GitHub actions) to either test every commit or pull request.
 The setup and invocation is the same as locally.
-The following .travis.yml template is a good starting point and is ready to be use:
-
-.. code:: yaml
-
-  # while this doesn't require sudo we don't want to run within a Docker container
-  sudo: true
-  dist: trusty
-  language: python
-  python:
-    - "3.4"
-  env:
-    global:
-      - JOB_PATH=/tmp/devel_job
-    matrix:
-      - ROS_DISTRO_NAME=indigo OS_NAME=ubuntu OS_CODE_NAME=trusty ARCH=amd64
-      #- ROS_DISTRO_NAME=jade OS_NAME=ubuntu OS_CODE_NAME=trusty ARCH=amd64
-      #- ROS_DISTRO_NAME=kinetic OS_NAME=ubuntu OS_CODE_NAME=xenial ARCH=amd64
-  install:
-    # either install the latest released version of ros_buildfarm
-    - pip install ros_buildfarm
-    # or checkout a specific branch
-    #- git clone -b master https://github.com/ros-infrastructure/ros_buildfarm /tmp/ros_buildfarm
-    #- pip install /tmp/ros_buildfarm
-
-    # use either of the two following options depending on the chosen build tool
-    # checkout catkin for catkin_test_results script
-    - git clone https://github.com/ros/catkin /tmp/catkin
-    # install colcon for test results
-    - pip install colcon-core colcon-test-result
-
-    # run devel job for a ROS repository with the same name as this repo
-    - export REPOSITORY_NAME=`basename $TRAVIS_BUILD_DIR`
-    # use the code already checked out by Travis
-    - mkdir -p $JOB_PATH/ws/src
-    - cp -R $TRAVIS_BUILD_DIR $JOB_PATH/ws/src/
-    # generate the script to run a devel job for that target and repo
-    - generate_devel_script.py https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml $ROS_DISTRO_NAME default $REPOSITORY_NAME $OS_NAME $OS_CODE_NAME $ARCH > $JOB_PATH/devel_job.sh
-    - cd $JOB_PATH
-    - cat devel_job.sh
-    # run the actual job which involves Docker
-    - sh devel_job.sh -y
-  script:
-    # get summary of test results
-    # use either of the two following options depending on the chosen build tool
-    - /tmp/catkin/bin/catkin_test_results $JOB_PATH/ws/test_results --all
-    - colcon test-result --test-result-base $JOB_PATH/ws/test_results --all
-  notifications:
-    email: false
-
-An example can be found in the `.travis.yml <https://github.com/ros-infrastructure/ros_buildfarm/blob/master/.travis.yml>`_ file of the *ros_buildfarm* repository.
+An example can be found in the `.github/actions/devel/action.yaml <https://github.com/ros-infrastructure/ros_buildfarm/blob/master/.github/actions/devel/action.yaml>`_ file of the *ros_buildfarm* repository.
 
 Run for "custom" repositories
 -----------------------------

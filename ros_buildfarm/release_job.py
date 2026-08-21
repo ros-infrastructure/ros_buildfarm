@@ -113,7 +113,9 @@ def configure_release_jobs(
             print('  -', pkg_name)
 
         implicitly_ignored_pkg_names = get_implicitly_ignored_package_names(
-            cached_pkgs, explicitly_ignored_pkg_names)
+            cached_pkgs, explicitly_ignored_pkg_names,
+            include_test_deps=build_file.include_test_dependencies,
+            include_group_deps=build_file.include_group_dependencies)
         if implicitly_ignored_pkg_names:
             print(('The following packages are being %s because their ' +
                    'dependencies are being ignored:') % ('ignored'
@@ -403,7 +405,8 @@ def configure_release_job(
         is_disabled=False, other_build_files_same_platform=None,
         groovy_script=None,
         filter_arches=None,
-        dry_run=False):
+        dry_run=False,
+        docker_base_image_override=None):
     """
     Configure a Jenkins release job.
 
@@ -531,6 +534,7 @@ def configure_release_job(
     source_job_names.append(source_job_name)
     job_configs[source_job_name] = job_config
 
+    skip_rosdep_keys = None
     dependency_names = []
     if build_file.abi_incompatibility_assumed:
         dependency_names = get_direct_dependencies(
@@ -543,6 +547,7 @@ def configure_release_job(
             print(("Skipping binary jobs for package '%s' because it is not " +
                    "yet in the rosdistro cache") % pkg_name, file=sys.stderr)
             return source_job_names, binary_job_names, job_configs
+        skip_rosdep_keys = sorted(dependency_names.intersection(build_file.package_ignore_list))
         dependency_names.difference_update(build_file.package_ignore_list)
 
     # binarydeb jobs
@@ -565,7 +570,9 @@ def configure_release_job(
             config, build_file, os_name, os_code_name, arch,
             pkg_name, repo_name, repo.release_repository,
             cached_pkgs=cached_pkgs, upstream_job_names=upstream_job_names,
-            is_disabled=is_disabled)
+            is_disabled=is_disabled,
+            docker_base_image_override=docker_base_image_override,
+            skip_rosdep_keys=skip_rosdep_keys)
         # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
         if isinstance(jenkins, object) and jenkins is not False:
             configure_job(jenkins, job_name, job_config, dry_run=dry_run)
@@ -687,7 +694,9 @@ def _get_binarydeb_job_config(
         config, build_file, os_name, os_code_name, arch,
         pkg_name, repo_name, release_repository,
         cached_pkgs=None, upstream_job_names=None,
-        is_disabled=False):
+        is_disabled=False,
+        docker_base_image_override=None,
+        skip_rosdep_keys=None):
     package_format = package_format_mapping[os_name]
     template_name = 'release/%s/binarypkg_job.xml.em' % package_format
 
@@ -757,6 +766,7 @@ def _get_binarydeb_job_config(
         'notify_emails': build_file.notify_emails,
         'maintainer_emails': maintainer_emails,
         'notify_maintainers': build_file.notify_maintainers,
+        'skip_rosdep_keys': skip_rosdep_keys,
         'skip_tests': not build_file.run_package_tests,
 
         'timeout_minutes': build_file.jenkins_binary_job_timeout,
@@ -765,6 +775,8 @@ def _get_binarydeb_job_config(
         'credential_id': build_file.upload_credential_id,
 
         'shared_ccache': build_file.shared_ccache,
+
+        'docker_base_image_override': docker_base_image_override,
     }
     job_config = expand_template(template_name, job_data)
     return job_config

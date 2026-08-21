@@ -6,6 +6,7 @@
     os_name=os_name,
     os_code_name=os_code_name,
     arch=arch,
+    docker_base_image_override=docker_base_image_override,
 ))@
 
 VOLUME ["/var/cache/apt/archives"]

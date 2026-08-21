@@ -1,5 +1,8 @@
 include('/etc/mock/default.cfg')
 
+# Workaround for dnf5 download command (see rpm-software-management/mock#1750)
+config_opts.setdefault("dnf5_avoid_opts", {}).setdefault("download", []).append("--allowerasing")
+
 def _expanded(k, opts):
     """Get a config value and ensure it has been expanded."""
     exp, opts['__jinja_expand'] = opts.get('__jinja_expand', False), True
@@ -36,15 +39,22 @@ config_opts['environment']['@env_key'] = '@env_val'
 config_opts['macros']['%_empty_manifest_terminate_build'] = '%{nil}'
 config_opts['macros']['%_missing_build_ids_terminate_build'] = '%{nil}'
 
+@[if os_name in ['rhel'] and os_code_name in ['8', '9']]@
 # Disable automatic out-of-source CMake builds
 config_opts['macros']['%__cmake_in_source_build'] = '1'
 config_opts['macros']['%__cmake3_in_source_build'] = '1'
-
+@[end if]@
 # Required for running mock in Docker
 config_opts['use_nspawn'] = False
 
 # Add g++, which is an assumed dependency in ROS
 config_opts['chroot_setup_cmd'] += ' gcc-c++ make'
+
+# Mount through the rosdep DB
+if os.path.isdir(os.path.expanduser('~/.ros/rosdep')):
+    config_opts['plugin_conf']['mount_enable'] = True
+    config_opts['plugin_conf']['bind_mount_opts']['dirs'].append((os.path.expanduser('~/.ros/rosdep'), '/builddir/.ros/rosdep' ))
+    config_opts['exclude_from_homedir_cleanup'] += ['.ros/rosdep']
 
 config_opts[f'dnf.conf'] += """
 @[for i, url in enumerate(distribution_repository_urls)]@

@@ -35,7 +35,6 @@ from rosdistro.repository_specification import RepositorySpecification
 
 
 def main(argv=sys.argv[1:]):
-    global templates
     parser = argparse.ArgumentParser(
         description="Generate a 'prerelease overlay' script")
     add_argument_config_url(parser)

@@ -115,13 +115,14 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         ' --binarypkg-dir /tmp/binarypkg' +
         ' --env-vars ' + ' '.join(build_environment_variables) +
         (' --append-timestamp' if append_timestamp else '') +
-        (' --skip-tests' if skip_tests else ''),
+        (' --skip-tests' if skip_tests else '') +
+        ((' --skip-rosdep-keys ' + ' '.join(skip_rosdep_keys)) if skip_rosdep_keys else ''),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Build Dockerfile - build binaryrpm"',
         'cd $WORKSPACE/docker_binaryrpm',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --force-rm -t binaryrpm.%s_%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, arch, pkg_name),
+        'docker build --force-rm --platform=linux/%s -t binaryrpm.%s_%s_%s_%s_%s .' % (arch, rosdistro_name, os_name, os_code_name, arch, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - build binaryrpm"',

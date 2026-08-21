@@ -426,6 +426,13 @@ def add_argument_skip_rosdep_keys(parser):
              'and not installed.')
 
 
+def add_argument_single_stage(parser):
+    parser.add_argument(
+        '--single-stage',
+        action='store_true',
+        help='Skip the "Build & Install" stage and only run the "Build & Test" stage.')
+
+
 def add_argument_test_branch(parser):
     parser.add_argument(
         '--test-branch', default=None,
@@ -451,6 +458,12 @@ def add_argument_skip_tests(parser):
     parser.add_argument(
         '--skip-tests', action='store_true',
         help='Skip execution of tests as part of the package build process.')
+
+
+def add_argument_docker_base_image_override(parser):
+    parser.add_argument(
+        '--docker-base-image-override',
+        help='Prefix for the docker image (e.g. "osrf/" or "arm64v8/")')
 
 
 def check_len_action(minargs, maxargs):

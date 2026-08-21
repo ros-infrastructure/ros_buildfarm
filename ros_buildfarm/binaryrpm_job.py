@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from datetime import datetime
 import glob
 import os
 import subprocess
+import sys
 
 from ros_buildfarm.common import get_os_package_name
 
@@ -53,7 +55,7 @@ def get_sourcerpm(
 
 def build_binaryrpm(
         rosdistro_name, package_name, sourcepkg_dir, binarypkg_dir, append_timestamp=False,
-        skip_tests=False):
+        skip_tests=False, skip_rosdep_keys=None):
     rpm_package_name = get_os_package_name(rosdistro_name, package_name)
     source_packages = glob.glob(os.path.join(sourcepkg_dir, rpm_package_name + '-*.src.rpm'))
     assert len(source_packages) == 1
@@ -69,10 +71,14 @@ def build_binaryrpm(
         '--rebuild', source_packages[0]]
 
     if append_timestamp:
-        cmd += ['--define', 'release_suffix .%(date -u +%%Y%%m%%d.%%H%%M%%S)']
+        release_suffix = datetime.utcnow().strftime('.%Y%m%d.%H%M%S')
+        cmd += ['--define', 'release_suffix ' + release_suffix]
 
     if skip_tests:
         cmd += ['--without', 'tests']
+
+    if skip_rosdep_keys:
+        cmd += ['--define', '_bloom_skip_keys ' + ' '.join(skip_rosdep_keys)]
 
     print("Invoking '%s'" % ' '.join(cmd))
     subprocess.check_call(cmd)
@@ -81,13 +87,17 @@ def build_binaryrpm(
         ['mock', '--root', 'ros_buildfarm', '--print-root-path']).decode('utf-8').strip()
     mock_build_path = os.path.join(mock_root_path, 'builddir', 'build', 'BUILD')
     for subdir in os.listdir(mock_build_path):
-        if subdir.endswith('-SPECPARTS'):
+        if any(subdir.endswith(suffix) for suffix in ('-build', '-SPECPARTS')):
             continue
 
         package_root = os.path.join(mock_build_path, subdir)
         break
     else:
-        assert False, "Failed to determine package build root"
+        print(
+            'WARNING: Failed to determine package build root. '
+            'Maintainer E-mail addresses could not be determined.',
+            file=sys.stderr)
+        return
 
     # output package maintainers for job notification
     from catkin_pkg.package import parse_package

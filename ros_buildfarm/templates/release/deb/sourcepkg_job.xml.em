@@ -104,7 +104,7 @@ but disabled since the package is blacklisted (or not whitelisted) in the config
         'echo "# BEGIN SECTION: Build Dockerfile - generate sourcedeb"',
         'cd $WORKSPACE/docker_sourcedeb',
         'python3 -u $WORKSPACE/ros_buildfarm/scripts/misc/docker_pull_baseimage.py',
-        'docker build --network=host --force-rm -t sourcedeb.%s_%s_%s_%s .' % (rosdistro_name, os_name, os_code_name, pkg_name),
+        'docker build --network=host --force-rm --platform=linux/%s -t sourcedeb.%s_%s_%s_%s .' % (arch, rosdistro_name, os_name, os_code_name, pkg_name),
         'echo "# END SECTION"',
         '',
         'echo "# BEGIN SECTION: Run Dockerfile - generate sourcedeb"',

@@ -19,6 +19,7 @@ from ros_buildfarm.argument import add_argument_append_timestamp
 from ros_buildfarm.argument import add_argument_binarypkg_dir
 from ros_buildfarm.argument import add_argument_package_name
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.argument import add_argument_skip_rosdep_keys
 from ros_buildfarm.argument import add_argument_skip_tests
 from ros_buildfarm.argument import add_argument_sourcepkg_dir
 from ros_buildfarm.binaryrpm_job import build_binaryrpm
@@ -35,11 +36,13 @@ def main(argv=sys.argv[1:]):
         add_argument_binarypkg_dir(parser)
         add_argument_append_timestamp(parser)
         add_argument_skip_tests(parser)
+        add_argument_skip_rosdep_keys(parser)
         args = parser.parse_args(argv)
 
         return build_binaryrpm(
             args.rosdistro_name, args.package_name, args.sourcepkg_dir, args.binarypkg_dir,
-            args.append_timestamp, skip_tests=args.skip_tests)
+            args.append_timestamp, skip_tests=args.skip_tests,
+            skip_rosdep_keys=args.skip_rosdep_keys)
 
 
 if __name__ == '__main__':

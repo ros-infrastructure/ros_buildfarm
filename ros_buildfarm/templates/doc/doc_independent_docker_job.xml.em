@@ -22,6 +22,7 @@
 ))@
 @(SNIPPET(
     'property_job-weight',
+    weight=job_weight,
 ))@
   </properties>
 @[if upload_repository_url is not None]@
@@ -97,7 +98,7 @@ else:
     'builder_shell',
     script='\n'.join([
         'echo "# BEGIN SECTION: Clone %s"' % doc_repository_name,
-        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --depth 1 %s %s $WORKSPACE/repositories/%s' % (doc_repository_url, repo_branch_arg, doc_repository_name),
+        'python3 -u $WORKSPACE/ros_buildfarm/scripts/wrapper/git.py clone --recursive --depth 1 %s %s $WORKSPACE/repositories/%s' % (doc_repository_url, repo_branch_arg, doc_repository_name),
         'git -C $WORKSPACE/repositories/%s log -n 1' % doc_repository_name,
         'echo "# END SECTION"',
     ]),
