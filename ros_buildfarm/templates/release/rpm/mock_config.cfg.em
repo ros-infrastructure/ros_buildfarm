@@ -50,10 +50,14 @@ config_opts['use_nspawn'] = False
 # Add g++, which is an assumed dependency in ROS
 config_opts['chroot_setup_cmd'] += ' gcc-c++ make'
 
+import pwd
+user_home = pwd.getpwuid(os.getuid()).pw_dir
+rosdep_db = os.path.join(user_home, '.ros/rosdep')
+
 # Mount through the rosdep DB
-if os.path.isdir(os.path.expanduser('~/.ros/rosdep')):
+if os.path.isdir(rosdep_db):
     config_opts['plugin_conf']['mount_enable'] = True
-    config_opts['plugin_conf']['bind_mount_opts']['dirs'].append((os.path.expanduser('~/.ros/rosdep'), '/builddir/.ros/rosdep' ))
+    config_opts['plugin_conf']['bind_mount_opts']['dirs'].append((rosdep_db, '/builddir/.ros/rosdep/' ))
     config_opts['exclude_from_homedir_cleanup'] += ['.ros/rosdep']
 
 config_opts[f'dnf.conf'] += """
