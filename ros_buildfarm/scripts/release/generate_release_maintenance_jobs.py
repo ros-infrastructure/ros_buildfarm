@@ -122,12 +122,33 @@ def get_trigger_missed_jobs_job_config(args, config, build_file):
 def get_import_upstream_job_config(args, config, build_file, package_format):
     template_name = 'release/%s/import_upstream_job.xml.em' % package_format
     data = {
-        'import_targets': build_file.targets,
+        'import_targets': _get_all_import_targets(config, package_format),
         'credential_id': build_file.upload_credential_id,
     }
     return _get_job_config(
         args, config, config.notify_emails, template_name,
         additional_data=data)
+
+
+def _get_all_import_targets(config, package_format):
+    # the 'import_upstream' job name is not qualified by the ROS distribution
+    # or the build name, so every release build file using this package format
+    # writes the same job. Consider all of their targets, otherwise generating
+    # the job for one build file drops the targets of all the others.
+    targets = {}
+    for dist_name in sorted(config.distributions.keys()):
+        build_files = get_release_build_files(config, dist_name)
+        for _, build_file in sorted(build_files.items()):
+            for os_name, os_code_names in build_file.targets.items():
+                if package_format_mapping.get(os_name) != package_format:
+                    continue
+                known_os_code_names = targets.setdefault(os_name, {})
+                for os_code_name, arches in os_code_names.items():
+                    known_arches = known_os_code_names.setdefault(
+                        os_code_name, {})
+                    for arch, arch_data in arches.items():
+                        known_arches.setdefault(arch, arch_data)
+    return targets
 
 
 def _get_job_config(
