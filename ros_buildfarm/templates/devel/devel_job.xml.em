@@ -385,15 +385,18 @@ if pull_request:
         '}',
     ]),
 ))
+@[ if test_stats_upload_host ]@
 @(SNIPPET(
-    'publisher_publish-over-ssh',
-    config_name='docs',
-    remote_directory='%s/devel_jobs/%s' % (rosdistro_name, source_repo_spec.name),
-    source_files=[
-        'collated_test_stats/results.yaml'
-    ],
-    remove_prefix='collated_test_stats',
+    'builder_shell',
+    script='\n'.join([
+        'echo "# BEGIN SECTION: Publish test results"',
+        'sftp collated_test_stats/results.yaml %s@%s:%s' % (
+          test_stats_upload_user, test_stats_upload_host,
+          os.path.join(rosdistro_name, 'devel_jobs', source_repo_spec.name)
+        ),
+    ]),
 ))@
+@[ end if]@
 @[end if]@
 @[if not pull_request or notify_pull_requests]@
 @[ if notify_maintainers]@
@@ -427,10 +430,17 @@ if pull_request:
 @(SNIPPET(
     'build-wrapper_timestamper',
 ))@
-@[if git_ssh_credential_id]@
+@{
+credential_ids = []
+if git_ssh_credential_id:
+  credential_ids.append(git_ssh_credential_id)
+if doc_result_credential_id:
+  credential_ids.append(doc_result_credential_id)
+}@
+@[if credential_ids]@
 @(SNIPPET(
     'build-wrapper_ssh-agent',
-    credential_ids=[git_ssh_credential_id],
+    credential_ids=credential_ids
 ))@
 @[end if]@
   </buildWrappers>
