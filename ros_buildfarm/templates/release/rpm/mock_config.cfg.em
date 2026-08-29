@@ -1,5 +1,8 @@
 include('/etc/mock/default.cfg')
 
+# Always output full build logs
+config_opts['print_main_output'] = True
+
 # Workaround for dnf5 download command (see rpm-software-management/mock#1750)
 config_opts.setdefault("dnf5_avoid_opts", {}).setdefault("download", []).append("--allowerasing")
 
