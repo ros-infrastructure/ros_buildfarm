@@ -885,6 +885,10 @@ def _get_sync_packages_to_testing_job_config(
         'import_package_job_name': get_import_package_job_name(
             rosdistro_name, package_format),
 
+        'sync_to_main_job_name': get_sync_packages_to_main_job_name(
+            rosdistro_name, package_format),
+        'sync_auto_trigger_main': build_file.sync_auto_trigger_main,
+
         'notify_emails': build_file.notify_emails,
     }
     job_config = expand_template(template_name, job_data)
