@@ -58,7 +58,7 @@ if missed_jobs:
     refspec=None,
 ))@
   <scmCheckoutRetryCount>2</scmCheckoutRetryCount>
-  <assignedNode>agent_on_master</assignedNode>
+  <assignedNode>agent_on_jenkins || agent_on_master</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
