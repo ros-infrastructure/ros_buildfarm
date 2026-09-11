@@ -113,6 +113,8 @@ RUN pip3 install -U auto_abi_checker
 # TODO(nuclearsandwich) add link to Debian bug report when one is opened.
 RUN which update-ccache-symlinks >/dev/null 2>&1 && update-ccache-symlinks
 
+RUN rosdep init
+
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
 @{
@@ -128,6 +130,7 @@ if not testing:
     if run_abichecker:
         cmd += ' --run-abichecker'
 else:
+    cmd = 'rosdep update && ' + cmd
     cmd += \
         ' /tmp/ros_buildfarm/scripts/devel/build_and_test.py' + \
         ' --rosdistro-name %s' % (rosdistro_name or "''") + \
