@@ -16,7 +16,6 @@ from __future__ import print_function
 
 from collections import defaultdict
 from collections import namedtuple
-from distutils.version import LooseVersion
 import itertools
 import os
 import re
@@ -24,7 +23,8 @@ import shutil
 import sys
 import time
 
-import yaml
+from distutils.version import LooseVersion  # noqa: I100, I202
+import yaml  # noqa: I201
 
 from .common import get_os_package_name
 from .common import get_release_view_name

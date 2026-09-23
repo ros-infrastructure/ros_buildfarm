@@ -38,6 +38,7 @@ from ros_buildfarm.argument import add_argument_repos_file_urls
 from ros_buildfarm.argument import add_argument_repository_names
 from ros_buildfarm.argument import add_argument_ros_version
 from ros_buildfarm.argument import add_argument_rosdistro_name
+from ros_buildfarm.argument import add_argument_single_stage
 from ros_buildfarm.argument import add_argument_skip_rosdep_keys
 from ros_buildfarm.argument import add_argument_test_branch
 from ros_buildfarm.argument import extract_multiple_remainders
@@ -71,6 +72,7 @@ def main(argv=sys.argv[1:]):
     add_argument_package_names(parser, optional=True)
     add_argument_package_dependencies(parser)
     add_argument_ros_version(parser)
+    add_argument_single_stage(parser)
     add_argument_skip_rosdep_keys(parser)
     add_argument_test_branch(parser)
     parser.add_argument(

@@ -50,7 +50,8 @@ def get_rosdistro_info(dist, build_file):
         set(pkg_names) - set(filtered_pkg_names) - explicitly_ignored_without_recursion_pkg_names
     if explicitly_ignored_pkg_names:
         implicitly_ignored_pkg_names = get_implicitly_ignored_package_names(
-            cached_pkgs, explicitly_ignored_pkg_names)
+            cached_pkgs, explicitly_ignored_pkg_names,
+            include_test_deps=build_file.include_test_dependencies)
         filtered_pkg_names = \
             set(filtered_pkg_names) - implicitly_ignored_pkg_names
     filtered_pkg_names = set(filtered_pkg_names) - explicitly_ignored_without_recursion_pkg_names

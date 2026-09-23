@@ -1,4 +1,4 @@
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@332.va_1ee476d8f6d">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@338.va_0a_b_50e29397">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>

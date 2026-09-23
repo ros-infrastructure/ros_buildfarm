@@ -40,9 +40,16 @@ The actual build is performed within a Docker container in order to ensure
 only declared dependencies are available.
 
 The actual build process starts in the script *create_ci_task_generator.py*.
-It generates three Dockerfiles: one to perform the *create-workspace* task to
-populate the workspace and enumerate prerequisites, one to perform the
-*build-and-install* task, and one to perform the *build-and-test* task.
+It generates up to three Dockerfiles: one to perform the *create-workspace*
+task to populate the workspace and enumerate prerequisites, optionally one to
+perform the *build-and-install* task, and one to perform the *build-and-test*
+task.
+
+When the ``single_stage`` flag is set (either in the CI build file or via the
+Jenkins job parameter), the *build-and-install* stage is skipped entirely and
+only the *build-and-test* stage runs.
+In this mode the install-space archive is produced after *build-and-test*
+completes rather than after *build-and-install*.
 
 Create workspace
 ^^^^^^^^^^^^^^^^
@@ -80,6 +87,8 @@ Build and install
 ^^^^^^^^^^^^^^^^^
 
 This task is identical to `the one used by the devel jobs <devel_jobs.rst#Build-and-install>`_.
+
+This stage is skipped when ``single_stage`` is enabled.
 
 Build and test
 ^^^^^^^^^^^^^^
