@@ -17,6 +17,8 @@ import subprocess
 from urllib.error import HTTPError
 from urllib.request import urlretrieve
 
+from ros_buildfarm.cargo import is_vendoring_requested
+from ros_buildfarm.cargo import vendor_cargo_crates
 from ros_buildfarm.common import get_os_package_name
 from ros_buildfarm.release_common import dpkg_parsechangelog
 
@@ -92,6 +94,15 @@ def get_sources(
     if maintainer_emails:
         print('Package maintainer emails: %s' %
               ' '.join(sorted(maintainer_emails)))
+
+    # vendor crates here rather than when building the sourcedeb so that all
+    # network access happens in this job step, the maintainer emails above are
+    # printed first to ensure a vendoring failure is still reported to them.
+    # The crates go into debian/ because the quilt patches of a '3.0 (quilt)'
+    # source package cannot represent the binary files some crates contain,
+    # while anything under debian/ ships in the debian tarball untouched
+    if is_vendoring_requested(pkg):
+        vendor_cargo_crates(sources_dir, ['debian', 'vendor'])
 
 
 def _get_source_tag(
