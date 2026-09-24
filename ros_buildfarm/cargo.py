@@ -19,20 +19,13 @@ import subprocess
 
 def is_vendoring_requested(pkg):
     EXPORT_TAG = 'cargo_vendor_crates'
-    VALUES = {'True': True, 'true': True, 'False': False, 'false': False}
 
-    # vendoring is opt-in, an unrecognized value is a typo rather than a 'no'
-    requested = False
+    # vendoring is opt-in
     for export in pkg.exports:
         if export.tagname != EXPORT_TAG:
             continue
-        value = export.content.strip()
-        if value not in VALUES:
-            raise RuntimeError(
-                "Invalid '<%s>' value '%s' in the package manifest, expected "
-                'one of: %s' % (EXPORT_TAG, value, ', '.join(sorted(VALUES))))
-        requested = VALUES[value]
-    return requested
+        return True
+    return False
 
 
 def _get_non_crates_io_dependencies(sources_dir):
