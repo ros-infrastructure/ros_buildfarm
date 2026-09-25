@@ -458,6 +458,7 @@ def _get_doc_independent_job_config(
         job_data.update({
             'upload_repository_url': build_file.upload_repository_url,
             'upload_repository_branch': build_file.upload_repository_branch,
+            'upload_prune': build_file.upload_prune,
         })
     else:
         raise JobValidationError(

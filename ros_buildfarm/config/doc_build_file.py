@@ -191,6 +191,17 @@ class DocBuildFile(BuildFile):
         self.upload_host = data.get('upload_host', None)
         self.upload_root = data.get('upload_root', '/var/repos/docs')
 
+        # When True (default) the deploy step prunes the whole upload
+        # destination (rsync --delete over the entire site).  When False the
+        # deploy only updates the top-level directories that were actually
+        # built (pruning stale files within them) and leaves sibling
+        # directories untouched, so content for entries no longer in the build
+        # set (e.g. EOL distros dropped from the multiversion whitelist) stays
+        # frozen in place instead of being deleted.
+        # See https://github.com/ros2/ros2_documentation/issues/6964
+        self.upload_prune = data.get('upload_prune', True)
+        assert isinstance(self.upload_prune, bool)
+
         self.upload_repository_url = None
         if self.documentation_type == DOC_TYPE_DOCKER:
             self.upload_repository_url = data.get('upload_repository_url', None)
