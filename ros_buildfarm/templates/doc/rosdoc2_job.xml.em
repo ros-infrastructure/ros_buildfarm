@@ -204,6 +204,8 @@ else:
     script='\n'.join([
         'if [ -d "$WORKSPACE/ws/docs_output" ]; then',
         '  echo "# BEGIN SECTION: rsync API documentation to server"',
+        '  ssh %s@%s "mkdir -p %s"' % \
+          (upload_user, upload_host, os.path.join(upload_root, rosdistro_name, 'api')),
         '  cd $WORKSPACE/ws/docs_output',
         '  for pkg_name in $(find . -maxdepth 1 -mindepth 1 -type d); do',
         '    rsync -e ssh --stats -r --delete $pkg_name %s@%s:%s' % \
