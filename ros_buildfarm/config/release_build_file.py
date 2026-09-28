@@ -94,6 +94,7 @@ class ReleaseBuildFile(BuildFile):
         self.sync_package_count = None
         self.sync_package_percent = None
         self.sync_packages = []
+        self.sync_auto_trigger_main = False
         if 'sync' in data:
             if 'package_percent' in data['sync']:
                 percent = float(data['sync']['package_percent'])
@@ -104,6 +105,8 @@ class ReleaseBuildFile(BuildFile):
             if 'packages' in data['sync'] and data['sync']['packages']:
                 self.sync_packages = data['sync']['packages']
                 assert isinstance(self.sync_packages, list)
+            if 'auto_trigger_main' in data['sync']:
+                self.sync_auto_trigger_main = bool(data['sync']['auto_trigger_main'])
 
         self.target_queue = None
         if 'target_queue' in data:

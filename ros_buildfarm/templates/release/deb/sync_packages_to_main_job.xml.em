@@ -38,6 +38,73 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
+@{
+sync_to_testing_jobs_groovy = ', '.join(
+    "'" + n + "'" for n in sync_to_testing_job_names)
+check_sync_to_testing_command = """\
+import hudson.model.Result
+
+println ""
+println "# BEGIN SECTION: Check upstream sync-to-testing jobs"
+println "Verify that no sync-to-testing job is in progress or broken:"
+println ""
+
+def syncToTestingJobs = [%s]
+def jenkins = Jenkins.instance
+def allGood = true
+
+for (jobName in syncToTestingJobs) {
+  def job = jenkins.getItemByFullName(jobName)
+  if (job == null) {
+    println "  - '" + jobName + "' not found"
+    allGood = false
+    continue
+  }
+  if (job.isBuilding()) {
+    println "  - '" + jobName + "' is currently building"
+    allGood = false
+    continue
+  }
+  if (job.isInQueue()) {
+    println "  - '" + jobName + "' is currently queued"
+    allGood = false
+    continue
+  }
+  if (job.getNextBuildNumber() == 1) {
+    println "  - '" + jobName + "' has not been built yet"
+    allGood = false
+    continue
+  }
+  def lb = job.getLastBuild()
+  if (lb == null) {
+    println "  - '" + jobName + "' can't provide last build"
+    allGood = false
+    continue
+  }
+  def r = lb.getResult()
+  if (r == null || r.isWorseOrEqualTo(Result.FAILURE)) {
+    println "  - '" + jobName + "' build '" + lb.getNumber() + "' has result '" + r + "'"
+    allGood = false
+    continue
+  }
+  println "  - '" + jobName + "' build '" + lb.getNumber() + "' has result '" + r + "'"
+}
+
+if (!allGood) {
+  println ""
+  println "  -> aborting build"
+  throw new InterruptedException()
+}
+println "All sync-to-testing jobs are (un)stable"
+println ""
+println "# END SECTION"
+""" % sync_to_testing_jobs_groovy
+}@
+@(SNIPPET(
+    'builder_system-groovy',
+    command=check_sync_to_testing_command,
+    script_file=None,
+))@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([

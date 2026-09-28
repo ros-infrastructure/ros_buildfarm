@@ -109,6 +109,12 @@
     dynamic_recipients=[],
     send_to_individuals=False,
 ))@
+@[if sync_auto_trigger_main]@
+@(SNIPPET(
+    'publisher_build-trigger',
+    child_projects=[sync_to_main_job_name],
+))@
+@[end if]@
   </publishers>
   <buildWrappers>
 @(SNIPPET(
