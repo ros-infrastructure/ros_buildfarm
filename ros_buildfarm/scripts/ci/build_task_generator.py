@@ -36,7 +36,9 @@ from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.argument import add_argument_testing
 from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import get_binary_package_versions
+from ros_buildfarm.common import get_colcon_prerequisite_packages
 from ros_buildfarm.common import get_distribution_repository_keys
+from ros_buildfarm.common import get_generic_build_dependencies
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
 
@@ -74,19 +76,12 @@ def main(argv=sys.argv[1:]):
 
     apt_cache = Cache()
 
-    debian_pkg_names = set(['build-essential'])
+    debian_pkg_names = set(get_generic_build_dependencies(
+        args.os_name, build_tool=args.build_tool))
     debian_pkg_names.update(args.install_packages)
     if args.build_tool == 'colcon':
-        debian_pkg_names.update([
-            'python3-catkin-pkg-modules',
-            'python3-colcon-metadata',
-            'python3-colcon-output',
-            'python3-colcon-package-selection',
-            'python3-colcon-parallel-executor',
-            'python3-colcon-ros',
-            'python3-colcon-test-result',
-            'python3-rosdistro-modules',
-        ])
+        debian_pkg_names.update(
+            get_colcon_prerequisite_packages(args.os_name))
 
     print('Always install the following generic dependencies:')
     for debian_pkg_name in sorted(debian_pkg_names):

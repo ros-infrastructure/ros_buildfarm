@@ -38,6 +38,7 @@ from ros_buildfarm.argument import add_argument_test_branch
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_user_id
+from ros_buildfarm.common import get_workspace_task_prerequisite_packages
 from ros_buildfarm.templates import create_dockerfile
 
 
@@ -77,17 +78,7 @@ def main(argv=sys.argv[1:]):
         urlretrieve(repos_file_url, os.path.join(args.dockerfile_dir, repos_file_name))
         repos_file_names.append(repos_file_name)
 
-    debian_pkg_names = [
-        'git',
-        'python3-apt',
-        'python3-colcon-metadata',
-        'python3-colcon-package-information',
-        'python3-colcon-package-selection',
-        'python3-colcon-recursive-crawl',
-        'python3-colcon-ros',
-        'python3-rosdep',
-        'python3-vcstool',
-    ]
+    debian_pkg_names = get_workspace_task_prerequisite_packages(args.os_name)
 
     # get versions for build dependencies
     apt_cache = Cache()

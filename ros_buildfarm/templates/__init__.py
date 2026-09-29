@@ -70,6 +70,7 @@ except ImportError:
 
 
 from em import Interpreter
+from ros_buildfarm.common import package_format_mapping
 
 template_prefix_path = [os.path.abspath(os.path.dirname(__file__))]
 
@@ -204,6 +205,7 @@ def _add_helper_functions(data):
     data['ESCAPE'] = _escape_value
     data['SNIPPET'] = _expand_snippet
     data['TEMPLATE'] = _expand_template
+    data['package_format_mapping'] = package_format_mapping
 
 
 def _get_file_content(filename):
@@ -256,7 +258,7 @@ def create_dockerfile(template_name, data, dockerfile_dir, verbose=True):
 
 def get_wrapper_scripts():
     wrapper_scripts = {}
-    for filename in ['apt.py', 'git.py']:
+    for filename in ['apt.py', 'dnf.py', 'git.py']:
         wrapper_script_path = os.path.join(
             os.path.dirname(os.path.dirname(__file__)), 'wrapper')
         abs_file_path = os.path.join(

@@ -25,7 +25,7 @@ for distribution, archive_type in product((os_code_name, os_code_name + '-update
 }@
 RUN @(' && '.join(commands))
 @[  end if]@
-@[else if os_name == 'debian']@
+@[elif os_name == 'debian']@
 # Add contrib and non-free to debian images
 # Using httpredir here to match mirror used in osrf image
 # (https://github.com/osrf/multiarch-docker-image-generation/blob/d251b9a/build-image.sh#L46)

@@ -7,14 +7,29 @@
     arch=arch,
 ))@
 
+@{
+pkg_format = package_format_mapping[os_name]
+wrapper_script = 'apt.py' if pkg_format == 'deb' else 'dnf.py'
+prereq_pkgs = 'git python3-apt python3-catkin-pkg-modules python3-empy python3-rosdep python3-rosdistro-modules wget' if pkg_format == 'deb' else 'git python3-dnf python3-catkin_pkg python3-empy python3-rosdep python3-rosdistro wget'
+key_dir = '/etc/apt/keyrings' if pkg_format == 'deb' else '/etc/pki/rpm-gpg'
+key_ext = 'asc' if pkg_format == 'deb' else 'key'
+}@
+@[if pkg_format == 'deb']@
 VOLUME ["/var/cache/apt/archives"]
 
 ENV DEBIAN_FRONTEND noninteractive
+@[else]@
+VOLUME ["/var/cache/dnf"]
+@[end if]@
 
-@(TEMPLATE('snippet/phased_updates.Dockerfile.em'))@
+@(TEMPLATE(
+    'snippet/phased_updates.Dockerfile.em',
+    os_name=os_name,
+))@
 
 @(TEMPLATE(
     'snippet/setup_locale.Dockerfile.em',
+    os_name=os_name,
     timezone=timezone,
 ))@
 
@@ -52,11 +67,11 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-apt python3-catkin-pkg-modules python3-empy python3-rosdep python3-rosdistro-modules wget
+RUN python3 -u /tmp/wrapper_scripts/@(wrapper_script) update-install-clean -q -y @(prereq_pkgs)
 
 # always invalidate to actually have the latest apt and rosdep state
 RUN echo "@now_str"
-RUN python3 -u /tmp/wrapper_scripts/apt.py update
+RUN python3 -u /tmp/wrapper_scripts/@(wrapper_script) update
 
 ENV ROSDISTRO_INDEX_URL @rosdistro_index_url
 
@@ -84,7 +99,7 @@ cmd = \
     ' --os-code-name ' + os_code_name + \
     ' --arch ' + arch + \
     ' --distribution-repository-urls ' + ' '.join(distribution_repository_urls) + \
-    ' --distribution-repository-key-files ' + ' ' .join(['/etc/apt/keyrings/ros-buildfarm-%d.asc' % i for i in range(len(distribution_repository_keys))]) + \
+    ' --distribution-repository-key-files ' + ' ' .join(['%s/ros-buildfarm-%d.%s' % (key_dir, i, key_ext) for i in range(len(distribution_repository_keys))]) + \
     ' --build-tool ' + build_tool + \
     ' --ros-version ' + str(ros_version) + \
     ' --env-vars ' + ' ' .join(['%s=%s' % key_value for key_value in env_vars.items()])

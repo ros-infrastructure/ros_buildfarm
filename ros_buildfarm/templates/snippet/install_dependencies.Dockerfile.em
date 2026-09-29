@@ -23,14 +23,19 @@ end_entries_for_line = int(math.ceil(fold_factor))
 number_of_begin_blocks = int(round((end_entries_for_line - fold_factor) * max_lines))
 switch_index = number_of_begin_blocks * begin_entries_for_line
 
-def get_run_command(indices, dependencies, dependency_versions):
+os_name = vars().get('os_name')
+pkg_format = package_format_mapping.get(os_name, 'deb') if os_name else 'deb'
+wrapper_script = 'apt.py' if pkg_format == 'deb' else 'dnf.py'
+extra_flags = ' -o Debug::pkgProblemResolver=yes' if pkg_format == 'deb' else ''
+
+def get_run_command(indices, dependencies, dependency_versions, wrapper_script, extra_flags):
     cmds = []
     names = []
     for index in indices:
       name = dependencies[index]
       cmds.append('echo "{name}: {version}"'.format(name=name, version=dependency_versions[name]))
       names.append(name)
-    cmds.append('python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y -o Debug::pkgProblemResolver=yes {names}'.format(names=' '.join(names)))
+    cmds.append('python3 -u /tmp/wrapper_scripts/{script} update-install-clean -q -y{extra_flags} {names}'.format(script=wrapper_script, extra_flags=extra_flags, names=' '.join(names)))
     return ' && '.join(cmds)
 }@
 @[if fold_factor > 1]@
@@ -43,7 +48,7 @@ indices = []
 for j in range(begin_entries_for_line):
     indices.append(i + j)
 }@
-RUN @(get_run_command(indices, dependencies, dependency_versions))
+RUN @(get_run_command(indices, dependencies, dependency_versions, wrapper_script, extra_flags))
 @[end for]@
 @[end if]@
 @[if end_entries_for_line]@
@@ -53,6 +58,6 @@ indices = []
 for j in range(end_entries_for_line):
     indices.append(i + j)
 }@
-RUN @(get_run_command(indices, dependencies, dependency_versions))
+RUN @(get_run_command(indices, dependencies, dependency_versions, wrapper_script, extra_flags))
 @[end for]@
 @[end if]@

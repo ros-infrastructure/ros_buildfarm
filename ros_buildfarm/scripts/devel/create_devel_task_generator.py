@@ -31,6 +31,7 @@ from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
+from ros_buildfarm.common import get_generic_build_dependencies
 from ros_buildfarm.common import get_packages_in_workspaces
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
@@ -108,19 +109,9 @@ def main(argv=sys.argv[1:]):
 
     apt_cache = Cache()
 
-    debian_pkg_names = [
-        'build-essential',
-        'python3',
-    ]
-    if args.build_tool == 'colcon':
-        debian_pkg_names += [
-            'python3-colcon-metadata',
-            'python3-colcon-output',
-            'python3-colcon-parallel-executor',
-            'python3-colcon-ros',
-            'python3-colcon-test-result',
-        ]
-    elif 'catkin' not in pkg_names:
+    debian_pkg_names = get_generic_build_dependencies(
+        args.os_name, build_tool=args.build_tool)
+    if args.build_tool != 'colcon' and 'catkin' not in pkg_names:
         debian_pkg_names += resolve_names(['catkin'], **context)
     if args.ros_version == 2:
         debian_pkg_names += resolve_names(['ros_workspace'], **context)

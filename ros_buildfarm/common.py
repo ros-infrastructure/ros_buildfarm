@@ -170,18 +170,106 @@ def get_distribution_repository_keys(urls, key_files):
     return keys
 
 
-def get_binary_package_versions(apt_cache, debian_pkg_names):
+def get_binary_package_versions(pkg_cache, pkg_names):
     versions = {}
-    for debian_pkg_name in debian_pkg_names:
-        pkg = apt_cache.get(debian_pkg_name)
-        if not pkg:
-            prov = apt_cache.get_providing_packages(debian_pkg_name)
-            if not prov:
-                raise KeyError("No packages available for '%s'" % (debian_pkg_name,))
-            assert len(prov) == 1
-            pkg = apt_cache[prov[0]]
-        versions[debian_pkg_name] = max(pkg.versions).version
+    for pkg_name in pkg_names:
+        pkg = None
+        if hasattr(pkg_cache, 'get'):
+            pkg = pkg_cache.get(pkg_name)
+            if not pkg and hasattr(pkg_cache, 'get_providing_packages'):
+                prov = pkg_cache.get_providing_packages(pkg_name)
+                if not prov:
+                    raise KeyError("No packages available for '%s'" % (pkg_name,))
+                assert len(prov) == 1
+                pkg = pkg_cache[prov[0]]
+        elif isinstance(pkg_cache, dict):
+            pkg = pkg_cache.get(pkg_name)
+
+        if pkg is None:
+            raise KeyError("No packages available for '%s'" % (pkg_name,))
+
+        if hasattr(pkg, 'versions'):
+            versions[pkg_name] = max(pkg.versions).version
+        elif hasattr(pkg, 'version'):
+            versions[pkg_name] = pkg.version
+        elif isinstance(pkg, str):
+            versions[pkg_name] = pkg
+        elif hasattr(pkg, 'evr'):
+            versions[pkg_name] = pkg.evr
+        else:
+            versions[pkg_name] = str(pkg)
     return versions
+
+
+def get_generic_build_dependencies(os_name, build_tool=None):
+    package_format = package_format_mapping.get(os_name, 'deb')
+    if package_format == 'deb':
+        deps = ['build-essential', 'python3']
+        if build_tool == 'colcon':
+            deps += [
+                'python3-colcon-metadata',
+                'python3-colcon-output',
+                'python3-colcon-parallel-executor',
+                'python3-colcon-ros',
+                'python3-colcon-test-result',
+            ]
+    elif package_format == 'rpm':
+        deps = ['gcc-c++', 'make', 'python3']
+        if build_tool == 'colcon':
+            deps += [
+                'python3-colcon-metadata',
+                'python3-colcon-output',
+                'python3-colcon-parallel-executor',
+                'python3-colcon-ros',
+                'python3-colcon-test-result',
+            ]
+    else:
+        assert False, "Unknown package format for OS name '%s'" % os_name
+    return deps
+
+
+def get_colcon_prerequisite_packages(os_name):
+    package_format = package_format_mapping.get(os_name, 'deb')
+    if package_format == 'deb':
+        return [
+            'python3-catkin-pkg-modules',
+            'python3-colcon-metadata',
+            'python3-colcon-output',
+            'python3-colcon-package-selection',
+            'python3-colcon-parallel-executor',
+            'python3-colcon-ros',
+            'python3-colcon-test-result',
+            'python3-rosdistro-modules',
+        ]
+    elif package_format == 'rpm':
+        return [
+            'python3-catkin_pkg',
+            'python3-colcon-metadata',
+            'python3-colcon-output',
+            'python3-colcon-package-selection',
+            'python3-colcon-parallel-executor',
+            'python3-colcon-ros',
+            'python3-colcon-test-result',
+            'python3-rosdistro',
+        ]
+    else:
+        assert False, "Unknown package format for OS name '%s'" % os_name
+
+
+def get_workspace_task_prerequisite_packages(os_name):
+    package_format = package_format_mapping.get(os_name, 'deb')
+    pkg_manager_pkg = 'python3-apt' if package_format == 'deb' else 'python3-dnf'
+    return [
+        'git',
+        pkg_manager_pkg,
+        'python3-colcon-metadata',
+        'python3-colcon-package-information',
+        'python3-colcon-package-selection',
+        'python3-colcon-recursive-crawl',
+        'python3-colcon-ros',
+        'python3-rosdep',
+        'python3-vcstool',
+    ]
 
 
 def get_ci_job_name(rosdistro_name, os_name, os_code_name, arch, job_type):

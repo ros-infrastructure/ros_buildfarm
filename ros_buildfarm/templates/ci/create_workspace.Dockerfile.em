@@ -11,11 +11,23 @@ import os
     arch=arch,
 ))@
 
+@{
+pkg_format = package_format_mapping[os_name]
+wrapper_script = 'apt.py' if pkg_format == 'deb' else 'dnf.py'
+extra_flags = ' --no-install-recommends' if pkg_format == 'deb' else ''
+}@
+@[if pkg_format == 'deb']@
 VOLUME ["/var/cache/apt/archives"]
 
 ENV DEBIAN_FRONTEND noninteractive
+@[else]@
+VOLUME ["/var/cache/dnf"]
+@[end if]@
 
-@(TEMPLATE('snippet/phased_updates.Dockerfile.em'))@
+@(TEMPLATE(
+    'snippet/phased_updates.Dockerfile.em',
+    os_name=os_name,
+))@
 
 @(TEMPLATE(
     'snippet/old_release_set.Dockerfile.em',
@@ -25,6 +37,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 @(TEMPLATE(
     'snippet/setup_locale.Dockerfile.em',
+    os_name=os_name,
     timezone=timezone,
 ))@
 
@@ -72,10 +85,11 @@ RUN echo "@today_str"
     'snippet/install_dependencies.Dockerfile.em',
     dependencies=dependencies,
     dependency_versions=dependency_versions,
+    os_name=os_name,
 ))@
 
 # needed for 'vcs custom --git --args merge' invocation
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y --no-install-recommends sudo wget
+RUN python3 -u /tmp/wrapper_scripts/@(wrapper_script) update-install-clean -q -y@(extra_flags) sudo wget
 RUN sudo -H -u buildfarm -- git config --global user.email "jenkins@@ros.invalid" && sudo -H -u buildfarm -- git config --global user.name "Jenkins ROS"
 
 @(TEMPLATE(
@@ -85,7 +99,7 @@ RUN sudo -H -u buildfarm -- git config --global user.email "jenkins@@ros.invalid
 
 # always ensure that the apt cache is up-to-date
 RUN echo "@now_str"
-RUN python3 -u /tmp/wrapper_scripts/apt.py update
+RUN python3 -u /tmp/wrapper_scripts/@(wrapper_script) update
 
 @[for repos_file in repos_file_names]@
 COPY @repos_file /tmp/@repos_file

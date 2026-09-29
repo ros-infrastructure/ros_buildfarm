@@ -7,11 +7,23 @@
     arch=arch,
 ))@
 
+@{
+pkg_format = package_format_mapping[os_name]
+wrapper_script = 'apt.py' if pkg_format == 'deb' else 'dnf.py'
+catkin_pkg = 'python3-catkin-pkg-modules' if pkg_format == 'deb' else 'python3-catkin_pkg'
+}@
+@[if pkg_format == 'deb']@
 VOLUME ["/var/cache/apt/archives"]
 
 ENV DEBIAN_FRONTEND noninteractive
+@[else]@
+VOLUME ["/var/cache/dnf"]
+@[end if]@
 
-@(TEMPLATE('snippet/phased_updates.Dockerfile.em'))@
+@(TEMPLATE(
+    'snippet/phased_updates.Dockerfile.em',
+    os_name=os_name,
+))@
 
 @(TEMPLATE(
     'snippet/old_release_set.Dockerfile.em',
@@ -21,6 +33,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 @(TEMPLATE(
     'snippet/setup_locale.Dockerfile.em',
+    os_name=os_name,
     timezone=timezone,
 ))@
 
@@ -63,7 +76,7 @@ RUN echo "@today_str"
     os_code_name=os_code_name,
 ))@
 
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python3-yaml
+RUN python3 -u /tmp/wrapper_scripts/@(wrapper_script) update-install-clean -q -y git python3-yaml
 
 @[if build_tool == 'colcon']@
 @# pytest-rerunfailures enables usage of --retest-until-pass
@@ -72,20 +85,20 @@ RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y git python
     os_name=os_name,
 ))@
 @[end if]@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y ccache
+RUN python3 -u /tmp/wrapper_scripts/@(wrapper_script) update-install-clean -q -y ccache
 
 @[if run_abichecker]@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y python3-catkin-pkg-modules python3-pip
+RUN python3 -u /tmp/wrapper_scripts/@(wrapper_script) update-install-clean -q -y @(catkin_pkg) python3-pip
 @[if os_name == 'ubuntu' and os_code_name not in ('xenial', 'bionic')]@
 # Focal/Groovy abi-compliance-checker package has a bug that breaks python invocation
 # See: https://github.com/lvc/abi-compliance-checker/pull/80#issuecomment-652521014
 # Install 2.3 version from source, needs perl
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y curl make perl
+RUN python3 -u /tmp/wrapper_scripts/@(wrapper_script) update-install-clean -q -y curl make perl
 RUN curl -sL https://github.com/lvc/abi-compliance-checker/archive/2.3.tar.gz | tar xvz -C /tmp && \
     make install prefix=/usr -C /tmp/abi-compliance-checker-2.3 && \
     rm -fr /tmp/abi-compliance
 @[else]@
-RUN python3 -u /tmp/wrapper_scripts/apt.py update-install-clean -q -y abi-compliance-checker
+RUN python3 -u /tmp/wrapper_scripts/@(wrapper_script) update-install-clean -q -y abi-compliance-checker
 @[end if]@
 RUN pip3 install -U auto_abi_checker
 @[end if]@
@@ -99,6 +112,7 @@ RUN pip3 install -U auto_abi_checker
     'snippet/install_dependencies.Dockerfile.em',
     dependencies=dependencies,
     dependency_versions=dependency_versions,
+    os_name=os_name,
 ))@
 
 @(TEMPLATE(
@@ -106,12 +120,14 @@ RUN pip3 install -U auto_abi_checker
     install_lists=install_lists,
 ))@
 
+@[if pkg_format == 'deb']@
 # After all dependencies are installed, update ccache symlinks.
 # This command is supposed to be invoked whenever a new compiler is installed
 # but that isn't happening. So we invoke it here to make sure all compilers are
 # picked up.
 # TODO(nuclearsandwich) add link to Debian bug report when one is opened.
 RUN which update-ccache-symlinks >/dev/null 2>&1 && update-ccache-symlinks
+@[end if]@
 
 USER buildfarm
 ENTRYPOINT ["sh", "-c"]
