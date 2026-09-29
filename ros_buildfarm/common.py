@@ -170,11 +170,39 @@ def get_distribution_repository_keys(urls, key_files):
     return keys
 
 
+def get_package_cache(os_name):
+    package_format = package_format_mapping.get(os_name, 'deb')
+    if package_format == 'deb':
+        from apt import Cache
+        return Cache()
+    elif package_format == 'rpm':
+        import dnf
+        base = dnf.Base()
+        base.read_all_repos()
+        base.fill_sack()
+        return base.sack
+    else:
+        assert False, "Unknown package format for OS name '%s'" % os_name
+
+
 def get_binary_package_versions(pkg_cache, pkg_names):
     versions = {}
     for pkg_name in pkg_names:
         pkg = None
-        if hasattr(pkg_cache, 'get'):
+        if hasattr(pkg_cache, 'query'):
+            q = pkg_cache.query().filter(name=pkg_name)
+            if not q:
+                q = pkg_cache.query().filter(provides=pkg_name)
+                if not q:
+                    raise KeyError("No packages available for '%s'" % (pkg_name,))
+            pkgs = list(q)
+            pkg = max(pkgs, key=lambda p: (p.epoch, p.version, p.release))
+            version_str = '%s-%s' % (pkg.version, pkg.release) if pkg.release else str(pkg.version)
+            if getattr(pkg, 'epoch', 0) > 0:
+                version_str = '%s:%s' % (pkg.epoch, version_str)
+            versions[pkg_name] = version_str
+            continue
+        elif hasattr(pkg_cache, 'get'):
             pkg = pkg_cache.get(pkg_name)
             if not pkg and hasattr(pkg_cache, 'get_providing_packages'):
                 prov = pkg_cache.get_providing_packages(pkg_name)

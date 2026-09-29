@@ -17,7 +17,6 @@ import os
 from pathlib import Path
 import sys
 
-from apt import Cache
 from catkin_pkg.packages import find_packages
 from ros_buildfarm.argument import add_argument_os_code_name
 from ros_buildfarm.argument import add_argument_os_name
@@ -27,6 +26,7 @@ from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_skip_rosdep_keys
 from ros_buildfarm.colcon import locate_packages
 from ros_buildfarm.common import get_binary_package_versions
+from ros_buildfarm.common import get_package_cache
 from ros_buildfarm.common import Scope
 from rosdep2 import create_default_installer_context
 from rosdep2.catkin_support import get_catkin_view
@@ -144,10 +144,10 @@ def main(argv=sys.argv[1:]):
 
         os_pkg_names_test -= os_pkg_names_build
 
-    with Scope('SUBSECTION', 'Resolving packages versions using apt cache'):
-        apt_cache = Cache()
+    with Scope('SUBSECTION', 'Resolving packages versions using package cache'):
+        pkg_cache = get_package_cache(args.os_name)
         os_pkg_versions = get_binary_package_versions(
-            apt_cache, os_pkg_names_build | os_pkg_names_test)
+            pkg_cache, os_pkg_names_build | os_pkg_names_test)
 
     with open(os.path.join(args.output_dir, 'install_list_build.txt'), 'w') as out_file:
         for package in sorted(os_pkg_names_build):

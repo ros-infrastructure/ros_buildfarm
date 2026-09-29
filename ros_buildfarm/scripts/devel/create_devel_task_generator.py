@@ -16,7 +16,6 @@ import argparse
 import os
 import sys
 
-from apt import Cache
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
 from ros_buildfarm.argument import add_argument_build_tool_test_args
@@ -32,8 +31,10 @@ from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_generic_build_dependencies
+from ros_buildfarm.common import get_package_cache
 from ros_buildfarm.common import get_packages_in_workspaces
 from ros_buildfarm.common import get_user_id
+from ros_buildfarm.common import package_format_mapping
 from ros_buildfarm.templates import create_dockerfile
 from rosdep2 import create_default_installer_context
 from rosdep2.catkin_support import get_catkin_view
@@ -107,7 +108,7 @@ def main(argv=sys.argv[1:]):
     context = initialize_resolver(
         args.rosdistro_name, args.os_name, args.os_code_name)
 
-    apt_cache = Cache()
+    pkg_cache = get_package_cache(args.os_name)
 
     debian_pkg_names = get_generic_build_dependencies(
         args.os_name, build_tool=args.build_tool)
@@ -128,7 +129,7 @@ def main(argv=sys.argv[1:]):
     debian_pkg_names_building -= set(debian_pkg_names)
     debian_pkg_names += order_dependencies(debian_pkg_names_building)
     debian_pkg_versions.update(
-        get_binary_package_versions(apt_cache, debian_pkg_names))
+        get_binary_package_versions(pkg_cache, debian_pkg_names))
 
     # get run and test dependencies and map them to binary packages
     run_and_test_depends = get_dependencies(
@@ -140,7 +141,7 @@ def main(argv=sys.argv[1:]):
     # in order to reuse existing images in the docker container
     debian_pkg_names_testing -= set(debian_pkg_names)
     debian_pkg_versions.update(
-        get_binary_package_versions(apt_cache, debian_pkg_names_testing))
+        get_binary_package_versions(pkg_cache, debian_pkg_names_testing))
     if args.testing:
         debian_pkg_names += order_dependencies(debian_pkg_names_testing)
 
@@ -273,6 +274,7 @@ def initialize_resolver(rosdistro_name, os_name, os_code_name):
 
 def resolve_names(rosdep_keys, os_name, os_code_name, view, installer):
     debian_pkg_names = set([])
+    pkg_format = package_format_mapping.get(os_name, 'deb')
     for rosdep_key in sorted(rosdep_keys):
         try:
             resolved_names = resolve_for_os(
@@ -281,6 +283,19 @@ def resolve_names(rosdep_keys, os_name, os_code_name, view, installer):
             raise RuntimeError(
                 "Could not resolve the rosdep key '%s'" % rosdep_key)
         debian_pkg_names.update(resolved_names)
+        if pkg_format == 'rpm':
+            for name in list(resolved_names):
+                if name.startswith('ros-'):
+                    debian_pkg_names.add(name + '-devel')
+                    if 'ament-lint-common' in name:
+                        distro_prefix = name.split('ament-lint-common')[0]
+                        linters = [
+                            'copyright', 'cppcheck', 'cpplint', 'flake8',
+                            'lint-cmake', 'pep257', 'uncrustify', 'xmllint',
+                        ]
+                        for linter in linters:
+                            debian_pkg_names.add(
+                                f'{distro_prefix}ament-cmake-{linter}-devel')
     print('Resolved the dependencies to the following binary packages:')
     for debian_pkg_name in sorted(debian_pkg_names):
         print('  -', debian_pkg_name)

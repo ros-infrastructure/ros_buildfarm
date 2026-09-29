@@ -16,7 +16,6 @@ import argparse
 import os
 import sys
 
-from apt import Cache
 from ros_buildfarm.argument import add_argument_arch
 from ros_buildfarm.argument import add_argument_build_tool
 from ros_buildfarm.argument import add_argument_build_tool_args
@@ -39,6 +38,7 @@ from ros_buildfarm.common import get_binary_package_versions
 from ros_buildfarm.common import get_colcon_prerequisite_packages
 from ros_buildfarm.common import get_distribution_repository_keys
 from ros_buildfarm.common import get_generic_build_dependencies
+from ros_buildfarm.common import get_package_cache
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
 
@@ -74,7 +74,7 @@ def main(argv=sys.argv[1:]):
     for k, v in remainder_args.items():
         setattr(args, k, v)
 
-    apt_cache = Cache()
+    pkg_cache = get_package_cache(args.os_name)
 
     debian_pkg_names = set(get_generic_build_dependencies(
         args.os_name, build_tool=args.build_tool))
@@ -90,7 +90,7 @@ def main(argv=sys.argv[1:]):
     install_list = 'install_list.txt'
     write_install_list(
         os.path.join(args.dockerfile_dir, install_list),
-        debian_pkg_names, apt_cache)
+        debian_pkg_names, pkg_cache)
     install_lists = [install_list, 'install_list_build.txt']
     if args.testing:
         install_lists.append('install_list_test.txt')
