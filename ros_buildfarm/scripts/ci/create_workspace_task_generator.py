@@ -86,7 +86,7 @@ def main(argv=sys.argv[1:]):
         'python3-colcon-recursive-crawl',
         'python3-colcon-ros',
         'python3-rosdep',
-        'python3-vcstool',
+        'python3-vcs2l',
     ]
 
     # get versions for build dependencies
