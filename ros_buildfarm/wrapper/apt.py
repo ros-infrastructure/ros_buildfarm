@@ -17,24 +17,29 @@ import sys
 from time import sleep
 
 
-def main(argv=sys.argv[1:]):
+def main(argv=None):
+    if argv is None:
+        argv = list(sys.argv)
+        argv.pop(0)
     max_tries = 10
-    known_error_strings = [
+    known_error_strings = (
         'Failed to fetch',
         'Failed to stat',
         'Hash Sum mismatch',
         'Unable to locate package',
         'is not what the server reported',
-    ]
+    )
 
-    command = argv[0]
-    if command in ['update', 'source']:
+    command = next(iter(argv))
+    if command in ('update', 'source'):
         rc, _, _ = call_apt_repeatedly(
             argv, known_error_strings, max_tries)
         return rc
     elif command == 'update-install-clean':
+        install_argv = list(argv)
+        install_argv.pop(0)
         return call_apt_update_install_clean(
-            argv[1:], known_error_strings, max_tries)
+            install_argv, known_error_strings, max_tries)
     else:
         assert "Command '%s' not implemented" % command
 
@@ -46,7 +51,7 @@ def call_apt_update_install_clean(
     while tries < max_tries:
         if command == 'update':
             rc, _, tries = call_apt_repeatedly(
-                [command], known_error_strings, max_tries - tries,
+                (command,), known_error_strings, max_tries - tries,
                 offset=tries)
             if rc != 0:
                 # abort if update was unsuccessful even after retries
@@ -57,17 +62,17 @@ def call_apt_update_install_clean(
         if command == 'install':
             # any call is considered a try
             tries += 1
-            known_error_strings_redo_update = [
+            known_error_strings_redo_update = (
                 'Size mismatch',
                 'maybe run apt update',
                 'The following packages cannot be authenticated!',
                 'Unable to locate package',
                 'has no installation candidate',
                 'corrupted package archive',
-            ]
+            )
             rc, known_error_conditions = \
                 call_apt(
-                    [command] + install_argv,
+                    list((command,)) + list(install_argv),
                     known_error_strings + known_error_strings_redo_update)
             if not known_error_conditions:
                 if rc != 0:
@@ -103,14 +108,14 @@ def call_apt_update_install_clean(
                 # retry install command
 
         if command == 'clean':
-            rc, _ = call_apt([command], [])
+            rc, _ = call_apt((command,), ())
             break
 
     return rc
 
 
 def call_apt_repeatedly(argv, known_error_strings, max_tries, offset=0):
-    command = argv[0]
+    command = next(iter(argv))
     for i in range(1, max_tries + 1):
         if i > 1:
             sleep_time = 5 + 2 * (i + offset)
@@ -133,15 +138,15 @@ def call_apt_repeatedly(argv, known_error_strings, max_tries, offset=0):
 
 
 def call_apt(argv, known_error_strings):
-    known_error_conditions = []
+    known_error_conditions = list()
 
     # some of the used options are not supported in older distros
     # e.g. Ubuntu Wily, Debian Jessie
-    cmd = ['apt-get'] + argv
+    cmd = list(('apt-get',)) + list(argv)
     print("Invoking '%s'" % ' '.join(cmd))
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    lines = []
+    lines = list()
     while True:
         line = proc.stdout.readline()
         if not line:

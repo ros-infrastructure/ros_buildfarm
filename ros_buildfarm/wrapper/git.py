@@ -17,13 +17,16 @@ import sys
 from time import sleep
 
 
-def main(argv=sys.argv[1:]):
+def main(argv=None):
+    if argv is None:
+        argv = list(sys.argv)
+        argv.pop(0)
     max_tries = 10
-    known_error_strings = [
+    known_error_strings = (
         'Connection timed out',
-    ]
+    )
 
-    command = argv[0]
+    command = next(iter(argv))
     if command == 'clone':
         rc, _, _ = call_git_repeatedly(
             argv, known_error_strings, max_tries)
@@ -33,7 +36,7 @@ def main(argv=sys.argv[1:]):
 
 
 def call_git_repeatedly(argv, known_error_strings, max_tries):
-    command = argv[0]
+    command = next(iter(argv))
     for i in range(1, max_tries + 1):
         if i > 1:
             sleep_time = 5 + 2 * i
@@ -52,9 +55,9 @@ def call_git_repeatedly(argv, known_error_strings, max_tries):
 
 
 def call_git(argv, known_error_strings):
-    known_error_conditions = []
+    known_error_conditions = list()
 
-    cmd = ['git'] + argv
+    cmd = list(('git',)) + list(argv)
     print("Invoking '%s'" % ' '.join(cmd))
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
