@@ -1,4 +1,4 @@
-    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.40">
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.41">
       <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
         <timeoutMinutes>@int(timeout_minutes)</timeoutMinutes>
       </strategy>

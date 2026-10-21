@@ -1,4 +1,4 @@
-<hudson.plugins.view.dashboard.Dashboard plugin="dashboard-view@@2.558.v96b_901978e47">
+<hudson.plugins.view.dashboard.Dashboard plugin="dashboard-view@@2.569.v5ddb_c9b_a_7264">
   <name>@view_name</name>
   <description>Generated at @ESCAPE(now_str) from template '@ESCAPE(template_name)'</description>
   <filterExecutors>false</filterExecutors>
@@ -15,15 +15,15 @@
     <hudson.views.LastSuccessColumn/>
     <hudson.views.LastFailureColumn/>
     <hudson.views.LastDurationColumn/>
-    <jenkins.plugins.extracolumns.BuildDescriptionColumn plugin="extra-columns@@1.28">
+    <jenkins.plugins.extracolumns.BuildDescriptionColumn plugin="extra-columns@@1.29">
       <columnWidth>80</columnWidth>
       <forceWidth>true</forceWidth>
     </jenkins.plugins.extracolumns.BuildDescriptionColumn>
     <hudson.views.BuildButtonColumn/>
-    <jenkins.plugins.extracolumns.TestResultColumn plugin="extra-columns@@1.28">
+    <jenkins.plugins.extracolumns.TestResultColumn plugin="extra-columns@@1.29">
       <testResultFormat>1</testResultFormat>
     </jenkins.plugins.extracolumns.TestResultColumn>
-    <io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn plugin="warnings-ng@@13.10153.v011f47a_3ef01">
+    <io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn plugin="warnings-ng@@13.10305.v3231d55c5755">
       <selectTools>false</selectTools>
       <tools>
         <io.jenkins.plugins.analysis.core.model.ToolSelection>
