@@ -1,4 +1,4 @@
-  <scm class="hudson.plugins.mercurial.MercurialSCM" plugin="mercurial@@1260.vdfb_723cdcc81">
+  <scm class="hudson.plugins.mercurial.MercurialSCM" plugin="mercurial@@1323.ve69d2a_db_8a_b_d">
     <installation>Default</installation>
     <source>@ESCAPE(source)</source>
     <modules/>

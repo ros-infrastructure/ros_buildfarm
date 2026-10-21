@@ -17,12 +17,11 @@ base_image = '%s:%s' % (
     'builder_system-groovy',
     command=
 """// DISABLE SLAVE IF OUTPUT INDICATES DOCKER RUN PROBLEMS
-import hudson.model.Cause.UserIdCause
+import hudson.model.Cause.UpstreamCause
 import hudson.model.ParametersAction
 import hudson.slaves.OfflineCause.UserCause
 import java.io.BufferedReader
 import java.util.regex.Pattern
-import org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildAction
 
 pattern = Pattern.compile("'docker run' returned [^0].*")
 
@@ -41,10 +40,7 @@ while ((line = br.readLine()) != null) {
 
         // rescheduled a build with the same parameters
         // the requeue flag in the project configuration seems to not be sufficient anymore
-        build.getProject().scheduleBuild(1, new UserIdCause(), *build.getActions(ParametersAction))
-
-        // add badge to build
-        build.getActions().add(GroovyPostbuildAction.createInfoBadge("'docker run' failed, disabled agent '" + computer.name + "', rescheduled job"))
+        build.getProject().scheduleBuild(1, new UpstreamCause(build), *build.getActions(ParametersAction))
 
         // abort this build
         throw new InterruptedException()
