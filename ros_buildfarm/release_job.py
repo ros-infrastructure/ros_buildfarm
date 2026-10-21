@@ -911,7 +911,7 @@ def configure_sync_packages_to_main_job(
     job_name = get_sync_packages_to_main_job_name(
         rosdistro_name, package_format)
     job_config = _get_sync_packages_to_main_job_config(
-        rosdistro_name, build_file, package_format)
+        rosdistro_name, build_file, package_format, config=config)
 
     # jenkinsapi.jenkins.Jenkins evaluates to false if job count is zero
     if isinstance(jenkins, object) and jenkins is not False:
@@ -926,19 +926,54 @@ def get_sync_packages_to_main_job_name(rosdistro_name, package_format):
         view_name, '' if package_format == 'deb' else '-' + package_format)
 
 
-def _get_sync_packages_to_main_job_config(rosdistro_name, build_file, package_format):
+def _get_sync_packages_to_main_job_config(
+        rosdistro_name, build_file, package_format, config=None):
+    if config and package_format == 'rpm':
+        sync_targets = _get_all_sync_targets(
+            config, rosdistro_name, package_format)
+        notify_emails = set(build_file.notify_emails)
+        build_files = get_release_build_files(config, rosdistro_name)
+        for _, bf in sorted(build_files.items()):
+            if any(package_format_mapping.get(os_name) == package_format
+                   for os_name in bf.targets.keys()):
+                notify_emails.update(bf.notify_emails)
+        notify_emails = sorted(notify_emails)
+    else:
+        sync_targets = build_file.targets
+        notify_emails = build_file.notify_emails
+
     template_name = 'release/%s/sync_packages_to_main_job.xml.em' % package_format
     job_data = {
         'ros_buildfarm_repository': get_repository(),
         'rosdistro_name': rosdistro_name,
 
         'deb_sync_to_main_job_name': get_sync_packages_to_main_job_name(rosdistro_name, 'deb'),
-        'sync_targets': build_file.targets,
+        'sync_targets': sync_targets,
 
-        'notify_emails': build_file.notify_emails,
+        'notify_emails': notify_emails,
     }
     job_config = expand_template(template_name, job_data)
     return job_config
+
+
+def _get_all_sync_targets(config, rosdistro_name, package_format):
+    # the '<rosdistro_name>_sync-packages-to-main' job name is not qualified by the
+    # build name, so every release build file using this package format
+    # writes the same job. Consider all of their targets, otherwise generating
+    # the job for one build file drops the targets of all the others.
+    targets = {}
+    build_files = get_release_build_files(config, rosdistro_name)
+    for _, build_file in sorted(build_files.items()):
+        for os_name, os_code_names in sorted(build_file.targets.items()):
+            if package_format_mapping.get(os_name) != package_format:
+                continue
+            known_os_code_names = targets.setdefault(os_name, {})
+            for os_code_name, arches in sorted(os_code_names.items()):
+                known_arches = known_os_code_names.setdefault(
+                    os_code_name, {})
+                for arch, arch_data in sorted(arches.items()):
+                    known_arches.setdefault(arch, arch_data)
+    return targets
 
 
 def _get_maintainer_emails(cached_pkgs, pkg_name):
