@@ -1,4 +1,4 @@
-    <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@@795.ve8e151429b_27">
+    <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@@805.v9d1393350780">
       <project>@(project)</project>
       <filter>@(','.join(artifacts))</filter>
       <target>@(target_directory)</target>

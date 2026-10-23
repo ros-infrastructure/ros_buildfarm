@@ -1,4 +1,4 @@
-    <io.jenkins.plugins.analysis.core.steps.IssuesRecorder plugin="warnings-ng@@13.10153.v011f47a_3ef01">
+    <io.jenkins.plugins.analysis.core.steps.IssuesRecorder plugin="warnings-ng@@13.10305.v3231d55c5755">
       <analysisTools>
         <io.jenkins.plugins.analysis.warnings.Cmake>
           <id></id>
@@ -29,7 +29,7 @@
       <failOnError>false</failOnError>
       <healthy>0</healthy>
       <unhealthy>0</unhealthy>
-      <minimumSeverity plugin="analysis-model-api@@14.14.0-1004.vf53c9efb_f455">
+      <minimumSeverity plugin="analysis-model-api@@14.18.0-1028.v9c938eeda_ef2">
         <name>LOW</name>
       </minimumSeverity>
       <filters>

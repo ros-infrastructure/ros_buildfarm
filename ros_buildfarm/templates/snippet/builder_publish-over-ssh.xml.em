@@ -1,9 +1,9 @@
-    <jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin plugin="publish-over-ssh@@390.vb_f56e7405751">
+    <jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin plugin="publish-over-ssh@@409.v73ca_23a_5b_48e">
       <delegate>
         <consolePrefix>SSH: </consolePrefix>
-        <delegate plugin="publish-over@@238.v1db_583004c9b_">
+        <delegate plugin="publish-over@@242.vf56f6892cb_b_a_">
           <publishers>
-            <jenkins.plugins.publish__over__ssh.BapSshPublisher plugin="publish-over-ssh@@390.vb_f56e7405751">
+            <jenkins.plugins.publish__over__ssh.BapSshPublisher plugin="publish-over-ssh@@409.v73ca_23a_5b_48e">
               <configName>@config_name</configName>
               <verbose>false</verbose>
               <transfers>
