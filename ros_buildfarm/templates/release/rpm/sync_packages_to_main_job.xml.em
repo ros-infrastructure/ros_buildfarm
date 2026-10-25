@@ -49,7 +49,7 @@
         'echo "# BEGIN SECTION: sync packages to main repos"',
     ] + [
         'createrepo-agent /var/repos/%s/main/%s/ --sync=/var/repos/%s/testing/%s/ --arch=SRPMS --arch=%s --sync-pattern="ros-%s-.*" --invalidate-family' % (os_name, os_code_name, os_name, os_code_name, ' --arch='.join(sorted(arches)), rosdistro_name)
-        for os_name, os_versions in sync_targets.items() for os_code_name, arches in os_versions.items()
+        for rosdistro_name, sync_targets in ((rosdistro_name, sync_targets),) for os_name, os_versions in sync_targets.items() for os_code_name, arches in os_versions.items()
     ] + [
         'echo "# END SECTION"',
     ]),
