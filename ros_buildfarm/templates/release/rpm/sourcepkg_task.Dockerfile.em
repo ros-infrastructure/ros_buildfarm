@@ -4,7 +4,7 @@
 FROM almalinux:@(os_code_name)
 
 # Enable CRB and EPEL on RHEL
-RUN dnf install --refresh -y epel-release && crb enable
+RUN dnf install --refresh -y epel-release 'dnf-command(config-manager)' && crb enable
 @[else]@
 FROM @(os_name):@(os_code_name)
 @[end if]@
