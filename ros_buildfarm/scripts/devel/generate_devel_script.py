@@ -141,7 +141,8 @@ def main(argv=sys.argv[1:]):
             'scripts': hook.scripts,
             'build_tool': args.build_tool or build_file.build_tool},
         ignore_bangpath=True)
-    value = re.sub(r'(^| )python3 ', r'\1' + sys.executable + ' ', value, flags=re.M)
+    value = re.sub(
+        r'(^| )python3 ', lambda m: m.group(1) + sys.executable + ' ', value, flags=re.M)
     print(value)
 
 
