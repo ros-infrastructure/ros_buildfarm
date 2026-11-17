@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import argparse
+import os
 import re
 import sys
 
@@ -54,7 +55,7 @@ def main(argv=sys.argv[1:]):
             self.scripts = []
 
         def beforeInclude(self, *args, **kwargs):
-            template_path = kwargs['file'].name
+            template_path = kwargs['file'].name.replace(os.sep, '/')
             if template_path.endswith('/snippet/scm.xml.em'):
                 self.scms.append(
                     (kwargs['locals']['repo_spec'], kwargs['locals']['path']))

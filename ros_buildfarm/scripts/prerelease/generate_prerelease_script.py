@@ -175,7 +175,7 @@ def main(argv=sys.argv[1:]):
             self.scripts = []
 
         def beforeInclude(self, *_, **kwargs):
-            template_path = kwargs['file'].name
+            template_path = kwargs['file'].name.replace(os.sep, '/')
             if template_path.endswith('/snippet/builder_shell.xml.em'):
                 script = kwargs['locals']['script']
                 # reuse existing ros_buildfarm folder if it exists
