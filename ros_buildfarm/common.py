@@ -579,8 +579,9 @@ def get_default_node_label(additional_label=None):
 def get_system_architecture():
     # this is used to determine the arch for the Docker image for source jobs
     # which don't explicitly specify an architecture
-    machine = platform.machine()
-    if machine == 'x86_64':
+    # Windows reports 'AMD64'
+    machine = platform.machine().lower()
+    if machine in ('x86_64', 'amd64'):
         return 'amd64'
     if machine == 'i386':
         return 'i386'
