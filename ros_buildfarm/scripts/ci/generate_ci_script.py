@@ -95,7 +95,7 @@ def main(argv=sys.argv[1:]):
                 self.parameters['build_tool_test_args'] = ' '.join(args.build_tool_test_args)
 
         def beforeInclude(self, *_, **kwargs):
-            template_path = kwargs['file'].name
+            template_path = kwargs['file'].name.replace(os.sep, '/')
             if template_path.endswith('/snippet/scm.xml.em'):
                 self.scms.append(
                     (kwargs['locals']['repo_spec'], kwargs['locals']['path']))
