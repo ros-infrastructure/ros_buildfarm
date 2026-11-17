@@ -155,7 +155,8 @@ def main(argv=sys.argv[1:]):
             'binary_scripts': binary_scripts,
             'package_format': package_format},
         ignore_bangpath=True)
-    value = re.sub(r'(^| )python3 ', r'\1' + sys.executable + ' ', value, flags=re.M)
+    value = re.sub(
+        r'(^| )python3 ', lambda m: m.group(1) + sys.executable + ' ', value, flags=re.M)
     print(value)
 
 
