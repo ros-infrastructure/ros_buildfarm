@@ -15,6 +15,7 @@
 from collections import namedtuple
 import os
 import platform
+import shutil
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -390,11 +391,7 @@ def get_user_id():
 
 
 def find_executable(file_name):
-    for path in os.getenv('PATH').split(os.path.pathsep):
-        file_path = os.path.join(path, file_name)
-        if os.path.isfile(file_path) and os.access(file_path, os.X_OK):
-            return file_path
-    return None
+    return shutil.which(file_name)
 
 
 def get_doc_job_name(rosdistro_name, doc_build_name,
