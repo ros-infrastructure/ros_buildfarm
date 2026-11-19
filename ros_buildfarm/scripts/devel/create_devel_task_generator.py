@@ -264,6 +264,9 @@ def _get_run_and_test_dependencies(pkg, pkgs):
 
 def initialize_resolver(rosdistro_name, os_name, os_code_name):
     # resolve rosdep keys into binary package names
+    # rosdep has no 'windows' OS: Windows targets resolve keys as 'conda'
+    if os_name == 'windows':
+        os_name = 'conda'
     ctx = create_default_installer_context()
     try:
         installer_key = ctx.get_default_os_installer_key(os_name)
