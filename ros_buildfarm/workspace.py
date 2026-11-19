@@ -54,7 +54,14 @@ def call_build_tool(
     assert build_tool in ('catkin_make_isolated', 'colcon')
     script_name = build_tool
 
-    cmd = ['PYTHONIOENCODING=utf_8', 'PYTHONUNBUFFERED=1']
+    if os.name == 'nt':
+        # cmd.exe can not prefix a command with environment variables
+        env = dict(os.environ if env is None else env)
+        env['PYTHONIOENCODING'] = 'utf_8'
+        env['PYTHONUNBUFFERED'] = '1'
+        cmd = []
+    else:
+        cmd = ['PYTHONIOENCODING=utf_8', 'PYTHONUNBUFFERED=1']
 
     # use script from source space if available
     if build_tool == 'catkin_make_isolated':
@@ -139,7 +146,13 @@ def call_build_tool(
         c if ' ' not in c else '"%s"' % c for c in cmd)
 
     # prepend setup files if available
-    if parent_result_spaces is None:
+    if os.name == 'nt':
+        # the build tool comes from the activated environment, there are no
+        # setup files to source
+        assert not parent_result_spaces, \
+            'Parent result spaces are not supported on Windows'
+        parent_result_spaces = []
+    elif parent_result_spaces is None:
         parent_result_spaces = ['/opt/ros/%s' % rosdistro_name]
     for parent_result_space in reversed(parent_result_spaces):
         setup_file = os.path.join(parent_result_space, 'setup.sh')
