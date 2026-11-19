@@ -137,6 +137,34 @@ else:
     ]),
 ))@
 @[if upload_host is not None]@
+@{
+if upload_prune:
+    # Default behaviour: prune the whole upload destination.
+    deploy_rsync_lines = [
+        '  rsync -e ssh --stats -r --delete html/ %s@%s:%s' %
+        (upload_user, upload_host, upload_root),
+    ]
+else:
+    # Freeze mode (upload_prune=false): prune only *within* each built
+    # top-level directory and never remove sibling directories, so content
+    # for entries no longer in the build set (e.g. EOL distros dropped from
+    # the multiversion whitelist) is left frozen in place instead of pruned.
+    # See https://github.com/ros2/ros2_documentation/issues/6964
+    deploy_rsync_lines = [
+        '  for built_dir in html/*/; do',
+        '    [ -d "$built_dir" ] || continue',
+        '    built_name=$(basename "$built_dir")',
+        '    ssh %s@%s "mkdir -p %s/$built_name"' %
+        (upload_user, upload_host, upload_root),
+        '    rsync -e ssh --stats -r --delete "$built_dir" %s@%s:%s/"$built_name"/' %
+        (upload_user, upload_host, upload_root),
+        '  done',
+        '  # Sync top-level files only (index.html, versions.json, sitemap, ...);',
+        "  # --exclude='/*/' keeps sibling distro directories untouched.",
+        "  rsync -e ssh --stats -r --exclude='/*/' html/ %s@%s:%s" %
+        (upload_user, upload_host, upload_root),
+    ]
+}@
 @(SNIPPET(
     'builder_shell',
     script='\n'.join([
@@ -145,8 +173,7 @@ else:
         '  ssh %s@%s "mkdir -p %s"' %
           (upload_user, upload_host, upload_root),
         '  cd $WORKSPACE/repositories/%s/build' % doc_repository_name,
-        '  rsync -e ssh --stats -r --delete html/ %s@%s:%s' % \
-          (upload_user, upload_host, upload_root),
+    ] + deploy_rsync_lines + [
         '  echo "# END SECTION"',
         'fi',
     ]),
