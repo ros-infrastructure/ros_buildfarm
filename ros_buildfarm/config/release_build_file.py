@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ros_buildfarm.common import package_format_mapping
+
 from .build_file import BuildFile
 
 
@@ -39,6 +41,11 @@ class ReleaseBuildFile(BuildFile):
         super(ReleaseBuildFile, self).__init__(name, data)
 
         assert len(self.targets) > 0
+        for os_name in self.targets:
+            if package_format_mapping.get(os_name) == 'conda':
+                raise ValueError(
+                    "Release build file '%s' targets '%s' which uses the "
+                    "unsupported package format 'conda'" % (name, os_name))
 
         self.abi_incompatibility_assumed = None
         if 'abi_incompatibility_assumed' in data:
