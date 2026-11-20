@@ -16,6 +16,7 @@ from __future__ import print_function
 
 import logging
 import os
+from pathlib import Path
 
 import yaml
 
@@ -35,8 +36,11 @@ logger = logging.getLogger(__name__)
 
 
 def load_yaml(url):
+    # A local path such as C:\cfg\index.yaml would be read as a URL with scheme 'C'
+    if os.path.exists(url):
+        url = Path(os.path.abspath(url)).as_uri()
     # Resolve relative file paths from CWD
-    url = urljoin('file://' + os.getcwd() + '/', url)
+    url = urljoin(Path.cwd().as_uri() + '/', url)
 
     class BuildfarmConfigSafeLoader(yaml.SafeLoader):
 
