@@ -28,6 +28,7 @@ package_format_mapping = {
     'fedora': 'rpm',
     'rhel': 'rpm',
     'ubuntu': 'deb',
+    'windows': 'conda',
 }
 
 
@@ -385,6 +386,9 @@ def check_https_github_com(url):
 
 
 def get_user_id():
+    if os.name == 'nt':
+        # Windows has no uid and its containers don't create a user from one
+        return None
     uid = os.getuid()
     assert uid != 0, "You can not run this as user 'root'"
     return uid
