@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import argparse
+import os
 import re
 import sys
 
@@ -68,12 +69,12 @@ def main(argv=sys.argv[1:]):
             self.scripts = []
 
         def beforeFile(self, *args, **kwargs):
-            template_path = kwargs['file'].name
+            template_path = kwargs['file'].name.replace(os.sep, '/')
             if template_path.endswith('/release/%s/binarypkg_job.xml.em' % package_format):
                 self.scripts.append('--')
 
         def beforeInclude(self, *args, **kwargs):
-            template_path = kwargs['file'].name
+            template_path = kwargs['file'].name.replace(os.sep, '/')
             if template_path.endswith('/snippet/builder_shell.xml.em'):
                 script = kwargs['locals']['script']
                 # reuse existing ros_buildfarm folder if it exists
@@ -154,7 +155,8 @@ def main(argv=sys.argv[1:]):
             'binary_scripts': binary_scripts,
             'package_format': package_format},
         ignore_bangpath=True)
-    value = re.sub(r'(^| )python3 ', r'\1' + sys.executable + ' ', value, flags=re.M)
+    value = re.sub(
+        r'(^| )python3 ', lambda m: m.group(1) + sys.executable + ' ', value, flags=re.M)
     print(value)
 
 

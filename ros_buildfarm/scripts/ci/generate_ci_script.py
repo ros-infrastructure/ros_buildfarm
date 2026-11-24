@@ -95,7 +95,7 @@ def main(argv=sys.argv[1:]):
                 self.parameters['build_tool_test_args'] = ' '.join(args.build_tool_test_args)
 
         def beforeInclude(self, *_, **kwargs):
-            template_path = kwargs['file'].name
+            template_path = kwargs['file'].name.replace(os.sep, '/')
             if template_path.endswith('/snippet/scm.xml.em'):
                 self.scms.append(
                     (kwargs['locals']['repo_spec'], kwargs['locals']['path']))
@@ -163,7 +163,8 @@ def main(argv=sys.argv[1:]):
             'build_tool': args.build_tool or build_file.build_tool,
             'parameters': hook.parameters},
         ignore_bangpath=True)
-    value = re.sub(r'(^| )python3 ', r'\1' + sys.executable + ' ', value, flags=re.M)
+    value = re.sub(
+        r'(^| )python3 ', lambda m: m.group(1) + sys.executable + ' ', value, flags=re.M)
     print(value)
 
 
