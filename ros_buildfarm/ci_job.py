@@ -288,6 +288,8 @@ def _get_ci_job_config(
         'ros_version': ros_version,
         'build_environment_variables': build_environment_variables,
 
+        'require_gpu_support': build_file.tests_require_gpu_default,
+
         'timeout_minutes': build_file.jenkins_job_timeout,
 
         'repos_file_urls': repos_files,

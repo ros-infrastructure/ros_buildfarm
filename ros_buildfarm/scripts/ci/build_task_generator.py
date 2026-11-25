@@ -72,6 +72,12 @@ def main(argv=sys.argv[1:]):
     for k, v in remainder_args.items():
         setattr(args, k, v)
 
+    if args.require_gpu_support:
+        print(
+            'WARNING: using the --require-gpu-support argument is deprecated.'
+            'Can be removed without changing functionality.',
+            file=sys.stderr)
+
     apt_cache = Cache()
 
     debian_pkg_names = set(['build-essential'])
@@ -132,7 +138,6 @@ def main(argv=sys.argv[1:]):
 
         'testing': args.testing,
         'run_abichecker': args.run_abichecker,
-        'require_gpu_support': args.require_gpu_support,
         'workspace_root': mapped_workspaces[-1][1],
         'parent_result_space': [mapping[1] for mapping in mapped_workspaces[:-1]],
     }
