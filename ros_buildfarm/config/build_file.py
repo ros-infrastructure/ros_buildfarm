@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import json
+import sys
 from xml.etree import ElementTree
 
+from ros_buildfarm.common import package_format_mapping
 from ros_buildfarm.common import Target
 
 
@@ -73,6 +75,16 @@ class BuildFile(object):
                     self.targets[os_name][os_code_name][arch] = \
                         data['targets'][os_name][os_code_name][arch]
 
+        # no job type supports the 'conda' package format yet
+        self.unsupported_targets = []
+        for os_name in list(self.targets.keys()):
+            if package_format_mapping.get(os_name) != 'conda':
+                continue
+            for os_code_name, arches in self.targets.pop(os_name).items():
+                for arch in arches.keys():
+                    self.unsupported_targets.append(
+                        Target(os_name, os_code_name, arch))
+
         self.shared_ccache = False
         if 'shared_ccache' in data:
             self.shared_ccache = bool(data['shared_ccache'])
@@ -100,6 +112,14 @@ class BuildFile(object):
                 res.append(dist_file)
 
         return res
+
+    def print_unsupported_targets(self):
+        for target in self.unsupported_targets:
+            print(
+                "Ignoring target '%s %s %s' in build file '%s': " %
+                (target.os_name, target.os_code_name, target.arch, self.name) +
+                "jobs for the 'conda' package format are not supported yet",
+                file=sys.stderr)
 
     def get_targets_list(self):
         target_list = []

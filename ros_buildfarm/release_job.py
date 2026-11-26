@@ -79,6 +79,7 @@ def configure_release_jobs(
     for os_name, os_code_name in platforms:
         print('  - %s %s: %s' % (os_name, os_code_name, ', '.join(
             build_file.targets[os_name][os_code_name])))
+    build_file.print_unsupported_targets()
 
     dist_file = get_distribution_file(index, rosdistro_name, build_file)
     if not dist_file:
