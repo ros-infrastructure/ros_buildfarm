@@ -67,6 +67,7 @@ def configure_doc_jobs(
     print('The build file contains the following targets:')
     for os_name, os_code_name, arch in targets:
         print('  -', os_name, os_code_name, arch)
+    build_file.print_unsupported_targets()
 
     dist_file = get_distribution_file(index, rosdistro_name, build_file)
     if not dist_file:

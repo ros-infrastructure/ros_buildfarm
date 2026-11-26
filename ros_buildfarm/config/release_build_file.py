@@ -38,7 +38,7 @@ class ReleaseBuildFile(BuildFile):
 
         super(ReleaseBuildFile, self).__init__(name, data)
 
-        assert len(self.targets) > 0
+        assert len(self.targets) > 0 or self.unsupported_targets
 
         self.abi_incompatibility_assumed = None
         if 'abi_incompatibility_assumed' in data:

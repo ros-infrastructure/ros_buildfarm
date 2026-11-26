@@ -72,6 +72,7 @@ def _configure_ci_jobs(
         "The build file '%s' contains the following targets:" % ci_build_name)
     for os_name, os_code_name, arch in targets:
         print('  -', os_name, os_code_name, arch)
+    build_file.print_unsupported_targets()
 
     ci_view_name = get_ci_view_name(rosdistro_name)
 
