@@ -38,6 +38,7 @@ from ros_buildfarm.argument import add_argument_rosdistro_name
 from ros_buildfarm.argument import add_argument_run_abichecker
 from ros_buildfarm.argument import extract_multiple_remainders
 from ros_buildfarm.common import get_distribution_repository_keys
+from ros_buildfarm.common import get_os_template_suffix
 from ros_buildfarm.common import get_user_id
 from ros_buildfarm.templates import create_dockerfile
 
@@ -82,10 +83,12 @@ def main(argv=sys.argv[1:]):
             args.distribution_repository_key_files),
         'custom_rosdep_urls': args.custom_rosdep_urls,
         'rosdep_update_options': args.custom_rosdep_update_options,
-        'uid': get_user_id(),
     })
+    if args.os_name != 'windows':
+        data['uid'] = get_user_id()
     create_dockerfile(
-        'devel/devel_create_tasks.Dockerfile.em', data, args.dockerfile_dir)
+        'devel/devel_create_tasks%s.Dockerfile.em' %
+        get_os_template_suffix(args.os_name), data, args.dockerfile_dir)
 
 
 if __name__ == '__main__':

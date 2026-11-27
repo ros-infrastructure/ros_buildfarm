@@ -18,6 +18,7 @@ from .build_file import BuildFile
 class SourceBuildFile(BuildFile):
 
     _type = 'source-build'
+    _supports_conda_targets = True
 
     def __init__(self, name, data):  # noqa: D107
         assert 'type' in data, "Expected file type is '%s'" % \
@@ -38,7 +39,7 @@ class SourceBuildFile(BuildFile):
 
         super(SourceBuildFile, self).__init__(name, data)
 
-        assert len(self.targets) > 0 or self.unsupported_targets
+        assert len(self.targets) > 0
 
         self.jenkins_commit_job_priority = None
         if 'jenkins_commit_job_priority' in data:

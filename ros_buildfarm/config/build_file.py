@@ -22,6 +22,8 @@ from ros_buildfarm.common import Target
 
 class BuildFile(object):
 
+    _supports_conda_targets = False
+
     def __init__(self, name, data):  # noqa: D107
         self.name = name
 
@@ -75,10 +77,10 @@ class BuildFile(object):
                     self.targets[os_name][os_code_name][arch] = \
                         data['targets'][os_name][os_code_name][arch]
 
-        # no job type supports the 'conda' package format yet
         self.unsupported_targets = []
         for os_name in list(self.targets.keys()):
-            if package_format_mapping.get(os_name) != 'conda':
+            if self._supports_conda_targets or \
+                    package_format_mapping.get(os_name) != 'conda':
                 continue
             for os_code_name, arches in self.targets.pop(os_name).items():
                 for arch in arches.keys():

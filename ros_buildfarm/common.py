@@ -32,6 +32,10 @@ package_format_mapping = {
 }
 
 
+def get_os_template_suffix(os_name):
+    return '_windows' if os_name == 'windows' else ''
+
+
 class JobValidationError(Exception):
     """
     Indicates that the validation of a build job failed.

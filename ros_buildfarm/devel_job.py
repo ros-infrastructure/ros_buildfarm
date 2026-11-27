@@ -28,7 +28,6 @@ from ros_buildfarm.common \
 from ros_buildfarm.common import get_xunit_publisher_types_and_patterns
 from ros_buildfarm.common import git_github_orgunit
 from ros_buildfarm.common import JobValidationError
-from ros_buildfarm.common import package_format_mapping
 from ros_buildfarm.common import write_groovy_script_and_configs
 from ros_buildfarm.config import get_distribution_file
 from ros_buildfarm.config import get_index as get_config_index
@@ -68,7 +67,6 @@ def configure_devel_jobs(
     print('The build file contains the following targets:')
     for os_name, os_code_name, arch in targets:
         print('  -', os_name, os_code_name, arch)
-    build_file.print_unsupported_targets()
 
     dist_file = get_distribution_file(index, rosdistro_name, build_file)
     if not dist_file:
@@ -300,11 +298,6 @@ def configure_devel_job(
                 "Repository '%s' has no source version" % repo_name)
         source_repository = repo.source_repository
 
-    if package_format_mapping.get(os_name) == 'conda':
-        raise JobValidationError(
-            "Devel jobs for target '%s %s %s' are not supported yet: " %
-            (os_name, os_code_name, arch) +
-            "the 'conda' package format is not supported")
     if os_name not in build_file.targets.keys():
         raise JobValidationError(
             "Invalid OS name '%s' " % os_name +
