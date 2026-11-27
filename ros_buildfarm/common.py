@@ -31,6 +31,14 @@ package_format_mapping = {
     'windows': 'conda',
 }
 
+os_template_suffix_mapping = {
+    'windows': '_windows',
+}
+
+
+def get_os_template_suffix(os_name):
+    return os_template_suffix_mapping.get(os_name, '')
+
 
 class JobValidationError(Exception):
     """
